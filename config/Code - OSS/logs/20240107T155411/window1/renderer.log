@@ -1,0 +1,26 @@
+2024-01-07 15:54:12.636 [info] Started local extension host with pid 3399.
+2024-01-07 15:54:15.702 [info] [perf] Render performance baseline is 41ms
+2024-01-07 15:54:37.599 [error] [Extension Host] Error: Git error
+	at ChildProcess.<anonymous> (/usr/lib/code/extensions/git/dist/main.js:2:991008)
+	at ChildProcess.emit (node:events:525:35)
+	at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+2024-01-07 15:54:38.599 [error] [Extension Host] Error: Git error
+	at ChildProcess.<anonymous> (/usr/lib/code/extensions/git/dist/main.js:2:991008)
+	at ChildProcess.emit (node:events:525:35)
+	at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+2024-01-07 15:54:39.247 [error] [Extension Host] Error: Git error
+	at ChildProcess.<anonymous> (/usr/lib/code/extensions/git/dist/main.js:2:991008)
+	at ChildProcess.emit (node:events:525:35)
+	at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+2024-01-07 15:54:40.045 [error] [Extension Host] Error: Git error
+	at ChildProcess.<anonymous> (/usr/lib/code/extensions/git/dist/main.js:2:991008)
+	at ChildProcess.emit (node:events:525:35)
+	at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+2024-01-07 15:54:42.215 [error] [Extension Host] Error: Git error
+	at ChildProcess.<anonymous> (/usr/lib/code/extensions/git/dist/main.js:2:991008)
+	at ChildProcess.emit (node:events:525:35)
+	at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+2024-01-07 15:54:42.839 [error] [Extension Host] Error: Git error
+	at ChildProcess.<anonymous> (/usr/lib/code/extensions/git/dist/main.js:2:991008)
+	at ChildProcess.emit (node:events:525:35)
+	at ChildProcess._handle.onexit (node:internal/child_process:291:12)

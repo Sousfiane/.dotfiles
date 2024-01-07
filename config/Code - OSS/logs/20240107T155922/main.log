@@ -1,0 +1,28 @@
+2024-01-07 15:59:22.449 [info] update#setState disabled
+2024-01-07 15:59:22.455 [info] update#ctor - updates are disabled as there is no update URL
+2024-01-07 16:03:19.868 [error] Error: Unable to write file '/home/thibault/.config/Code - OSS/User/globalStorage/storage.json' (Error: Unable to create folder '/home/thibault/.config/Code - OSS' that already exists but is not a directory)
+    at f.writeFile (/usr/lib/code/out/vs/code/electron-main/main.js:59:16231)
+    at async y.t (/usr/lib/code/out/vs/code/electron-main/main.js:61:9003)
+2024-01-07 16:03:24.289 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?),(?,?)). Details: Keys: memento/workbench.editors.files.textFileEditor, workbench.explorer.treeViewState Length: 1527
+2024-01-07 16:04:06.067 [error] Error: Unable to write file '/home/thibault/.config/Code - OSS/User/globalStorage/storage.json' (Error: Unable to create folder '/home/thibault/.config/Code - OSS' that already exists but is not a directory)
+    at f.writeFile (/usr/lib/code/out/vs/code/electron-main/main.js:59:16231)
+    at async y.t (/usr/lib/code/out/vs/code/electron-main/main.js:61:9003)
+2024-01-07 16:04:06.195 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: memento/workbench.editors.files.textFileEditor Length: 1318
+2024-01-07 16:04:08.949 [error] Error: Unable to write file '/home/thibault/.config/Code - OSS/User/globalStorage/storage.json' (Error: Unable to create folder '/home/thibault/.config/Code - OSS' that already exists but is not a directory)
+    at f.writeFile (/usr/lib/code/out/vs/code/electron-main/main.js:59:16231)
+    at async y.t (/usr/lib/code/out/vs/code/electron-main/main.js:61:9003)
+2024-01-07 16:04:20.267 [error] Error: Unable to write file '/home/thibault/.config/Code - OSS/User/globalStorage/storage.json' (Error: Unable to create folder '/home/thibault/.config/Code - OSS' that already exists but is not a directory)
+    at f.writeFile (/usr/lib/code/out/vs/code/electron-main/main.js:59:16231)
+    at async y.t (/usr/lib/code/out/vs/code/electron-main/main.js:61:9003)
+2024-01-07 16:04:20.367 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: memento/workbench.editors.files.textFileEditor Length: 1318
+2024-01-07 16:05:24.325 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?),(?,?)). Details: Keys: history.entries, memento/workbench.editors.files.textFileEditor Length: 1013
+2024-01-07 16:07:44.242 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 286
+2024-01-07 16:07:46.290 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 209
+2024-01-07 16:08:05.316 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: memento/workbench.editors.files.textFileEditor Length: 892
+2024-01-07 16:08:27.756 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 278
+2024-01-07 16:08:28.507 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 376
+2024-01-07 16:08:29.670 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 488
+2024-01-07 16:08:32.872 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 400
+2024-01-07 16:08:33.387 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 307
+2024-01-07 16:08:33.812 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 215
+2024-01-07 16:08:46.275 [error] [storage state.vscdb] prepare(): Error: SQLITE_READONLY_DBMOVED: attempt to write a readonly database (INSERT INTO ItemTable VALUES (?,?)). Details: Keys: workbench.explorer.treeViewState Length: 201

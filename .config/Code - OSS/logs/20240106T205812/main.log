@@ -1,4 +1,0 @@
-2024-01-06 20:58:12.104 [info] update#setState disabled
-2024-01-06 20:58:12.105 [info] update#ctor - updates are disabled as there is no update URL
-2024-01-06 20:58:29.810 [error] [UtilityProcess type: shared-process, pid: 15504]: crashed with code 15 and reason 'killed'
-2024-01-06 20:58:29.828 [error] CodeWindow: renderer process gone (reason: clean-exit, code: <unknown>)
