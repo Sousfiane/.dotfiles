@@ -2,7 +2,8 @@
     "userDataProfilesMigration": true,
     "profileAssociations": {
         "workspaces": {
-            "file:///home/thibault": "__default__profile__"
+            "file:///home/thibault": "__default__profile__",
+            "file:///home/thibault/.dotfiles": "__default__profile__"
         },
         "emptyWindows": {}
     },
@@ -13,10 +14,14 @@
         "workspaces": [],
         "folders": [
             {
-                "folderUri": "file:///home/thibault"
+                "folderUri": "file:///home/thibault/.dotfiles"
             }
         ],
-        "emptyWindows": []
+        "emptyWindows": [
+            {
+                "backupFolder": "1704637039292"
+            }
+        ]
     },
     "lastKnownMenubarData": {
         "menus": {
@@ -56,10 +61,22 @@
                             "items": [
                                 {
                                     "id": "workbench.action.reopenClosedEditor",
-                                    "label": "&&Reopen Closed Editor"
+                                    "label": "&&Reopen Closed Editor",
+                                    "enabled": false
                                 },
                                 {
                                     "id": "vscode.menubar.separator"
+                                },
+                                {
+                                    "id": "openRecentFolder",
+                                    "uri": {
+                                        "$mid": 1,
+                                        "external": "file:///home/thibault/.dotfiles",
+                                        "path": "/home/thibault/.dotfiles",
+                                        "scheme": "file"
+                                    },
+                                    "enabled": true,
+                                    "label": "~/.dotfiles"
                                 },
                                 {
                                     "id": "openRecentFolder",
@@ -74,6 +91,50 @@
                                 },
                                 {
                                     "id": "vscode.menubar.separator"
+                                },
+                                {
+                                    "id": "openRecentFile",
+                                    "uri": {
+                                        "$mid": 1,
+                                        "external": "file:///home/thibault/.dotfiles/.config/gtk-3.0/bookmarks",
+                                        "path": "/home/thibault/.dotfiles/.config/gtk-3.0/bookmarks",
+                                        "scheme": "file"
+                                    },
+                                    "enabled": true,
+                                    "label": "~/.dotfiles/.config/gtk-3.0/bookmarks"
+                                },
+                                {
+                                    "id": "openRecentFile",
+                                    "uri": {
+                                        "$mid": 1,
+                                        "external": "file:///home/thibault/.dotfiles/.zshrc",
+                                        "path": "/home/thibault/.dotfiles/.zshrc",
+                                        "scheme": "file"
+                                    },
+                                    "enabled": true,
+                                    "label": "~/.dotfiles/.zshrc"
+                                },
+                                {
+                                    "id": "openRecentFile",
+                                    "uri": {
+                                        "$mid": 1,
+                                        "external": "file:///home/thibault/.config/gtk-3.0/settings.ini",
+                                        "path": "/home/thibault/.config/gtk-3.0/settings.ini",
+                                        "scheme": "file"
+                                    },
+                                    "enabled": true,
+                                    "label": "~/.config/gtk-3.0/settings.ini"
+                                },
+                                {
+                                    "id": "openRecentFile",
+                                    "uri": {
+                                        "$mid": 1,
+                                        "external": "file:///home/thibault/.dotfiles/.config/user-dirs.dirs",
+                                        "path": "/home/thibault/.dotfiles/.config/user-dirs.dirs",
+                                        "scheme": "file"
+                                    },
+                                    "enabled": true,
+                                    "label": "~/.dotfiles/.config/user-dirs.dirs"
                                 },
                                 {
                                     "id": "openRecentFile",
@@ -142,6 +203,13 @@
                         "label": "Share",
                         "submenu": {
                             "items": [
+                                {
+                                    "id": "github.copyVscodeDevLinkFile",
+                                    "label": "Copy vscode.dev Link"
+                                },
+                                {
+                                    "id": "vscode.menubar.separator"
+                                },
                                 {
                                     "id": "workbench.profiles.actions.exportProfile",
                                     "label": "Export Profile (Default)..."
@@ -1664,20 +1732,20 @@
             "editorPartMinWidth": 220,
             "titleBarHeight": 0,
             "activityBarWidth": 48,
-            "sideBarWidth": 300,
+            "sideBarWidth": 170,
             "statusBarHeight": 22,
             "windowBorder": false
         }
     },
     "windowsState": {
         "lastActiveWindow": {
-            "folder": "file:///home/thibault",
-            "backupPath": "/home/thibault/.config/Code - OSS/Backups/c736e4aa650e6b3706f306ef5b0621c4",
+            "folder": "file:///home/thibault/.dotfiles",
+            "backupPath": "/home/thibault/.config/Code - OSS/Backups/fc90dc421a5f137cdfe67e207c096f9e",
             "uiState": {
                 "mode": 1,
-                "x": 10,
+                "x": 965,
                 "y": 50,
-                "width": 1900,
+                "width": 945,
                 "height": 1020
             }
         },
