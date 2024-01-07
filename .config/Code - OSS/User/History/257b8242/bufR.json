@@ -1,0 +1,7 @@
+{
+    "workbench.colorTheme": "Rosé Pine",
+    "editor.fontFamily": "'Droid Sans Mono'",
+    "workbench.settings.applyToAllProfiles": [
+        "editor.fontFamily"
+    ]
+}
