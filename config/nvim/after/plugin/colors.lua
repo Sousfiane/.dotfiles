@@ -5,7 +5,7 @@ require('rose-pine').setup({
     extend_background_behind_borders = false,
 
     styles = {
-        bold = true,
+        bold = false,
         italic = true,
         transparency = true,
     },
@@ -40,19 +40,13 @@ require('rose-pine').setup({
             h5 = "pine",
             h6 = "foam",
         },
-        -- Alternatively, set all headings at once.
-        -- headings = "subtle",
     },
-    	highlight_groups = {
+    highlight_groups = {
 		ColorColumn = { bg = 'rose' },
 
-		-- Blend colours against the "base" background
 		CursorLine = { bg = 'foam', blend = 10 },
 		StatusLine = { fg = 'love', bg = 'love', blend = 10 },
 
-		-- By default each group adds to the existing config.
-		-- If you only want to set what is written in this config exactly,
-		-- you can set the inherit option:
 		Search = { bg = 'gold'},
 	}
 })
