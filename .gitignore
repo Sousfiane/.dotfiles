@@ -1,0 +1,7 @@
+config/polybar/scripts/arch/arch_updates.pid
+config/polybar/scripts/arch/aur-vcs.pkgs
+config/polybar/scripts/arch/aur.pkgs
+config/polybar/scripts/arch/polybar_updates.pid
+config/polybar/scripts/arch/repo.pkgs
+config/polybar/scripts/arch/status
+config/polybar/scripts/arch/status_vcs
