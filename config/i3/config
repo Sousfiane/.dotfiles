@@ -152,21 +152,24 @@ set $ws10 "10"
 # use workspaces on different displays:
 workspace $ws1 output DP-0
 workspace $ws2 output HDMI-0
-workspace $ws3 output HDMI-0
+workspace $ws3 output DP-0
 workspace $ws4 output DP-0
 workspace $ws5 output HDMI-0
+workspace $ws6 output HDMI-0
 
 # bind program to workspace and focus to them on startup:
-assign [window_role=fixed_term] $ws1
+#assign [window_role=fixed_term] $ws1
 assign [class="Google-chrome"] $ws2
-assign [class="discord"] $ws3
+assign [class="code-oss"] $ws3
 assign [class="Thunar"] $ws4
-assign [class="Spotify"] $ws5
+assign [class="discord"] $ws5
+assign [class="Spotify"] $ws6
 
 # automatic set focus new window if it opens on another workspace than the current:
 for_window [class="Xfce4-terminal"] focus
 for_window [class="Google-chrome"] focus
 for_window [class="Spotify"] focus
+for_window [class="code-oss"] focus
 
 ##############
 # compositor #
