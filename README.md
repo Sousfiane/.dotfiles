@@ -1,6 +1,7 @@
 # Screenshots
 ![rice1](/assets/rice-1.png)
 ![rice2](/assets/rice-2.png)
+![rice3](/assets/rice-3.png)
 
 ---
 
