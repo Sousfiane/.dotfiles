@@ -16,7 +16,8 @@ default_floating_border pixel 0
 
 
 # Set inner/outer gaps
-gaps inner 10
+gaps inner 20
+gaps outer -10
 #gaps top 30
 smart_gaps on
 
