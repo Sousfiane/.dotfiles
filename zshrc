@@ -28,11 +28,6 @@ alias ijavac='javac -cp ~/tpdevs1/program.jar:.'
 alias ijava='java -cp ~/tpdevs1/program.jar:.'
 
 # other alias
-alias rm-r='rm -ri'
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
-
 alias shutdown='shutdown now'
 
 alias ps='sudo pacman -S'
@@ -50,3 +45,5 @@ alias vim='nvim'
 alias svim='sudo nvim'
 alias hvim='nvim ~'
 alias cvim='nvim ~/.config'
+
+alias dev='nvim ~/dev/'
