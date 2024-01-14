@@ -24,8 +24,8 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Ijava alias 
-alias ijavac='javac -cp ~/tpdevs1/program.jar:.'
-alias ijava='java -cp ~/tpdevs1/program.jar:.'
+alias ijavac='javac -cp ~/dev/devS1/program.jar:.'
+alias ijava='java -cp ~/dev/devS1/program.jar:.'
 
 # other alias
 alias shutdown='shutdown now'
@@ -46,4 +46,4 @@ alias svim='sudo nvim'
 alias hvim='nvim ~'
 alias cvim='nvim ~/.config'
 
-alias dev='nvim ~/dev/'
+alias dev='nvim ~/dev'
