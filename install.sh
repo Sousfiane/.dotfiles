@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo install config
+ln -s ~/.dotfiles/fehbg ~/.fehbg
 ln -s ~/.dotfiles/p10k.zsh ~/.p10k.zsh
 ln -s ~/.dotfiles/zshrc ~/.zshrc
 ln -s ~/.dotfiles/gitconfig ~/.gitconfig

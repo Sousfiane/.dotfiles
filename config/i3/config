@@ -187,11 +187,8 @@ exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf
 # get auth work with polkit-gnome
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
-# dex execute
-exec --no-startup-id dex --autostart --environment i3
-
-# set wallpaper
-exec --no-startup-id sleep 1 && feh --bg-fill ~/.wallpapers/Zerogoki.png
+# wallpaper
+exec --no-startup-id ~/.fehbg 
 
 # set powersavings for display:
 exec --no-startup-id xset s 480 dpms 600 600 600
@@ -247,7 +244,7 @@ client.urgent		    	#191724	#191724		#E0DEF4		#191724		#191724
 # Application menu handled by rofi: #
 #####################################
 
-# rofi bindings fancy application menu 
+# rofi bindings application menu 
 bindsym $mod+space exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
-# rofi bindings fancy exit menu
+# rofi bindings exit menu
 bindsym $mod+Escape exec --no-startup-id ~/.config/rofi/powermenu/type-1/powermenu.sh
