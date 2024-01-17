@@ -47,3 +47,5 @@ alias hvim='nvim ~'
 alias cvim='nvim ~/.config'
 
 alias dev='nvim ~/dev'
+
+alias wallpaper='~/.dotfiles/scripts/wallpapers.sh'
