@@ -6,3 +6,4 @@ config/polybar/scripts/arch/repo.pkgs
 config/polybar/scripts/arch/status
 config/polybar/scripts/arch/status_vcs
 config/vlc/vlc-qt-interface.conf
+fonts/.uuid
