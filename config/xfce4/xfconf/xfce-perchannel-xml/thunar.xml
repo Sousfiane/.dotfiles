@@ -22,4 +22,5 @@
   <property name="hidden-devices" type="array">
     <value type="string" value="94FA3A55FA3A33B8"/>
   </property>
+  <property name="misc-status-bar-active-info" type="uint" value="15"/>
 </channel>
