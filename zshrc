@@ -23,11 +23,11 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# Ijava alias 
+# ijava
 alias ijavac='javac -cp ~/dev/devS1/program.jar:.'
 alias ijava='java -cp ~/dev/devS1/program.jar:.'
 
-# other alias
+# other
 alias shutdown='shutdown now'
 
 alias ps='sudo pacman -S'
@@ -49,3 +49,5 @@ alias cvim='nvim ~/.config'
 alias dev='cd ~/dev/ && nvim ~/dev/'
 
 alias wallpaper='~/.dotfiles/scripts/wallpapers.sh'
+
+alias c='clear'
