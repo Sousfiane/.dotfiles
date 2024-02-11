@@ -160,7 +160,6 @@ workspace $ws3 output DP-0
 workspace $ws4 output DP-0
 workspace $ws5 output HDMI-0
 workspace $ws6 output HDMI-0
-workspace $ws7 output DP-0
 
 # bind program to workspace and focus to them on startup:
 #assign [window_role=fixed_term] $ws1
