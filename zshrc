@@ -43,10 +43,12 @@ alias yc='yay -Sc'
 
 alias vim='nvim'
 alias svim='sudo nvim'
-alias hvim='nvim ~'
-alias cvim='nvim ~/.config'
+alias hvim='cd && nvim ~'
+alias cvim='cd ~/.config && nvim ~/.config'
 
 alias dev='cd ~/dev/ && nvim ~/dev/'
+alias devS1='cd ~/dev/devS1/ && nvim ~/dev/devS1/'
+alias devS2='cd ~/dev/devS2/ && nvim ~/dev/devS2/'
 
 alias wallpaper='~/.dotfiles/scripts/wallpapers.sh'
 
