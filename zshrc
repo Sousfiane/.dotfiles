@@ -44,7 +44,7 @@ alias yu='yay -Syu'
 alias yc='yay -Sc'
 
 alias vim='nvim'
-alias svim='sudo nvim'
+alias svim='sudo -E nvim'
 alias hvim='cd && nvim ~'
 alias cvim='cd ~/.config && nvim ~/.config'
 alias dvim='cd ~/.dotfiles && nvim ~/.dotfiles'
