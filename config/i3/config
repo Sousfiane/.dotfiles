@@ -16,7 +16,7 @@ default_floating_border pixel 0
 
 
 # Set inner/outer gaps
-gaps inner 10
+gaps inner 8
 #gaps outer -10
 #gaps top 30
 smart_gaps on
@@ -187,6 +187,9 @@ exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf
 # autostart applications/services on login: #
 #############################################
 
+#get autrostart with dex
+exec --no-startup-id dex --autostart --environment i3
+
 # get auth work with polkit-gnome
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
@@ -204,11 +207,9 @@ exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
 exec_always --no-startup-id sleep 2 && ~/.config/polybar/launch.sh
-exec_always --no-startup-id sleep 2 && xfce4-power-manager
-exec_always --no-startup-id sleep 2 && light-locker
-exec --no-startup-id sleep 2 && ~/.config/i3/workspaces/load_layout.sh
-exec --no-startup-id sleep 2 && google-chrome-stable
-exec --no-startup-id sleep 4 && discord
+#exec --no-startup-id sleep 2 && ~/.config/i3/workspaces/load_layout.sh
+#exec --no-startup-id sleep 2 && google-chrome-stable
+#exec --no-startup-id sleep 4 && discord
 exec --no-startup-id sleep 2 && thunar
 
 ##################
