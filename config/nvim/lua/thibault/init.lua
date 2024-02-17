@@ -1,4 +1,4 @@
-print("Salut BG, prets à coder des grand-mères ? ;)")
+print("IM PROGRAMMIIIIIIIIIIIIIIIIIIIIIIIIIINNNNNNG !!!!")
 
 require("thibault.remap")
 require("thibault.set")
