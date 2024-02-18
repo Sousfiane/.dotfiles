@@ -227,7 +227,6 @@ for_window [class="Nm-connection-editor" instance="nm-connection-editor"] floati
 for_window [class="Pavucontrol" instance="pavucontrol"] floating enable
 for_window [class="Lxappearance" instance="lxappearance"] floating enable
 for_window [class="qBittorrent" instance="qbittorrent"] floating enable
-for_window [class="vlc" instance="vlc"] floating enable resize set 1148 720
 for_window [class="Nvidia-settings" instance="nvidia-settings"] floating enable
 for_window [class="KeePassXC" instance="keepassxc"] floating enable
 for_window [class="Orage" instance="orage"] floating enable
