@@ -50,8 +50,8 @@ alias cvim='cd ~/.config && nvim ~/.config'
 alias dvim='cd ~/.dotfiles && nvim ~/.dotfiles'
 
 alias dev='cd ~/dev/ && nvim ~/dev/'
-alias devS1='cd ~/dev/devS1/ && nvim ~/dev/devS1/'
-alias devS2='cd ~/dev/devS2/ && nvim ~/dev/devS2/'
+alias devS1='cd ~/devS1/ && nvim ~/devS1/'
+alias devS2='cd ~/dev-oo/ && nvim ~/dev-oo/'
 
 alias wallpaper='~/.dotfiles/scripts/wallpapers.sh'
 
