@@ -6,4 +6,6 @@ config/polybar/scripts/arch/repo.pkgs
 config/polybar/scripts/arch/status
 config/polybar/scripts/arch/status_vcs
 config/vlc/vlc-qt-interface.conf
+config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
+config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
 fonts/.uuid

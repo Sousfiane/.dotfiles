@@ -16,7 +16,7 @@ default_floating_border pixel 0
 
 
 # Set inner/outer gaps
-gaps inner 8
+gaps inner 6
 #gaps outer -10
 #gaps top 30
 smart_gaps on
@@ -135,6 +135,7 @@ bindsym $mod+w exec --no-startup-id /usr/bin/google-chrome-stable
 bindsym $mod+n exec --no-startup-id /usr/bin/thunar
 bindsym $mod+s exec --no-startup-id /usr/bin/spotify
 bindsym $mod+g exec --no-startup-id /usr/bin/steam
+bindsym XF86LaunchB exec --no-startup-id ~/.config/rofi/launchers/type-3/launcher.sh
 bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
 ##########################################
@@ -245,6 +246,6 @@ client.urgent		    	#191724	#191724		#E0DEF4		#191724		#191724
 #####################################
 
 # rofi bindings application menu 
-bindsym $mod+space exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
+bindsym $mod+space exec --no-startup-id ~/.config/rofi/launchers/type-3/launcher.sh
 # rofi bindings exit menu
-bindsym $mod+Escape exec --no-startup-id ~/.config/rofi/powermenu/type-1/powermenu.sh
+bindsym $mod+Escape exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
