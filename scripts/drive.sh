@@ -14,6 +14,14 @@ success () {
     printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
 }
 
+
+wait_for_internet(){
+    until wget -q --spider duckduckgo.com
+    do
+        sleep 10
+    done
+}
+
 mount_drive(){
     wget -q --tries=10 --timeout=20 --spider http://google.com
     if [[ $? -eq 0 ]]; then
@@ -72,6 +80,7 @@ delete_symlinks(){
     }
 
     mount_link(){
+        wait_for_internet
         mount_drive
         sleep 1
         create_symlinks

@@ -1447,3 +1447,6 @@ reboot
 dvim
 systemctl --user daemon-reload 
 reboot
+dvim
+systemctl --user daemon-reload 
+reboot
