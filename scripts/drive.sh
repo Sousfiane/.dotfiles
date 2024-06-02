@@ -77,18 +77,18 @@ delete_symlinks(){
     else
         info "The drive is not mounted"
     fi
-    }
+}
 
-    mount_link(){
-        wait_for_internet
-        mount_drive
-        sleep 1
-        create_symlinks
-    }
+mount_link(){
+    wait_for_internet
+    mount_drive
+    sleep 2
+    create_symlinks
+}
 
-    [[ $1 == "-m" ]] && mount_drive
-    [[ $1 == "-l" ]] && create_symlinks
-    [[ $1 == "-d" ]] && delete_symlinks 
-    [[ $1 == "-u" ]] && unmount_drive
-    [[ $1 == "-ml" ]] && mount_link
-    [[ $1 == "-du" ]] && delete_symlinks && unmount_drive
+[[ $1 == "-m" ]] && mount_drive
+[[ $1 == "-l" ]] && create_symlinks
+[[ $1 == "-d" ]] && delete_symlinks 
+[[ $1 == "-u" ]] && unmount_drive
+[[ $1 == "-ml" ]] && mount_link
+[[ $1 == "-du" ]] && delete_symlinks && unmount_drive

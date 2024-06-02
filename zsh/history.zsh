@@ -1458,3 +1458,13 @@ systemctl --user status dotfiles.service
 systemctl --user status drive.service
 dvim
 reboot
+dvim
+systemctl --user daemon-reload 
+drive -du
+drive -ml
+dvim
+drive -du
+drive -ml
+dvim
+systemctl --user daemon-reload 
+reboot
