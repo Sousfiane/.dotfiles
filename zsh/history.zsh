@@ -1445,3 +1445,5 @@ reboot
 git clone git@github.com:Sousfiane/.dotfiles.git
 reboot
 dvim
+systemctl --user daemon-reload 
+reboot
