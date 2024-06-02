@@ -1435,3 +1435,8 @@ c
 cd .dotfiles
 git init
 git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:Sousfiane/.dotfiles.git
+git push -u origin main
+reboot
