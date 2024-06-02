@@ -12,7 +12,12 @@ success () {
     printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
 }
 
-
+wait_for_internet(){
+    until wget -q --spider duckduckgo.com
+    do
+        sleep 10
+    done
+}
 
 
 cd_dotfiles(){
@@ -78,6 +83,7 @@ pull(){
 
 
 push_notify(){
+    wait_for_internet
     notify-send "Pushing dotfiles ..."
     git -C /home/thibault/.dotfiles add .
     git -C /home/thibault/.dotfiles commit -m "Auto update $(date)"  
@@ -87,6 +93,7 @@ push_notify(){
 }
 
 pull_notify(){
+    wait_for_internet
     notify-send "Pulling dotfiles .."
     cd /home/thibault/.dotfiles
     notify-send "$(git -C /home/thibault/.dotfiles pull)"

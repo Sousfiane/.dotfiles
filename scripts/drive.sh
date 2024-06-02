@@ -20,11 +20,14 @@ mount_drive(){
         if [[ -z $(ls $drive) ]]; then
             rclone mount mydrive: $HOME/.mydrive --config $HOME/.config/rclone/rclone.conf --no-checksum --vfs-cache-mode=full &
             success "Drive successfully mounted"
+            notify-send "Drive successfully mounted"
         else
             info "Drive already mounted"
+            notify-send "Drive already mounted"
         fi
     else
         info "Offline"
+        notify-send "Offline"
     fi
 }
 
@@ -36,6 +39,7 @@ unmount_drive(){
     else
         info "Drive already unmounted"
     fi
+    exit
 }
 
 create_symlinks(){
@@ -65,7 +69,6 @@ delete_symlinks(){
     else
         info "The drive is not mounted"
     fi
-    exit
     }
 
     mount_link(){

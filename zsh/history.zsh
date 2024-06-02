@@ -1442,3 +1442,6 @@ git push -u origin main
 reboot
 git clone git@github.com:Sousfiane/.dotfiles.git
 reboot
+git clone git@github.com:Sousfiane/.dotfiles.git
+reboot
+dvim
