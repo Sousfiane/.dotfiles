@@ -1452,3 +1452,5 @@ systemctl --user daemon-reload
 reboot
 systemctl --user status drive.service
 systemctl --user status dotfiles.service
+systemctl --user daemon-reload 
+reboot
