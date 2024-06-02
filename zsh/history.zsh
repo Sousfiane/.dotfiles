@@ -1474,3 +1474,5 @@ drive -l
 ls
 yu
 reboot
+yu
+reboot
