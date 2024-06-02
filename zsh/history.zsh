@@ -1454,3 +1454,7 @@ systemctl --user status drive.service
 systemctl --user status dotfiles.service
 systemctl --user daemon-reload 
 reboot
+systemctl --user status dotfiles.service
+systemctl --user status drive.service
+dvim
+reboot
