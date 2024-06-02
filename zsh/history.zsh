@@ -1468,3 +1468,5 @@ drive -ml
 dvim
 systemctl --user daemon-reload 
 reboot
+systemctl --user daemon-reload 
+reboot
