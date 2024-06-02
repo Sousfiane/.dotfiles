@@ -1470,3 +1470,7 @@ systemctl --user daemon-reload
 reboot
 systemctl --user daemon-reload 
 reboot
+drive -l
+ls
+yu
+reboot
