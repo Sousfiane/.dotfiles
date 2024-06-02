@@ -1,0 +1,2 @@
+$DOTFILES/systemd/dotfiles.service=$HOME/.config/systemd/user/dotfiles.service
+$DOTFILES/systemd/drive.service=$HOME/.config/systemd/user/drive.service

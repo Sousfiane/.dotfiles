@@ -1,0 +1,11 @@
+polybar/scripts/arch/arch_updates.pid
+polybar/scripts/arch/aur-vcs.pkgs
+polybar/scripts/arch/aur.pkgs
+polybar/scripts/arch/polybar_updates.pid
+polybar/scripts/arch/repo.pkgs
+polybar/scripts/arch/status
+polybar/scripts/arch/status_vcs
+vlc/vlc-qt-interface.conf
+xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
+xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
+fonts/.uuid

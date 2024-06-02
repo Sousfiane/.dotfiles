@@ -1,0 +1,15 @@
+[Unit]
+Description=Managing Google Drive
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStartPre=/usr/bin/sleep 5
+ExecStart=/usr/bin/drive -ml
+ExecStop=/usr/bin/drive -du
+TimeoutStopSec=15
+
+
+[Install]
+WantedBy=default.target
