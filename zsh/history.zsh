@@ -835,3 +835,7 @@ man git push
 finder
 cd
 ./.dotfiles/scripts/dotfiles.sh push_notify
+./.dotfiles/scripts/dotfiles.sh push_notifyfinder
+finder
+systemctl --user daemon-reload 
+reboot
