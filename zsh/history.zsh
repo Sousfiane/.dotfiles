@@ -809,3 +809,4 @@ vim .ignore
 aliases
 finder
 reboot
+./.dotfiles/scripts/install.sh
