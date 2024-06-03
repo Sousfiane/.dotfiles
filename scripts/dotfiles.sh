@@ -87,7 +87,7 @@ push_notify(){
     notify-send "Pushing dotfiles ..."
     git -C /home/thibault/.dotfiles add .
     git -C /home/thibault/.dotfiles commit -m "Auto update $(date)"  
-    notify-send "$(git -C /home/thibault/.dotfiles push -u origin main)"
+    notify-send "$(git -C /home/thibault/.dotfiles push -u origin main > .lastpush 2>&1)"
     exit
 
 }
