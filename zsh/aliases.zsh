@@ -60,6 +60,6 @@ note() {
 }
 
  function finder {
-     selected=$(fd . $HOME -L -t f | fzf --preview 'cat {}')
+     selected=$(fd . $HOME -L -t f | fzf)
      [[ -z $selected ]] || nvim $selected
  }

@@ -810,3 +810,12 @@ aliases
 finder
 reboot
 ./.dotfiles/scripts/install.sh
+finder
+man fzf
+finder
+aliases
+finder
+aliases
+finder
+aliases
+finder
