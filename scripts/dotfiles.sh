@@ -85,11 +85,11 @@ pull(){
 push_notify(){
     wait_for_internet
     echo "[Last push from $date]" > .lastpush
-    echo "\n" >> .lastpush
+    echo >> .lastpush
     git -C /home/thibault/.dotfiles add . -v >> .lastpush 2>&1
-    echo "\n" >> .lastpush
+    echo >> .lastpush
     git -C /home/thibault/.dotfiles commit -v -m "Auto update $(date)" >>  .lastpush 2>&1
-    echo "\n" >> .lastpush
+    echo >> .lastpush
     git -C /home/thibault/.dotfiles push -v -u origin main >> .lastpush 2>&1
     exit
 

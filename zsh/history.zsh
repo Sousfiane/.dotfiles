@@ -839,3 +839,7 @@ cd
 finder
 systemctl --user daemon-reload 
 reboot
+echo
+finder
+systemctl --user daemon-reload 
+reboot
