@@ -58,3 +58,8 @@ note() {
     echo "$@" >> $HOME/drafts.txt
     echo "" >> $HOME/drafts.txt
 }
+
+ function finder {
+     selected=$(fd . $HOME -L -t f | fzf --preview 'cat {}')
+     [[ -z $selected ]] || nvim $selected
+ }
