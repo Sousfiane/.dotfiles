@@ -726,8 +726,6 @@ systemctl --user is-enabled NetworkManager-wait-online.service systemd-networkd-
 journalctl --user -xeu dotfiles.service
 cd .dotfiles/sys
 cd .dotfiles/systemd
-vim .
-./.dotfiles/scripts/install.sh
 systemctl --user enable drive.service
 systemctl --user enable dotfiles.service
 systemctl --user start dotfiles.service
@@ -751,18 +749,15 @@ drive -ml
 systemctl --user daemon-reload 
 drive -l
 yu
-reboot
 nvim
 /etc/X11/xinit
 ys fzf
-man fzf
 find * -type f | fzf > selected
 man find
 .//home/thibault/.dotfiles/scripts/finder.sh
 chmod +x /home/thibault/.dotfiles/scripts/finder.sh
 fzf
 dvim
-cd
 .dotfiles
 yay -s fd
 yay -S fd
@@ -776,46 +771,48 @@ fd --full-path '/home/thibault' -t f
 fd --full-path '/home/thibault' '$DOTFILES' -t f
 fd --full-path '/home/thibault' '/home/thibault/.dotfiles' -t f
 man fd
-c
-vim /home/thibault/.dotfiles/scripts/finder.sh
 ls
 /home/thibault/.dotfiles/scripts/finder.sh
-aliases
-finder
-c
-finder
-man fzf
 vim /home/thibault/.dotfiles/scripts/finder.sh
-aliases
-finder
-aliases
-finder
-vim /home/thibault/.dotfiles/scripts/finder.sh
-aliases
-finder
-aliases
-finder
-aliases
 touch .ignore
-vim .ignore
-finder
-finder
-aliases
-finder
-vim .ignore
-finder
 \:.ls ~/
 vim .ignore
-aliases
-finder
 reboot
 ./.dotfiles/scripts/install.sh
-finder
 man fzf
-finder
+dirname
+dirname $DOTFILES
+cd ../..
+nvip
+vim .
+c
+cd
+cd **
 aliases
 finder
 aliases
 finder
+cd
+finder
 aliases
 finder
+cd
+finder
+cd
+finder
+.wallpapers 
+cd
+c
+finder
+builtin cd -- /home/thibault/.zsh
+c
+cd ..
+c
+finder
+ls
+cd
+c
+systemctl --user status dotfiles.service
+finder
+systemctl --user daemon-reload 
+reboot
