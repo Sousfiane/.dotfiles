@@ -801,3 +801,69 @@ finder
 vim .ignore
 finder
 reboot
+finder
+neofetch
+finder
+nvim .dotfiles 
+finder
+fd --include
+finder
+btop
+finder
+fd --include
+finder
+cd .
+vim .
+finder
+vim .
+finder
+\:q
+vim .
+vim .cd
+cd
+finder
+cd
+finder
+cd
+finder
+cd .dotfiles
+finder
+cd .dotfilescd
+cd
+finder
+cd ..
+finder
+aliases
+finder
+vim .
+cd
+finder
+aliases
+finder
+aliases
+finder
+\:q
+pwd
+aliases
+cd
+rm .ignore
+finder
+cd
+finder
+aliases
+cd
+finder
+aliases
+finder
+aliases
+finder
+\:q
+cd
+cd .dotfiles
+finder
+cd
+finder
+aliases
+finder
+c
+reboot
