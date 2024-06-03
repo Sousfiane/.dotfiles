@@ -85,9 +85,9 @@ pull(){
 push_notify(){
     wait_for_internet
     echo "Pushing dotfiles ..."
-    git -C /home/thibault/.dotfiles add . > .lastpush 2>&1
-    git -C /home/thibault/.dotfiles commit -m "Auto update $(date)" >>  .lastpush 2>&1  
-    git -C /home/thibault/.dotfiles push -u origin main >> .lastpush 2>&1
+    git -C /home/thibault/.dotfiles add . -v > .lastpush 2>&1
+    git -C /home/thibault/.dotfiles commit -v -m "Auto update $(date)" >>  .lastpush 2>&1
+    git -C /home/thibault/.dotfiles push -v -u origin main >> .lastpush 2>&1
     exit
 
 }
