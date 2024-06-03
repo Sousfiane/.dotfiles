@@ -23,7 +23,7 @@ source_if_exists $DOTFILES/zsh/aliases.zsh
 source_if_exists $DOTFILES/zsh/p10k.zsh
 source_if_exists <(fzf --zsh)
 
-export FZF_DEFAULT_COMMAND='fd . $HOME -L -t f'
+export FZF_DEFAULT_COMMAND='fd -L -H -t f --exclude .git'
 
 precmd() {
     source $DOTFILES/zsh/aliases.zsh
