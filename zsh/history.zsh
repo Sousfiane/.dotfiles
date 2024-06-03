@@ -875,3 +875,17 @@ git clone git@github.com:Sousfiane/.dotfiles.git
 reboot
 finder
 btop
+finder
+cd .config/
+finder
+c
+cd
+finder
+aliases
+cd Documents
+c
+cd
+finder
+ls
+finder
+reboot
