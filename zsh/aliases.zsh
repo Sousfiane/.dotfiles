@@ -3,7 +3,7 @@ alias ijava='java -cp ~/dev/devS1/program.jar:.'
 
 alias shutdown='shutdown now'
 
-alias ls='ls $LS_OPTIONS'
+alias ls='ls --color'
 alias cp="cp -i"
 alias df='df -h'
 alias free='free -m'

@@ -889,3 +889,22 @@ finder
 ls
 finder
 reboot
+finderfinder
+finder
+sfinder
+c
+hjfinderububujb
+finder
+cd /
+cd
+c
+ls
+finderfinder
+finder
+ls
+ls
+finder
+ls
+ls 
+finder
+reboot
