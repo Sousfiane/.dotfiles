@@ -825,3 +825,6 @@ cd
 finder
 cd
 ./.dotfiles/scripts/dotfiles.sh push_notify
+finder
+cd
+./.dotfiles/scripts/dotfiles.sh push_notify
