@@ -828,3 +828,10 @@ cd
 finder
 cd
 ./.dotfiles/scripts/dotfiles.sh push_notify
+finder
+cd
+./.dotfiles/scripts/dotfiles.sh push_notify
+man git push
+finder
+cd
+./.dotfiles/scripts/dotfiles.sh push_notify
