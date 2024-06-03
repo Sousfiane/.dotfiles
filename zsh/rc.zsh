@@ -22,8 +22,7 @@ source_if_exists .env.sh
 source_if_exists $DOTFILES/zsh/aliases.zsh
 source_if_exists $DOTFILES/zsh/p10k.zsh
 
-export FZF_DEFAULT_COMMAND='fd -L -H -t f --exclude .git'
-eval "$(fzf --zsh)"
+source <(fzf --zsh)
 
 precmd() {
     source $DOTFILES/zsh/aliases.zsh
@@ -108,8 +107,9 @@ bindkey '^H' backward-kill-word                                 # delete previou
 bindkey '^[[Z' undo                                             # Shift+tab undo last action
 
 # Theming section  
-autoload -U compinit && compinit
-
+autoload -U compinit colors zcalc
+compinit -d
+colors
 
 # Color man pages
 export LESS_TERMCAP_mb=$'\E[01;32m'
