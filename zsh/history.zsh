@@ -871,3 +871,7 @@ finder
 .dotfiles
 finder
 cd
+git clone git@github.com:Sousfiane/.dotfiles.git
+reboot
+finder
+btop
