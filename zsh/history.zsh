@@ -742,11 +742,9 @@ git branch -M main
 git remote add origin git@github.com:Sousfiane/.dotfiles.git
 git push -u origin main
 git clone git@github.com:Sousfiane/.dotfiles.git
-systemctl --user status dotfiles.service
 systemctl --user status drive.service
 drive -du
 drive -ml
-systemctl --user daemon-reload 
 drive -l
 yu
 nvim
@@ -764,20 +762,17 @@ yay -S fd
 cd .config/
 cd .dotfiles
 cd ../.dotfiles
-cd ..
 fd $HOME
 fd --full-path '/home/thibault'
 fd --full-path '/home/thibault' -t f
 fd --full-path '/home/thibault' '$DOTFILES' -t f
 fd --full-path '/home/thibault' '/home/thibault/.dotfiles' -t f
 man fd
-ls
 /home/thibault/.dotfiles/scripts/finder.sh
 vim /home/thibault/.dotfiles/scripts/finder.sh
 touch .ignore
 \:.ls ~/
 vim .ignore
-reboot
 ./.dotfiles/scripts/install.sh
 man fzf
 dirname
@@ -785,61 +780,24 @@ dirname $DOTFILES
 cd ../..
 nvip
 vim .
-c
-cd
 cd **
 aliases
-finder
-aliases
-finder
-cd
-finder
-aliases
-finder
-cd
-finder
-cd
-finder
 .wallpapers 
-cd
-c
-finder
 builtin cd -- /home/thibault/.zsh
-c
 cd ..
-c
-finder
 ls
-cd
 c
 systemctl --user status dotfiles.service
-finder
-systemctl --user daemon-reload 
-reboot
-finder
-systemctl --user daemon-reload 
-reboot
-finder
-cd
-./.dotfiles/scripts/dotfiles.sh push_notify
-finder
-cd
-./.dotfiles/scripts/dotfiles.sh push_notify
-finder
-cd
-./.dotfiles/scripts/dotfiles.sh push_notify
-finder
-cd
-./.dotfiles/scripts/dotfiles.sh push_notify
 man git push
-finder
 cd
 ./.dotfiles/scripts/dotfiles.sh push_notify
 ./.dotfiles/scripts/dotfiles.sh push_notifyfinder
-finder
+echo
 systemctl --user daemon-reload 
 reboot
-echo
 finder
-systemctl --user daemon-reload 
+vim .ignore
+finder
+vim .ignore
+finder
 reboot
