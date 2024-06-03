@@ -84,10 +84,10 @@ pull(){
 
 push_notify(){
     wait_for_internet
-    notify-send "Pushing dotfiles ..."
-    git -C /home/thibault/.dotfiles add .
-    git -C /home/thibault/.dotfiles commit -m "Auto update $(date)"  
-    notify-send "$(git -C /home/thibault/.dotfiles push -u origin main > .lastpush 2>&1)"
+    echo "Pushing dotfiles ..."
+    echo "$(git -C /home/thibault/.dotfiles add . > .lastpush 2>&1)"
+    echo "$(git -C /home/thibault/.dotfiles commit -m "Auto update $(date)" >  .lastpush 2>&1)"  
+    echo "$(git -C /home/thibault/.dotfiles push -u origin main > .lastpush 2>&1)"
     exit
 
 }
@@ -95,7 +95,6 @@ push_notify(){
 pull_notify(){
     wait_for_internet
     notify-send "Pulling dotfiles .."
-    cd /home/thibault/.dotfiles
     notify-send "$(git -C /home/thibault/.dotfiles pull)"
     exit
 }

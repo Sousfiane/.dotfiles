@@ -819,3 +819,6 @@ reboot
 finder
 systemctl --user daemon-reload 
 reboot
+finder
+cd
+./.dotfiles/scripts/dotfiles.sh push_notify
