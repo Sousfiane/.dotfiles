@@ -7,7 +7,7 @@ After=network-online.target
 Type=oneshot
 RemainAfterExit=true
 ExecStart=/home/thibault/.dotfiles/scripts/dotfiles.sh pull_notify
-ExecStop=/home/thibault/.dotfiles/scripts/dotfiles.sh push_notify > .lastpush 2>&1
+ExecStop=/home/thibault/.dotfiles/scripts/dotfiles.sh push_notify 
 TimeoutStopSec=15
 
 

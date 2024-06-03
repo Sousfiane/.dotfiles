@@ -816,3 +816,6 @@ systemctl --user status dotfiles.service
 finder
 systemctl --user daemon-reload 
 reboot
+finder
+systemctl --user daemon-reload 
+reboot
