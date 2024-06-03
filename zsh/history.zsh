@@ -867,3 +867,7 @@ aliases
 finder
 c
 reboot
+finder
+.dotfiles
+finder
+cd
