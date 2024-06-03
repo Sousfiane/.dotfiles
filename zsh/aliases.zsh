@@ -60,7 +60,7 @@ note() {
 }
 
  function finder {
-     selected=$(fd . $HOME -L -t f | fzf)
+     selected=$(fzf)
     if [[ ! -z $selected ]]; then 
         cd $(dirname $selected) && nvim $selected
     fi
