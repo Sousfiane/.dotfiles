@@ -908,3 +908,28 @@ ls
 ls 
 finder
 reboot
+finder
+.config
+cd
+c
+finder
+c
+finder
+dust
+df
+finder
+aliases
+finder
+man fzf
+man fd
+finder
+c
+ys bat
+cd SAEs/bdd/
+bat parcoursup.sql
+man bat
+bat parcoursup.sql
+yr bat
+cd
+yu
+reboot
