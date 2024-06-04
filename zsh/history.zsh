@@ -956,3 +956,22 @@ cd
 systemctl --user status dotfiles.service
 git clone git@github.com:Sousfiane/.dotfiles.git
 reboot
+take PPP/portfolio
+note IHM SAE : rajouter un bouton "dernier ajout" pour le CSV
+cat drafts.txt
+cd ..
+mv PPP .mydrive
+drive -l
+c
+cd PPP/portfolio
+touch portfolioS1.md
+code .
+finder
+cd SAE
+cd SAEs
+ls
+finder
+ls
+yay
+man yay
+yay -P
