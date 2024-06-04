@@ -975,3 +975,6 @@ ls
 yay
 man yay
 yay -P
+tmux
+c
+dvim
