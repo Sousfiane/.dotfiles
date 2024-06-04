@@ -60,6 +60,6 @@ note() {
 }
 
  function finder {
-    selected=$(fd -L -H -t f --exclude '.git .cache' | fzf)
+    selected=$(fd -L -H -t f --exclude .git --exclude .cache | fzf)
     [[ -z $selected ]] || nvim $selected
  }

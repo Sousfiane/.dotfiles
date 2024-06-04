@@ -933,3 +933,20 @@ yr bat
 cd
 yu
 reboot
+finder
+bat parcoursup.sql
+c
+finder
+man fd
+finder
+finder
+vim .
+go version
+vim test 
+ls
+cd /
+ls
+cd home/thibault
+ls
+c
+finder
