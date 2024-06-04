@@ -950,3 +950,6 @@ cd home/thibault
 ls
 c
 finder
+cd .dotfiles
+finder
+cd
