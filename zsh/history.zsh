@@ -954,3 +954,5 @@ cd .dotfiles
 finder
 cd
 systemctl --user status dotfiles.service
+git clone git@github.com:Sousfiane/.dotfiles.git
+reboot
