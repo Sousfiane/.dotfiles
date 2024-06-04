@@ -953,3 +953,4 @@ finder
 cd .dotfiles
 finder
 cd
+systemctl --user status dotfiles.service
