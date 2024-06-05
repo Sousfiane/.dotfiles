@@ -6,8 +6,8 @@ After=network-online.target
 [Service]
 Type=oneshot
 RemainAfterExit=true
-ExecStart=/home/thibault/.dotfiles/scripts/dotfiles.sh sync
-ExecStop=/home/thibault/.dotfiles/scripts/dotfiles.sh sync
+ExecStart=/home/thibault/.dotfiles/scripts/dotfiles.sh sync 2>/dev/null
+ExecStop=/home/thibault/.dotfiles/scripts/dotfiles.sh sync 2>/dev/null
 TimeoutStopSec=15
 
 

@@ -545,4 +545,7 @@ man yay
 yay -P
 cd .dotfiles
 git fetch --dry-run
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
