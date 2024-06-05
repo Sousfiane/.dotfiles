@@ -231,7 +231,6 @@ for_window [class="Gnome-screenshot" instance="gnome-screenshot"] floating enabl
 for_window [window_role=float_term] floating enable
 for_window [class="Nm-connection-editor" instance="nm-connection-editor"] floating enable
 for_window [class="Pavucontrol" instance="pavucontrol"] floating enable
-for_window [class="qBittorrent" instance="qbittorrent"] floating enable
 for_window [class="Orage" instance="orage"] floating enable
 for_window [class="Bluetooth-sendto" instance="bluetooth-sendto"] floating enable
 for_window [window_role="About"] floating enable
