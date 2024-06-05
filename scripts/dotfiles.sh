@@ -46,7 +46,7 @@ pull(){
 push(){
     auto_pull
     git -C $HOME/.dotfiles add .
-    git -C $HOME/.dotfiles commit --allow-empty -m "$(date)" 
+    git -C $HOME/.dotfiles commit --allow-empty -m "Auto update : $(date)" 
     git -C $HOME/.dotfiles push
 }
 
