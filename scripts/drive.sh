@@ -18,7 +18,7 @@ success () {
 wait_for_internet(){
     until wget -q --spider duckduckgo.com
     do
-        sleep 15
+        sleep 30
         notify-send "No connexion ..."
         notify-send "Dive not mounted"
         exit
