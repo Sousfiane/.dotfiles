@@ -82,30 +82,34 @@ pull(){
 }
 
 
-push_notify(){
-    wait_for_internet
-    echo "[Last push from $date]" > .lastpush
-    echo >> .lastpush
-    git -C /home/thibault/.dotfiles add . -v >> .lastpush 2>&1
-    echo >> .lastpush
-    git -C /home/thibault/.dotfiles commit -v -m "Auto update $(date)" >>  .lastpush 2>&1
-    echo >> .lastpush
-    git -C /home/thibault/.dotfiles push -v -u origin main >> .lastpush 2>&1
-    exit
-
+auto_pull(){
+    git -C $DOTFILES stash
+    git -C $DOTFILES  pull --rebase
+    git -C $DOTFILES stash pop
 }
 
-pull_notify(){
+auto_push(){
+    auto_pull
+    git -C $DOTFILES add .
+    echo 'lol'
+    git -C $DOTFILES commit --allow-empty -m "$(date)"
+    git -C $DOTFILES push
+}
+
+sync(){
     wait_for_internet
-    notify-send "Pulling dotfiles .."
-    notify-send "$(git -C /home/thibault/.dotfiles pull)"
-    exit
+    git -C $DOTFILES fetch
+    status=$(git -C $DOTFILES status --porcelain=v1)
+    if [[ -n "$status" ]]; then
+        auto_push
+    else
+        auto_pull
+    fi
 }
 
 [[ $1 == "status" ]] && status
 [[ $1 == "notify" ]] && notify
 [[ $1 == "push" ]] && push 
 [[ $1 == "pull" ]] && pull
-[[ $1 == "pull_notify" ]] && pull_notify
-[[ $1 == "push_notify" ]] && push_notify
+[[ $1 == "sync" ]] && sync
 
