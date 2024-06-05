@@ -35,16 +35,16 @@ status(){
 pull(){
     index=$(git -C $HOME/.dotfiles status -s | wc -l)
     if [ $index = 0 ];then
-        git -C $HOME/.dotfiles pull --rebase
+        notify-send "$(git -C $HOME/.dotfiles pull --rebase -v)"
     else
         git -C $HOME/.dotfiles stash 
-        git -C $HOME/.dotfiles pull --rebase
+        notify-send "$(git -C $HOME/.dotfiles pull --rebase -v)"
         git -C $HOME/.dotfiles stash pop
     fi
 }
 
 push(){
-    auto_pull
+    pull
     git -C $HOME/.dotfiles add .
     git -C $HOME/.dotfiles commit --allow-empty -m "Auto update : $(date)" 
     git -C $HOME/.dotfiles push
