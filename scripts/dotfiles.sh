@@ -54,6 +54,7 @@ sync(){
     else
         auto_pull
     fi
+    exit
 }
 
 [[ $1 == "status" ]] && status

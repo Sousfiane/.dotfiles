@@ -57,6 +57,13 @@ setopt rcexpandparam                                            # Array expensio
 setopt nocheckjobs                                              # Don't warn about running processes when exiting
 setopt numericglobsort                                          # Sort filenames numerically when it makes sense
 setopt nobeep                                                   # No beep
+<<<<<<< Updated upstream
+=======
+setopt appendhistory                                            # Immediately append history instead of overwriting
+setopt histignorealldups                                        # If a new command is a duplicate, remove the older one
+setopt histsavenodups
+setopt histfindnodups
+>>>>>>> Stashed changes
 setopt autocd                                                   # if only directory path is entered, cd there.
 
 zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' # Case insensitive tab completion
@@ -67,6 +74,17 @@ zstyle ':completion:*' menu select                              # Highlight menu
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
+<<<<<<< Updated upstream
+=======
+HISTFILE=$DOTFILES/zsh/history.zsh
+HISTSIZE=5000
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+#export EDITOR=/usr/bin/nano
+#export VISUAL=/usr/bin/nano
+WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
+
+>>>>>>> Stashed changes
 
 ## Keybindings section
 bindkey -e
