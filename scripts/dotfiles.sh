@@ -15,10 +15,7 @@ success () {
 wait_for_internet(){
     until wget -q --spider duckduckgo.com
     do
-        sleep 30
-        notify-send "No connexion..."
-        notify-send "Dotfiles not synced"
-        exit
+        sleep 15
     done
 }
 
