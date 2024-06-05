@@ -480,4 +480,7 @@ finder
 cd
 finder
 cd
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
