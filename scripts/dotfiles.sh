@@ -35,10 +35,10 @@ status(){
 pull(){
     index=$(git -C $HOME/.dotfiles status -s | wc -l)
     if [ $index = 0 ];then
-        notify-send "$(git -C $HOME/.dotfiles pull --rebase --porcelain)"
+        notify-send "$(git -C $HOME/.dotfiles pull --rebase)"
     else
         git -C $HOME/.dotfiles stash 
-        notify-send "$(git -C $HOME/.dotfiles pull --rebase --porcelain)"
+        notify-send "$(git -C $HOME/.dotfiles pull --rebase)"
         git -C $HOME/.dotfiles stash pop
     fi
 }
