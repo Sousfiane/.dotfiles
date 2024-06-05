@@ -63,6 +63,9 @@ setopt appendhistory                                            # Immediately ap
 setopt histignorealldups                                        # If a new command is a duplicate, remove the older one
 setopt histsavenodups
 setopt histfindnodups
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 setopt autocd                                                   # if only directory path is entered, cd there.
 
