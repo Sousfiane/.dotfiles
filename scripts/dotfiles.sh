@@ -32,7 +32,7 @@ status(){
     fi
 }
 
-auto_pull(){
+pull(){
     index=$(git -C $HOME/.dotfiles status -s | wc -l)
     if [ $index = 0 ];then
         git -C $HOME/.dotfiles pull --rebase
@@ -43,7 +43,7 @@ auto_pull(){
     fi
 }
 
-auto_push(){
+push(){
     auto_pull
     git -C $HOME/.dotfiles add .
     git -C $HOME/.dotfiles commit --allow-empty -m "$(date)" 
@@ -55,9 +55,9 @@ sync(){
     git -C $HOME/.dotfiles fetch
     status=$(git -C $HOME/.dotfiles status --porcelain=v1)
     if [[ -n "$status" ]]; then
-        auto_push
+        push
     else
-        auto_pull
+        pull
     fi
     exit
 }
