@@ -33,21 +33,26 @@ status(){
 }
 
 auto_pull(){
-    git -C $HOME/.dotfiles stash 2>/dev/null
-    git -C $HOME/.dotfiles pull --rebase 2>/dev/null
-    git -C $HOME/.dotfiles stash pop 2>/dev/null
+    index=$(git -C $HOME/.dotfiles status -s | wc -l)
+    if [ $index = 0 ];then
+        git -C $HOME/.dotfiles pull --rebase
+    else
+        git -C $HOME/.dotfiles stash 
+        git -C $HOME/.dotfiles pull --rebase
+        git -C $HOME/.dotfiles stash pop
+    fi
 }
 
 auto_push(){
     auto_pull
-    git -C $HOME/.dotfiles add .  2>/dev/null
-    git -C $HOME/.dotfiles commit --allow-empty -m "$(date)"  2>/dev/null
-    git -C $HOME/.dotfiles push  2>/dev/null
+    git -C $HOME/.dotfiles add .
+    git -C $HOME/.dotfiles commit --allow-empty -m "$(date)" 
+    git -C $HOME/.dotfiles push
 }
 
 sync(){
     wait_for_internet
-    git -C $HOME/.dotfiles fetch  2>/dev/null
+    git -C $HOME/.dotfiles fetch
     status=$(git -C $HOME/.dotfiles status --porcelain=v1)
     if [[ -n "$status" ]]; then
         auto_push
