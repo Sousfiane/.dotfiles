@@ -15,45 +15,48 @@ success () {
 wait_for_internet(){
     until wget -q --spider duckduckgo.com
     do
-        sleep 10
+        sleep 15
+        notify-send "No connexion..."
+        notify-send "Dotfiles not synced"
+        exit
     done
 }
 
 notify(){
-    notify-send "$(git -C $HOME/.dotfiles status -s)"
+    notify-send "$(git -C "$HOME"/.dotfiles status -s)"
 }
 
 status(){
-    index=$(git -C $HOME/.dotfiles status -s | wc -l)
-    if [ $index = 0 ]; then
-        echo $index
+    index=$(git -C "$HOME"/.dotfiles status -s | wc -l)
+    if [ "$index" = 0 ]; then
+        echo "$index"
     else
-        echo %{F#eb6f92}$index
+        echo %{F#eb6f92}"$index"
     fi
 }
 
 pull(){
-    index=$(git -C $HOME/.dotfiles status -s | wc -l)
-    if [ $index = 0 ];then
-        notify-send "$(git -C $HOME/.dotfiles pull --rebase)"
+    index=$(git -C "$HOME"/.dotfiles status -s | wc -l)
+    if [ "$index" = 0 ];then
+        notify-send "$(git -C "$HOME"/.dotfiles pull --rebase)"
     else
-        git -C $HOME/.dotfiles stash 
-        notify-send "$(git -C $HOME/.dotfiles pull --rebase)"
-        git -C $HOME/.dotfiles stash pop
+        git -C "$HOME"/.dotfiles stash 
+        notify-send "$(git -C "$HOME"/.dotfiles pull --rebase)"
+        git -C "$HOME"/.dotfiles stash pop
     fi
 }
 
 push(){
     pull
-    git -C $HOME/.dotfiles add .
-    git -C $HOME/.dotfiles commit --allow-empty -m "Auto update : $(date)" 
-    notify-send "$(git -C $HOME/.dotfiles push --porcelain)"
+    git -C "$HOME"/.dotfiles add .
+    git -C "$HOME"/.dotfiles commit --allow-empty -m "Auto update : $(date)" 
+    notify-send "$(git -C "$HOME"/.dotfiles push --porcelain)"
 }
 
 sync(){
     wait_for_internet
-    git -C $HOME/.dotfiles fetch
-    status=$(git -C $HOME/.dotfiles status --porcelain=v1)
+    git -C "$HOME"/.dotfiles fetch
+    status=$(git -C "$HOME"/.dotfiles status --porcelain=v1)
     if [[ -n "$status" ]]; then
         push
     else
