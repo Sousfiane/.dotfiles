@@ -35,10 +35,10 @@ status(){
 pull(){
     index=$(git -C $HOME/.dotfiles status -s | wc -l)
     if [ $index = 0 ];then
-        notify-send "$(git -C $HOME/.dotfiles pull --rebase -v)"
+        notify-send "$(git -C $HOME/.dotfiles pull --rebase -v 2>&1)"
     else
         git -C $HOME/.dotfiles stash 
-        notify-send "$(git -C $HOME/.dotfiles pull --rebase -v)"
+        notify-send "$(git -C $HOME/.dotfiles pull --rebase -v 2>&1)"
         git -C $HOME/.dotfiles stash pop
     fi
 }
@@ -47,7 +47,7 @@ push(){
     pull
     git -C $HOME/.dotfiles add .
     git -C $HOME/.dotfiles commit --allow-empty -m "Auto update : $(date)" 
-    notify-send $(git -C $HOME/.dotfiles push -v)
+    notify-send $(git -C $HOME/.dotfiles push -v 2>&1)
 }
 
 sync(){
