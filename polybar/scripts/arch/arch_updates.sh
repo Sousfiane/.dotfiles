@@ -30,15 +30,15 @@ path=${HOME}/.config/polybar/scripts/arch/
   }
 
   check_for_updates() {
-    checkupdates | nl -w2 -s '. ' >| ${path}repo.pkgs
-    paclist aurpkgs | aur vercmp | nl -w2 -s '. ' | sed 's/://' >| ${path}aur.pkgs
+    checkupdates >| ${path}repo.pkgs
+    paclist aurpkgs | aur vercmp | sed 's/://' >| ${path}aur.pkgs
     updates=$(cat ${path}repo.pkgs ${path}aur.pkgs | wc -l)
     echo "%{T7}0%{T-}" >| ${path}status
     [ $updates -gt 0 ] && echo "%{T1}%{F#eb6f92}$updates" >| ${path}status
   }
 
   check_for_vcs_updates() {
-    aur vercmp-devel | sed 's/://' | nl -w2 -s '. ' >| ${path}aur-vcs.pkgs
+    aur vercmp-devel | sed 's/://' >| ${path}aur-vcs.pkgs
     updates=$(cat ${path}aur-vcs.pkgs | wc -l)
     echo "%{T7}0%{T-}" >| ${path}status_vcs
     [ $updates -gt 0 ] && echo "%{T1}%{F#eb6f92}$updates" >| ${path}status_vcs
@@ -46,7 +46,7 @@ path=${HOME}/.config/polybar/scripts/arch/
 
   notify() {
     if  [ -s ${path}repo.pkgs ]; then
-      [ -s ${path}aur.pkgs ] && notify-send "$(cat <(cat ${path}repo.pkgs) <(echo) <(cat ${path}aur.pkgs | sed '1iAURUpdates') | \
+        [ -s ${path}aur.pkgs ] && notify-send "$(cat <(cat ${path}repo.pkgs) <(echo) <(cat ${path}aur.pkgs | sed '1iAURUpdates') | \
                                 column -t -L -o " " | sed 's/AURUpdates/AUR Updates/')" || notify-send "$(cat ${path}repo.pkgs | column -t -L -o " ")"
     elif  [ -s ${path}aur.pkgs ]; then
       notify-send "$(cat ${path}aur.pkgs | column -t -L -o " " | sed '1iAUR Updates')"
@@ -61,8 +61,8 @@ path=${HOME}/.config/polybar/scripts/arch/
   }
 
   upgrade() {
-    if [ -s ${path}repo.pkgs ]; then
-      [ -s ${path}aur.pkgs ] && xfce4-terminal --role float_term -e "aur sync -c -u --noview && sudo pacman -Syu --noconfirm" || \
+    if  [ -s ${path}repo.pkgs ]; then
+        [ -s ${path}aur.pkgs ] && xfce4-terminal --role float_term -e "aur sync -c -u --noview && sudo pacman -Syu --noconfirm" || \
                                 xfce4-terminal --role float_term -e "sudo pacman -Syu --noconfirm"
       echo "%{T7}0%{T-}" > ${path}status && >| ${path}repo.pkgs && >| ${path}aur.pkgs
     elif [ -s ${path}aur.pkgs ]; then
