@@ -18,5 +18,11 @@ check_for_updates(){
     fi
 }
 
+notify(){
+    notify-send "$(checkupdates --nocolor)"
+}
+
 [[ $# -eq 0 ]] && main_loop
+[[ $1 == "-n" ]] && notify 
+[[ $1 == "-cu" ]] && echo "mdr"
 
