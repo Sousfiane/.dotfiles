@@ -29,11 +29,7 @@ status(){
 }
 
 notify(){
-    if [ "$index" = 0 ]; then
-        notify-send -e "Dotfiles are up to date !"
-    else
         notify-send "$(git -C "$HOME"/.dotfiles status -s)"
-    fi
    }
 
 pull(){
