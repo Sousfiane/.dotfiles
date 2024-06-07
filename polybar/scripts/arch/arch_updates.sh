@@ -34,7 +34,7 @@ path=${HOME}/.config/polybar/scripts/arch/
     elif  [ -s ${path}aur.pkgs ]; then
       notify-send "$(cat ${path}aur.pkgs | column -t -L -o " " | sed '1iAUR Updates')"
     else
-      notify-send "Up to date"
+      notify-send "Arch is up to date !"
     fi
   }
 
