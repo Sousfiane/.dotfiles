@@ -26,7 +26,7 @@ notify(){
 status(){
     index=$(git -C "$HOME"/.dotfiles status -s | wc -l)
     if [ "$index" = 0 ]; then
-        echo "$index"
+        echo %{F#9ccfd8}""
     else
         echo %{F#eb6f92}"$index"
     fi
