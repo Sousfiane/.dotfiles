@@ -19,10 +19,6 @@ wait_for_internet(){
     done
 }
 
-notify(){
-    notify-send "$(git -C "$HOME"/.dotfiles status -s)"
-}
-
 status(){
     index=$(git -C "$HOME"/.dotfiles status -s | wc -l)
     if [ "$index" = 0 ]; then
@@ -31,6 +27,14 @@ status(){
         echo %{F#eb6f92}"$index"
     fi
 }
+
+notify(){
+    if [ "$index" = 0 ]; then
+        notify-send "Dotfiles are up to date !"
+    else
+        notify-send "$(git -C "$HOME"/.dotfiles status -s)"
+    fi
+   }
 
 pull(){
     index=$(git -C "$HOME"/.dotfiles status -s | wc -l)
