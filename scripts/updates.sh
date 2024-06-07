@@ -1,14 +1,5 @@
 #!/usr/bin/env bash
 
-main_loop(){
-    while true; do
-        echo ''
-        echo ''
-        check_for_updates
-        sleep 600
-    done
-}
-
 check_for_updates(){
     index=$(checkupdates | wc -l)
     if [[ "$index" = 0 ]]; then 
@@ -22,7 +13,6 @@ notify(){
     notify-send "$(checkupdates --nocolor)"
 }
 
-[[ $# -eq 0 ]] && main_loop
+[[ $# -eq 0 ]] && check_for_updates
 [[ $1 == "-n" ]] && notify 
-[[ $1 == "-cu" ]] && echo "mdr"
 
