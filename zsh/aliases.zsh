@@ -16,7 +16,6 @@ alias pc='sudo pacman -Sc'
 alias y='yay'
 alias ys='yay -S'
 alias yr='yay -R'
-alias yu='yay -Syu'
 alias yc='yay -Sc'
 
 alias vim='nvim'
@@ -59,7 +58,7 @@ note() {
     echo "" >> $HOME/drafts.txt
 }
 
- function finder {
+function finder {
     selected=$(fd -L -H -t f --exclude .git --exclude .cache | fzf)
     [[ -z $selected ]] || nvim $selected
  }
