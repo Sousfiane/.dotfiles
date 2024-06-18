@@ -1,7 +1,7 @@
 alias ijavac='javac -cp ~/dev/devS1/program.jar:.'
 alias ijava='java -cp ~/dev/devS1/program.jar:.'
-alias javacfx='javac --module-path /home/thibault/.java/javafx-sdk-22.0.1/lib --add-modules=javafx.controls,javafx.fxml'
-alias javafx='java --module-path /home/thibault/.java/javafx-sdk-22.0.1/lib --add-modules=javafx.controls,javafx.fxml'
+alias javacfx='javac --module-path /home/thibault/.java/javafx-sdk-17.0.11/lib --add-modules=javafx.controls,javafx.fxml'
+alias javafx='java --module-path /home/thibault/.java/javafx-sdk-17.0.11/lib --add-modules=javafx.controls,javafx.fxml'
 
 alias shutdown='shutdown now'
 
