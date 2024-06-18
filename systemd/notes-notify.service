@@ -1,0 +1,8 @@
+[Unit]
+Description=Notify notes 
+
+[Service]
+ExecStart=/home/thibault/.dotfiles/scripts/notes-notify.sh
+
+[Install]
+WantedBy=default.target
