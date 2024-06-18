@@ -1,2 +1,3 @@
 $DOTFILES/systemd/dotfiles.service=$HOME/.config/systemd/user/dotfiles.service
 $DOTFILES/systemd/drive.service=$HOME/.config/systemd/user/drive.service
+$DOTFILES/systemd/notes-notify.service=$HOME/.config/systemd/user/notes-notify.service
