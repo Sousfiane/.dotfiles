@@ -61,6 +61,6 @@ note() {
 }
 
 function finder {
-    selected=$(fd -L -H -t f --exclude .git --exclude .cache | fzf)
+    selected=$(fd -L --follow --search-path $HOME --search-path $DOTFILES | fzf)
     [[ -z $selected ]] || nvim $selected
  }
