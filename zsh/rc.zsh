@@ -21,7 +21,7 @@ source_if_exists () {
     fi
 }
 
-source_if_exists .env.sh
+source_if_exists $HOME/.env.sh
 source_if_exists $DOTFILES/zsh/aliases.zsh
 source_if_exists $DOTFILES/zsh/p10k.zsh
 source_if_exists $DOTFILES/zsh/history.zsh
