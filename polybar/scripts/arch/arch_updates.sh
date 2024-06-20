@@ -36,7 +36,12 @@ path=${HOME}/.config/polybar/scripts/arch/
     fi
   }
 
+  update(){
+      xfce4-terminal --role float_term -e "yay"
+  }
+
   [[ $# -eq 0 ]] && main_loop
   [[ $1 == "-s" ]] && status
   [[ $1 == "-q" ]] && echo '' > ${path}status && check_for_updates
   [[ $1 == "-n" ]] && notify
+  [[ $1 == "-u" ]] && update 
