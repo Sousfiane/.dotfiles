@@ -8,13 +8,6 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.dotfiles/zsh/p10k.zsh.
 [[ ! -f ~/.dotfiles/zsh/p10k.zsh ]] || source ~/.dotfiles/zsh/p10k.zsh
 
-# Use powerline
-USE_POWERLINE="true"
-# Has weird character width
-# Example:
-#    is not a diamond
-HAS_WIDECHARS="false"
-
 source_if_exists () {
     if test -r "$1"; then
         source "$1"
@@ -23,10 +16,8 @@ source_if_exists () {
 
 source_if_exists $HOME/.env.sh
 source_if_exists $DOTFILES/zsh/aliases.zsh
-source_if_exists $DOTFILES/zsh/p10k.zsh
 source_if_exists $DOTFILES/zsh/history.zsh
-
-source <(fzf --zsh)
+source_if_exists <(fzf --zsh)
 
 precmd() {
     source $DOTFILES/zsh/aliases.zsh
