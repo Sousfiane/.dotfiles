@@ -54,13 +54,13 @@ function take {
     cd $1
 }
 
+function finder {
+    selected=$(fd -L -t f --follow --search-path $HOME --search-path $DOTFILES | fzf)
+    [[ -z $selected ]] || nvim $selected
+}
+
 note() {
     echo "date: $(date)" >> $HOME/drafts.txt
     echo "$@" >> $HOME/drafts.txt
     echo "" >> $HOME/drafts.txt
 }
-
-function finder {
-    selected=$(fd -L -t f --follow --search-path $HOME --search-path $DOTFILES | fzf)
-    [[ -z $selected ]] || nvim $selected
- }
