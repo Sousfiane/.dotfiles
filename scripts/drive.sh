@@ -45,7 +45,7 @@ unmount_drive(){
 }
 
 create_symlinks(){
-    for file in `ls $drive`
+    for file in $(ls $drive)
     do
         if [ ! -L $HOME/$file ]; then
             ln -s $drive/$file $HOME/$file
@@ -59,7 +59,7 @@ create_symlinks(){
 
 delete_symlinks(){
     if [[ ! -z $(ls $drive) ]]; then
-        for file in `ls $drive`
+        for file in $(ls $drive)
         do
             if [ -L $HOME/$file ]; then
                 rm $HOME/$file
