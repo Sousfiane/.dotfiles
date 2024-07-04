@@ -21,7 +21,7 @@ wait_for_internet(){
 
 status(){
     index=$(git -C "$HOME"/.dotfiles status -s | wc -l)
-    if [ "$index" = 0 ]; then
+    if [[ $index -eq 0 ]]; then
         echo %{F#9ccfd8}""
     else
         echo %{F#eb6f92}"$index"
@@ -34,7 +34,7 @@ notify(){
 
 pull(){
     index=$(git -C "$HOME"/.dotfiles status -s | wc -l)
-    if [ "$index" = 0 ];then
+    if [[ $index -eq 0 ]]; then
         notify-send "$(git -C "$HOME"/.dotfiles pull --rebase)"
     else
         git -C "$HOME"/.dotfiles stash 
