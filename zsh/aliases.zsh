@@ -49,6 +49,8 @@ alias balanced='sudo cpupower frequency-set --governor schedutils'
 
 alias aliases='vim $DOTFILES/zsh/aliases.zsh'
 
+alias tssh='ssh thibault@192.168.1.36 -t ts'
+
 function take {
     mkdir -p $1
     cd $1
@@ -57,6 +59,15 @@ function take {
 function finder {
     selected=$(fd -L -t f --follow --search-path $HOME --search-path $DOTFILES | fzf)
     [[ -z $selected ]] || nvim $selected
+}
+
+function ts {
+    list=$(tmux ls | cut -d':' -f 1)
+    if [[ $(echo $list | wc -l) -eq 1 ]]; then
+        tmux a || read name && tmux new -s "$name" 
+    else
+        tmux a -t $(echo $list | fzf)
+    fi
 }
 
 note() {
