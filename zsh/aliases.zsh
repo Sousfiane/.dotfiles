@@ -63,8 +63,11 @@ function finder {
 
 function ts {
     list=$(tmux ls | cut -d':' -f 1)
-    if [[ $(echo $list | wc -l) -eq 1 ]]; then
-        tmux a || read name && tmux new -s "$name" 
+    if [[ -z $(pgrep tmux) ]]; then
+        read name
+        tmux new -s "$name" 
+    elif [[ $(echo $list | wc -l) -eq 1 ]]; then
+        tmux a 
     else
         tmux a -t $(echo $list | fzf)
     fi
