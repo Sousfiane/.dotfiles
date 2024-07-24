@@ -5,8 +5,8 @@ After=network-online.target
 [Service]
 Type=oneshot
 RemainAfterExit=true
-ExecStart=/usr/bin/drive -ml
-ExecStop=/usr/bin/drive -du
+ExecStart=/usr/bin/drive -m
+ExecStop=/usr/bin/drive -d
 TimeoutStopSec=15
 
 
