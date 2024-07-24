@@ -22,22 +22,12 @@ alias yc='yay -Sc'
 
 alias vim='nvim'
 alias svim='sudo -E nvim'
-alias cvim='cd $HOME/.config && nvim $HOME/.config'
-alias dvim='cd $DOTFILES && nvim $DOTFILES'
 
 alias gadd='git add'
 alias gcom='git commit -m'
 alias gpush='git push -u'
 alias gpull='git pull'
 alias grm='git rm'
-
-alias dev='cd ~/dev/ && nvim ~/dev/'
-alias devS1='cd ~/devS1/ && nvim ~/devS1/'
-alias devS2='cd ~/dev-oo/ && nvim ~/dev-oo/'
-
-alias wallpapers=$DOTFILES/scripts/wallpapers.sh
-alias videos=$DOTFILES/scripts/videos.sh
-alias betterdiscord=$DOTFILES/scripts/BetterDiscord-Linux.AppImage
 
 alias c='clear'
 alias s='source ~/.zshrc'
@@ -47,30 +37,30 @@ alias wifi='networkmanager_dmenu &'
 alias powersave='sudo cpupower frequency-set --governor powersave'
 alias balanced='sudo cpupower frequency-set --governor schedutils'
 
-alias aliases='vim $DOTFILES/zsh/aliases.zsh'
+alias aliases='nvim $DOTFILES/zsh/aliases.zsh'
 
-alias tssh='ssh thibault@192.168.1.36 -t ts'
+alias ts='bash $DOTFILES/scripts/tmux-sessionizer.sh'
+alias ta='tmux a'
+alias tls='tmux ls'
 
-function take {
+alias dotfiles='bash $DOTFILES/scripts/tmux-sessionizer.sh $DOTFILES'
+alias config='bash $DOTFILES/scripts/tmux-sessionizer.sh $HOME/.config'
+
+alias betterdiscord=$DOTFILES/scripts/BetterDiscord-Linux.AppImage
+
+take() {
     mkdir -p $1
     cd $1
 }
 
-function finder {
-    selected=$(fd -L -t f --follow --search-path $HOME --search-path $DOTFILES | fzf)
-    [[ -z $selected ]] || nvim $selected
-}
-
-function ts {
-    list=$(tmux ls | cut -d':' -f 1)
-    if [[ -z $(pgrep tmux) ]]; then
-        read name
-        tmux new -s "$name" 
-    elif [[ $(echo $list | wc -l) -eq 1 ]]; then
-        tmux a 
+finder() {
+    if [[ $(pwd) == $HOME ]]; then
+        selected=$(fd -L -t f --follow --search-path $HOME --search-path $DOTFILES | fzf)
     else
-        tmux a -t $(echo $list | fzf)
+        selected=$(fd -L -t f | fzf)
     fi
+
+    [[ -z $selected ]] || nvim $selected
 }
 
 note() {
