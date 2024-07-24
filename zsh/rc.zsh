@@ -81,6 +81,8 @@ bindkey '^[[D'  backward-char                                   # Left key
 bindkey '^[[5~' history-beginning-search-backward               # Page up key
 bindkey '^[[6~' history-beginning-search-forward                # Page down key
 bindkey -s '^f' "finder\n"
+bindkey -s '^n' "ts\n"
+bindkey -s '^b' "ta\n"
 
 # Navigate words with ctrl+arrow keys
 bindkey '^[Oc' forward-word                                     #
