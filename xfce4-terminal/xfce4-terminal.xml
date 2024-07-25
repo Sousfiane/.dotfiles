@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <channel name="xfce4-terminal" version="1.0">
-  <property name="font-name" type="string" value="Source Code Pro Semi-Bold 10"/>
+  <property name="font-name" type="string" value="JetBrainsMonoNL Nerd Font Mono Semi-Bold 10"/>
   <property name="misc-menubar-default" type="bool" value="false"/>
   <property name="scrolling-bar" type="string" value="TERMINAL_SCROLLBAR_NONE"/>
   <property name="color-foreground" type="string" value="#e0def4"/>
