@@ -111,7 +111,7 @@
 
     ### Text ###
 
-    font = font-0 = JetBrains Mono Semibold 10
+    font = font-0 = JetBrains Mono Light 9
 
 
     # The spacing between lines.  If the height is smaller than the
