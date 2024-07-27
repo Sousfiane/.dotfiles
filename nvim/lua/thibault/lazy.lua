@@ -38,7 +38,7 @@ require("lazy").setup({
     },
 
     'lewis6991/gitsigns.nvim',
-    'nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'},
+    {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
     'm4xshen/autoclose.nvim',
     'ThePrimeagen/vim-be-good',
     {'neoclide/coc.nvim', branch = 'master', run = 'npm ci'},
