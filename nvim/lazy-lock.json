@@ -1,6 +1,6 @@
 {
   "autoclose.nvim": { "branch": "main", "commit": "b2077aa2c83df7ebc19b2a20a3a0654b24ae9c8f" },
-  "coc.nvim": { "branch": "master", "commit": "39cd270fdd9edb6d51e5aece361d561d9961d796" },
+  "coc.nvim": { "branch": "release", "commit": "39cd270fdd9edb6d51e5aece361d561d9961d796" },
   "gitsigns.nvim": { "branch": "main", "commit": "f074844b60f9e151970fbcdbeb8a2cd52b6ef25a" },
   "harpoon": { "branch": "harpoon2", "commit": "0378a6c428a0bed6a2781d459d7943843f374bce" },
   "lazy.nvim": { "branch": "main", "commit": "077102c5bfc578693f12377846d427f49bc50076" },
