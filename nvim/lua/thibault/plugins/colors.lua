@@ -3,9 +3,10 @@ return {
     as = 'rose-pine',
     config = function()
         require('rose-pine').setup({
-            variant = "auto", -- auto, main, moon, or dawn
+            variant = "main", -- auto, main, moon, or dawn
             dark_variant = "main", -- main, moon, or dawn
             dim_inactive_windows = false,
+           --disable_background = true,
             extend_background_behind_borders = false,
 
             styles = {
@@ -15,7 +16,7 @@ return {
             },
 
             groups = {
-                background = "NONE",
+                --background = "NONE",
                 border = "muted",
                 link = "iris",
                 panel = "surface",
