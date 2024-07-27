@@ -18,6 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Setup lazy.nvim
 require("lazy").setup({
     spec = "thibault.plugins",
+    change_detection = { notify = false },
     ui = {
         border = "rounded",
     },
