@@ -41,7 +41,10 @@ require("lazy").setup({
     {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
     'm4xshen/autoclose.nvim',
     'ThePrimeagen/vim-be-good',
-    {'neoclide/coc.nvim', branch = 'master', run = 'npm ci'},
+    {
+        "neoclide/coc.nvim",
+        branch = "release",
+    },
     "nvim-lua/plenary.nvim", 
     {
         "ThePrimeagen/harpoon",
