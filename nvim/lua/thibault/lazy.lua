@@ -17,9 +17,14 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Setup lazy.nvim
 require("lazy").setup({
+    'lewis6991/gitsigns.nvim',
+    'm4xshen/autoclose.nvim',
+    'ThePrimeagen/vim-be-good',
+
     {
-        'nvim-telescope/telescope.nvim', tag = '0.1.4',
-        requires = { {'nvim-lua/plenary.nvim'} }
+        'nvim-telescope/telescope.nvim',
+        tag = '0.1.4',
+        dependencies = {'nvim-lua/plenary.nvim'},
     },
 
     {
@@ -32,23 +37,22 @@ require("lazy").setup({
 
     {
         'nvim-tree/nvim-tree.lua',
-        requires = {
-            'nvim-tree/nvim-web-devicons', -- optional
-        },
+        dependencies = {'nvim-tree/nvim-web-devicons'},
     },
 
-    'lewis6991/gitsigns.nvim',
-    {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
-    'm4xshen/autoclose.nvim',
-    'ThePrimeagen/vim-be-good',
     {
-        "neoclide/coc.nvim",
-        branch = "release",
+        'nvim-treesitter/nvim-treesitter',
+        build = ':TSUpdate',
     },
-    "nvim-lua/plenary.nvim", 
+
     {
-        "ThePrimeagen/harpoon",
-        branch = "harpoon2",
-        requires = { {"nvim-lua/plenary.nvim"} }
+        'neoclide/coc.nvim',
+        branch = 'release',
+    },
+
+    {
+        'ThePrimeagen/harpoon',
+        branch = 'harpoon2',
+        dependencies = {'nvim-lua/plenary.nvim'},
     },
 })
