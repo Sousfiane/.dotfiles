@@ -41,6 +41,7 @@ require('rose-pine').setup({
             h6 = "foam",
         },
     },
+
     highlight_groups = {
 		ColorColumn = { bg = 'rose' },
 
