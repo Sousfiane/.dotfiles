@@ -17,6 +17,8 @@ vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
+vim.opt.fillchars = {eob = " "}
+
 vim.cmd[[
 augroup highlight_yank
 autocmd!
