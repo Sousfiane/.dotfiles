@@ -17,39 +17,5 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Setup lazy.nvim
 require("lazy").setup({
-    'lewis6991/gitsigns.nvim',
-    'm4xshen/autoclose.nvim',
-    'ThePrimeagen/vim-be-good',
-
-    {
-        'nvim-telescope/telescope.nvim',
-        tag = '0.1.4',
-        dependencies = {'nvim-lua/plenary.nvim'},
-    },
-
-    {
-        'rose-pine/neovim',
-        as = 'rose-pine',
-    },
-
-    {
-        'nvim-tree/nvim-tree.lua',
-        dependencies = {'nvim-tree/nvim-web-devicons'},
-    },
-
-    {
-        'nvim-treesitter/nvim-treesitter',
-        build = ':TSUpdate',
-    },
-
-    {
-        'neoclide/coc.nvim',
-        branch = 'release',
-    },
-
-    {
-        'ThePrimeagen/harpoon',
-        branch = 'harpoon2',
-        dependencies = {'nvim-lua/plenary.nvim'},
-    },
+    spec = "thibault.plugins",
 })
