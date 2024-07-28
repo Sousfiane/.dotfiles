@@ -50,7 +50,7 @@ return {
             highlight_groups = {
 
                 ColorColumn = { bg = 'rose' },
-                CursorColumn ={ bg = 'highlight_med'},
+                CursorColumn ={bg = 'highlight_med' },
 
                 CursorLine = { bg = 'foam', blend = 10 },
                 StatusLine = { fg = 'love', bg = 'love', blend = 10 },
