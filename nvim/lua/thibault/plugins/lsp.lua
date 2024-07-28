@@ -40,7 +40,8 @@ return{
                 'coc-pyright',
                 'coc-lua',
                 'coc-snippets',
-                'coc-pairs'
+                'coc-pairs',
+                'coc-sh'
             })
 
             -- Use Tab for trigger completion 
