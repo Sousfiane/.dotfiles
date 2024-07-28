@@ -3,6 +3,7 @@ return{
     dependencies = {'nvim-tree/nvim-web-devicons'},
     config = function()
         require("nvim-tree").setup({
+
             view = {
                 adaptive_size = true,
                 centralize_selection = true,
@@ -20,6 +21,7 @@ return{
                 },
             },
         })
+
         local api = require("nvim-tree.api")
 
         vim.g.loaded_netrw = 1
