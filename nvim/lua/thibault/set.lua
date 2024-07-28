@@ -18,3 +18,9 @@ vim.opt.isfname:append("@-@")
 vim.opt.updatetime = 50
 
 vim.opt.fillchars = {eob = " "}
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank({higroup = Search, timeout = 200 })
+  end,
+})
