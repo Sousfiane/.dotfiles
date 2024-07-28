@@ -21,6 +21,19 @@ return{
                 return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
             end
 
+            -- Auto install plugins
+            vim.api.nvim_set_var('coc_global_extensions', {
+                'coc-json',
+                'coc-css',
+                'coc-tsserver',
+                'coc-html',
+                'coc-clangd',
+                'coc-java',
+                'coc-pyright',
+                'coc-lua',
+                'coc-pairs'
+            })
+
             -- Use Tab for trigger completion with characters ahead and navigate
             -- NOTE: There's always a completion item selected by default, you may want to enable
             -- no select by setting `"suggest.noselect": true` in your configuration file
@@ -34,4 +47,4 @@ return{
             -- <C-g>u breaks current undo, please make your own choice
             keyset("i", "<cr>", [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
         end
-}
+    }
