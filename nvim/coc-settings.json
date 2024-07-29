@@ -1,4 +1,6 @@
 {
+    "Lua.diagnostics.globals": ["vim"],
+
     "suggest.floatConfig": {
         "border": true,
         "rounded": true
