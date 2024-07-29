@@ -46,8 +46,6 @@ alias tls='tmux ls'
 alias dotfiles='bash $DOTFILES/scripts/tmux-sessionizer.sh $DOTFILES'
 alias config='bash $DOTFILES/scripts/tmux-sessionizer.sh $HOME/.config'
 
-alias betterdiscord=$DOTFILES/scripts/BetterDiscord-Linux.AppImage
-
 take() {
     mkdir -p $1
     cd $1
