@@ -10,6 +10,19 @@ set $alt Mod1
 # extra options for windows: #
 ##############################
 
+# Outputs
+
+output DP0 pos 0 0 res 1920x1080@165
+output HDMI0 pos 1920 0 res 1920x1080@60
+
+# Keyboard
+
+input "type:keyboard" {
+    xkb_layout fr
+    xkb_variant ,nodeadkeys
+    xkb_options grp:alt_shift_toggle
+}
+
 # border indicator on windows:
 default_border pixel 0
 default_floating_border pixel 0
