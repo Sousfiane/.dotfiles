@@ -10,15 +10,10 @@ set $alt Mod1
 # extra options for windows: #
 ##############################
 
-# Outputs
-
-output DP-1 pos 0 0 res 1920x1080@165.004Hz
-output HDMI-A-1 pos 1920 0 res 1920x1080@60.000Hz
-
 # Keyboard
 
-input type:keyboard {
-    xkb_layout fr
+input * {
+    xkb_layout "fr"
 }
 
 
