@@ -12,13 +12,13 @@ set $alt Mod1
 
 # Outputs
 
-output DP0 pos 0 0 res 1920x1080@165
-output HDMI0 pos 1920 0 res 1920x1080@60
+output DP-1 pos 0 0 res 1920x1080@165.004
+output HDMI-A-1 pos 1920 0 res 1920x1080@60.000
 
 # Keyboard
 
-input * {
-        xkb_layout "fr"
+input "1046:291:Ducky_Ducky_One2_SF_RGB" {
+        xkb_layout fr
 }
 
 # border indicator on windows:
