@@ -12,8 +12,8 @@ set $alt Mod1
 
 # Keyboard
 
-input * {
-    xkb_layout "fr"
+input "type:keyboard" {
+    xkb_layout fr
 }
 
 
