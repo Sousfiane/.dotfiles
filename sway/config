@@ -18,9 +18,7 @@ output HDMI0 pos 1920 0 res 1920x1080@60
 # Keyboard
 
 input "type:keyboard" {
-    xkb_layout fr
-    xkb_variant ,nodeadkeys
-    xkb_options grp:alt_shift_toggle
+    xkb_layout fr,
 }
 
 # border indicator on windows:
