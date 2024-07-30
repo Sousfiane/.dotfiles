@@ -17,8 +17,8 @@ output HDMI0 pos 1920 0 res 1920x1080@60
 
 # Keyboard
 
-input "type:keyboard" {
-    xkb_layout fr,
+input * {
+        xkb_layout "fr"
 }
 
 # border indicator on windows:
