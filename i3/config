@@ -130,7 +130,6 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
 # App shortcuts
-bindsym $mod+t exec --no-startup-id ~/.config/i3/workspaces/load_layout.sh
 bindsym $mod+w exec --no-startup-id /usr/bin/google-chrome-stable
 bindsym $mod+n exec --no-startup-id /usr/bin/thunar
 bindsym $mod+s exec --no-startup-id /usr/bin/spotify
@@ -156,15 +155,14 @@ set $ws9 "9"
 set $ws10 "10"
 
 # use workspaces on different displays:
-workspace $ws1 output DP-0
-workspace $ws2 output HDMI-0
-workspace $ws3 output DP-0
-workspace $ws4 output DP-0
+#workspace $ws1 output DP-0
+#workspace $ws2 output HDMI-0
+#workspace $ws3 output DP-0
+#workspace $ws4 output DP-0
 workspace $ws5 output HDMI-0
 workspace $ws6 output HDMI-0
 
 # bind program to workspace and focus to them on startup:
-#assign [window_role=fixed_term] $ws1
 assign [class="Google-chrome"] $ws2
 assign [class="code-oss"] $ws3
 assign [class="Thunar"] $ws4
@@ -212,7 +210,6 @@ exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
 exec_always --no-startup-id sleep 2 && ~/.config/polybar/launch.sh
-exec --no-startup-id sleep 2 && ~/.config/i3/launch_if_desktop.sh ~/.config/i3/workspaces/load_layout.sh
 exec --no-startup-id sleep 2 && ~/.config/i3/launch_if_desktop.sh google-chrome-stable
 exec --no-startup-id sleep 4 && ~/.config/i3/launch_if_desktop.sh discord
 exec --no-startup-id sleep 3 && thunar
