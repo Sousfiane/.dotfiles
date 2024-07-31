@@ -10,6 +10,16 @@ set $alt Mod1
 # extra options for windows: #
 ##############################
 
+blur on
+blur_xray on
+blur_passes 2
+blur_radius 5
+
+shadows on
+shadows_on_csd on 
+shadow_blur_radius 20
+shadow_color #0000007F
+
 # keyboard
 
 input "type:keyboard" {
