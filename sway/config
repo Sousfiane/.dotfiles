@@ -10,6 +10,11 @@ set $alt Mod1
 # extra options for windows: #
 ##############################
 
+env = LIBVA_DRIVER_NAME,nvidia
+env = XDG_SESSION_TYPE,wayland
+env = GBM_BACKEND,nvidia-drm
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+
 blur on
 blur_xray on
 blur_passes 2
