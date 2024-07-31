@@ -46,6 +46,8 @@ alias tls='tmux ls'
 alias dotfiles='bash $DOTFILES/scripts/tmux-sessionizer.sh $DOTFILES'
 alias config='bash $DOTFILES/scripts/tmux-sessionizer.sh $HOME/.config'
 
+alias neofetch='fastfetch --config neofetch.jsonc'
+
 take() {
     mkdir -p $1
     cd $1
