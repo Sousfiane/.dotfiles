@@ -136,7 +136,6 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
 # App shortcuts
-bindsym $mod+t exec --no-startup-id ~/.config/i3/workspaces/load_layout.sh
 bindsym $mod+w exec --no-startup-id /usr/bin/google-chrome-stable
 bindsym $mod+n exec --no-startup-id /usr/bin/thunar
 bindsym $mod+s exec --no-startup-id /usr/bin/spotify
@@ -150,16 +149,16 @@ bindsym XF86LaunchB exec --no-startup-id ~/.config/rofi/launchers/type-3/launche
 ##########################################
 
 # Define names for default workspaces
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws1 1
+set $ws2 2
+set $ws3 3
+set $ws4 4
+set $ws5 5
+set $ws6 6
+set $ws7 7
+set $ws8 8
+set $ws9 9
+set $ws10 10
 
 # use workspaces on different displays:
 workspace $ws1 output DP-0
@@ -253,3 +252,5 @@ client.urgent		    	#191724	#191724		#E0DEF4		#191724		#191724
 bindsym $mod+space exec --no-startup-id ~/.dotfiles/scripts/launcher.sh
 # rofi bindings exit menu
 bindsym $mod+Escape exec --no-startup-id ~/.dotfiles/scripts/powermenu.sh
+
+include /etc/sway/config.d/*
