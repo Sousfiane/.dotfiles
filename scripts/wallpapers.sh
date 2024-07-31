@@ -6,4 +6,4 @@ wallpapers_dir="$HOME/.wallpapers"
 
 wallpaper=$(ls $wallpapers_dir| sed '/links.prop/d' | rofi -dmenu -i -theme $dir/$theme)
 
-[ -z $wallpaper ] || swaybg -i $wallpapers_dir/$wallpaper
+[ -z $wallpaper ] || feh --bg-fill $wallpapers_dir/$wallpaper
