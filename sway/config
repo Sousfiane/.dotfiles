@@ -166,12 +166,12 @@ set $ws9 9
 set $ws10 10
 
 # use workspaces on different displays:
-workspace $ws1 output DP-0
-workspace $ws2 output HDMI-0
-workspace $ws3 output DP-0
-workspace $ws4 output DP-0
-workspace $ws5 output HDMI-0
-workspace $ws6 output HDMI-0
+workspace $ws1 output DP-1
+workspace $ws2 output HDMI-A-1
+workspace $ws3 output DP-1
+workspace $ws4 output DP-1
+workspace $ws5 output HDMI-A-1
+workspace $ws6 output HDMI-A-1
 
 # bind program to workspace and focus to them on startup:
 #assign [window_role=fixed_term] $ws1
@@ -188,12 +188,6 @@ for_window [class="Google-chrome"] focus
 for_window [class="Spotify"] focus
 for_window [class="code-oss"] focus
 for_window [class="steam"] focus
-
-##############
-# compositor #
-##############
-
-exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf
 
 #############################################
 # autostart applications/services on login: #
