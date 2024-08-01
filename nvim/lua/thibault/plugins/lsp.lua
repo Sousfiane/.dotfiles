@@ -26,7 +26,7 @@ return {
             'coc-clangd',
             'coc-java',
             'coc-pyright',
-            'coc-sumneko-lua',
+            'coc-lua',
             'coc-snippets',
             'coc-pairs',
             'coc-sh'
