@@ -1,11 +1,15 @@
 {
+    "Lua.workspace.library": [
+        "/usr/local/share/nvim/runtime/lua",
+        "/usr/local/share/nvim/runtime/lua/vim",
+        "/usr/local/share/nvim/runtime/lua/vim/lsp"
+    ],
     "Lua.diagnostics.globals": ["vim"],
     "Lua.workspace.ignoreDir": [
         ".vscode",
         "themes",
         "icons"
     ],
-
     "suggest.floatConfig": {
         "border": true,
         "rounded": true
