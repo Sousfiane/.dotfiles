@@ -1,5 +1,10 @@
 {
     "Lua.diagnostics.globals": ["vim"],
+    "Lua.workspace.ignoreDir": [
+        ".vscode",
+        "themes",
+        "icons"
+    ],
 
     "suggest.floatConfig": {
         "border": true,
