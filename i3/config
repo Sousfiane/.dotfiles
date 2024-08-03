@@ -66,10 +66,10 @@ bindsym $mod+$alt+Right resize grow width 10 px or 10 ppt
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id xfce4-terminal --role fixed_term
+bindsym $mod+Return exec --no-startup-id kitty
 
 # start a floating terminal
-bindsym $mod+Shift+Return exec --no-startup-id xfce4-terminal --role float_term
+bindsym $mod+Shift+Return exec --no-startup-id kitty --app-id float_term
 
 # kill focused window
 bindsym $mod+q kill
@@ -225,7 +225,7 @@ for_window [class="Blueberry.py" instance="blueberry.py"] floating enable
 for_window [class="Gnome-screenshot" instance="gnome-screenshot"] floating enable
 
 # set floating for special apps
-for_window [window_role=float_term] floating enable
+for_window [class="float_term"] floating enable
 for_window [class="Nm-connection-editor" instance="nm-connection-editor"] floating enable
 for_window [class="Pavucontrol" instance="pavucontrol"] floating enable
 for_window [class="Orage" instance="orage"] floating enable
