@@ -66,11 +66,10 @@ bindsym $mod+$alt+Right resize grow width 10 px or 10 ppt
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id kitty
+bindsym $mod+Return exec --no-startup-id kitty -1
 
 # start a floating terminal
-bindsym $mod+Shift+Return exec --no-startup-id kitty --app-id float_term
-
+bindsym $mod+Shift+Return exec --no-startup-id kitty --app-id float_term -1
 # kill focused window
 bindsym $mod+q kill
 
