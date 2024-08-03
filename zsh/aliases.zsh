@@ -10,11 +10,6 @@ alias cp="cp -i"
 alias df='df -h'
 alias free='free -m'
 
-alias ps='sudo pacman -S'
-alias pr='sudo pacman -R'
-alias pu='sudo pacman -Syu'
-alias pc='sudo pacman -Sc'
-
 alias y='yay'
 alias ys='yay -S'
 alias yr='yay -R'
