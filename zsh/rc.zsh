@@ -14,6 +14,8 @@ source_if_exists () {
     fi
 }
 
+export GIT_EDITOR=nvim
+
 source_if_exists $HOME/.env.sh
 source_if_exists $DOTFILES/zsh/aliases.zsh
 source_if_exists $DOTFILES/zsh/history.zsh
