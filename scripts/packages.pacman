@@ -29,6 +29,7 @@ inetutils
 ##intel-media-driver
 jdk-openjdk
 keepassxc
+kitty
 libinput-gestures
 libreoffice-fresh
 ##libva-intel-driver
@@ -64,7 +65,6 @@ postgresql
 python-dbus
 qbittorrent
 rofi
-rose-pine-gtk-theme-full
 smartmontools
 spicetify-cli
 spicetify-themes-git
@@ -112,5 +112,4 @@ wine
 ##wireless_tools
 xcursor-simp1e-rose-pine-dawn
 ##xfce4-power-manager
-xfce4-terminal
 zsh
