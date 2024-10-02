@@ -38,7 +38,6 @@ alias ts='bash $DOTFILES/scripts/tmux-sessionizer.sh'
 alias ta='tmux a'
 alias tls='tmux ls'
 
-alias dotfiles='bash $DOTFILES/scripts/tmux-sessionizer.sh $DOTFILES'
 alias config='bash $DOTFILES/scripts/tmux-sessionizer.sh $HOME/.config'
 
 alias neofetch='fastfetch --config neofetch.jsonc'
