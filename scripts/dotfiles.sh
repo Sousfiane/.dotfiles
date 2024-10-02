@@ -62,7 +62,12 @@ sync(){
     exit
 }
 
+reset(){
+    git -C "$HOME"/.dotfiles rest --hard HEAD
+}
+
 [[ $1 == "status" ]] && status
 [[ $1 == "notify" ]] && notify
 [[ $1 == "sync" ]] && sync
+[[ $1 == "reset" ]] && reset
 
