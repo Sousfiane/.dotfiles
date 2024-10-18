@@ -6,3 +6,4 @@ polybar/scripts/arch/repo.pkgs
 polybar/scripts/arch/status
 polybar/scripts/arch/status_vcs
 fonts/.uuid
+btop/btop.log
