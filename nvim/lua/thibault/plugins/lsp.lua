@@ -42,9 +42,23 @@ return {
 
         vim.keymap.set("i", "<c-j>", "<Plug>(coc-snippets-expand-jump)")
 
-        vim.keymap.set("n", "<leader>qf", "<Plug>(coc-fix-current)", { silent = true, nowait = true })
-
+        vim.keymap.set("n", "<leader>rn", "<Plug>(coc-rename)", {silent = true})
         vim.keymap.set("x", "<leader>f", "<Plug>(coc-format-selected)", { silent = true })
         vim.keymap.set("n", "<leader>f", "<Plug>(coc-format-selected)", { silent = true })
+
+        opts = {silent = true, nowait = true}
+        vim.keymap.set("x", "<leader>ca", "<Plug>(coc-codeaction-selected)", opts)
+        vim.keymap.set("n", "<leader>ca", "<Plug>(coc-codeaction-selected)", opts)
+
+        vim.keymap.set("n", "<leader>cac", "<Plug>(coc-codeaction-cursor)", opts)
+
+        vim.keymap.set("n", "<leader>cas", "<Plug>(coc-codeaction-source)", opts)
+        vim.keymap.set("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
+
+        vim.keymap.set("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", { silent = true })
+        vim.keymap.set("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = true })
+        vim.keymap.set("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = true })
+
+        vim.keymap.set("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
     end
 }
