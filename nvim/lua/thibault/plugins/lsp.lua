@@ -42,8 +42,8 @@ return {
 
         vim.keymap.set("i", "<c-j>", "<Plug>(coc-snippets-expand-jump)")
 
-        vim.keymap.set("n", "gn", "<Plug>(coc-diagnostic-prev)", {silent = true})
-        vim.keymap.set("n", "gp", "<Plug>(coc-diagnostic-next)", {silent = true})
+        vim.keymap.set("n", "gp", "<Plug>(coc-diagnostic-prev)", {silent = true})
+        vim.keymap.set("n", "gn", "<Plug>(coc-diagnostic-next)", {silent = true})
 
         vim.keymap.set("n", "gd", "<Plug>(coc-definition)", {silent = true})
         vim.keymap.set("n", "gy", "<Plug>(coc-type-definition)", {silent = true})
