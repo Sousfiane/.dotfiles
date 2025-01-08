@@ -42,6 +42,8 @@ alias config='bash $DOTFILES/scripts/tmux-sessionizer.sh $HOME/.config'
 
 alias neofetch='fastfetch --config neofetch.jsonc'
 
+alias gcc="gcc -Wall -Wextra -Werror"
+
 take() {
     mkdir -p $1
     cd $1
