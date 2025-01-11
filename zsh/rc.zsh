@@ -15,6 +15,7 @@ source_if_exists () {
 }
 
 export GIT_EDITOR=nvim
+export TERM=xterm-256color
 
 source_if_exists $HOME/.env.sh
 source_if_exists $DOTFILES/zsh/aliases.zsh
