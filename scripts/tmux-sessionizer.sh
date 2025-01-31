@@ -3,7 +3,7 @@
 if [[ $# -eq 1 ]]; then
     [[ $1 == "." ]] && selected=$(pwd) || selected=$1
 else
-    selected=$(fd -t d --follow --search-path $HOME/dev/ --search-path $HOME/ZimaOS-HDD/ --search-path $HOME/.dotfiles/ --max-depth 1 | fzf)
+    selected=$(fd -t d --follow --search-path $HOME/dev/ --search-path $HOME/NAS/ --search-path $HOME/.dotfiles/ --max-depth 1 | fzf)
 fi
 
 if [[ -z $selected ]]; then
