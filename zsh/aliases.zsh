@@ -64,3 +64,8 @@ note() {
     echo "$@" >> $HOME/drafts.txt
     echo "" >> $HOME/drafts.txt
 }
+
+nextclound(){
+    [[ $1 == "-m" ]] && rclone mount nextcloud: ~/Nextcloud --ignore-existing --vfs-cache-mode full --daemon 
+    [[ $1 == "-u" ]] && fusermount -u ~/Nextcloud
+}
