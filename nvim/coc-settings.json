@@ -1,33 +1,35 @@
 {
-    "workspace.ignoredFolders": [
-        "$HOME",
-        "$DOTFILES",
-        "$HOME/.cargo/**",
-        "$HOME/.rustup/**",
-        "$HOME/pkg/mod/**",
-        "$HOMEBREW_PREFIX/**"
-    ],
-    "Lua.workspace.library": [
-        "/usr/local/share/nvim/runtime/lua",
-        "/usr/local/share/nvim/runtime/lua/vim",
-        "/usr/local/share/nvim/runtime/lua/vim/lsp"
-    ],
-    "Lua.diagnostics.globals": ["vim"],
-    "suggest.floatConfig": {
-        "border": true,
-        "rounded": true
-    },
-    "hover.floatConfig": {
-        "border": true,
-        "rounded": true
-    },
-    "diagnostic.floatConfig": {
-        "border": true,
-        "rounded": true
-    },
-    "signature.floatConfig": {
-        "border": true,
-        "rounded": true
-    },
-    "snippets.ultisnips.pythonPrompt": false,
+  "workspace.ignoredFolders": [
+    "$HOME",
+    "$DOTFILES",
+    "$HOME/.cargo/**",
+    "$HOME/.rustup/**",
+    "$HOME/pkg/mod/**",
+    "$HOMEBREW_PREFIX/**"
+  ],
+  "Lua.workspace.library": [
+    "/usr/local/share/nvim/runtime/lua",
+    "/usr/local/share/nvim/runtime/lua/vim",
+    "/usr/local/share/nvim/runtime/lua/vim/lsp"
+  ],
+  "Lua.diagnostics.globals": ["vim"],
+  "suggest.floatConfig": {
+    "border": true,
+    "rounded": true
+  },
+  "hover.floatConfig": {
+    "border": true,
+    "rounded": true
+  },
+  "diagnostic.floatConfig": {
+    "border": true,
+    "rounded": true
+  },
+  "signature.floatConfig": {
+    "border": true,
+    "rounded": true
+  },
+  "snippets.ultisnips.pythonPrompt": false,
+  "typescript.format.enable": false
 }
+
