@@ -5,6 +5,7 @@ return{
         require("nvim-tree").setup({
 
             view = {
+                side = "left", -- Always open on the left side
                 adaptive_size = true,
                 centralize_selection = true,
             },
