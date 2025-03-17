@@ -1,1 +1,2 @@
-$DOTFILES/BetterDiscord/=$HOME/.config/BetterDiscord
+$DOTFILES/BetterDiscord/plugins=$HOME/.config/BetterDiscord/plugins
+$DOTFILES/BetterDiscord/themes=$HOME/.config/BetterDiscord/themes
