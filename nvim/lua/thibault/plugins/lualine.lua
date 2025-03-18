@@ -12,7 +12,7 @@ return {
                 lualine_b = { 'branch' },
                 lualine_c = {
                     { 'filename', file_status = true, path = 1 },
-                    { 'diagnostics', sources = { 'nvim_lsp' }, sections = { 'error', 'warn' }, symbols = { error = ' ', warn = ' ' } }
+                    { 'diagnostics', sources = { 'coc' }, sections = { 'error', 'warn' }, symbols = { error = ' ', warn = ' ' } }
                 },
                 lualine_x = {
                     'filetype',
