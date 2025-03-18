@@ -1,1 +1,1 @@
-$DOTFILES/i3/=$HOME/.config/i3
+$DOTFILES/i3/config=$HOME/.config/i3/config

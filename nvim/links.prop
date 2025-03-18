@@ -1,1 +1,3 @@
-$DOTFILES/nvim/=$HOME/.config/nvim
+$DOTFILES/nvim/lua=$HOME/.config/nvim/lua
+$DOTFILES/nvim/coc-settings.json=$HOME/.config/nvim/coc-settings.json
+$DOTFILES/nvim/init.lua=$HOME/.config/nvim/init.lua

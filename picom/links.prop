@@ -1,1 +1,1 @@
-$DOTFILES/picom/=$HOME/.config/picom
+$DOTFILES/picom/picom.conf=$HOME/.config/picom/picom.conf
