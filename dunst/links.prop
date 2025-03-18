@@ -1,1 +1,1 @@
-$DOTFILES/dunst/=$HOME/.config/dunst
+$DOTFILES/dunst/dunstrc=$HOME/.config/dunst/dunstrc

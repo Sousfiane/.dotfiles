@@ -1,1 +1,2 @@
-$DOTFILES/btop/=$HOME/.config/btop
+$DOTFILES/btop/themes=$HOME/.config/btop/themes
+$DOTFILES/btop/btop.conf=$HOME/.config/btop/btop.conf
