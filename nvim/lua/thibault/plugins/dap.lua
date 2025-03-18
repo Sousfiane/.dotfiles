@@ -9,9 +9,8 @@ return {
         local dap = require("dap")
         local dapui = require("dapui")
 
-        dap.set_log_level("TRACE") -- Enable detailed logging
+        dap.set_log_level("TRACE")
 
-        -- Setup virtual text and DAP UI
         require("nvim-dap-virtual-text").setup()
 
         dapui.setup({
@@ -38,7 +37,6 @@ return {
             expand_lines = true,
         })
 
-        -- Automatically open DAP UI on attach/launch
         dap.listeners.before.attach.dapui_config = function()
             dapui.open()
         end
@@ -49,7 +47,6 @@ return {
             dapui.close()
         end
 
-        -- Adapter configurations for pwa-node and chrome (just an example)
         dap.adapters["pwa-node"] = {
             type = "server",
             host = "localhost",
@@ -66,7 +63,6 @@ return {
             args = { os.getenv("HOME") .. "/.config/dap/vscode-chrome-debug/out/src/chromeDebug.js" },
         }
 
-        -- Key mappings
         local map = function(mode, lhs, rhs, opts)
             opts = opts or {}
             opts.silent = true
