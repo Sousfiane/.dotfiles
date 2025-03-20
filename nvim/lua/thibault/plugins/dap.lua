@@ -17,10 +17,10 @@ return {
             layout = {
                 {
                     elements = {
-                        { id = "scopes", size = 0.25 },
+                        { id = "scopes",      size = 0.25 },
                         { id = "breakpoints", size = 0.25 },
-                        { id = "stacks", size = 0.25 },
-                        { id = "watches", size = 0.25 },
+                        { id = "stacks",      size = 0.25 },
+                        { id = "watches",     size = 0.25 },
                     },
                     size = 12,
                     position = "left",
@@ -28,7 +28,7 @@ return {
                 {
                     elements = {
                         { id = "console", size = 0.5 },
-                        { id = "repl", size = 0.5 },
+                        { id = "repl",    size = 0.5 },
                     },
                     size = 12,
                     position = "bottom",
@@ -77,7 +77,10 @@ return {
         map("n", "<Leader>B", function() dap.set_breakpoint(vim.fn.input("Breakpoint condition: ")) end,
             { desc = "Set Conditional Breakpoint" })
         map("n", "<Leader>dl", dap.run_last, { desc = "Run Last Debugging Session" })
-        map("n", "<Leader>du", dapui.toggle, { desc = "Toggle DAP UI" })
+        map("n", "<Leader>du", function()
+            require("nvim-tree.api").tree.close()
+            vim.cmd('UndotreeHide')
+            dapui.toggle()
+        end, { desc = "Run Last Debugging Session" })
     end,
 }
-
