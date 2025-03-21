@@ -1,1 +1,1 @@
-$DOTFILES/polybar/=$HOME/.config/polybar
+$DOTFILES/polybar/config.ini=$HOME/.config/polybar/config.ini
