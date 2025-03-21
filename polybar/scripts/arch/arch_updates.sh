@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-path=${HOME}/.config/polybar/scripts/arch/
+path=${DOTFILES}/polybar/scripts/arch/
 #trap 'exit' SIGINT
 
   main_loop() {

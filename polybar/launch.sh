@@ -14,7 +14,7 @@ else
 fi
 
 # Launch arch_updates script
-arch_updates & echo $! > ~/.config/polybar/scripts/arch/arch_updates.pid
+arch_updates & echo $! > $DOTFILES/polybar/scripts/arch/arch_updates.pid
 
 echo "Bars launched..."
 
