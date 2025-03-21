@@ -3,7 +3,7 @@ return {
     config = function()
         vim.keymap.set('n', '<leader>u', function()
             require("dapui").close()
-            require("nvim-tree.api").tree.close()
+            vim.cmd(":Neotree filesystem close")
             vim.cmd.UndotreeToggle()
         end)
 

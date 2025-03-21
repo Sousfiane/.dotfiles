@@ -7,7 +7,7 @@ return {
                 theme = 'rose-pine',
                 globalstatus = true,
             },
-            extensions = { 'lazy', 'nvim-tree', 'quickfix', 'nvim-dap-ui' },
+            extensions = { 'lazy', 'neo-tree', 'quickfix', 'nvim-dap-ui' },
         })
     end
 }
