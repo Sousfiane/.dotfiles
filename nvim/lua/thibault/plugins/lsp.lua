@@ -72,6 +72,8 @@ return {
 
         -- Rename symbol
         vim.keymap.set("n", "<leader>rn", "<Plug>(coc-rename)", {silent = true})
+
+        -- Format
         vim.keymap.set("x", "<leader>f", "<Plug>(coc-format-selected)", {silent = true})
         vim.keymap.set("n", "<leader>f", "<Plug>(coc-format-selected)", {silent = true})
 
