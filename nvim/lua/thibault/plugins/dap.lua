@@ -78,7 +78,7 @@ return {
             { desc = "Set Conditional Breakpoint" })
         map("n", "<Leader>dl", dap.run_last, { desc = "Run Last Debugging Session" })
         map("n", "<Leader>du", function()
-            require("nvim-tree.api").tree.close()
+            vim.cmd(":Neotree filesystem close")
             vim.cmd('UndotreeHide')
             dapui.toggle()
         end, { desc = "Run Last Debugging Session" })
