@@ -7,22 +7,7 @@ return {
                 theme = 'rose-pine',
                 globalstatus = true,
             },
-            sections = {
-                lualine_a = { 'mode' },
-                lualine_b = { 'branch' },
-                lualine_c = {
-                    { 'filename', file_status = true, path = 1 },
-                    { 'diagnostics', sources = { 'coc' }, sections = { 'error', 'warn' }, symbols = { error = ' ', warn = ' ' } }
-                },
-                lualine_x = {
-                    'filetype',
-                    { 'encoding', upper = true },
-                    'progress',
-                },
-                lualine_y = { 'location' },
-                lualine_z = { 'time' },
-            },
-            extensions = { 'fugitive', 'nvim-tree', 'quickfix' },
+            extensions = { 'lazy', 'nvim-tree', 'quickfix', 'nvim-dap-ui' },
         })
     end
 }
