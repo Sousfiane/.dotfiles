@@ -15,25 +15,25 @@ return {
     },
     {
         "neovim/nvim-lspconfig",
-        dependencies = { 'nvim-java/nvim-java' },
+        dependencies = { "nvim-java/nvim-java" },
         lazy = false,
         config = function()
-            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-            require('java').setup()
+            require("java").setup()
 
             local lspconfig = require("lspconfig")
             lspconfig.ts_ls.setup({
-                capabilities = capabilities
+                capabilities = capabilities,
             })
             lspconfig.html.setup({
-                capabilities = capabilities
+                capabilities = capabilities,
             })
             lspconfig.lua_ls.setup({
-                capabilities = capabilities
+                capabilities = capabilities,
             })
             lspconfig.jdtls.setup({
-                capabilities = capabilities
+                capabilities = capabilities,
             })
 
             vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
