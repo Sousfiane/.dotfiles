@@ -7,13 +7,22 @@ return {
 		"MunifTanjim/nui.nvim",
 	},
 	config = function()
+		vim.g.loaded_netrw = 1
+		vim.g.loaded_netrwPlugin = 1
+
 		vim.keymap.set("n", "<leader>pv", function()
-			vim.cmd('UndotreeHide')
+			vim.cmd("UndotreeHide")
 			require("dapui").close()
 			vim.cmd(":Neotree filesystem reveal left toggle")
 		end, {})
 
 		require("neo-tree").setup({
+			filesystem = {
+				follow_current_file = {
+					enabled = true,
+				},
+				hijack_netrw_behavior = "open_current",
+			},
 			default_component_configs = {
 				diagnostics = {
 					symbols = {
@@ -30,4 +39,3 @@ return {
 		})
 	end,
 }
-
