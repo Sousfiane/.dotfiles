@@ -1,26 +1,20 @@
 return {
     {
-        "williamboman/mason.nvim",
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            "nvim-java/nvim-java",
+            "williamboman/mason-lspconfig.nvim",
+            "williamboman/mason.nvim",
+        },
         lazy = false,
         config = function()
             require("mason").setup()
-        end,
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
-        lazy = true,
-        opts = {
-            auto_install = true,
-        },
-    },
-    {
-        "neovim/nvim-lspconfig",
-        dependencies = { "nvim-java/nvim-java" },
-        lazy = false,
-        config = function()
-            local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
             require("java").setup()
+            require("mason-lspconfig").setup({
+                automatic_installation = true,
+            })
+
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
             local lspconfig = require("lspconfig")
             lspconfig.ts_ls.setup({
