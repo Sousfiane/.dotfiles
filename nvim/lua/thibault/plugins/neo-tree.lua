@@ -7,11 +7,27 @@ return {
 		"MunifTanjim/nui.nvim",
 	},
 	config = function()
-		vim.keymap.set("n", "<leader>pv",
-        function ()
-            vim.cmd('UndotreeHide')
-            require("dapui").close()
-            vim.cmd(":Neotree filesystem reveal left toggle")
-        end, {})
+		vim.keymap.set("n", "<leader>pv", function()
+			vim.cmd('UndotreeHide')
+			require("dapui").close()
+			vim.cmd(":Neotree filesystem reveal left toggle")
+		end, {})
+
+		require("neo-tree").setup({
+			default_component_configs = {
+				diagnostics = {
+					symbols = {
+						hint = "",
+						info = "",
+						warn = "",
+						error = "",
+					},
+					enable = true,
+					show_on_dirs = true,
+					show_on_open_dirs = false,
+				},
+			},
+		})
 	end,
 }
+
