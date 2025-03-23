@@ -124,20 +124,57 @@ return {
 		end
 
 		------------------------------------------------------------
+		-- LSP Key Mappings
+		------------------------------------------------------------
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+		vim.keymap.set("n", "<leader>gd", require("telescope.builtin").lsp_definitions, {})
+		vim.keymap.set("n", "<leader>gr", require("telescope.builtin").lsp_references, {})
+		vim.keymap.set("n", "<leader>gi", require("telescope.builtin").lsp_implementations, {})
+		vim.keymap.set("n", "<leader>ds", require("telescope.builtin").lsp_document_symbols, {})
+		vim.keymap.set("n", "<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, {})
+		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
+		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
+
+		------------------------------------------------------------
 		-- Diagnostic Configuration
 		------------------------------------------------------------
 		vim.diagnostic.config({
 			signs = true,
+			underline = true, -- Enable underlines
+			virtual_text = false,
+			float = {
+				border = "rounded",
+				source = false, -- Hide diagnostic source
+				focusable = false,
+				header = "", -- No title
+				prefix = "", -- No prefix
+				format = function(diagnostic)
+					return diagnostic.message -- Only show the message
+				end,
+			},
 		})
 
+		-- Use the Rose Pine palette for diagnostic underlines
+		local palette = require("rose-pine.palette")
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { sp = palette.love, undercurl = true, underline = true })
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { sp = palette.gold, undercurl = true, underline = true })
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { sp = palette.foam, undercurl = true, underline = true })
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { sp = palette.iris, undercurl = true, underline = true })
 		------------------------------------------------------------
-		-- LSP Key Mappings
+		-- Diagnostic Key Mappings
 		------------------------------------------------------------
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-		vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
-		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
-		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
-		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
+
+		vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
+		vim.keymap.set("n", "<leader>dp", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
+		vim.keymap.set("n", "<leader>dl", function()
+			require("telescope.builtin").diagnostics({ bufnr = 0 })
+		end, { desc = "Show buffer diagnostics with Telescope" })
+		vim.api.nvim_create_autocmd("CursorHold", {
+			buffer = 0, -- Use `0` for current buffer or remove it to apply globally
+			callback = function()
+				vim.diagnostic.open_float(nil, { focusable = false })
+			end,
+		})
 
 		------------------------------------------------------------
 		-- Notifications Configuration
