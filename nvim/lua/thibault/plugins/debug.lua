@@ -53,8 +53,8 @@ return {
 			vim.cmd("UndotreeHide") -- Hide undotree when DAP session starts
 			vim.cmd(":Neotree filesystem close") -- Close neotree file explorer during debugging
 		end
-		dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-		dap.listeners.before.event_exited["dapui_config"] = dapui.close
+		--dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+		--dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
 		------------------------------------------------------------
 		-- DAP Adapter Configurations
