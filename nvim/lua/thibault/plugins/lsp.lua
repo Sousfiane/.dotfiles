@@ -128,12 +128,6 @@ return {
 		------------------------------------------------------------
 		vim.diagnostic.config({
 			signs = true,
-			underline = true,
-			update_in_insert = false,
-			float = {
-				border = "rounded",
-				source = "always",
-			},
 		})
 
 		------------------------------------------------------------
@@ -143,6 +137,7 @@ return {
 		vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
 		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
 		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
+		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
 
 		------------------------------------------------------------
 		-- Notifications Configuration
@@ -153,6 +148,35 @@ return {
 					winblend = 0,
 				},
 			},
+		})
+
+		------------------------------------------------------------
+		-- highlights
+		------------------------------------------------------------
+		vim.api.nvim_create_autocmd("LspAttach", {
+			group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
+			callback = function(event)
+				local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
+				vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+					buffer = event.buf,
+					group = highlight_augroup,
+					callback = vim.lsp.buf.document_highlight,
+				})
+
+				vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+					buffer = event.buf,
+					group = highlight_augroup,
+					callback = vim.lsp.buf.clear_references,
+				})
+
+				vim.api.nvim_create_autocmd("LspDetach", {
+					group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
+					callback = function(event2)
+						vim.lsp.buf.clear_references()
+						vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event2.buf })
+					end,
+				})
+			end,
 		})
 
 		------------------------------------------------------------
