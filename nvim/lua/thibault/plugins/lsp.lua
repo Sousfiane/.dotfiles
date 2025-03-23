@@ -11,6 +11,7 @@ return {
 		"L3MON4D3/LuaSnip", -- LuaSnip for snippets
 		"saadparwaiz1/cmp_luasnip", -- LuaSnip source for nvim-cmp
 		"rafamadriz/friendly-snippets", -- Friendly snippets collection
+		"j-hui/fidget.nvim", -- Lsp notifications
 	},
 	config = function()
 		------------------------------------------------------------
@@ -54,7 +55,7 @@ return {
 				java = { "google-java-format" },
 				c = { "clang-format" },
 				javascript = { "prettierd", "prettier", stop_after_first = true },
-				javascriptreact = { "prettierd", "prettier", stop_after_first = true }, -- Add this line for JSX files
+				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
 			},
 		})
 		require("mason-conform").setup({})
@@ -85,6 +86,16 @@ return {
 			capabilities = capabilities,
 		})
 
+		-- Java (jdtls)
+		lspconfig.jdtls.setup({
+			capabilities = capabilities,
+		})
+
+		-- C/C++ (clangd)
+		lspconfig.clangd.setup({
+			capabilities = capabilities,
+		})
+
 		-- Lua
 		lspconfig.lua_ls.setup({
 			capabilities = capabilities,
@@ -96,24 +107,6 @@ return {
 				},
 			},
 		})
-
-		-- Java (jdtls)
-		lspconfig.jdtls.setup({
-			capabilities = capabilities,
-		})
-
-		-- C/C++ (clangd)
-		lspconfig.clangd.setup({
-			capabilities = capabilities,
-		})
-
-		------------------------------------------------------------
-		-- LSP Key Mappings
-		------------------------------------------------------------
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-		vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
-		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
-		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
 
 		------------------------------------------------------------
 		-- Diagnostic Sign Setup
@@ -140,6 +133,25 @@ return {
 			float = {
 				border = "rounded",
 				source = "always",
+			},
+		})
+
+		------------------------------------------------------------
+		-- LSP Key Mappings
+		------------------------------------------------------------
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+		vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
+		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
+		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
+
+		------------------------------------------------------------
+		-- Notifications Configuration
+		------------------------------------------------------------
+		require("fidget").setup({
+			notification = {
+				window = {
+					winblend = 0,
+				},
 			},
 		})
 
