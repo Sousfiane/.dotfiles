@@ -126,6 +126,9 @@ return {
 		------------------------------------------------------------
 		-- LSP Key Mappings
 		------------------------------------------------------------
+		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+			border = "rounded",
+		})
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 		vim.keymap.set("n", "<leader>gd", require("telescope.builtin").lsp_definitions, {})
 		vim.keymap.set("n", "<leader>gr", require("telescope.builtin").lsp_references, {})
@@ -167,7 +170,6 @@ return {
 			require("telescope.builtin").diagnostics({ bufnr = 0 })
 		end, { desc = "Show buffer diagnostics with Telescope" })
 		vim.api.nvim_create_autocmd("CursorHold", {
-			buffer = 0, -- Use `0` for current buffer or remove it to apply globally
 			callback = function()
 				vim.diagnostic.open_float(nil, { focusable = false })
 			end,
