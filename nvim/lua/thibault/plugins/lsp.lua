@@ -7,6 +7,8 @@ return {
 		"stevearc/conform.nvim",
 		"zapling/mason-conform.nvim",
 		"hrsh7th/nvim-cmp", -- Added nvim-cmp dependency
+		"hrsh7th/cmp-path",
+		"hrsh7th/cmp-buffer",
 		"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
 		"L3MON4D3/LuaSnip", -- LuaSnip for snippets
 		"saadparwaiz1/cmp_luasnip", -- LuaSnip source for nvim-cmp
@@ -108,6 +110,10 @@ return {
 			},
 		})
 
+		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+			border = "rounded",
+		})
+
 		------------------------------------------------------------
 		-- Diagnostic Sign Setup
 		------------------------------------------------------------
@@ -126,9 +132,6 @@ return {
 		------------------------------------------------------------
 		-- LSP Key Mappings
 		------------------------------------------------------------
-		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-			border = "rounded",
-		})
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 		vim.keymap.set("n", "<leader>gd", require("telescope.builtin").lsp_definitions, {})
 		vim.keymap.set("n", "<leader>gr", require("telescope.builtin").lsp_references, {})
@@ -154,12 +157,6 @@ return {
 			},
 		})
 
-		-- Use the Rose Pine palette for diagnostic underlines
-		local palette = require("rose-pine.palette")
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { sp = palette.love, undercurl = true })
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { sp = palette.gold, undercurl = true })
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { sp = palette.foam, undercurl = true })
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { sp = palette.iris, undercurl = true })
 		------------------------------------------------------------
 		-- Diagnostic Key Mappings
 		------------------------------------------------------------
@@ -241,8 +238,10 @@ return {
 			sources = cmp.config.sources({
 				{ name = "nvim_lsp" }, -- Use LSP for completion
 				{ name = "luasnip" }, -- Use LuaSnip for snippets
-			}, {
 				{ name = "buffer" }, -- Use buffer source for completion
+				{ name = "buffer" }, -- Words from the current buffer
+				{ name = "path" }, -- File path completion
+				{ name = "cmdline" },
 			}),
 		})
 	end,
