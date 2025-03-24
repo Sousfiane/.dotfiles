@@ -241,7 +241,6 @@ return {
 				{ name = "buffer" }, -- Use buffer source for completion
 				{ name = "buffer" }, -- Words from the current buffer
 				{ name = "path" }, -- File path completion
-				{ name = "cmdline" },
 			}),
 		})
 	end,
