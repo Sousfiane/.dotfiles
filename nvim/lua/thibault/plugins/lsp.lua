@@ -148,18 +148,15 @@ return {
 				focusable = false,
 				header = "", -- No title
 				prefix = "", -- No prefix
-				format = function(diagnostic)
-					return diagnostic.message -- Only show the message
-				end,
 			},
 		})
 
 		-- Use the Rose Pine palette for diagnostic underlines
 		local palette = require("rose-pine.palette")
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { sp = palette.love, undercurl = true, underline = true })
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { sp = palette.gold, undercurl = true, underline = true })
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { sp = palette.foam, undercurl = true, underline = true })
-		vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { sp = palette.iris, undercurl = true, underline = true })
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { sp = palette.love, undercurl = true })
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { sp = palette.gold, undercurl = true })
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { sp = palette.foam, undercurl = true })
+		vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { sp = palette.iris, undercurl = true })
 		------------------------------------------------------------
 		-- Diagnostic Key Mappings
 		------------------------------------------------------------
