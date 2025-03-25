@@ -115,21 +115,6 @@ return {
 		})
 
 		------------------------------------------------------------
-		-- Diagnostic Sign Setup
-		------------------------------------------------------------
-		local signs = {
-			Error = " ",
-			Warn = " ",
-			Hint = " ",
-			Info = " ",
-		}
-
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-		end
-
-		------------------------------------------------------------
 		-- LSP Key Mappings
 		------------------------------------------------------------
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
@@ -144,6 +129,18 @@ return {
 		------------------------------------------------------------
 		-- Diagnostic Configuration
 		------------------------------------------------------------
+		local signs = {
+			Error = " ",
+			Warn = " ",
+			Hint = " ",
+			Info = " ",
+		}
+
+		for type, icon in pairs(signs) do
+			local hl = "DiagnosticSign" .. type
+			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+		end
+
 		vim.diagnostic.config({
 			signs = true,
 			underline = true, -- Enable underlines
@@ -160,7 +157,6 @@ return {
 		------------------------------------------------------------
 		-- Diagnostic Key Mappings
 		------------------------------------------------------------
-
 		vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
 		vim.keymap.set("n", "<leader>dp", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
 		vim.keymap.set("n", "<leader>dl", function()

@@ -37,5 +37,13 @@ return {
 				},
 			},
 		})
+
+		-- Refresh neo-tree git status on git events (e.g. from gitsigns)
+		vim.api.nvim_create_autocmd("User", {
+			pattern = "GitSignsUpdate",
+			callback = function()
+				require("neo-tree.sources.git_status").refresh()
+			end,
+		})
 	end,
 }
