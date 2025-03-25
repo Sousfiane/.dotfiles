@@ -16,6 +16,13 @@ return {
 			vim.cmd(":Neotree filesystem reveal left toggle")
 		end, {})
 
+		vim.api.nvim_create_autocmd("User", {
+			pattern = "GitSignsUpdate",
+			callback = function()
+				require("neo-tree.sources.git_status").refresh()
+			end,
+		})
+
 		require("neo-tree").setup({
 			close_if_last_window = true,
 			filesystem = {
@@ -36,14 +43,6 @@ return {
 					show_on_open_dirs = false,
 				},
 			},
-		})
-
-		-- Refresh neo-tree git status on git events (e.g. from gitsigns)
-		vim.api.nvim_create_autocmd("User", {
-			pattern = "GitSignsUpdate",
-			callback = function()
-				require("neo-tree.sources.git_status").refresh()
-			end,
 		})
 	end,
 }
