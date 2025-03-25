@@ -9,5 +9,12 @@ return {
 			},
 			extensions = { "mason", "lazy", "neo-tree", "quickfix", "nvim-dap-ui" },
 		})
+
+		vim.api.nvim_create_autocmd("User", {
+			pattern = "GitSignsUpdate",
+			callback = function()
+				require("lualine").refresh()
+			end,
+		})
 	end,
 }
