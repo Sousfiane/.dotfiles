@@ -9,6 +9,14 @@ return {
 	config = function()
 		local dap = require("dap")
 		local dapui = require("dapui")
+		------------------------------------------------------------
+		-- Mason Setup
+		------------------------------------------------------------
+		require("mason").setup({
+			ui = {
+				border = "rounded",
+			},
+		})
 
 		------------------------------------------------------------
 		-- Mason DAP Setup

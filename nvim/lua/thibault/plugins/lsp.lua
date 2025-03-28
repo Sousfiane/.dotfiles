@@ -13,7 +13,7 @@ return {
 		"L3MON4D3/LuaSnip", -- LuaSnip for snippets
 		"saadparwaiz1/cmp_luasnip", -- LuaSnip source for nvim-cmp
 		"rafamadriz/friendly-snippets", -- Friendly snippets collection
-		"j-hui/fidget.nvim", -- Lsp notifications
+		--"j-hui/fidget.nvim", -- Lsp notifications
 	},
 	config = function()
 		------------------------------------------------------------
@@ -166,17 +166,6 @@ return {
 			callback = function()
 				vim.diagnostic.open_float(nil, { focusable = false })
 			end,
-		})
-
-		------------------------------------------------------------
-		-- Notifications Configuration
-		------------------------------------------------------------
-		require("fidget").setup({
-			notification = {
-				window = {
-					winblend = 0,
-				},
-			},
 		})
 
 		------------------------------------------------------------
