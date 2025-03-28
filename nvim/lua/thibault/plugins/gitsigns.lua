@@ -11,7 +11,7 @@ return {
 			},
 		})
 
-		vim.keymap.set("n", "<leader>Gp", ":Gitsigns preview_hunk<CR>", { desc = "Preview Git hunk" })
+		vim.keymap.set("n", "<leader>Gh", ":Gitsigns preview_hunk<CR>", { desc = "Preview Git hunk" })
 		vim.keymap.set("n", "<leader>Gn", ":Gitsigns next_hunk<CR>", { desc = "Go to next hunk" })
 		vim.keymap.set("n", "<leader>Gp", ":Gitsigns prev_hunk<CR>", { desc = "Go to previous hunk" })
 		vim.keymap.set("n", "<leader>Gs", ":Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
