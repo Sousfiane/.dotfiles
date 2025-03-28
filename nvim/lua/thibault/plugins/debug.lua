@@ -15,8 +15,8 @@ return {
 		------------------------------------------------------------
 		require("mason-nvim-dap").setup({
 			ensure_installed = {
-				"chrome-debug-adapter", -- Chrome debugging (for web)
-				"js-debug-adapter", -- JavaScript debugging
+				"chrome", -- Chrome debugging (for web)
+				"js", -- JavaScript debugging
 			},
 		})
 
