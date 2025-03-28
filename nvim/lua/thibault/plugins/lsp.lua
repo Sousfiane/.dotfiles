@@ -13,7 +13,6 @@ return {
 		"L3MON4D3/LuaSnip", -- LuaSnip for snippets
 		"saadparwaiz1/cmp_luasnip", -- LuaSnip source for nvim-cmp
 		"rafamadriz/friendly-snippets", -- Friendly snippets collection
-		--"j-hui/fidget.nvim", -- Lsp notifications
 	},
 	config = function()
 		------------------------------------------------------------
