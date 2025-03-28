@@ -101,6 +101,10 @@ return {
 		vim.keymap.set("n", "<leader>B", function()
 			dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
 		end, { desc = "Debug: Set Breakpoint" })
-		vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
+		vim.keymap.set("n", "<F7>", function()
+			dapui.toggle()
+			vim.cmd("UndotreeHide") -- Hide undotree when DAP session starts
+			vim.cmd(":Neotree filesystem close") -- Close neotree file explorer during debugging
+		end, { desc = "Debug: See last session result." })
 	end,
 }
