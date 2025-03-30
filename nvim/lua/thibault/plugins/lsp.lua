@@ -128,29 +128,25 @@ return {
 		------------------------------------------------------------
 		-- Diagnostic Configuration
 		------------------------------------------------------------
-		local signs = {
-			Error = " ",
-			Warn = " ",
-			Hint = " ",
-			Info = " ",
-		}
-
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-		end
-
 		vim.diagnostic.config({
-			signs = true,
+			signs = {
+				text = {
+					[vim.diagnostic.severity.ERROR] = "",
+					[vim.diagnostic.severity.WARN] = "",
+					[vim.diagnostic.severity.INFO] = "",
+					[vim.diagnostic.severity.HINT] = "",
+				},
+			},
 			underline = true, -- Enable underlines
 			virtual_text = false,
 			float = {
 				border = "rounded",
-				source = false, -- Hide diagnostic source
+				source = false,
 				focusable = false,
-				header = "", -- No title
-				prefix = "", -- No prefix
+				header = "",
+				prefix = "",
 			},
+			update_in_insert = true, -- Show diagnostics (including underline) in insert mode
 		})
 
 		------------------------------------------------------------

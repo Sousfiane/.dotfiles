@@ -30,19 +30,6 @@ return {
 					enabled = true,
 				},
 			},
-			default_component_configs = {
-				diagnostics = {
-					symbols = {
-						hint = "",
-						info = "",
-						warn = "",
-						error = "",
-					},
-					enable = true,
-					show_on_dirs = true,
-					show_on_open_dirs = false,
-				},
-			},
 		})
 	end,
 }
