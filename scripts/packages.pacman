@@ -5,7 +5,6 @@ bluez-utils
 ##broadcom-wl-dkms
 btop
 clang
-code
 ##cpupower
 dex
 discord
@@ -23,11 +22,9 @@ google-chrome
 graphviz
 grub
 gvfs
-htop
 inetutils
 ##intel-gpu-tools
 ##intel-media-driver
-jdk-openjdk
 keepassxc
 kitty
 libinput-gestures
@@ -54,7 +51,6 @@ orage
 pacman-contrib
 pandoc-cli
 pavucontrol
-peaclock
 picom
 pipewire
 pipewire-pulse
@@ -65,11 +61,11 @@ postgresql
 python-dbus
 qbittorrent
 rofi
+rose-pine-gtk-theme-full
 smartmontools
 spicetify-cli
 spicetify-themes-git
 spotify
-steam
 texlive-basic
 texlive-bibtexextra
 texlive-bin
@@ -108,7 +104,6 @@ virtualbox
 virtualbox-guest-iso
 ##vulkan-intel
 wget
-wine
 ##wireless_tools
 xcursor-simp1e-rose-pine-dawn
 ##xfce4-power-manager
