@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Wallpapers
+Comment=Change the current wallpaper
+Exec=/home/thibault/.dotfiles/scripts/wallpapers.sh
+Icon=image
+Terminal=false
+Type=Application
+Categories=Utility;
+

@@ -1,0 +1,67 @@
+@import "colors.css";
+
+* {
+    min-height: 0;
+    font-family: JetBrainsMono Nerd Font;
+    font-weight: 600;
+    font-size: 14px;
+    background-color: transparent;
+}
+
+.modules-left {
+    margin-left: 8px;
+}
+
+.modules-right {
+    margin-right: 8px;
+}
+
+window#waybar {
+    background-color: @base;
+    color: @text;
+    border-bottom: 1px solid @overlay;
+}
+
+#workspaces button {
+    all: initial;
+    padding: 0 6px;
+    margin: 0 1.5px;
+    min-width: 9px;
+}
+
+#workspaces button.empty {
+    opacity: 0.5;
+}
+
+#tray,
+#cpu,
+#battery,
+#network,
+#bluetooth,
+#pulseaudio,
+#custom-pacman {
+    min-width: 12px;
+    margin: 0 7.5px;
+}
+
+tooltip {
+    padding: 2px;
+    background-color: @overlay;
+    border-radius: 8px;
+}
+
+#clock {
+    margin-left: 8.75px;
+}
+
+#battery.warning {
+    color: @gold;
+}
+
+#battery.critical {
+    color: @love;
+}
+
+.hidden {
+    opacity: 0;
+}

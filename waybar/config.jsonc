@@ -1,0 +1,95 @@
+{
+  "reload_style_on_change": true,
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 32,
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": [
+      "custom/pacman",
+    "bluetooth",
+    "network",
+    "pulseaudio",
+    "battery"
+  ],
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "active": ""
+    },
+  },
+  "cpu": {
+    "interval": 5,
+    "format": "󰍛",
+    "on-click": "kitty -e btop"
+  },
+  "clock": {
+    "format": "{:L%A %H:%M}",
+    "format-alt": "{:L%d %B %Y}",
+    "tooltip": false,
+    "on-click-right": "omarchy-cmd-tzupdate"
+  },
+  "network": {
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format": "{icon}",
+    "format-wifi": "{icon}",
+    "format-ethernet": "󰀂",
+    "format-disconnected": "󰤮",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "interval": 3,
+    "spacing": 1,
+    "on-click": "networkmanager_dmenu"
+  },
+  "battery": {
+    "format": "{icon}",
+    "format-plugged": "",
+    "format-icons": {
+      "charging": ["󱐋", "󱐋", "󱐋", "󱐋", "󱐋", "󱐋", "󱐋", "󱐋", "󱐋", "󱐋"],
+      "default": ["", "", "", "", "", "", "", "", "", ""]
+    },
+    "format-full": "󰂅",
+    "tooltip-format-discharging": "{capacity}% {time}",
+    "tooltip-format-charging": "{capacity}% {time}",
+    "interval": 5,
+    "states": {
+      "warning": 20,
+      "critical": 10
+    }
+  },
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "󰂲",
+    "format-connected": "",
+    "tooltip-format": "Devices connected: {num_connections}",
+    "on-click": "blueberry"
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "on-click": "kitty --class=Wiremix -e wiremix",
+    "on-click-right": "pamixer -t",
+    "tooltip-format": "Playing at {volume}%",
+    "scroll-step": 5,
+    "format-muted": "",
+    "format-icons": {
+      "default": ["", "", ""]
+    },
+        "tray": {
+        "icon-size": 32,
+        "spacing": 32
+    },
+  },
+  "custom/pacman": {
+      "format": "{}  ",
+      "return-type": "json",
+      "interval": 3600,
+      "tooltip": true,
+      "on-click": "pkill -SIGRTMIN+8 waybar",
+      "signal": 8,
+      "exec": "~/.dotfiles/scripts/updates.sh",
+  },
+}

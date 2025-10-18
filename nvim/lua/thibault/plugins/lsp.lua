@@ -65,41 +65,18 @@ return {
 		-- LSP Capabilities and Server Setup
 		------------------------------------------------------------
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
-		local lspconfig = require("lspconfig")
 
-		-- Typescript / JavaScript
-		lspconfig.ts_ls.setup({
+		vim.lsp.config("*", {
 			capabilities = capabilities,
 		})
 
-		-- EsLint
-		lspconfig.eslint.setup({
-			capabilities = capabilities,
-		})
-
-		-- HTML
-		lspconfig.html.setup({
-			capabilities = capabilities,
-		})
-
-		-- CSS
-		lspconfig.cssls.setup({
-			capabilities = capabilities,
-		})
-
-		-- Java (jdtls)
-		lspconfig.jdtls.setup({
-			capabilities = capabilities,
-		})
-
-		-- C/C++ (clangd)
-		lspconfig.clangd.setup({
-			capabilities = capabilities,
-		})
-
-		-- Lua
-		lspconfig.lua_ls.setup({
-			capabilities = capabilities,
+		vim.lsp.config("ts_ls", {})
+		vim.lsp.config("eslint", {})
+		vim.lsp.config("html", {})
+		vim.lsp.config("cssls", {})
+		vim.lsp.config("jdtls", {})
+		vim.lsp.config("clangd", {})
+		vim.lsp.config("lua_ls", {
 			settings = {
 				Lua = {
 					diagnostics = {
@@ -107,6 +84,16 @@ return {
 					},
 				},
 			},
+		})
+
+		vim.lsp.enable({
+			"ts_ls",
+			"eslint",
+			"html",
+			"cssls",
+			"jdtls",
+			"clangd",
+			"lua_ls",
 		})
 
 		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
