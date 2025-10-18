@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Keybindings
+Comment=Show keybindings
+Exec=/home/thibault/.dotfiles/scripts/keybindings.sh
+Icon=keyboard
+Terminal=false
+Type=Application
+Categories=Utility
