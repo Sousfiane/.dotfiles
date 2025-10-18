@@ -1,0 +1,2 @@
+$DOTFILES/wofi/config.jsonc=$HOME/.config/wofi/config.jsonc
+$DOTFILES/wofi/style.css=$HOME/.config/wofi/style.css
