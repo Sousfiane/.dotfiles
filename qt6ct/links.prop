@@ -1,2 +1,2 @@
 $DOTFILES/qt6ct/qt6ct.conf=$HOME/.config/qt6ct/qt6ct.conf
-$DOTFILES/qt6ct/qt6=$HOME/.config/qt6ct/qt6
+$DOTFILES/qt6ct/colors=$HOME/.config/qt6ct/colors
