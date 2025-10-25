@@ -7,13 +7,12 @@ return {
 	},
 	opts = {
 		extensions = {
-			["ui-select"] = {
-				require("telescope.themes").get_dropdown({}),
-			},
+			["ui-select"] = {},
 		},
 	},
 	config = function(_, opts)
 		local telescope = require("telescope")
+		opts.extensions["ui-select"] = require("telescope.themes").get_dropdown({})
 		telescope.setup(opts)
 		telescope.load_extension("ui-select")
 	end,
