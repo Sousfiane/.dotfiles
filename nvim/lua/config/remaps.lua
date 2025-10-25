@@ -48,11 +48,13 @@ map("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make curr
 -- Diagnostics
 -- =========================
 map("n", "<leader>dn", function()
-	vim.diagnostic.goto_next({ float = true })
+	vim.diagnostic.jump({ count = 1, float = true })
 end, { desc = "Go to next diagnostic" })
+
 map("n", "<leader>dp", function()
-	vim.diagnostic.goto_prev({ float = true })
+	vim.diagnostic.jump({ count = -1, float = true })
 end, { desc = "Go to previous diagnostic" })
+
 map("n", "<leader>dl", function()
 	local ok, telescope = pcall(require, "telescope.builtin")
 	if ok then
@@ -66,36 +68,43 @@ end, { desc = "Show buffer diagnostics with Telescope" })
 map("n", "K", function()
 	vim.lsp.buf.hover()
 end, { desc = "Hover documentation" })
+
 map("n", "<leader>ca", function()
 	vim.lsp.buf.code_action()
 end, { desc = "Code action" })
+
 map("n", "<leader>rn", function()
 	vim.lsp.buf.rename()
 end, { desc = "Rename symbol" })
+
 map("n", "<leader>gd", function()
 	local ok, telescope = pcall(require, "telescope.builtin")
 	if ok then
 		telescope.lsp_definitions()
 	end
 end, { desc = "Go to definition" })
+
 map("n", "<leader>gr", function()
 	local ok, telescope = pcall(require, "telescope.builtin")
 	if ok then
 		telescope.lsp_references()
 	end
 end, { desc = "Show references" })
+
 map("n", "<leader>gi", function()
 	local ok, telescope = pcall(require, "telescope.builtin")
 	if ok then
 		telescope.lsp_implementations()
 	end
 end, { desc = "Go to implementations" })
+
 map("n", "<leader>ds", function()
 	local ok, telescope = pcall(require, "telescope.builtin")
 	if ok then
 		telescope.lsp_document_symbols()
 	end
 end, { desc = "Document symbols" })
+
 map("n", "<leader>ws", function()
 	local ok, telescope = pcall(require, "telescope.builtin")
 	if ok then
