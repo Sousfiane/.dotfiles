@@ -15,8 +15,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	spec = "thibault.plugins",
+	spec = "plugins",
 	change_detection = { notify = false },
+	install = { colorscheme = { "rose-pine" } },
 	ui = {
 		border = "rounded",
 	},
