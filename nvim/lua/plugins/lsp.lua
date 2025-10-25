@@ -1,19 +1,12 @@
 return {
-	"mason-org/mason-lspconfig.nvim",
-	opts = {
-		ensure_installed = {
-			"lua_ls",
-			"ts_ls",
-			"html",
-			"cssls",
-			"clangd",
-			"eslint",
-		},
-	},
+	"neovim/nvim-lspconfig",
 	dependencies = {
-		"neovim/nvim-lspconfig",
 		"hrsh7th/cmp-nvim-lsp",
 		{ "mason-org/mason.nvim", opts = {} },
+		{
+			"mason-org/mason-lspconfig.nvim",
+			opts = { ensure_installed = { "lua_ls", "ts_ls", "html", "cssls", "clangd", "eslint" } },
+		},
 	},
 	config = function()
 		vim.lsp.config("*", {
