@@ -18,7 +18,5 @@ require("lazy").setup({
 	spec = "plugins",
 	change_detection = { notify = false },
 	install = { colorscheme = { "rose-pine" } },
-	ui = {
-		border = "rounded",
-	},
+	ui = { border = "rounded" },
 })
