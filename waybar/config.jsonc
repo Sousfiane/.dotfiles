@@ -81,7 +81,7 @@
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "kitty --class=Wiremix -e wiremix",
+    "on-click": "xdg-terminal-exec --app-id=com.omarchy.Wiremix -e wiremix",
     "on-click-right": "pamixer -t",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,

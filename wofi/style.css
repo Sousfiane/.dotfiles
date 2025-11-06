@@ -1,13 +1,12 @@
 * {
     background: none;
     font-family: JetbrainsMono Nerd Font;
-    border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
 }
 
 window {
-    margin: 0px;
+    margin: 1px;
     background-color: rgba(25, 23, 36, .9999);
 
 }
