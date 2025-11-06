@@ -3,7 +3,7 @@ default-timeout=5000
 width=420
 outer-margin=20
 padding=10,15
-border-size=1
+border-size=2
 max-icon-size=32
 font=JetBrainsMono NF 14px
 

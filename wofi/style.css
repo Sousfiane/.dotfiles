@@ -6,6 +6,7 @@
 }
 
 window {
+    border: 2px solid #c4a7e7;
     margin: 1px;
     background-color: rgba(25, 23, 36, .9999);
 
@@ -15,7 +16,7 @@ window {
     margin: 5px;
     padding: 10px;
     border: none;
-    background-color: #26233a;
+    background-color: #191724;
 }
 
 #inner-box {
