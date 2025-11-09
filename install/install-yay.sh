@@ -20,14 +20,14 @@ info "Installing prerequisites (git, base-devel)..."
 sudo pacman -S --needed --noconfirm git base-devel
 success "Base packages installed"
 
-info "Cloning yay AUR repo to /tmp..."
-tmpdir=$(mktemp -d /tmp/yay-build-XXXX)
-git clone https://aur.archlinux.org/yay.git "$tmpdir/yay"
+info "Cloning yay AUR repo"
+git clone https://aur.archlinux.org/yay.git
 
 info "Building yay from source..."
-makepkg -si --noconfirm -C -p "$tmpdir/yay/PKGBUILD"
+cd yay
+makepkg -si
 
 success "yay installed successfully"
 
-rm -rf "$tmpdir"
-
+cd ..
+rm -rf yay
