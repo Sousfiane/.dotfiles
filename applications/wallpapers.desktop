@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Wallpapers
 Comment=Change the current wallpaper
-Exec=sh -c "$HOME/.dotfiles/scripts/wallpapers.sh"
+Exec=wallpapers
 Icon=image
 Terminal=false
 Type=Application
