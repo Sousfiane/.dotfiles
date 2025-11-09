@@ -1,0 +1,5 @@
+$DOTFILES/bin/app-launcher.sh=$HOME/.local/bin/app-launcher
+$DOTFILES/bin/wallpapers.sh=$HOME/.local/bin/wallpapers
+$DOTFILES/bin/tmux-sessionizer.sh=$HOME/.local/bin/tmux-sessionizer
+$DOTFILES/bin/keybindings.sh=$HOME/.local/bin/keybindings
+$DOTFILES/bin/console-mode.sh=$HOME/.local/bin/console-mode
