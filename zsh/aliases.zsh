@@ -34,10 +34,6 @@ alias balanced='sudo cpupower frequency-set --governor schedutils'
 
 alias aliases='nvim $DOTFILES/zsh/aliases.zsh'
 
-alias ts='bash $DOTFILES/scripts/tmux-sessionizer.sh'
-alias ta='tmux a'
-alias tls='tmux ls'
-
 alias config='bash $DOTFILES/scripts/tmux-sessionizer.sh $HOME/.config'
 
 alias neofetch='fastfetch --config neofetch.jsonc'
