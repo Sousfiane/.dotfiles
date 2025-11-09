@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Keybindings
 Comment=Show keybindings
-Exec=sh -c "$HOME/.dotfiles/scripts/keybindings.sh"
+Exec=keybindings
 Icon=keyboard
 Terminal=false
 Type=Application
