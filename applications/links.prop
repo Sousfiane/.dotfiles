@@ -1,2 +1,3 @@
 $DOTFILES/applications/wallpapers.desktop=$HOME/.local/share/applications/wallpapers.desktop
 $DOTFILES/applications/keybindings.desktop=$HOME/.local/share/applications/keybindings.desktop
+$DOTFILES/applications/powermenu.desktop=$HOME/.local/share/applications/powermenu.desktop
