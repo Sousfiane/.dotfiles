@@ -3,3 +3,4 @@ $DOTFILES/bin/wallpapers.sh=$HOME/.local/bin/wallpapers
 $DOTFILES/bin/tmux-sessionizer.sh=$HOME/.local/bin/tmux-sessionizer
 $DOTFILES/bin/keybindings.sh=$HOME/.local/bin/keybindings
 $DOTFILES/bin/console-mode.sh=$HOME/.local/bin/console-mode
+$DOTFILES/bin/powermenu.sh=$HOME/.local/bin/powermenu
