@@ -30,12 +30,7 @@ map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 -- =========================
 -- Commands
 -- =========================
-map(
-	"n",
-	"<C-n>",
-	"<cmd>silent !tmux neww $DOTFILES/scripts/tmux-sessionizer.sh<CR>",
-	{ desc = "Open tmux-sessionizer" }
-)
+map("n", "<C-n>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", { desc = "Open tmux-sessionizer" })
 map(
 	"n",
 	"<leader>s",
