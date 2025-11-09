@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -o pipefail
+set -euo pipefail
 
 # Ensure DOTFILES is set
 if [ -z "${DOTFILES:-}" ]; then
@@ -46,5 +46,3 @@ if [ -z specific_list ]; then
 else
     yay -S --noconfirm --needed - < "$specific_list"
 fi
-
-
