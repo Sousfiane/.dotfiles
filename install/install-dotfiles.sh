@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -o pipefail
+set -euo pipefail
 
 # Ensure DOTFILES is set
 if [ -z "${DOTFILES:-}" ]; then
