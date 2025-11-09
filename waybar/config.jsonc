@@ -21,11 +21,6 @@
       "active": ""
     },
   },
-  "cpu": {
-    "interval": 5,
-    "format": "󰍛",
-    "on-click": "kitty -e btop"
-  },
   "clock": {
     "format": "{:L%A %H:%M}",
     "format-alt": "{:L%d %B %Y}",
@@ -90,6 +85,6 @@
       "tooltip": true,
       "on-click": "pkill -SIGRTMIN+8 waybar",
       "signal": 8,
-      "exec": "~/.dotfiles/scripts/updates.sh",
+      "exec": "~/.dotfiles/waybar/custom/pacman.sh",
   },
 }
