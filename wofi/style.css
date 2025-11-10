@@ -1,49 +1,51 @@
 * {
-    background: none;
+    all: unset;
+}
+
+* {
     font-family: JetbrainsMono Nerd Font;
     font-size: 14px;
     font-weight: 600;
 }
 
 window {
-    border: 2px solid #c4a7e7;
+    border: 2px solid rgba(196, 167, 231, 1);
     margin: 1px;
-    background-color: rgba(25, 23, 36, .9999);
+    background-color: rgba(25, 23, 36, 0.8);
 
+}
+
+image {
+    -gtk-icon-transform: scale(0.8);
 }
 
 #input {
-    margin: 5px;
+    margin-top: 10px;
     padding: 10px;
-    border: none;
-    background-color: #191724;
+}
+
+#input>image {
+    -gtk-icon-transform: scale(0);
 }
 
 #inner-box {
-    margin: 5px;
-    border: none;
-    background-color: #191724;
+    margin-left: 15px;
 }
 
 #outer-box {
     margin: 5px;
-    border: none;
     border-radius: 10px;
-    background-color: #191724;
-}
-
-#scroll {
-    margin: 0px;
-    border: none;
 }
 
 #text {
     margin: 5px;
-    border: none;
-    color: #e0def4;
+    color: rgba(224, 222, 244, 1);
 }
 
-#selected * {
-    outline: none;
-    color: #c4a7e7;
+#entry {
+    margin: 5px;
+}
+
+#selected label {
+    color: rgba(196, 167, 231, 1);
 }
