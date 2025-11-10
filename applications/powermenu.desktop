@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Powermenu
-Comment=A wofi powermenu
-Exec=powermenu
-Icon=system-shutdown
-Terminal=false
-Type=Application
-Categories=Utility;
-

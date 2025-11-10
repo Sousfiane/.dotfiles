@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Wallpapers
-Comment=Change the current wallpaper
-Exec=wallpapers
-Icon=image
-Terminal=false
-Type=Application
-Categories=Utility;
-
