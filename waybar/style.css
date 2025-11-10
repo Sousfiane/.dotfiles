@@ -1,11 +1,11 @@
-@import "colors.css";
+* {
+    all: unset
+}
 
 * {
-    min-height: 0;
     font-family: JetBrainsMono Nerd Font;
     font-weight: 600;
     font-size: 14px;
-    background-color: transparent;
 }
 
 .modules-left {
@@ -17,9 +17,9 @@
 }
 
 window#waybar {
-    background-color: @base;
-    color: @text;
-    border-bottom: 1px solid @overlay;
+    background-color: rgba(25, 23, 36, 0.9);
+    color: rgba(224, 222, 244, 1);
+    border: 1px solid rgba(38, 35, 58, 0.9);
 }
 
 #workspaces button {
@@ -39,14 +39,16 @@ window#waybar {
 #network,
 #bluetooth,
 #pulseaudio,
-#custom-pacman {
+#custom-pacman,
+#custom-menu {
     min-width: 12px;
     margin: 0 7.5px;
 }
 
 tooltip {
     padding: 2px;
-    background-color: @overlay;
+    background-color: rgba(25, 23, 36, 0.9);
+    border: 1px solid rgba(38, 35, 58, 0.9);
     border-radius: 8px;
 }
 
@@ -55,13 +57,9 @@ tooltip {
 }
 
 #battery.warning {
-    color: @gold;
+    color: rgba(246, 193, 119, 1);
 }
 
 #battery.critical {
-    color: @love;
-}
-
-.hidden {
-    opacity: 0;
+    color: rgba(235, 111, 146, 1);
 }
