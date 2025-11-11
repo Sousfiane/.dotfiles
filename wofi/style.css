@@ -15,17 +15,18 @@ window {
 
 }
 
-image {
-    -gtk-icon-transform: scale(0.8);
-}
 
 #input {
     margin-top: 10px;
     padding: 10px;
 }
 
-#input>image {
+#input image {
     -gtk-icon-transform: scale(0);
+}
+
+#entry image {
+    -gtk-icon-transform: scale(0.8);
 }
 
 #inner-box {
