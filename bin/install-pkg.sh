@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 fzf_args=(
   --multi
@@ -12,10 +12,7 @@ fzf_args=(
   --color 'pointer:green,marker:green'
 )
 
-# yay -Slq already lists repo + AUR when using yay as the backend
-pkg_list=$(yay -Slq 2>/dev/null | sort -u)
-
-pkg_names=$(echo "$pkg_list" | fzf "${fzf_args[@]}")
+pkg_names=$(yay -Slq | fzf "${fzf_args[@]}")
 
 if [[ -n "$pkg_names" ]]; then
   echo "$pkg_names" | tr '\n' ' ' | xargs yay -S --noconfirm

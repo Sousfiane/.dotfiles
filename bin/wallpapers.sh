@@ -1,7 +1,11 @@
-#!/bin/bash
+#!/bin/env bash
 
 wallpapers_dir="$HOME/.wallpapers"
 
 wallpaper=$(ls $wallpapers_dir| sed '/links.prop/d' | wofi -S dmenu -p Wallpapers)
 
-[ -z $wallpaper ] || (echo "$wallpapers_dir/$wallpaper" > $HOME/.swaybg && pkill swaybg && uwsm-app -- swaybg -i "$(cat ~/.swaybg)" &)
+[[ -z "$wallpaper" ]] && exit 0
+
+echo "$wallpapers_dir/$wallpaper" > $HOME/.swaybg
+pkill swaybg
+setsid uwsm-app -- swaybg -i "$(cat ~/.swaybg)" >/dev/null 2>&1 &
