@@ -6,4 +6,4 @@ $DOTFILES/bin/console-mode.sh=$HOME/.local/bin/console-mode
 $DOTFILES/bin/os-menu.sh=$HOME/.local/bin/os-menu
 $DOTFILES/bin/install-pkg.sh=$HOME/.local/bin/install-pkg
 $DOTFILES/bin/remove-pkg.sh=$HOME/.local/bin/remove-pkg
-$DOTFILES/bin/update-pkg.sh=$HOME/.local/bin/update-pkg-pkg
+$DOTFILES/bin/update-pkg.sh=$HOME/.local/bin/update-pkg
