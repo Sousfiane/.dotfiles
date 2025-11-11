@@ -8,11 +8,11 @@
   "modules-center": ["clock"],
   "modules-right": [
       "custom/pacman",
-    "bluetooth",
-    "network",
-    "pulseaudio",
-    "battery",
-    "custom/menu",
+      "pulseaudio",
+      "bluetooth",
+      "network",
+      "battery",
+      "custom/menu",
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -39,7 +39,8 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "spacing": 1,
-    "on-click": "networkmanager_dmenu"
+    "on-click": "networkmanager_dmenu",
+    "on-click-right": "uwsm-app -- nm-connection-editor"
   },
   "battery": {
     "format": "{icon}",
@@ -66,8 +67,7 @@
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "xdg-terminal-exec --app-id=FloatingTerm -e wiremix",
-    "on-click-right": "pamixer -t",
+    "on-click": "uwsm-app -- xdg-terminal-exec --app-id=FloatingTerm -e wiremix",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": "",
@@ -80,16 +80,17 @@
     },
   },
   "custom/pacman": {
-      "format": "{}  ",
+      "format": "{} ",
       "return-type": "json",
       "interval": 3600,
       "tooltip": true,
       "on-click": "pkill -SIGRTMIN+8 waybar",
+      "on-click-right": "os-menu update",
       "signal": 8,
       "exec": "~/.dotfiles/waybar/custom/pacman.sh",
   },
   "custom/menu": {
-      "format": " 󱗼",
+      "format": "󱗼",
       "tooltip": false,
       "on-click": "os-menu",
   },
