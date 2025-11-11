@@ -1,11 +1,14 @@
 * {
-    all: unset
-}
-
-* {
     font-family: JetBrainsMono Nerd Font;
     font-weight: 600;
     font-size: 14px;
+}
+
+tooltip {
+    padding: 2px;
+    background-color: rgba(25, 23, 36, 0.9);
+    border: 1px solid rgba(38, 35, 58, 0.9);
+    border-radius: 8px;
 }
 
 .modules-left {
@@ -19,7 +22,7 @@
 window#waybar {
     background-color: rgba(25, 23, 36, 0.9);
     color: rgba(224, 222, 244, 1);
-    border: 1px solid rgba(38, 35, 58, 0.9);
+    border-bottom: 1px solid rgba(38, 35, 58, 0.9);
 }
 
 #workspaces button {
@@ -41,16 +44,15 @@ window#waybar {
 #pulseaudio,
 #custom-pacman,
 #custom-menu {
-    min-width: 12px;
-    margin: 0 7.5px;
+    min-width: 14px;
+    margin: 0 8px;
 }
 
-tooltip {
-    padding: 2px;
-    background-color: rgba(25, 23, 36, 0.9);
-    border: 1px solid rgba(38, 35, 58, 0.9);
-    border-radius: 8px;
+/*Fix the uncentered bluetooth icon*/
+#bluetooth {
+    margin-right: 2px;
 }
+
 
 #clock {
     margin-left: 8.75px;
