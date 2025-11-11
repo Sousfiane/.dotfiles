@@ -39,7 +39,7 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "spacing": 1,
-    "on-click": "networkmanager_dmenu",
+    "on-click": "uwsm-app -- xdg-terminal-exec --app-id=FloatingTerm -e impala",
     "on-click-right": "uwsm-app -- nm-connection-editor"
   },
   "battery": {
