@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 
+
+if [[ -f "$HOME/.env.sh" ]]; then
+    source "$HOME/.env.sh"
+fi
+
 BACK_TO_EXIT=false
 
-HYPRLAND_CONF_DIR=$HOME/.dotfiles/hypr/config
-NEOVIM_CONF_DIR=$HOME/.dotfiles/nvim/lua/config
-NEOVIM_PLUG_DIR=$HOME/.dotfiles/nvim/lua/plugins
-TMUX_CONF=$HOME/.dotfiles/tmux/tmux.conf
-ZSH_CONF_DIR=$HOME/.dotfiles/zsh
+NEOVIM_CONF_DIR="$DOTFILES/nvim/lua/config"
+NEOVIM_PLUG_DIR="$DOTFILES/nvim/lua/plugins"
+HYPRLAND_CONF_DIR="$DOTFILES/hypr/config"
+ZSH_CONF_DIR="$DOTFILES/zsh"
+TMUX_CONF="$DOTFILES/tmux/tmux.conf"
 
-# Prevent from opeing two instances of wofi
+# Prevent from opening two instances of wofi
 if pgrep -x wofi >/dev/null; then
     pkill -x wofi
 fi
@@ -30,24 +35,27 @@ menu() {
     local prompt="$1"
     local options="$2"
     local height="${3:-}"
+    local width="${4:-}"
 
     local args=("-S" "dmenu" "-p" "$prompt")
 
     [[ -n "$height" ]] && args+=("-H" "$height")
+    [[ -n "$width" ]] && args+=("-W" "$width")
 
     echo -e "$options" | wofi "${args[@]}"
 }
 
 terminal(){
-    uwsm-app -- xdg-terminal-exec -e $1
+    exec setsid uwsm-app -- xdg-terminal-exec -e "$@"
 }
 
 floating_terminal(){
-    uwsm-app -- xdg-terminal-exec --app-id=FloatingTerm -e $1
+    exec setsid uwsm-app -- xdg-terminal-exec --app-id=FloatingTerm -e "$@"
 }
 
 open_in_vim(){
-    terminal "nvim $1"
+    notify-send "Editing config file" "$1"
+    terminal nvim $1
 }
 
 get_hostname_config() {
@@ -57,7 +65,6 @@ get_hostname_config() {
     eval echo "$path"
 }
 
-
 go_to_menu() {
     case "${1,,}" in
         *apps*) app-launcher;;
@@ -66,6 +73,7 @@ go_to_menu() {
         *whichkey*) keybindings;;
         *wallpapers*) wallpapers;;
         *utils*) show_utils_menu;;
+        *dotfiles*) floating_terminal lazygit -p $DOTFILES;;
         *settings*) show_settings_menu;;
         *install*) floating_terminal install-pkg;;
         *remove*) floating_terminal remove-pkg;;
@@ -75,7 +83,7 @@ go_to_menu() {
 }
 
 show_main_menu() {
-    go_to_menu "$(menu "Welcome" "󰀻  Apps\n  Utils\n󰉉  Install\n󰭌  Remove\n  Update\n  Settings\n  System" "300")"
+    go_to_menu "$(menu "Welcome" "󰀻  Apps\n  Utils\n  Dotfiles\n󰉉  Install\n󰭌  Remove\n  Update\n  Settings\n  System" "340")"
 }
 
 show_utils_menu() {
@@ -98,7 +106,7 @@ show_screenshot_menu() {
 }
 
 show_settings_menu(){
-    case $(menu "Settings" "  Sound\n󰛳  Network\n  Hyprland\n  Neovim\n  Zsh\n  Tmux") in
+    case $(menu "Settings" "  Sound\n󰛳  Network\n  Hyprland\n  Neovim\n  Zsh\n  Tmux" "260") in
         *Sound*) floating_terminal wiremix;;
         *Network*) show_network_menu;;
         *Hyprland*) show_hyprland_menu;;
@@ -153,7 +161,7 @@ show_neovim_menu(){
 }
 
 show_system_menu(){
-      case $(menu "System" "  Lock\n󰤄  Suspend\n󰜉  Restart\n󰐥  Shutdown" "180") in
+      case $(menu "System" "  Lock\n󰤄  Suspend\n󰜉  Restart\n󰐥  Shutdown" "180" "300") in
         *Lock*) uwsm-app hyprlock ;;
         *Logout*) uwsm stop ;;
         *Suspend*) systemctl suspend;;
