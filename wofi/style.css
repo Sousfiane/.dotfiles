@@ -15,6 +15,10 @@ window {
 
 }
 
+#outer-box {
+    margin: 2px;
+}
+
 #input {
     margin: 25px 5px 10px;
 }
