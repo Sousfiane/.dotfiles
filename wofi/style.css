@@ -11,40 +11,28 @@
 window {
     border: 2px solid rgba(196, 167, 231, 0.9);
     border-radius: 6;
-    margin: 1px;
     background-color: rgba(25, 23, 36, 0.9);
 
 }
 
 #input {
-    margin-top: 10px;
-    padding: 10px;
+    margin: 25px 5px 10px;
 }
 
 #input image {
     -gtk-icon-transform: scale(0);
 }
 
-#entry image {
-    -gtk-icon-transform: scale(0.8);
-}
-
-#inner-box {
-    margin-left: 15px;
-}
-
-#outer-box {
-    margin: 5px;
-    border-radius: 10px;
-}
-
 #text {
-    margin: 5px;
     color: rgba(224, 222, 244, 1);
 }
 
 #entry {
-    margin: 5px;
+    margin: 10px 25px;
+}
+
+#entry image {
+    margin-right: 10px;
 }
 
 #selected label {
