@@ -72,6 +72,7 @@ go_to_menu() {
         *console*) console-mode;;
         *whichkey*) keybindings;;
         *wallpapers*) wallpapers;;
+        *clipboard*) clipboard;;
         *utils*) show_utils_menu;;
         *dotfiles*) floating_terminal lazygit -p $DOTFILES;;
         *settings*) show_settings_menu;;
@@ -87,9 +88,10 @@ show_main_menu() {
 }
 
 show_utils_menu() {
-    case $(menu "Screenshot" "  Screenshot\n  Whichkey\n  Wallpapers\n  Console Mode" "180") in
+    case $(menu "Screenshot" "  Screenshot\n  Whichkey\n  Clipboard\n  Wallpapers\n  Console Mode" "220") in
         *Screenshot*) show_screenshot_menu;;
         *Whichkey*) keybindings;;
+        *Clipboard*) clipboard;;
         *Console*) console-mode;;
         *Wallpapers*) wallpapers;;
         *) back_to show_main_menu;;
@@ -113,7 +115,7 @@ show_settings_menu(){
         *Neovim*) show_neovim_menu;;
         *Zsh*) show_zsh_menu;;
         *Tmux*) open_in_vim $TMUX_CONF;;
-        *) back_to show_utils_menu;;
+        *) back_to show_main_menu;;
     esac
 }
 
