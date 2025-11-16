@@ -225,5 +225,5 @@ build_keymap_cache
   parse_keycodes |
   parse_bindings |
   prioritize_entries |
- wofi -S dmenu -p 'Keybindings' -W 600 -H "$menu_height"
+ wofi -S dmenu -p 'Keybindings' -W 600 -H "$menu_height"--cache-file=/dev/null 
 

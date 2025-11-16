@@ -2,7 +2,7 @@
 
 wallpapers_dir="$HOME/.wallpapers"
 
-wallpaper=$(ls $wallpapers_dir| sed '/links.prop/d' | wofi -S dmenu -p Wallpapers)
+wallpaper=$(ls $wallpapers_dir| sed '/links.prop/d' | wofi -S dmenu -p Wallpapers --cache-file=/dev/null)
 
 [[ -z "$wallpaper" ]] && exit 0
 
