@@ -30,7 +30,7 @@ match(\$0, /^([0-9]+)\s\[\[\sbinary.*(jpg|jpeg|png|bmp|webp|tif|gif)/, grp) {
 EOF
 
 # Get the choice returned by `wofi`, exiting early if nothing was chosen
-choice=$(gawk <<< "$list" "$prog" | wofi -I --dmenu --prompt "Clipboard" -W 700 -Dimage_size=100 -d -k /dev/null)
+choice=$(gawk <<< "$list" "$prog" | wofi -I --dmenu --prompt "Clipboard" -W 700 -Dimage_size=100 --cache-file=/dev/null)
 if [ "$choice" = "" ]; then
     exit 1
 fi

@@ -37,12 +37,12 @@ menu() {
     local height="${3:-}"
     local width="${4:-}"
 
-    local args=("-S" "dmenu" "-p" "$prompt")
+    local args=("-S" "dmenu" "-p" "$prompt" "--cache-file=/dev/null")
 
     [[ -n "$height" ]] && args+=("-H" "$height")
     [[ -n "$width" ]] && args+=("-W" "$width")
 
-    echo -e "$options" | wofi "${args[@]}"
+    echo -e "$options" | wofi "${args[@]}" 
 }
 
 terminal(){
