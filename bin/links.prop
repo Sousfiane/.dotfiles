@@ -8,3 +8,4 @@ $DOTFILES/bin/install-pkg.sh=$HOME/.local/bin/install-pkg
 $DOTFILES/bin/remove-pkg.sh=$HOME/.local/bin/remove-pkg
 $DOTFILES/bin/update-pkg.sh=$HOME/.local/bin/update-pkg
 $DOTFILES/bin/clipboard.sh=$HOME/.local/bin/clipboard
+$DOTFILES/bin/kb-backlight.sh=$HOME/.local/bin/kb-backlight
