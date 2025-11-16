@@ -1,0 +1,2 @@
+$DOTFILES/swayosd/config.toml=$HOME/.config/swayosd/config.toml
+$DOTFILES/swayosd/style.css=$HOME/.config/swayosd/style.css
