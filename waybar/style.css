@@ -47,6 +47,7 @@ window#waybar {
 #bluetooth,
 #pulseaudio,
 #custom-pacman,
+#custom-dotfiles,
 #custom-menu {
     min-width: 14px;
     margin: 0 8px;

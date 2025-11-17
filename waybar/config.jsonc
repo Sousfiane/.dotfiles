@@ -7,6 +7,7 @@
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
   "modules-right": [
+      "custom/dotfiles",
       "custom/pacman",
       "pulseaudio",
       "bluetooth",
@@ -88,6 +89,16 @@
       "on-click-right": "os-menu update",
       "signal": 8,
       "exec": "~/.dotfiles/waybar/custom/pacman.sh",
+  },
+  "custom/dotfiles": {
+      "format": "{} ",
+      "return-type": "json",
+      "interval": 10,
+      "tooltip": true,
+      "on-click": "pkill -SIGRTMIN+9 waybar",
+      "on-click-right": "os-menu dotfiles",
+      "signal": 9,
+      "exec": "~/.dotfiles/waybar/custom/dotfiles.sh",
   },
   "custom/menu": {
       "format": "󱗼",
