@@ -16,7 +16,7 @@ else
 fi
 
 updates=$(echo "$updates_raw" | awk '{print $1}')
-pkg_count=$(echo "$updates" | wc -l)
+pkg_count=$(echo "$updates" | grep -c .)
 
 if [[ -z "$updates" ]]; then
     pkg_list="System up to date"
