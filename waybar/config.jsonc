@@ -91,7 +91,7 @@
       "exec": "~/.dotfiles/waybar/custom/pacman.sh",
   },
   "custom/dotfiles": {
-      "format": "{} ",
+      "format": "{} ",
       "return-type": "json",
       "interval": 10,
       "tooltip": true,
