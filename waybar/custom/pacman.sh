@@ -5,7 +5,7 @@ CACHE_FILE="$HOME/.cache/waybar-pkg-cache"
 updates_raw=$(checkupdates 2>/dev/null)
 status=$?
 
-if [[ $status -ne 0 ]]; then
+if [[ $status -eq 1 ]]; then
     if [[ -f "$CACHE_FILE" ]]; then
         updates_raw=$(<"$CACHE_FILE")
     else
