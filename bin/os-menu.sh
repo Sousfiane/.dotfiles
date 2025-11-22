@@ -73,6 +73,7 @@ go_to_menu() {
         *whichkey*) keybindings;;
         *wallpapers*) wallpapers;;
         *clipboard*) clipboard;;
+        *power-profiles*) power-profiles;;
         *utils*) show_utils_menu;;
         *dotfiles*) floating_terminal lazygit -p $DOTFILES;;
         *settings*) show_settings_menu;;
@@ -108,9 +109,10 @@ show_screenshot_menu() {
 }
 
 show_settings_menu(){
-    case $(menu "Settings" "  Sound\n󰛳  Network\n  Hyprland\n  Neovim\n  Zsh\n  Tmux" "260") in
+    case $(menu "Settings" "  Sound\n󰛳  Network\n󰂄  Power profiles\n  Hyprland\n  Neovim\n  Zsh\n  Tmux" "300") in
         *Sound*) floating_terminal wiremix;;
         *Network*) show_network_menu;;
+        *Power*) power-profiles;;
         *Hyprland*) show_hyprland_menu;;
         *Neovim*) show_neovim_menu;;
         *Zsh*) show_zsh_menu;;
