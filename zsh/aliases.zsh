@@ -1,8 +1,3 @@
-alias ijavac='javac -cp ~/dev/devS1/program.jar:.'
-alias ijava='java -cp ~/dev/devS1/program.jar:.'
-alias javacfx='javac --module-path /home/thibault/.java/javafx-sdk-17.0.11/lib --add-modules=javafx.controls,javafx.fxml'
-alias javafx='java --module-path /home/thibault/.java/javafx-sdk-17.0.11/lib --add-modules=javafx.controls,javafx.fxml'
-
 alias shutdown='shutdown now'
 
 alias ls='ls --color'
@@ -10,19 +5,8 @@ alias cp="cp -i"
 alias df='df -h'
 alias free='free -m'
 
-alias y='yay'
-alias ys='yay -S'
-alias yr='yay -R'
-alias yc='yay -Sc'
-
 alias vim='nvim'
 alias svim='sudo -E nvim'
-
-alias gadd='git add'
-alias gcom='git commit -m'
-alias gpush='git push -u'
-alias gpull='git pull'
-alias grm='git rm'
 
 alias c='clear'
 alias s='source ~/.zshrc'
@@ -34,8 +18,6 @@ alias balanced='sudo cpupower frequency-set --governor schedutils'
 
 alias aliases='nvim $DOTFILES/zsh/aliases.zsh'
 
-alias config='bash $DOTFILES/scripts/tmux-sessionizer.sh $HOME/.config'
-
 alias neofetch='fastfetch --config neofetch.jsonc'
 
 alias gcc="gcc -Wall -Wextra -Werror"
@@ -45,23 +27,8 @@ take() {
     cd $1
 }
 
-finder() {
-    if [[ $(pwd) == $HOME ]]; then
-        selected=$(fd -L -t f --follow --search-path $HOME --search-path $DOTFILES | fzf)
-    else
-        selected=$(fd -L -t f | fzf)
-    fi
-
-    [[ -z $selected ]] || nvim $selected
-}
-
 note() {
     echo "date: $(date)" >> $HOME/drafts.txt
     echo "$@" >> $HOME/drafts.txt
     echo "" >> $HOME/drafts.txt
-}
-
-nextclound(){
-    [[ $1 == "-m" ]] && rclone mount nextcloud: ~/Nextcloud --ignore-existing --vfs-cache-mode full --daemon 
-    [[ $1 == "-u" ]] && fusermount -u ~/Nextcloud
 }
