@@ -11,4 +11,5 @@ $DOTFILES/bin/clipboard.sh=$HOME/.local/bin/clipboard
 $DOTFILES/bin/kb-backlight.sh=$HOME/.local/bin/kb-backlight
 $DOTFILES/bin/popup.sh=$HOME/.local/bin/popup
 $DOTFILES/bin/finder.sh=$HOME/.local/bin/finder
+$DOTFILES/bin/power-profiles.sh=$HOME/.local/bin/power-profiles
 $DOTFILES/bin/nvcat=$HOME/.local/bin/nvcat
