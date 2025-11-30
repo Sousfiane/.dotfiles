@@ -24,13 +24,11 @@ tooltip {
 }
 
 window#waybar {
-    background-color: rgba(25, 23, 36, 0.9);
+    background-color: rgba(25, 23, 36, 0.8);
     color: rgba(224, 222, 244, 1);
-    border-bottom: 1px solid rgba(38, 35, 58, 0.9);
 }
 
 #workspaces button {
-    all: initial;
     padding: 0 6px;
     margin: 0 1.5px;
     min-width: 9px;
