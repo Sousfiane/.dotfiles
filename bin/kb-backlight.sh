@@ -10,7 +10,7 @@ percent=$(printf "%.1f" "$(awk -v c="$current" -v m="$max" 'BEGIN{print (c/m)}')
 echo $percent
 
 if [[ "$percent" == "0.0" ]];then
-    swayosd-client --custom-message=" " --custom-icon=kb-backlight-symbolic
+    swayosd-client --custom-message=" " --custom-icon=kb-backlight-off-symbolic
 else
     swayosd-client --custom-progress="$percent" --custom-icon=kb-backlight-symbolic
 fi
