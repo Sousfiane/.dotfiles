@@ -3,9 +3,9 @@
 fzf_args=(
   --ansi
   --preview 'nvcat {1}'
-  --preview-label='alt-j/k: scroll, tab: multi-select'
+  --preview-label='alt-j/k: scroll'
   --preview-label-pos='bottom'
-  --preview-window 'right:45%:wrap'
+  --preview-window 'right:50%:wrap'
   --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
   --bind 'alt-k:preview-up,alt-j:preview-down'
   --color 'pointer:red,marker:red'
@@ -17,4 +17,6 @@ else
     selected=$(fd -L -t f | fzf "${fzf_args[@]}")
 fi
 
-[[ -z $selected ]] || nvim $selected
+[[ -z $selected ]] && exit 0
+
+nvim $selected
