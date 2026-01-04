@@ -3,7 +3,7 @@
 MONITOR="HDMI-A-1"
 RESOLUTION="3840x2160@60"
 POSITION="-3840x0"
-GAME_WORKSPACE="10"
+GAME_WORKSPACE="9"
 
 # Define your sinks
 AUDIO_SINK_NORMAL="alsa_output.usb-Yamaha_Corporation_Steinberg_UR22-00.analog-stereo"
