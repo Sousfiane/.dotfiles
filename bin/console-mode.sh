@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 MONITOR="HDMI-A-1"
-RESOLUTION="3840x2160@60"
+RESOLUTION="3840x2160@144"
 POSITION="-3840x0"
 GAME_WORKSPACE="9"
 
 # Define your sinks
 AUDIO_SINK_NORMAL="alsa_output.usb-Yamaha_Corporation_Steinberg_UR22-00.analog-stereo"
-AUDIO_SINK_TV="alsa_output.pci-0000_01_00.1.hdmi-stereo-extra1"
+AUDIO_SINK_TV="alsa_output.pci-0000_01_00.1.hdmi-stereo"
 
 # Check if monitor is active
 MONITOR_ACTIVE=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$MONITOR\") | .dpmsStatus")
@@ -26,7 +26,7 @@ else
     echo "Enabling game mode on $MONITOR..."
 
     # Turn on the TV
-    hyprctl keyword monitor "$MONITOR,$RESOLUTION,$POSITION,1"
+    hyprctl keyword monitor "$MONITOR,$RESOLUTION,$POSITION,1,vrr,1"
     sleep 2
 
     # Set as primary for Xwayland
