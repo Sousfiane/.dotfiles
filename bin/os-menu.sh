@@ -85,7 +85,7 @@ go_to_menu() {
 }
 
 show_main_menu() {
-    go_to_menu "$(menu "Welcome" "󰀻  Apps\n  Utils\n  Dotfiles\n󰉉  Install\n󰭌  Remove\n  Update\n  Settings\n  System" "340")"
+    go_to_menu "$(menu "Welcome" "󰀻  Apps\n  Utils\n  Dotfiles\n󰉉  Install\n󰭌  Remove\n  Update\n  Settings\n  System" "390")"
 }
 
 show_utils_menu() {
@@ -165,7 +165,7 @@ show_neovim_menu(){
 }
 
 show_system_menu(){
-      case $(menu "System" "  Lock\n󰤄  Suspend\n󰜉  Restart\n󰐥  Shutdown" "180" "300") in
+      case $(menu "System" "  Lock\n󰤄  Suspend\n󰜉  Restart\n󰐥  Shutdown" "230" "300") in
         *Lock*) uwsm-app hyprlock ;;
         *Logout*) uwsm stop ;;
         *Suspend*) systemctl suspend;;
