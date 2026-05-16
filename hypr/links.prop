@@ -1,3 +1,4 @@
-$DOTFILES/hypr/hyprland.conf=$HOME/.config/hypr/hyprland.conf
+$DOTFILES/hypr/config=$HOME/.config/hypr/config
+$DOTFILES/hypr/hyprland.lua=$HOME/.config/hypr/hyprland.lua
 $DOTFILES/hypr/hypridle.conf=$HOME/.config/hypr/hypridle.conf
 $DOTFILES/hypr/hyprlock.conf=$HOME/.config/hypr/hyprlock.conf
