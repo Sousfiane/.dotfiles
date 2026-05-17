@@ -155,17 +155,25 @@ hl.bind(
 	{ locked = true, repeating = true }
 )
 
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd(osdclient .. " --output-volume mute-toggle"), { locked = true })
+hl.bind(
+	"XF86AudioMute",
+	hl.dsp.exec_cmd(osdclient .. " --output-volume mute-toggle"),
+	{ locked = true, repeating = true }
+)
 
-hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd(osdclient .. " --input-volume mute-toggle"), { locked = true })
+hl.bind(
+	"XF86AudioMicMute",
+	hl.dsp.exec_cmd(osdclient .. " --input-volume mute-toggle"),
+	{ locked = true, repeating = true }
+)
 
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(osdclient .. " --brightness +5"), { locked = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(osdclient .. " --brightness +5"), { locked = true, repeating = true })
 
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(osdclient .. " --brightness -5"), { locked = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(osdclient .. " --brightness -5"), { locked = true, repeating = true })
 
-hl.bind("XF86KbdBrightnessUp", hl.dsp.exec_cmd("kb-backlight +26"), { locked = true })
+hl.bind("XF86KbdBrightnessUp", hl.dsp.exec_cmd("kb-backlight +26"), { locked = true, repeating = true })
 
-hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd("kb-backlight 26-"), { locked = true })
+hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd("kb-backlight 26-"), { locked = true, repeating = true })
 
 --------------------------------------------------
 -- 🎵 Media keys
