@@ -34,8 +34,8 @@ note() {
 }
 
 tv() {
-    [[ $1 == "on" ]] && hyprctl keyword monitor "HDMI-A-1,3840x2160@144,-3840x0,1,bitdepth,10"
-    [[ $1 == "off" ]] && hyprctl keyword monitor "HDMI-A-1,disable"
+    [[ $1 == "on" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@144", position = "-3840x0,1", scale = 1, vrr = 1, bitdepth = 10, disabled = false })'
+    [[ $1 == "off" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@144", position = "-3840x0,1", scale = 1,vrr = 1, bitdepth = 10, disabled = true })'
 }
 
 to-mov(){

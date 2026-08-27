@@ -40,13 +40,13 @@ else
     hyprctl dispatch focusmonitor "$MONITOR"
     hyprctl dispatch workspace "$GAME_WORKSPACE"
 
-    # Launch Steam Big Picture
-    if pgrep -x "steam" > /dev/null; then
-        echo "Steam is already running; switching to Big Picture..."
-        steam steam://open/bigpicture &
-    else
-        echo "Launching Steam in Big Picture mode..."
-        steam -tenfoot >/dev/null 2>&1 &
-    fi
+  #  # Launch Steam Big Picture
+  #  if pgrep -x "steam" > /dev/null; then
+  #      echo "Steam is already running; switching to Big Picture..."
+  #      steam steam://open/bigpicture &
+  #  else
+  #      echo "Launching Steam in Big Picture mode..."
+  #      steam -tenfoot >/dev/null 2>&1 &
+  #  fi
 fi
 

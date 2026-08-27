@@ -15,14 +15,55 @@ hl.bind(mod .. " + Q", hl.dsp.window.close())
 
 hl.bind(mod .. " + F", hl.dsp.window.fullscreen())
 
-hl.bind(
-	mod .. " + " .. shift .. " + F",
-	hl.dsp.exec_cmd(
-		"hyprctl --batch 'dispatch togglefloating; dispatch resizeactive exact 875 600; dispatch centerwindow'"
-	)
-)
+hl.bind(mod .. " + " .. shift .. " + F", function()
+	local active = hl.get_active_window()
+	if active ~= nil then
+		hl.dispatch(hl.dsp.window.float({ window = active }))
+		if active.floating then
+			hl.dispatch(hl.dsp.window.resize({ x = 875, y = 600, window = active }))
+			hl.dispatch(hl.dsp.window.center({ window = active }))
+		end
+	end
+end)
 
-hl.bind(mod .. " + P", hl.dsp.exec_cmd("popup"))
+hl.bind(mod .. " + P", function()
+	local active = hl.get_active_window()
+	if active ~= nil and active.pinned then
+		hl.dispatch(hl.dsp.window.pin({ window = active }))
+		hl.dispatch(hl.dsp.window.float({ window = active }))
+		hl.dispatch(hl.dsp.window.clear_tags({ window = active }))
+	else
+		hl.dispatch(hl.dsp.window.float({ window = active }))
+		hl.dispatch(hl.dsp.window.resize({ x = 640, y = 360, window = active }))
+		hl.dispatch(hl.dsp.window.center({ window = active }))
+		hl.dispatch(hl.dsp.window.pin({ window = active }))
+		hl.dispatch(hl.dsp.window.alter_zorder({ mode = "top", window = active }))
+		hl.dispatch(hl.dsp.window.tag({ tag = "pop", window = active }))
+	end
+end)
+
+hl.bind(mod .. "+ T", function()
+	local tv = hl.get_monitor("name: HDMI-1-A")
+	if tv == nil then
+		hl.monitor({
+			output = "HDMI-A-1",
+			mode = "3840x2160@144",
+			position = "-3840x0,1",
+			scale = 1,
+			bitdepth = 10,
+			disabled = false,
+		})
+	else
+		hl.monitor({
+			output = "HDMI-A-1",
+			mode = "3840x2160@144",
+			position = "-3840x0,1",
+			scale = 1,
+			bitdepth = 10,
+			disabled = true,
+		})
+	end
+end)
 
 --------------------------------------------------
 -- 🚀 Menus
@@ -74,10 +115,10 @@ hl.bind(mod .. " + " .. shift .. " + R", hl.dsp.exec_cmd("pkill waybar && uwsm-a
 -- 🧭 Focus (vim-style)
 --------------------------------------------------
 
-hl.bind(mod .. " + H", hl.dsp.focus({ direction = "left" }))
-hl.bind(mod .. " + J", hl.dsp.focus({ direction = "down" }))
-hl.bind(mod .. " + K", hl.dsp.focus({ direction = "up" }))
-hl.bind(mod .. " + L", hl.dsp.focus({ direction = "right" }))
+hl.bind(mod .. " + H", hl.dsp.layout("focus l"))
+hl.bind(mod .. " + J", hl.dsp.layout("focus u"))
+hl.bind(mod .. " + K", hl.dsp.layout("focus d"))
+hl.bind(mod .. " + L", hl.dsp.layout("focus r"))
 
 --------------------------------------------------
 -- 🔄 Swap windows
@@ -123,13 +164,13 @@ hl.bind(mod .. " + " .. ctrl .. " + TAB", hl.dsp.focus({ workspace = "previous" 
 -- 📏 Resize windows
 --------------------------------------------------
 
-hl.bind(mod .. " + " .. alt .. " + H", hl.dsp.exec_cmd("hyprctl dispatch resizeactive -100 0"))
+hl.bind(mod .. " + " .. alt .. " + H", hl.dsp.layout("colresize -0.2"))
 
 hl.bind(mod .. " + " .. alt .. " + J", hl.dsp.exec_cmd("hyprctl dispatch resizeactive 0 100"))
 
 hl.bind(mod .. " + " .. alt .. " + K", hl.dsp.exec_cmd("hyprctl dispatch resizeactive 0 -100"))
 
-hl.bind(mod .. " + " .. alt .. " + L", hl.dsp.exec_cmd("hyprctl dispatch resizeactive 100 0"))
+hl.bind(mod .. " + " .. alt .. " + L", hl.dsp.layout("colresize +0.2"))
 
 --------------------------------------------------
 -- 🖱️ Mouse actions

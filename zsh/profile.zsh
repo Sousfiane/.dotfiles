@@ -1,5 +1,13 @@
 [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
 
+source_if_exists () {
+    if test -r "$1"; then
+        source "$1"
+    fi
+}
+
+source_if_exists $HOME/.env.sh
+
 export HOSTNAME=$(hostnamectl hostname)
 export FZF_DEFAULT_OPTS="
 	--color=fg:#908caa,bg:#191724,hl:#ebbcba

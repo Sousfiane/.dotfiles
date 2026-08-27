@@ -1,3 +1,5 @@
+package.path = os.getenv("DOTFILES") .. "/hypr/?.lua;" .. package.path
+
 require("config.monitors")
 require("config.autostart")
 require("config.envs")

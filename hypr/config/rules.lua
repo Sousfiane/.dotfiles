@@ -1,11 +1,10 @@
-local suppressMaximizeRule = hl.window_rule({
+hl.window_rule({
 	-- Ignore maximize requests from all apps. You'll probably like this.
 	name = "suppress-maximize-events",
 	match = { class = ".*" },
 
 	suppress_event = "maximize",
 })
-suppressMaximizeRule:set_enabled(true)
 
 hl.window_rule({
 	-- Fix some dragging issues with XWayland
@@ -74,4 +73,29 @@ hl.layer_rule({
 		class = "^(notifications|waybar|wofi|swayosd)$",
 	},
 	ignore_alpha = 0,
+})
+
+-- Programs on specific workspaces
+hl.window_rule({
+	name = "kitty-on-ws1",
+	match = { class = "^(kitty)" },
+	workspace = "1",
+})
+
+hl.window_rule({
+	name = "zen-on-ws2",
+	match = { class = "^(zen)" },
+	workspace = "2",
+})
+
+hl.window_rule({
+	name = "discord-on-ws3",
+	match = { class = "^(discord)" },
+	workspace = "3",
+})
+
+hl.window_rule({
+	name = "steam-on-ws4",
+	match = { class = "^(steam)" },
+	workspace = "4",
 })
