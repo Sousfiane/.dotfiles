@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-selected=$(wofi -S drun -p "Apps" --define=drun-print_desktop_file=true | sed -E 's/(\.desktop) /\1:/')
+set -uo pipefail
+
+selected=$( wofi --show drun --prompt "Apps" --define=drun-print_desktop_file=true) || exit 0
 
 [[ -z "$selected" ]] && exit 0
 
-uwsm-app -- "$selected" &
+selected="${selected//$'\n'/}"
 
+exec uwsm-app -- "$selected"
