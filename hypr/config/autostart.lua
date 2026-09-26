@@ -6,7 +6,11 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm-app -- wl-paste --watch clipvault store")
 	hl.exec_cmd("uwsm-app -- sh -c 'swaybg -i \"$(cat ~/.swaybg)\"'")
 	hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
+	hl.exec_cmd("uwsm-app -- easyeffects --service-mode -w")
+	hl.exec_cmd("sleep 5 && bluetoothctl power on && bluetoothctl connect A8:E6:E8:04:97:29")
 
 	hl.exec_cmd("systemctl --user import-environment $(env | cut -d'=' -f 1)")
 	hl.exec_cmd("dbus-update-activation-environment --systemd --all")
+
+	hl.exec_cmd("hyprpm reload")
 end)
