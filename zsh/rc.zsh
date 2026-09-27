@@ -16,6 +16,7 @@ source_if_exists () {
 
 export GIT_EDITOR=nvim
 export TERM=xterm-kitty
+export LS_COLORS="$(vivid generate rose-pine)"
 
 source_if_exists $HOME/.env.sh
 source_if_exists $DOTFILES/zsh/aliases.zsh
