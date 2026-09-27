@@ -42,7 +42,7 @@ window#waybar {
 #cpu,
 #battery,
 #network,
-#bluetooth,
+#custom-bluetooth,
 #pulseaudio,
 #custom-pacman,
 #custom-dotfiles,
@@ -52,8 +52,8 @@ window#waybar {
 }
 
 /*Fix the uncentered bluetooth icon*/
-#bluetooth {
-    margin-right: 2px;
+#custom-bluetooth {
+    margin-right: 0px;
 }
 
 
