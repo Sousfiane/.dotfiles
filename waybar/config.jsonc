@@ -14,24 +14,36 @@
       "custom/dotfiles",
       "custom/pacman",
       "pulseaudio",
-      "bluetooth",
+      "custom/bluetooth",
       "network",
       "battery",
-      "custom/menu",
+      "custom/menu"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
     "format": "{icon}",
-    "format-icons": {
-      "default": "",
-      "active": "󱓻"
+
+    "tooltip": true,
+    "tooltips": {
+        "default": "Workspace {name}:\n{windows}",
+        "empty": "Workspace {name}: empty"
     },
+
+    "format-window-separator": "\n",
+
+    "format-icons": {
+        "default": "",
+        "active": "󱓻"
+    },
+    "window-rewrite-default": "",
+    "window-rewrite": {
+        "class<.*> title<.*>": "{class} : {title}"
+    }
   },
   "clock": {
     "format": "{:L%A %H:%M}",
     "format-alt": "{:L%d %B %Y}",
-    "tooltip": false,
-    "on-click-right": "omarchy-cmd-tzupdate"
+    "tooltip": false
   },
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
@@ -62,18 +74,12 @@
       "warning": 20,
       "critical": 10
     },
-    "on-click": "os-menu power-profiles",
-  },
-  "bluetooth": {
-    "format": "",
-    "format-disabled": "󰂲",
-    "format-connected": "",
-    "tooltip-format": "Devices connected: {num_connections}",
-    "on-click": "blueberry"
+    "on-click": "os-menu power-profiles"
   },
   "pulseaudio": {
     "format": "{icon}",
     "on-click": "uwsm-app -- xdg-terminal-exec --app-id=FloatingTerm -e wiremix",
+    "on-left-click": "headset-toggle",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": "",
@@ -83,7 +89,7 @@
         "tray": {
         "icon-size": 32,
         "spacing": 32
-    },
+    }
   },
   "custom/pacman": {
       "format": "{} ",
@@ -93,7 +99,7 @@
       "on-click": "pkill -SIGRTMIN+8 waybar",
       "on-click-right": "os-menu update",
       "signal": 8,
-      "exec": "~/.dotfiles/waybar/custom/pacman.sh",
+      "exec": "~/.dotfiles/waybar/custom/pacman.sh"
   },
   "custom/dotfiles": {
       "format": "{} ",
@@ -103,11 +109,18 @@
       "on-click": "pkill -SIGRTMIN+9 waybar",
       "on-click-right": "os-menu dotfiles",
       "signal": 9,
-      "exec": "~/.dotfiles/waybar/custom/dotfiles.sh",
+      "exec": "~/.dotfiles/waybar/custom/dotfiles.sh"
   },
   "custom/menu": {
       "format": "󱗼",
       "tooltip": false,
-      "on-click": "os-menu",
+      "on-click": "os-menu"
   },
+  "custom/bluetooth": {
+    "exec": "~/.dotfiles/waybar/custom/bt-status.sh",
+    "return-type": "json",
+    "format": "{text}",
+    "tooltip": true,
+    "interval": 2
+  }
 }
