@@ -79,7 +79,7 @@
   "pulseaudio": {
     "format": "{icon}",
     "on-click": "uwsm-app -- xdg-terminal-exec --app-id=FloatingTerm -e wiremix",
-    "on-left-click": "headset-toggle",
+    "on-click-right": "headset-toggle",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": "",
