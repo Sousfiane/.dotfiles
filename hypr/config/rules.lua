@@ -24,7 +24,7 @@ hl.window_rule({
 hl.window_rule({
 	name = "tag-floating-windows",
 	match = {
-		class = "^(localsend|blueberry.py|FloatingTerm|nm-connection-editor|org.gnome.NautilusPreviewer)$",
+		class = "^(localsend|blueberry.py|FloatingTerm|nm-connection-editor|org.gnome.NautilusPreviewer|hyprland-share-picker)$",
 	},
 	tag = "+floating-window",
 })
@@ -90,7 +90,7 @@ hl.window_rule({
 
 hl.window_rule({
 	name = "discord-on-ws3",
-	match = { class = "^(discord)" },
+	match = { class = "^(vesktop)" },
 	workspace = "3",
 })
 
@@ -98,4 +98,10 @@ hl.window_rule({
 	name = "steam-on-ws4",
 	match = { class = "^(steam)" },
 	workspace = "4",
+})
+
+-- OBS gets background rendering
+hl.window_rule({
+	match = { class = "^obs$" },
+	render_unfocused = true,
 })
