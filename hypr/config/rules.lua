@@ -105,3 +105,8 @@ hl.window_rule({
 	match = { class = "^obs$" },
 	render_unfocused = true,
 })
+
+hl.window_rule({
+	match = { class = "cs2" },
+	immediate = true,
+})
