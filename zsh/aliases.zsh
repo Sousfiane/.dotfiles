@@ -9,6 +9,7 @@ alias vim='nvim'
 alias svim='sudo -E nvim'
 
 alias c='clear'
+alias rs='clear && cd'
 alias s='source ~/.zshrc'
 
 alias wifi='networkmanager_dmenu &'
@@ -22,6 +23,9 @@ alias neofetch='fastfetch --config neofetch.jsonc'
 
 alias gcc="gcc -Wall -Wextra -Werror"
 
+alias er-death-counter='nohup protonhax run 1245620 "$HOME/Documents/ERDeathCounter/ER_DeathCounter.exe" > /tmp/er-death-counter.log 2>&1 &'
+alias er-tools='nohup protonhax run 1245620 "$HOME/Documents/EldenRingTool/EldenRingTool.exe" > /tmp/er-tools.log 2>&1 &'
+
 take() {
     mkdir -p $1
     cd $1
@@ -34,8 +38,8 @@ note() {
 }
 
 tv() {
-    [[ $1 == "on" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@144", position = "-3840x0,1", scale = 1, vrr = 1, bitdepth = 10, disabled = false })'
-    [[ $1 == "off" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@144", position = "-3840x0,1", scale = 1,vrr = 1, bitdepth = 10, disabled = true })'
+    [[ $1 == "on" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@60", position = "-3840x0,1", scale = 1, disabled = false })'
+    [[ $1 == "off" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@60", position = "-3840x0,1", scale = 1, disabled = true })'
 }
 
 to-mov(){
