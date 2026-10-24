@@ -8,6 +8,8 @@ hl.config({
 		col = { active_border = "rgba(c4a7e7e6)", inactive_border = "rgba(6e6a86b3)" },
 
 		layout = "scrolling",
+
+		allow_tearing = true,
 	},
 
 	decoration = {
