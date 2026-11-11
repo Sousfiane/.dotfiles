@@ -65,7 +65,7 @@ Item {
             implicitWidth: list.implicitWidth + 24
             implicitHeight: list.implicitHeight + 24
             radius: Theme.radius
-            color: Theme.bg
+            color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
             border.color: Theme.border
 
             HoverHandler {

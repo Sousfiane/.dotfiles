@@ -47,7 +47,7 @@ Item {
             implicitWidth: Math.max(220, list.implicitWidth + 24)
             implicitHeight: list.implicitHeight + 24
             radius: Theme.radius
-            color: Theme.bg
+            color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
             border.color: Theme.border
 
             Column {
@@ -78,9 +78,9 @@ Item {
 
                         Text {
                             width: 150
+                            color: Theme.fg
                             text: line.modelData.name + ":"
                             elide: Text.ElideRight
-                            color: Theme.fg
                             font.family: Theme.font
                             font.pixelSize: Theme.fontSize - 1
                         }
