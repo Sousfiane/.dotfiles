@@ -77,8 +77,8 @@ Item {
                         spacing: 16
 
                         Text {
-                            width: 170
-                            text: line.modelData.name
+                            width: 150
+                            text: line.modelData.name + ":"
                             elide: Text.ElideRight
                             color: Theme.fg
                             font.family: Theme.font
