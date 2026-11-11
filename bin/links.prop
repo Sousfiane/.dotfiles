@@ -1,14 +1,9 @@
-$DOTFILES/bin/app-launcher.sh=$HOME/.local/bin/app-launcher
-$DOTFILES/bin/wallpapers.sh=$HOME/.local/bin/wallpapers
 $DOTFILES/bin/tmux-sessionizer.sh=$HOME/.local/bin/tmux-sessionizer
 $DOTFILES/bin/keybindings.sh=$HOME/.local/bin/keybindings
 $DOTFILES/bin/console-mode.sh=$HOME/.local/bin/console-mode
-$DOTFILES/bin/os-menu.sh=$HOME/.local/bin/os-menu
 $DOTFILES/bin/install-pkg.sh=$HOME/.local/bin/install-pkg
 $DOTFILES/bin/remove-pkg.sh=$HOME/.local/bin/remove-pkg
 $DOTFILES/bin/update-pkg.sh=$HOME/.local/bin/update-pkg
-$DOTFILES/bin/clipboard.sh=$HOME/.local/bin/clipboard
-$DOTFILES/bin/kb-backlight.sh=$HOME/.local/bin/kb-backlight
 $DOTFILES/bin/popup.sh=$HOME/.local/bin/popup
 $DOTFILES/bin/finder.sh=$HOME/.local/bin/finder
 $DOTFILES/bin/power-profiles.sh=$HOME/.local/bin/power-profiles
