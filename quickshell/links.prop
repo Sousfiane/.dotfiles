@@ -1,0 +1,4 @@
+$DOTFILES/quickshell/shell.qml=$HOME/.config/quickshell/shell.qml
+$DOTFILES/quickshell/config=$HOME/.config/quickshell/config
+$DOTFILES/quickshell/modules=$HOME/.config/quickshell/modules
+$DOTFILES/quickshell/services=$HOME/.config/quickshell/services
