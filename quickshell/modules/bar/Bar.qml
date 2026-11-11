@@ -17,7 +17,7 @@ Variants {
             right: true
         }
         implicitHeight: Theme.barHeight
-        color: Theme.bg
+        color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
 
         Workspaces {
             screen: win.modelData

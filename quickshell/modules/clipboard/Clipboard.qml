@@ -204,7 +204,7 @@ Scope {
                     height: Math.min(760, parent.height - 48)
 
                     radius: Theme.radius + 4
-                    color: Theme.bg
+                    color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
 
                     border.color: Theme.border
                     border.width: 2

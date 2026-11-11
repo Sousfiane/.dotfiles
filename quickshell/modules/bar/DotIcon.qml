@@ -59,7 +59,7 @@ Item {
             implicitWidth: 360
             implicitHeight: list.implicitHeight + 24
             radius: Theme.radius
-            color: Theme.bg
+            color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
             border.color: Theme.border
 
             Column {
@@ -74,8 +74,8 @@ Item {
 
                 Text {
                     text: Dotfiles.failed ? "Could not read the repository" : Dotfiles.count === 0 ? "Dotfiles are clean" : "Dotfiles changes (" + Dotfiles.count + ")"
-                    color: Theme.fg
                     font.family: Theme.font
+                    color: Theme.fg
                     font.pixelSize: Theme.fontSize
                     font.bold: true
                 }
