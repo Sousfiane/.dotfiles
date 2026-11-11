@@ -1,4 +1,5 @@
 import Quickshell
+import QtQuick.Controls
 import Quickshell.Io        // <-- add this
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -82,20 +83,54 @@ Scope {
                     anchors.margins: 12
                     spacing: 8
 
-                    TextInput {
-                        id: input
+                    Rectangle {
                         Layout.fillWidth: true
-                        color: Theme.fg
-                        font.family: Theme.font
-                        font.pixelSize: Theme.fontSize + 3
-                        focus: true
-                        Component.onCompleted: forceActiveFocus()
+                        Layout.preferredHeight: 40
 
-                        onTextChanged: list.currentIndex = 0
-                        Keys.onEscapePressed: root.open = false
-                        Keys.onDownPressed: list.incrementCurrentIndex()
-                        Keys.onUpPressed: list.decrementCurrentIndex()
-                        Keys.onReturnPressed: win.launch()
+                        radius: Theme.radius
+                        color: Theme.surface
+
+                        TextInput {
+                            id: input
+
+                            anchors.fill: parent
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 12
+
+                            focus: true
+                            Component.onCompleted: forceActiveFocus()
+
+                            verticalAlignment: TextInput.AlignVCenter
+
+                            color: Theme.fg
+                            font.family: Theme.font
+                            font.pixelSize: Theme.fontSize + 3
+
+                            clip: true
+                            selectByMouse: true
+
+                            onTextChanged: list.currentIndex = 0
+
+                            Keys.onEscapePressed: root.open = false
+                            Keys.onDownPressed: list.incrementCurrentIndex()
+                            Keys.onUpPressed: list.decrementCurrentIndex()
+                            Keys.onReturnPressed: win.launch()
+
+                            Text {
+                                anchors.fill: parent
+
+                                verticalAlignment: Text.AlignVCenter
+
+                                text: "Apps..."
+                                color: Theme.dim
+
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize
+
+                                visible: input.text.length === 0
+                                enabled: false
+                            }
+                        }
                     }
 
                     ListView {
@@ -116,7 +151,7 @@ Scope {
                             height: 36
                             radius: 6
 
-                            color: (mouseArea.containsMouse || ListView.isCurrentItem) ? Theme.surface : "transparent"
+                            color: (mouseArea.containsMouse || ListView.isCurrentItem) ? Qt.rgba(Theme.surface.r, Theme.surface.g, Theme.surface.b, 0.2) : "transparent"
 
                             Behavior on color {
                                 ColorAnimation {
