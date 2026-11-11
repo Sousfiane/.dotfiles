@@ -98,7 +98,7 @@ Item {
                         }
                         Text {
                             width: 300
-                            text: line.modelData.substring(3)
+                            text: line.modelData.substring(2).trim()
                             elide: Text.ElideMiddle
                             color: Theme.fg
                             font.family: Theme.font
