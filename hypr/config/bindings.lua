@@ -72,13 +72,12 @@ end, { description = "Toggle external TV monitor" })
 hl.bind(mod .. " + Space", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { description = "Menu: Apps" })
 hl.bind(mod .. " + W", hl.dsp.exec_cmd("qs ipc call wallpaper toggle"), { description = "Menu: Wallpapers" })
 hl.bind(mod .. " + V", hl.dsp.exec_cmd("qs ipc call clipboard toggle"), { description = "Menu: Clipboard" })
+hl.bind(mod .. " + Escape", hl.dsp.exec_cmd("qs ipc call power toggle"), { description = "Menu: PowerMenu" })
 hl.bind(
 	mod .. " + D",
 	hl.dsp.exec_cmd("uwsm-app -- xdg-terminal-exec --app-id=FloatingTerm -e lazygit -p $DOTFILES"),
 	{ description = "Menu: Dotfiles" }
 )
-
-hl.bind(mod .. " + " .. shift .. " + Escape", hl.dsp.exec_cmd("os-menu settings"), { description = "Menu: Settings" })
 
 hl.bind(mod .. " + " .. alt .. " + Space", hl.dsp.exec_cmd("os-menu"), { description = "Menu: General" })
 
