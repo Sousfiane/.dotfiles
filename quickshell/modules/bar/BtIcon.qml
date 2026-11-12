@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 import qs.config
 import qs.services
+import qs.modules.bluetooth
 
 Item {
     id: root
@@ -18,7 +19,7 @@ Item {
         color: !Bt.powered ? Theme.dim : Theme.fg
 
         font.family: Theme.font
-        font.pixelSize: Theme.fontSize + 3
+        font.pixelSize: Theme.fontSize + 2
     }
 
     MouseArea {
@@ -27,10 +28,15 @@ Item {
         anchors.margins: -4
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton
-        onClicked: Quickshell.execDetached(["uwsm", "app", "--", "blueberry"])
-    }
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
+        onClicked: mouse => {
+            if (mouse.button === Qt.RightButton)
+                Bt.togglePower();
+            else
+                Bt.toggle();
+        }
+    }
     PopupWindow {
         visible: hover.containsMouse
 

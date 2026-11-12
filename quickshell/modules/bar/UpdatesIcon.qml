@@ -20,6 +20,7 @@ Item {
         } else
             closeTimer.restart();
     }
+
     Timer {
         id: closeTimer
         interval: 200
@@ -36,10 +37,11 @@ Item {
 
         Text {
             // nf-md-update
-            text: String.fromCodePoint(0xF06B0)
-            color: Updates.failed ? Theme.urgent : Updates.count > 0 ? Theme.accent : Theme.fg
+            text: String.fromCodePoint(0xf03d4)
+            color: Updates.failed ? Theme.urgent : Theme.fg
             font.family: Theme.font
             font.pixelSize: Theme.fontSize + 3
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         Text {
@@ -48,6 +50,7 @@ Item {
             color: Theme.fg
             font.family: Theme.font
             font.pixelSize: Theme.fontSize
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 

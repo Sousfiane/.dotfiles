@@ -106,7 +106,7 @@ Scope {
                     height: Math.min(760, parent.height - 48)
 
                     radius: Theme.radius + 4
-                    color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
+                    color: Theme.bg
 
                     border.color: Theme.border
                     border.width: 2
@@ -209,6 +209,8 @@ Scope {
                                     text: "Search wallpapers..."
                                     color: Theme.dim
                                     visible: search.text.length === 0
+                                    font.family: Theme.font
+                                    font.pixelSize: Theme.fontSize
                                 }
                             }
                         }

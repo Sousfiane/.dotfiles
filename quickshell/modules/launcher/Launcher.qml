@@ -55,24 +55,28 @@ Scope {
                     return qa.localeCompare(qb);
                 });
             }
+            // change to foot, alacritty, ghostty...
+            readonly property string terminal: "kitty"
 
             function launch() {
                 const entry = results[list.currentIndex];
                 if (entry) {
                     LauncherHistory.record(entry.id);
+
+                    const cmd = entry.runInTerminal ? [terminal, "--app-id=FloatingTerm", "-e", ...entry.command] : entry.command;
+
                     Quickshell.execDetached({
-                        command: ["uwsm", "app", "--", ...entry.command],
+                        command: ["uwsm", "app", "--", ...cmd],
                         workingDirectory: entry.workingDirectory
                     });
                 }
                 root.open = false;
             }
-
             Rectangle {
                 anchors.fill: parent
                 radius: Theme.radius
                 border.color: Theme.border
-                color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
+                color: Theme.bg
                 border {
                     color: Theme.border
                     width: 2
@@ -151,8 +155,7 @@ Scope {
                             height: 36
                             radius: 6
 
-                            color: (mouseArea.containsMouse || ListView.isCurrentItem) ? Qt.rgba(Theme.surface.r, Theme.surface.g, Theme.surface.b, 0.2) : "transparent"
-
+                            color: (mouseArea.containsMouse || ListView.isCurrentItem) ? Theme.surface : "transparent"
                             Behavior on color {
                                 ColorAnimation {
                                     duration: 120

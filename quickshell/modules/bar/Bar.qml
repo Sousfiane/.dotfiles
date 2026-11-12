@@ -32,10 +32,19 @@ Variants {
             anchors.centerIn: parent
         }
 
+        PowerIcon {
+            id: power
+            anchors {
+                right: parent.right
+                rightMargin: 12
+                verticalCenter: parent.verticalCenter
+            }
+        }
+
         BellIcon {
             id: bell
             anchors {
-                right: parent.right
+                right: power.left
                 rightMargin: 12
                 verticalCenter: parent.verticalCenter
             }

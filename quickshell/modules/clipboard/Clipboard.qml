@@ -1,164 +1,33 @@
 import Quickshell
+import QtQuick.Effects
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.config
+import qs.services
 
 Scope {
-    id: root
-
-    property bool open: false
-    property var historyItems: []
-
-    readonly property string cacheRoot: Quickshell.env("XDG_CACHE_HOME") || (Quickshell.env("HOME") + "/.cache")
-
-    readonly property string cacheDir: cacheRoot + "/clipvault/thumbs"
-
-    ListModel {
-        id: entries
-    }
-
-    // --------------------------------------------------
-    // IPC
-    // --------------------------------------------------
-
+    // `qs ipc call clipboard toggle|close|refresh`
     IpcHandler {
         target: "clipboard"
 
         function toggle(): void {
-            root.open = !root.open;
-
-            if (root.open) {
-                searchText = "";
-                root.refreshHistory();
-            }
+            ClipHistory.toggle();
         }
 
         function close(): void {
-            root.open = false;
+            ClipHistory.open = false;
         }
 
         function refresh(): void {
-            root.refreshHistory();
+            ClipHistory.refresh();
         }
     }
-
-    // --------------------------------------------------
-    // Clipboard history
-    // --------------------------------------------------
-
-    Process {
-        id: historyProcess
-
-        command: ["clipvault", "list"]
-
-        stdout: StdioCollector {
-            onStreamFinished: root.parseHistory(this.text)
-        }
-    }
-
-    function refreshHistory() {
-        entries.clear();
-        historyProcess.running = false;
-        historyProcess.running = true;
-    }
-
-    function parseHistory(output) {
-        let parsed = [];
-        const lines = output.split(/\r?\n/);
-
-        for (let i = 0; i < lines.length; i++) {
-            const match = lines[i].match(/^([0-9]+)\s+(.*)$/);
-
-            if (!match)
-                continue;
-            const clipId = match[1];
-            const content = match[2];
-
-            // Ignore HTML metadata
-            if (content.startsWith("<meta http-equiv="))
-                continue;
-
-            // Image entry
-            if (/^\[\[\s*binary/i.test(content)) {
-                const extMatch = content.match(/\b(jpeg|jpg|png|bmp|webp|tiff|tif|gif)\b/i);
-
-                if (!extMatch)
-                    continue;
-                const ext = extMatch[1].toLowerCase();
-
-                parsed.push({
-                    clipId: clipId,
-                    kind: "image",
-                    imageExt: ext,
-                    preview: "Image • " + ext.toUpperCase(),
-                    searchText: "image " + ext + " " + clipId
-                });
-
-                continue;
-            }
-
-            // Normal text entry
-            let preview = content;
-
-            if (preview.length > 240)
-                preview = preview.substring(0, 240) + "…";
-
-            parsed.push({
-                clipId: clipId,
-                kind: "text",
-                imageExt: "",
-                preview: preview,
-                searchText: content.toLowerCase()
-            });
-        }
-
-        historyItems = parsed;
-        filterEntries(searchText);
-    }
-
-    // --------------------------------------------------
-    // Search
-    // --------------------------------------------------
-
-    property string searchText: ""
-
-    function filterEntries(query) {
-        entries.clear();
-
-        const needle = (query || "").toLowerCase().trim();
-
-        for (let i = 0; i < historyItems.length; i++) {
-            const item = historyItems[i];
-
-            if (needle.length === 0 || item.searchText.indexOf(needle) !== -1) {
-                entries.append(item);
-            }
-        }
-
-        grid.currentIndex = entries.count > 0 ? 0 : -1;
-    }
-
-    // --------------------------------------------------
-    // Copy entry
-    // --------------------------------------------------
-
-    function copyEntry(id) {
-        if (!/^[0-9]+$/.test(id))
-            return;
-        Quickshell.execDetached(["bash", "-c", "set -o pipefail; clipvault get \"$1\" | wl-copy", "clipboard-copy", id]);
-
-        root.open = false;
-    }
-
-    // --------------------------------------------------
-    // Window
-    // --------------------------------------------------
 
     LazyLoader {
-        active: root.open
+        active: ClipHistory.open
 
         PanelWindow {
             id: panel
@@ -178,20 +47,26 @@ Scope {
             WlrLayershell.namespace: "clipboard-picker"
 
             Item {
+                id: content
                 anchors.fill: parent
-                focus: true
 
-                Keys.onEscapePressed: root.open = false
+                function copyCurrent() {
+                    const item = ClipHistory.entries.get(grid.currentIndex);
+                    if (item)
+                        ClipHistory.copy(item.clipId);
+                }
+
+                Keys.onEscapePressed: ClipHistory.open = false
 
                 Shortcut {
                     sequence: "Ctrl+R"
-                    onActivated: root.refreshHistory()
+                    onActivated: ClipHistory.refresh()
                 }
 
                 // Click outside to close
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: root.open = false
+                    onClicked: ClipHistory.open = false
                 }
 
                 // Main card
@@ -204,7 +79,7 @@ Scope {
                     height: Math.min(760, parent.height - 48)
 
                     radius: Theme.radius + 4
-                    color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.80)
+                    color: Theme.bg
 
                     border.color: Theme.border
                     border.width: 2
@@ -219,10 +94,9 @@ Scope {
                         anchors.margins: 20
                         spacing: 16
 
-                        // --------------------------------
+                        // ------------------------------
                         // Header
-                        // --------------------------------
-
+                        // ------------------------------
                         RowLayout {
                             Layout.fillWidth: true
 
@@ -239,7 +113,7 @@ Scope {
                             }
 
                             Text {
-                                text: entries.count + " entries"
+                                text: ClipHistory.entries.count + " entries"
                                 color: Theme.dim
                                 font.family: Theme.font
                                 font.pixelSize: Theme.fontSize
@@ -263,15 +137,14 @@ Scope {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: root.open = false
+                                    onClicked: ClipHistory.open = false
                                 }
                             }
                         }
 
-                        // --------------------------------
+                        // ------------------------------
                         // Search
-                        // --------------------------------
-
+                        // ------------------------------
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 40
@@ -282,9 +155,6 @@ Scope {
                             TextInput {
                                 id: search
 
-                                focus: true
-
-                                Component.onCompleted: forceActiveFocus()
                                 anchors.fill: parent
                                 anchors.leftMargin: 12
                                 anchors.rightMargin: 12
@@ -298,12 +168,19 @@ Scope {
                                 clip: true
                                 selectByMouse: true
 
-                                onTextChanged: {
-                                    root.searchText = text;
-                                    root.filterEntries(text);
-                                }
+                                focus: true
+                                Component.onCompleted: forceActiveFocus()
 
-                                onAccepted: grid.forceActiveFocus()
+                                onTextChanged: ClipHistory.query = text
+
+                                // navigate the grid while typing
+                                Keys.onEscapePressed: ClipHistory.open = false
+                                Keys.onUpPressed: grid.moveCurrentIndexUp()
+                                Keys.onDownPressed: grid.moveCurrentIndexDown()
+                                Keys.onLeftPressed: grid.moveCurrentIndexLeft()
+                                Keys.onRightPressed: grid.moveCurrentIndexRight()
+                                Keys.onReturnPressed: content.copyCurrent()
+                                Keys.onEnterPressed: content.copyCurrent()
 
                                 Text {
                                     anchors.fill: parent
@@ -311,14 +188,15 @@ Scope {
                                     text: "Search clipboard..."
                                     color: Theme.dim
                                     visible: search.text.length === 0
+                                    font.family: Theme.font
+                                    font.pixelSize: Theme.fontSize
                                 }
                             }
                         }
 
-                        // --------------------------------
+                        // ------------------------------
                         // History grid
-                        // --------------------------------
-
+                        // ------------------------------
                         GridView {
                             id: grid
 
@@ -326,27 +204,19 @@ Scope {
                             Layout.fillHeight: true
 
                             clip: true
-
                             cellWidth: 220
                             cellHeight: 166
 
-                            model: entries
+                            model: ClipHistory.entries
+                            currentIndex: 0
 
-                            keyNavigationEnabled: true
-                            currentIndex: entries.count > 0 ? 0 : -1
+                            // reset the selection whenever the results change
+                            Connections {
+                                target: ClipHistory.entries
 
-                            Keys.onReturnPressed: {
-                                const item = entries.get(grid.currentIndex);
-
-                                if (item)
-                                    root.copyEntry(item.clipId);
-                            }
-
-                            Keys.onEnterPressed: {
-                                const item = entries.get(grid.currentIndex);
-
-                                if (item)
-                                    root.copyEntry(item.clipId);
+                                function onCountChanged() {
+                                    grid.currentIndex = ClipHistory.entries.count > 0 ? 0 : -1;
+                                }
                             }
 
                             ScrollBar.vertical: ScrollBar {
@@ -369,18 +239,15 @@ Scope {
                                 property bool imageReady: false
                                 property bool imageFailed: false
 
-                                property string thumbnailPath: root.cacheDir + "/" + clipId + ".thumb." + imageExt
+                                property string thumbnailPath: ClipHistory.cacheDir + "/" + clipId + ".thumb." + imageExt
 
                                 property bool highlighted: hovered || grid.currentIndex === index
 
-                                // --------------------------------
-                                // Image thumbnail process
-                                // --------------------------------
-
+                                // Image thumbnail generation
                                 Process {
                                     id: thumbnailProcess
 
-                                    command: ["bash", "-c", "set -e\n" + 'cache="$1"\n' + 'id="$2"\n' + 'ext="$3"\n' + 'mkdir -p "$cache"\n' + 'original="$cache/$id.$ext"\n' + 'thumb="$cache/$id.thumb.$ext"\n' + 'if [ ! -s "$original" ]; then\n' + '  clipvault get "$id" > "$original.tmp"\n' + '  mv "$original.tmp" "$original"\n' + 'fi\n' + 'if [ ! -s "$thumb" ]; then\n' + '  if command -v magick >/dev/null 2>&1; then\n' + '    magick "$original" -thumbnail "256x256>" "$thumb" 2>/dev/null || cp -f "$original" "$thumb"\n' + '  else\n' + '    cp -f "$original" "$thumb"\n' + '  fi\n' + 'fi', "clipboard-thumbnail", root.cacheDir, tile.clipId, tile.imageExt]
+                                    command: ["bash", "-c", ['set -e', 'cache="$1"', 'id="$2"', 'ext="$3"', 'mkdir -p "$cache"', 'original="$cache/$id.$ext"', 'thumb="$cache/$id.thumb.$ext"', 'if [ ! -s "$original" ]; then', '  clipvault get "$id" > "$original.tmp"', '  mv "$original.tmp" "$original"', 'fi', 'if [ ! -s "$thumb" ]; then', '  if command -v magick >/dev/null 2>&1; then', '    magick "$original" -thumbnail "256x256>" "$thumb" 2>/dev/null || cp -f "$original" "$thumb"', '  else', '    cp -f "$original" "$thumb"', '  fi', 'fi'].join("\n"), "clipboard-thumbnail", ClipHistory.cacheDir, tile.clipId, tile.imageExt]
 
                                     running: tile.kind === "image"
 
@@ -389,10 +256,6 @@ Scope {
                                         tile.imageFailed = exitCode !== 0;
                                     }
                                 }
-
-                                // --------------------------------
-                                // Tile
-                                // --------------------------------
 
                                 Rectangle {
                                     anchors.fill: parent
@@ -403,8 +266,9 @@ Scope {
                                     clip: true
 
                                     // Image preview
-                                    Image {
-                                        id: previewImage
+                                    // Image preview, clipped to rounded corners
+                                    Rectangle {
+                                        id: imageFrame
 
                                         anchors {
                                             top: parent.top
@@ -413,16 +277,67 @@ Scope {
                                         }
 
                                         height: 112
+                                        radius: Theme.radius
+                                        clip: true
+                                        color: Theme.bg
+                                        visible: tile.kind === "image"
 
-                                        visible: tile.kind === "image" && tile.imageReady
+                                        // Rounded mask, rendered as a texture
+                                        Rectangle {
+                                            id: previewMask
 
-                                        source: tile.imageReady ? "file://" + tile.thumbnailPath : ""
+                                            anchors.fill: parent
+                                            radius: imageFrame.radius
+                                            color: Theme.bg
+                                            antialiasing: true
 
-                                        asynchronous: true
-                                        cache: true
-                                        fillMode: Image.PreserveAspectCrop
+                                            layer.enabled: true
+                                            layer.smooth: true
+
+                                            z: -1
+                                        }
+
+                                        Image {
+                                            id: previewImage
+
+                                            anchors.fill: parent
+
+                                            visible: tile.imageReady
+                                            source: tile.imageReady ? "file://" + tile.thumbnailPath : ""
+
+                                            asynchronous: true
+                                            cache: true
+                                            fillMode: Image.PreserveAspectCrop
+
+                                            layer.enabled: true
+                                            layer.smooth: true
+
+                                            layer.effect: MultiEffect {
+                                                maskEnabled: true
+                                                maskSource: previewMask
+                                            }
+                                        }
+
+                                        // Image loading label
+                                        Text {
+                                            anchors.centerIn: parent
+                                            visible: !tile.imageReady && !tile.imageFailed
+
+                                            text: "Loading image..."
+                                            color: Theme.dim
+                                            font.family: Theme.font
+                                        }
+
+                                        // Image failure label
+                                        Text {
+                                            anchors.centerIn: parent
+                                            visible: tile.imageFailed
+
+                                            text: "Preview unavailable"
+                                            color: Theme.dim
+                                            font.family: Theme.font
+                                        }
                                     }
-
                                     // Image loading label
                                     Text {
                                         anchors.centerIn: previewImage
@@ -480,7 +395,7 @@ Scope {
                                         font.pixelSize: Theme.fontSize - 1
                                     }
 
-                                    // Highlight border
+                                    // Highlight border, drawn above the content
                                     Rectangle {
                                         anchors.fill: parent
 
@@ -501,7 +416,6 @@ Scope {
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
-
                                         cursorShape: Qt.PointingHandCursor
 
                                         onEntered: {
@@ -513,25 +427,23 @@ Scope {
 
                                         onClicked: {
                                             grid.currentIndex = tile.index;
-                                            root.copyEntry(tile.clipId);
+                                            ClipHistory.copy(tile.clipId);
                                         }
                                     }
                                 }
                             }
                         }
 
-                        // --------------------------------
+                        // ------------------------------
                         // Empty state
-                        // --------------------------------
-
+                        // ------------------------------
                         Text {
                             Layout.fillWidth: true
 
-                            visible: entries.count === 0
-
+                            visible: ClipHistory.entries.count === 0
                             horizontalAlignment: Text.AlignHCenter
 
-                            text: historyItems.length === 0 ? "No clipboard history found" : "No matching entries"
+                            text: ClipHistory.items.length === 0 ? "No clipboard history found" : "No matching entries"
 
                             color: Theme.dim
                             font.family: Theme.font
@@ -540,8 +452,7 @@ Scope {
                         Text {
                             Layout.fillWidth: true
 
-                            text: "Enter to copy • Esc to close • Ctrl+R to refresh"
-
+                            text: "Enter to copy • Arrows to navigate • Esc to close • Ctrl+R to refresh"
                             horizontalAlignment: Text.AlignHCenter
 
                             color: Theme.dim
