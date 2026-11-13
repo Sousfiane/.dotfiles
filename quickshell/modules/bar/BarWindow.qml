@@ -16,7 +16,11 @@ PanelWindow {
         left: true
         right: true
     }
-    implicitHeight: Theme.barHeight
+    implicitHeight: Theme.barHeight + 1      // was Theme.barHeight
+
+    // the extra row only holds the underline, so tiled windows still start at the old position
+    exclusionMode: ExclusionMode.Normal
+    exclusiveZone: Theme.barHeight
     color: "transparent"
 
     // ---------- auto-hide ----------
@@ -29,6 +33,21 @@ PanelWindow {
     property bool revealed: false
 
     readonly property bool shown: !fullscreen || panelHere || revealed
+
+    // the underline, split around every dropdown that is attached to this bar
+    readonly property var segments: {
+        const gaps = Object.values(Panels.gaps[screen?.name ?? ""] ?? {}).sort((a, b) => a[0] - b[0]);
+        const out = [];
+        let x = 0;
+        for (const g of gaps) {
+            if (g[0] > x)
+                out.push([x, g[0]]);
+            x = Math.max(x, g[1]);
+        }
+        if (x < width)
+            out.push([x, width]);
+        return out;
+    }
 
     Timer {
         id: showTimer
@@ -68,7 +87,7 @@ PanelWindow {
         height: Theme.barHeight
         color: Theme.bg
 
-        y: win.shown ? 0 : -height
+        y: win.shown ? 0 : -(height + 1)
         // true only when the bar has fully finished sliding in
         readonly property bool fullyIn: win.shown && y === 0
 
@@ -145,6 +164,20 @@ PanelWindow {
                 right: updates.left
                 rightMargin: 12
                 verticalCenter: parent.verticalCenter
+            }
+        }
+        // 1px underline
+        Repeater {
+            model: win.segments
+
+            delegate: Rectangle {
+                required property var modelData
+
+                x: modelData[0]
+                y: parent.height
+                width: modelData[1] - modelData[0]
+                height: 1
+                color: Theme.line
             }
         }
     }

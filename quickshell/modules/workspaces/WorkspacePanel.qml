@@ -29,8 +29,8 @@ Variants {
                 margins.top: Theme.barHeight
 
                 // just big enough for the card and its flare, so the rest of the screen stays clickable
-                implicitWidth: card.width + card.flare
-                implicitHeight: card.height
+                implicitWidth: card.width + card.flare + 2
+                implicitHeight: card.height + 2
 
                 color: "transparent"
                 exclusionMode: ExclusionMode.Ignore

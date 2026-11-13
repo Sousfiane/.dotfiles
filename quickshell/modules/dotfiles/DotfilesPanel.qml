@@ -227,8 +227,9 @@ Scope {
                                     required property string modelData
 
                                     // porcelain format: two status letters, a space, then the path
-                                    readonly property string code: modelData.substring(0, 2).trim()
-                                    readonly property string path: modelData.substring(3)
+                                    readonly property var parts: modelData.match(/^\s*(\S{1,2})\s+(.*)$/) ?? ["", "", modelData]
+                                    readonly property string code: parts[1]
+                                    readonly property string path: parts[2]
 
                                     width: ListView.view.width
                                     implicitHeight: 30

@@ -26,6 +26,7 @@ Singleton {
     readonly property color dim: subtle
     readonly property color accent: iris
     readonly property color urgent: love
+    readonly property color line: muted
 
     readonly property string font: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
