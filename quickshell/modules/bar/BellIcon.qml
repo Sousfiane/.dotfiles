@@ -15,7 +15,7 @@ Item {
         Text {
             // nf-md: bell_off (DND), bell_ring (unread), bell_outline
             text: Notifs.dnd ? String.fromCodePoint(0xF009B) : Notifs.unread > 0 ? String.fromCodePoint(0xF009D) : String.fromCodePoint(0xF009C)
-            color: Notifs.dnd ? Theme.dim : Theme.fg
+            color: Notifs.centerOpen ? Theme.accent : Notifs.dnd ? Theme.dim : Theme.fg
             font.family: Theme.font
             font.pixelSize: Theme.fontSize + 3
             anchors.verticalCenter: parent.verticalCenter

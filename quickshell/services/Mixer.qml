@@ -8,7 +8,7 @@ Singleton {
     id: root
 
     property bool open: false
-    property int tab: 0                      // 0 playback, 1 recording, 2 output, 3 input
+    property int tab: 0                      // 0 playback, 1 recording, 2 output, 3 input, 4 config
     readonly property real maxVolume: 1.5    // slider goes to 150% like wiremix
 
     readonly property var tabLabels: ["Playback", "Recording", "Output", "Input", "Config"]
@@ -16,6 +16,24 @@ Singleton {
     function toggle() {
         open = !open;
     }
+
+    // opening the mixer closes the other panels (and loads the cards if needed)
+    onOpenChanged: {
+        if (open) {
+            Bt.panelOpen = false;
+            Notifs.centerOpen = false;
+            Power.open = false;
+            Updates.panelOpen = false;
+            Dotfiles.panelOpen = false;
+            Hub.open = false;
+
+            if (tab === 4)
+                refreshCards();
+        }
+    }
+
+    onTabChanged: if (tab === 4)
+        refreshCards()
 
     function mediaClass(n) {
         return (n.properties || ({}))["media.class"] || "";
@@ -189,11 +207,6 @@ Singleton {
         interval: 500
         onTriggered: root.refreshCards()
     }
-
-    onTabChanged: if (tab === 4)
-        refreshCards()
-    onOpenChanged: if (open && tab === 4)
-        refreshCards()
 
     // nodes and links must be tracked, otherwise properties stay unavailable
     PwObjectTracker {

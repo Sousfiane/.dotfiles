@@ -1,16 +1,22 @@
 import Quickshell
-import QtQuick.Controls
-import Quickshell.Io        // <-- add this
+import Quickshell.Io
+import Quickshell.Hyprland
 import Quickshell.Wayland
 import Quickshell.Widgets
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components
 
 Scope {
     id: root
     property bool open: false
+
+    // change to foot, alacritty, ghostty...
+    readonly property string terminal: "kitty"
+    onOpenChanged: Panels.launcherOpen = open
 
     IpcHandler {
         target: "launcher"
@@ -19,17 +25,33 @@ Scope {
         }
     }
 
-    LazyLoader {
-        active: root.open
+    function focusedScreen() {
+        const name = Hyprland.focusedMonitor?.name;
+        for (let i = 0; i < Quickshell.screens.length; i++)
+            if (Quickshell.screens[i].name === name)
+                return Quickshell.screens[i];
+        return Quickshell.screens[0];
+    }
+
+    SlideLoader {
+        open: root.open
 
         PanelWindow {
             id: win
-            implicitWidth: 520
-            implicitHeight: 400
+
+            screen: root.focusedScreen()
+            margins.top: Theme.barHeight
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+            WlrLayershell.namespace: "launcher"
 
             readonly property var results: {
                 const q = input.text.toLowerCase();
@@ -55,15 +77,13 @@ Scope {
                     return qa.localeCompare(qb);
                 });
             }
-            // change to foot, alacritty, ghostty...
-            readonly property string terminal: "kitty"
 
             function launch() {
                 const entry = results[list.currentIndex];
                 if (entry) {
                     LauncherHistory.record(entry.id);
 
-                    const cmd = entry.runInTerminal ? [terminal, "--app-id=FloatingTerm", "-e", ...entry.command] : entry.command;
+                    const cmd = entry.runInTerminal ? [root.terminal, "-e", ...entry.command] : entry.command;
 
                     Quickshell.execDetached({
                         command: ["uwsm", "app", "--", ...cmd],
@@ -72,128 +92,145 @@ Scope {
                 }
                 root.open = false;
             }
-            Rectangle {
+
+            Item {
                 anchors.fill: parent
-                radius: Theme.radius
-                border.color: Theme.border
-                color: Theme.bg
-                border {
-                    color: Theme.border
-                    width: 2
+
+                // click outside to close
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.open = false
                 }
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    spacing: 8
+                SlideArea {
+                    open: root.open
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 40
-
-                        radius: Theme.radius
-                        color: Theme.surface
-
-                        TextInput {
-                            id: input
-
-                            anchors.fill: parent
-                            anchors.leftMargin: 12
-                            anchors.rightMargin: 12
-
-                            focus: true
-                            Component.onCompleted: forceActiveFocus()
-
-                            verticalAlignment: TextInput.AlignVCenter
-
-                            color: Theme.fg
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize + 3
-
-                            clip: true
-                            selectByMouse: true
-
-                            onTextChanged: list.currentIndex = 0
-
-                            Keys.onEscapePressed: root.open = false
-                            Keys.onDownPressed: list.incrementCurrentIndex()
-                            Keys.onUpPressed: list.decrementCurrentIndex()
-                            Keys.onReturnPressed: win.launch()
-
-                            Text {
-                                anchors.fill: parent
-
-                                verticalAlignment: Text.AlignVCenter
-
-                                text: "Apps..."
-                                color: Theme.dim
-
-                                font.family: Theme.font
-                                font.pixelSize: Theme.fontSize
-
-                                visible: input.text.length === 0
-                                enabled: false
-                            }
+                    DropCard {
+                        edge: "center"
+                        anchors {
+                            top: parent.top
+                            horizontalCenter: parent.horizontalCenter
                         }
-                    }
+                        width: 560
+                        height: 440
 
-                    ListView {
-                        id: list
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        clip: true
-                        model: win.results
-                        currentIndex: 0
+                        // swallow clicks on the card
+                        MouseArea {
+                            anchors.fill: parent
+                        }
 
-                        delegate: Rectangle {
-                            id: row
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 16
+                            spacing: 8
 
-                            required property var modelData
-                            required property int index
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 40
 
-                            width: ListView.view.width
-                            height: 36
-                            radius: 6
+                                radius: Theme.radius
+                                color: Theme.surface
 
-                            color: (mouseArea.containsMouse || ListView.isCurrentItem) ? Theme.surface : "transparent"
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 120
-                                }
-                            }
+                                TextInput {
+                                    id: input
 
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: 8
-                                spacing: 10
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 12
+                                    anchors.rightMargin: 12
 
-                                IconImage {
-                                    implicitSize: 24
-                                    source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
-                                }
+                                    focus: true
+                                    Component.onCompleted: forceActiveFocus()
 
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: row.modelData.name
+                                    verticalAlignment: TextInput.AlignVCenter
+
                                     color: Theme.fg
                                     font.family: Theme.font
-                                    font.pixelSize: Theme.fontSize
-                                    elide: Text.ElideRight
+                                    font.pixelSize: Theme.fontSize + 3
+
+                                    clip: true
+                                    selectByMouse: true
+
+                                    onTextChanged: list.currentIndex = 0
+
+                                    Keys.onEscapePressed: root.open = false
+                                    Keys.onDownPressed: list.incrementCurrentIndex()
+                                    Keys.onUpPressed: list.decrementCurrentIndex()
+                                    Keys.onReturnPressed: win.launch()
+                                    Keys.onEnterPressed: win.launch()
+
+                                    Text {
+                                        anchors.fill: parent
+                                        verticalAlignment: Text.AlignVCenter
+                                        text: "Apps..."
+                                        color: Theme.dim
+                                        font.family: Theme.font
+                                        font.pixelSize: Theme.fontSize
+                                        visible: input.text.length === 0
+                                        enabled: false
+                                    }
                                 }
                             }
 
-                            MouseArea {
-                                id: mouseArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
+                            ListView {
+                                id: list
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                clip: true
+                                model: win.results
+                                currentIndex: 0
 
-                                onEntered: list.currentIndex = row.index
+                                delegate: Rectangle {
+                                    id: row
 
-                                onClicked: {
-                                    list.currentIndex = row.index;
-                                    input.forceActiveFocus();
-                                    win.launch();
+                                    required property var modelData
+                                    required property int index
+
+                                    width: ListView.view.width
+                                    height: 36
+                                    radius: 6
+
+                                    color: (mouseArea.containsMouse || ListView.isCurrentItem) ? Theme.surface : "transparent"
+
+                                    Behavior on color {
+                                        ColorAnimation {
+                                            duration: 120
+                                        }
+                                    }
+
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        anchors.leftMargin: 8
+                                        spacing: 10
+
+                                        IconImage {
+                                            implicitSize: 24
+                                            source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
+                                        }
+
+                                        Text {
+                                            Layout.fillWidth: true
+                                            text: row.modelData.name
+                                            color: Theme.fg
+                                            font.family: Theme.font
+                                            font.pixelSize: Theme.fontSize
+                                            elide: Text.ElideRight
+                                        }
+                                    }
+
+                                    MouseArea {
+                                        id: mouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+
+                                        onEntered: list.currentIndex = row.index
+
+                                        onClicked: {
+                                            list.currentIndex = row.index;
+                                            input.forceActiveFocus();
+                                            win.launch();
+                                        }
+                                    }
                                 }
                             }
                         }

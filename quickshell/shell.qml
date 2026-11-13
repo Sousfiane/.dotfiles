@@ -3,11 +3,15 @@ import qs.modules.bar
 import qs.modules.launcher
 import qs.modules.osd
 import qs.modules.notifications
-import qs.modules.wallpaper
 import qs.modules.clipboard
-import qs.modules.power
 import qs.modules.mixer
 import qs.modules.bluetooth
+import qs.modules.power
+import qs.modules.updates
+import qs.modules.dotfiles
+import qs.modules.workspaces
+import qs.modules.wallpaper
+import qs.modules.hub
 
 ShellRoot {
     Bar {}
@@ -15,9 +19,13 @@ ShellRoot {
     Osd {}
     NotifPopups {}
     NotifCenter {}
-    WallpaperPicker {}
     Clipboard {}
-    PowerMenu {}
     MixerPanel {}
     BtPanel {}
+    PowerMenu {}
+    UpdatesPanel {}
+    DotfilesPanel {}
+    WorkspacePanel {}
+    WallpaperPicker {}
+    HubMenu {}
 }

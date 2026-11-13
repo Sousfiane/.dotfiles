@@ -76,8 +76,17 @@ Singleton {
             adapter.discovering = !adapter.discovering;
     }
 
-    // scan while the panel is open, stop when it closes
+    // close the other panels, and scan while the panel is open
     onPanelOpenChanged: {
+        if (panelOpen) {
+            Mixer.open = false;
+            Notifs.centerOpen = false;
+            Power.open = false;
+            Updates.panelOpen = false;
+            Dotfiles.panelOpen = false;
+            Hub.open = false;
+        }
+
         if (adapter && adapter.enabled)
             adapter.discovering = panelOpen;
     }

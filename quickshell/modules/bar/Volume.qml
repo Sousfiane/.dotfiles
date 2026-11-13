@@ -21,7 +21,7 @@ Item {
             // nf-md: volume_off, volume_low, volume_medium, volume_high
             text: (Audio.muted || root.pct === 0) ? String.fromCodePoint(0xeee8) : root.pct < 25 ? String.fromCodePoint(0xf026) : root.pct < 50 ? String.fromCodePoint(0xf027) : root.pct < 75 ? String.fromCodePoint(0xefcf) : String.fromCodePoint(0xf028)
 
-            color: Audio.muted ? Theme.dim : Theme.fg
+            color: Mixer.open ? Theme.accent : Audio.muted ? Theme.dim : Theme.fg
             font.family: Theme.font
             font.pixelSize: Theme.fontSize + 2
         }

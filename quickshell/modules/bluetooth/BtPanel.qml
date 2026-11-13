@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components
 
 Scope {
     id: root
@@ -29,11 +30,12 @@ Scope {
         return Quickshell.screens[0];
     }
 
-    LazyLoader {
-        active: Bt.panelOpen
+    SlideLoader {
+        open: Bt.panelOpen
 
         PanelWindow {
             screen: root.focusedScreen()
+            margins.top: Theme.barHeight       // <-- add this
             anchors {
                 top: true
                 bottom: true
@@ -105,179 +107,178 @@ Scope {
                     onClicked: Bt.panelOpen = false
                 }
 
-                Rectangle {
-                    id: card
-                    anchors {
-                        top: parent.top
-                        right: parent.right
-                        topMargin: Theme.barHeight + 8
-                        rightMargin: 8
-                    }
-                    width: 460
-                    height: Math.min(col.implicitHeight + 32, parent.height - Theme.barHeight - 24)
-                    radius: Theme.radius + 4
-                    color: Theme.bg
-                    border.color: Theme.border
-                    border.width: 2
+                SlideArea {
+                    open: Bt.panelOpen
 
-                    // swallow clicks on the card
-                    MouseArea {
-                        anchors.fill: parent
-                    }
-
-                    ColumnLayout {
-                        id: col
+                    DropCard {
+                        id: card
+                        edge: "right"
                         anchors {
-                            fill: parent
-                            margins: 16
+                            top: parent.top
+                            right: parent.right
                         }
-                        spacing: 12
 
-                        // ---------- header ----------
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 10
+                        width: 460
+                        height: Math.min(col.implicitHeight + 32, parent.height - 16)
+                        // swallow clicks on the card
+                        MouseArea {
+                            anchors.fill: parent
+                        }
 
-                            Text {
-                                // nf-md-bluetooth
-                                text: String.fromCodePoint(0xF00AF)
-                                color: Bt.powered ? Theme.accent : Theme.dim
-                                font.family: Theme.font
-                                font.pixelSize: Theme.fontSize + 6
+                        ColumnLayout {
+                            id: col
+                            anchors {
+                                fill: parent
+                                margins: 16
                             }
+                            spacing: 12
 
-                            ColumnLayout {
-                                spacing: 0
-
-                                Text {
-                                    text: "Bluetooth"
-                                    color: Theme.fg
-                                    font.family: Theme.font
-                                    font.pixelSize: Theme.fontSize + 4
-                                    font.bold: true
-                                }
-
-                                Text {
-                                    visible: Bt.adapter !== null && Bt.adapter !== undefined
-                                    text: Bt.adapter?.name ?? ""
-                                    color: Theme.dim
-                                    font.family: Theme.font
-                                    font.pixelSize: Theme.fontSize - 3
-                                }
-                            }
-
-                            Item {
+                            // ---------- header ----------
+                            RowLayout {
                                 Layout.fillWidth: true
-                            }
-
-                            // scan button
-                            Rectangle {
-                                visible: Bt.powered
-                                implicitWidth: scanLabel.implicitWidth + 18
-                                implicitHeight: 24
-                                radius: 12
-                                color: Bt.scanning ? Theme.accent : Theme.surface
+                                spacing: 10
 
                                 Text {
-                                    id: scanLabel
-                                    anchors.centerIn: parent
-                                    text: Bt.scanning ? "Scanning…" : "Scan"
-                                    color: Bt.scanning ? Theme.bg : Theme.fg
+                                    // nf-md-bluetooth
+                                    text: String.fromCodePoint(0xF00AF)
+                                    color: Bt.powered ? Theme.accent : Theme.dim
                                     font.family: Theme.font
-                                    font.pixelSize: Theme.fontSize - 3
+                                    font.pixelSize: Theme.fontSize + 6
                                 }
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: Bt.toggleScan()
-                                }
-                            }
+                                ColumnLayout {
+                                    spacing: 0
 
-                            // power switch
-                            Rectangle {
-                                visible: Bt.adapter !== null && Bt.adapter !== undefined
-                                implicitWidth: 40
-                                implicitHeight: 22
-                                radius: 11
-                                color: Bt.powered ? Theme.accent : Theme.surface
+                                    Text {
+                                        text: "Bluetooth"
+                                        color: Theme.fg
+                                        font.family: Theme.font
+                                        font.pixelSize: Theme.fontSize + 4
+                                        font.bold: true
+                                    }
 
-                                Rectangle {
-                                    y: 3
-                                    x: Bt.powered ? parent.width - width - 3 : 3
-                                    width: 16
-                                    height: 16
-                                    radius: 8
-                                    color: Bt.powered ? Theme.bg : Theme.dim
-
-                                    Behavior on x {
-                                        NumberAnimation {
-                                            duration: 120
-                                        }
+                                    Text {
+                                        visible: Bt.adapter !== null && Bt.adapter !== undefined
+                                        text: Bt.adapter?.name ?? ""
+                                        color: Theme.dim
+                                        font.family: Theme.font
+                                        font.pixelSize: Theme.fontSize - 3
                                     }
                                 }
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: Bt.togglePower()
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                // scan button
+                                Rectangle {
+                                    visible: Bt.powered
+                                    implicitWidth: scanLabel.implicitWidth + 18
+                                    implicitHeight: 24
+                                    radius: 12
+                                    color: Bt.scanning ? Theme.accent : Theme.surface
+
+                                    Text {
+                                        id: scanLabel
+                                        anchors.centerIn: parent
+                                        text: Bt.scanning ? "Scanning…" : "Scan"
+                                        color: Bt.scanning ? Theme.bg : Theme.fg
+                                        font.family: Theme.font
+                                        font.pixelSize: Theme.fontSize - 3
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: Bt.toggleScan()
+                                    }
+                                }
+
+                                // power switch
+                                Rectangle {
+                                    visible: Bt.adapter !== null && Bt.adapter !== undefined
+                                    implicitWidth: 40
+                                    implicitHeight: 22
+                                    radius: 11
+                                    color: Bt.powered ? Theme.accent : Theme.surface
+
+                                    Rectangle {
+                                        y: 3
+                                        x: Bt.powered ? parent.width - width - 3 : 3
+                                        width: 16
+                                        height: 16
+                                        radius: 8
+                                        color: Bt.powered ? Theme.bg : Theme.dim
+
+                                        Behavior on x {
+                                            NumberAnimation {
+                                                duration: 120
+                                            }
+                                        }
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: Bt.togglePower()
+                                    }
                                 }
                             }
-                        }
 
-                        Rectangle {
-                            Layout.fillWidth: true
-                            implicitHeight: 1
-                            color: Theme.border
-                        }
-
-                        // ---------- devices ----------
-                        ListView {
-                            id: list
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: Math.min(contentHeight, 420)
-                            visible: Bt.list.length > 0
-                            clip: true
-                            spacing: 2
-                            model: Bt.list
-
-                            delegate: BtRow {
-                                required property var modelData
-                                required property int index
-
-                                width: ListView.view.width
-                                dev: modelData
-                                selected: content.selIndex === index
-
-                                header: (index === 0 || Bt.groupOf(Bt.list[index - 1]) !== Bt.groupOf(modelData)) ? ["Connected", "My devices", "Available"][Bt.groupOf(modelData)] : ""
-
-                                onSelectRequested: content.sel = index
-                                onActivated: Bt.activate(modelData)
-                                onForgetRequested: Bt.forget(modelData)
+                            Rectangle {
+                                Layout.fillWidth: true
+                                implicitHeight: 1
+                                color: Theme.border
                             }
-                        }
 
-                        Text {
-                            Layout.fillWidth: true
-                            Layout.topMargin: 8
-                            Layout.bottomMargin: 8
-                            visible: Bt.list.length === 0
-                            horizontalAlignment: Text.AlignHCenter
-                            wrapMode: Text.Wrap
-                            text: !Bt.adapter ? "No Bluetooth adapter found" : !Bt.powered ? "Bluetooth is off  (p to turn it on)" : Bt.scanning ? "Searching for devices…" : "No devices  (s to scan)"
-                            color: Theme.dim
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize
-                        }
+                            // ---------- devices ----------
+                            ListView {
+                                id: list
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: Math.min(contentHeight, 420)
+                                visible: Bt.list.length > 0
+                                clip: true
+                                spacing: 2
+                                model: Bt.list
 
-                        Text {
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignHCenter
-                            wrapMode: Text.Wrap
-                            text: "j k select • Enter connect / pair • f forget • s scan • p power • Esc close"
-                            color: Theme.dim
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize - 3
+                                delegate: BtRow {
+                                    required property var modelData
+                                    required property int index
+
+                                    width: ListView.view.width
+                                    dev: modelData
+                                    selected: content.selIndex === index
+
+                                    header: (index === 0 || Bt.groupOf(Bt.list[index - 1]) !== Bt.groupOf(modelData)) ? ["Connected", "My devices", "Available"][Bt.groupOf(modelData)] : ""
+
+                                    onSelectRequested: content.sel = index
+                                    onActivated: Bt.activate(modelData)
+                                    onForgetRequested: Bt.forget(modelData)
+                                }
+                            }
+
+                            Text {
+                                Layout.fillWidth: true
+                                Layout.topMargin: 8
+                                Layout.bottomMargin: 8
+                                visible: Bt.list.length === 0
+                                horizontalAlignment: Text.AlignHCenter
+                                wrapMode: Text.Wrap
+                                text: !Bt.adapter ? "No Bluetooth adapter found" : !Bt.powered ? "Bluetooth is off  (p to turn it on)" : Bt.scanning ? "Searching for devices…" : "No devices  (s to scan)"
+                                color: Theme.dim
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize
+                            }
+
+                            Text {
+                                Layout.fillWidth: true
+                                horizontalAlignment: Text.AlignHCenter
+                                wrapMode: Text.Wrap
+                                text: "j k select • Enter connect / pair • f forget • s scan • p power • Esc close"
+                                color: Theme.dim
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize - 3
+                            }
                         }
                     }
                 }

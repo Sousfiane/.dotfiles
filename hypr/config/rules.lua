@@ -110,3 +110,11 @@ hl.window_rule({
 	match = { class = "cs2" },
 	immediate = true,
 })
+
+hl.layer_rule({
+	name = "quickshell-panels-no-anim",
+	match = {
+		namespace = "^(bar-overlay|mixer|bluetooth-panel|notif-center|power-menu|updates-panel|dotfiles-panel|workspace-panel|launcher|wallpaper-picker|clipboard-picker|hub-menu)$",
+	},
+	no_anim = true,
+})

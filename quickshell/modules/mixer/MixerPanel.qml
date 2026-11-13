@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components
 
 Scope {
     id: root
@@ -29,11 +30,12 @@ Scope {
         return Quickshell.screens[0];
     }
 
-    LazyLoader {
-        active: Mixer.open
+    SlideLoader {
+        open: Mixer.open
 
         PanelWindow {
             screen: root.focusedScreen()
+            margins.top: Theme.barHeight       // <-- add this
             anchors {
                 top: true
                 bottom: true
@@ -193,176 +195,174 @@ Scope {
                     onClicked: Mixer.open = false
                 }
 
-                Rectangle {
-                    id: card
-                    anchors {
-                        top: parent.top
-                        right: parent.right
-                        topMargin: Theme.barHeight + 8
-                        rightMargin: 8
-                    }
-                    width: 560
-                    height: Math.min(col.implicitHeight + 32, parent.height - Theme.barHeight - 24)
-                    radius: Theme.radius + 4
-                    color: Theme.bg
-                    border.color: Theme.border
-                    border.width: 2
+                SlideArea {
+                    open: Mixer.open
 
-                    // swallow clicks on the card
-                    MouseArea {
-                        anchors.fill: parent
-                    }
-
-                    ColumnLayout {
-                        id: col
+                    DropCard {
+                        id: card
+                        edge: "right"
                         anchors {
-                            fill: parent
-                            margins: 16
+                            top: parent.top
+                            right: parent.right
                         }
-                        spacing: 12
-
-                        Text {
-                            text: "Mixer"
-                            color: Theme.fg
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize + 4
-                            font.bold: true
+                        width: 560
+                        height: Math.min(col.implicitHeight + 32, parent.height - 16)
+                        // swallow clicks on the card
+                        MouseArea {
+                            anchors.fill: parent
                         }
 
-                        // tabs
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 6
+                        ColumnLayout {
+                            id: col
+                            anchors {
+                                fill: parent
+                                margins: 16
+                            }
+                            spacing: 12
 
-                            Repeater {
-                                model: Mixer.tabLabels
+                            Text {
+                                text: "Mixer"
+                                color: Theme.fg
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize + 4
+                                font.bold: true
+                            }
 
-                                delegate: Rectangle {
-                                    id: tabPill
-                                    required property string modelData
+                            // tabs
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 6
+
+                                Repeater {
+                                    model: Mixer.tabLabels
+
+                                    delegate: Rectangle {
+                                        id: tabPill
+                                        required property string modelData
+                                        required property int index
+
+                                        readonly property bool active: Mixer.tab === index
+                                        readonly property int count: Mixer.listFor(index).length
+
+                                        Layout.fillWidth: true
+                                        Layout.preferredWidth: 1
+                                        implicitHeight: 26
+                                        radius: 13
+                                        color: active ? Theme.accent : Theme.surface
+
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: tabPill.modelData + (tabPill.count > 0 ? "  " + tabPill.count : "")
+                                            color: tabPill.active ? Theme.bg : Theme.fg
+                                            font.family: Theme.font
+                                            font.pixelSize: Theme.fontSize - 2
+                                            font.bold: tabPill.active
+                                        }
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: Mixer.tab = tabPill.index
+                                        }
+                                    }
+                                }
+                            }
+
+                            // tabs 1-4: applications and devices
+                            ListView {
+                                id: list
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: Math.min(contentHeight, 440)
+                                visible: Mixer.tab < 4 && Mixer.current.length > 0
+                                clip: true
+                                spacing: 4
+                                model: Mixer.tab < 4 ? Mixer.current : []
+
+                                delegate: MixerRow {
+                                    required property var modelData
                                     required property int index
 
-                                    readonly property bool active: Mixer.tab === index
-                                    readonly property int count: Mixer.listFor(index).length
+                                    width: ListView.view.width
+                                    node: modelData
+                                    device: Mixer.tab >= 2
+                                    input: Mixer.tab === 1 || Mixer.tab === 3
+                                    selected: content.selIndex === index
+                                    choosing: content.choosing && content.selIndex === index
+                                    chooseIndex: content.chooseIdx
 
-                                    Layout.fillWidth: true
-                                    Layout.preferredWidth: 1
-                                    implicitHeight: 26
-                                    radius: 13
-                                    color: active ? Theme.accent : Theme.surface
+                                    onSelectRequested: content.sel = index
 
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: tabPill.modelData + (tabPill.count > 0 ? "  " + tabPill.count : "")
-                                        color: tabPill.active ? Theme.bg : Theme.fg
-                                        font.family: Theme.font
-                                        font.pixelSize: Theme.fontSize - 2
-                                        font.bold: tabPill.active
+                                    onChooseRequested: {
+                                        if (content.choosing && content.selIndex === index)
+                                            content.choosing = false;
+                                        else
+                                            content.openChooser();
                                     }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: Mixer.tab = tabPill.index
+                                    onChoiceHovered: i => content.chooseIdx = i
+                                    onChoicePicked: target => {
+                                        Mixer.moveStream(modelData, target);
+                                        content.choosing = false;
                                     }
                                 }
                             }
-                        }
 
-                        // tabs 1-4: applications and devices
-                        ListView {
-                            id: list
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: Math.min(contentHeight, 440)
-                            visible: Mixer.tab < 4 && Mixer.current.length > 0
-                            clip: true
-                            spacing: 4
-                            model: Mixer.tab < 4 ? Mixer.current : []
+                            // Config tab: sound cards and their profiles
+                            ListView {
+                                id: configList
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: Math.min(contentHeight, 440)
+                                visible: Mixer.tab === 4 && Mixer.cards.length > 0
+                                clip: true
+                                spacing: 4
+                                model: Mixer.tab === 4 ? Mixer.cards : []
 
-                            delegate: MixerRow {
-                                required property var modelData
-                                required property int index
+                                delegate: ConfigRow {
+                                    required property var modelData
+                                    required property int index
 
-                                width: ListView.view.width
-                                node: modelData
-                                device: Mixer.tab >= 2
-                                input: Mixer.tab === 1 || Mixer.tab === 3
-                                selected: content.selIndex === index
-                                choosing: content.choosing && content.selIndex === index
-                                chooseIndex: content.chooseIdx
+                                    width: ListView.view.width
+                                    card: modelData
+                                    selected: content.selIndex === index
+                                    choosing: content.choosing && content.selIndex === index
+                                    chooseIndex: content.chooseIdx
 
-                                onSelectRequested: content.sel = index
+                                    onSelectRequested: content.sel = index
 
-                                onChooseRequested: {
-                                    if (content.choosing && content.selIndex === index)
+                                    onChooseRequested: {
+                                        if (content.choosing && content.selIndex === index)
+                                            content.choosing = false;
+                                        else
+                                            content.openChooser();
+                                    }
+                                    onChoiceHovered: i => content.chooseIdx = i
+                                    onChoicePicked: profile => {
+                                        Mixer.setProfile(modelData, profile);
                                         content.choosing = false;
-                                    else
-                                        content.openChooser();
-                                }
-                                onChoiceHovered: i => content.chooseIdx = i
-                                onChoicePicked: target => {
-                                    Mixer.moveStream(modelData, target);
-                                    content.choosing = false;
+                                    }
                                 }
                             }
-                        }
 
-                        // Config tab: sound cards and their profiles
-                        ListView {
-                            id: configList
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: Math.min(contentHeight, 440)
-                            visible: Mixer.tab === 4 && Mixer.cards.length > 0
-                            clip: true
-                            spacing: 4
-                            model: Mixer.tab === 4 ? Mixer.cards : []
-
-                            delegate: ConfigRow {
-                                required property var modelData
-                                required property int index
-
-                                width: ListView.view.width
-                                card: modelData
-                                selected: content.selIndex === index
-                                choosing: content.choosing && content.selIndex === index
-                                chooseIndex: content.chooseIdx
-
-                                onSelectRequested: content.sel = index
-
-                                onChooseRequested: {
-                                    if (content.choosing && content.selIndex === index)
-                                        content.choosing = false;
-                                    else
-                                        content.openChooser();
-                                }
-                                onChoiceHovered: i => content.chooseIdx = i
-                                onChoicePicked: profile => {
-                                    Mixer.setProfile(modelData, profile);
-                                    content.choosing = false;
-                                }
+                            Text {
+                                Layout.fillWidth: true
+                                Layout.topMargin: 8
+                                Layout.bottomMargin: 8
+                                visible: Mixer.current.length === 0
+                                horizontalAlignment: Text.AlignHCenter
+                                text: ["No application is playing audio", "No application is recording", "No output devices", "No input devices", "No sound cards found"][Mixer.tab]
+                                color: Theme.dim
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize
                             }
-                        }
 
-                        Text {
-                            Layout.fillWidth: true
-                            Layout.topMargin: 8
-                            Layout.bottomMargin: 8
-                            visible: Mixer.current.length === 0
-                            horizontalAlignment: Text.AlignHCenter
-                            text: ["No application is playing audio", "No application is recording", "No output devices", "No input devices", "No sound cards found"][Mixer.tab]
-                            color: Theme.dim
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize
-                        }
-
-                        Text {
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignHCenter
-                            wrapMode: Text.Wrap
-                            text: content.choosing ? "j k choose • Enter apply • Esc back" : Mixer.tab === 4 ? "Tab / 1-5 tabs • j k select • s / Enter change profile • Esc close" : "Tab / 1-5 tabs • j k select • h l volume • m mute • s / Enter move app • d default • Esc close"
-                            color: Theme.dim
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize - 3
+                            Text {
+                                Layout.fillWidth: true
+                                horizontalAlignment: Text.AlignHCenter
+                                wrapMode: Text.Wrap
+                                text: content.choosing ? "j k choose • Enter apply • Esc back" : Mixer.tab === 4 ? "Tab / 1-5 tabs • j k select • s / Enter change profile • Esc close" : "Tab / 1-5 tabs • j k select • h l volume • m mute • s / Enter move app • d default • Esc close"
+                                color: Theme.dim
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize - 3
+                            }
                         }
                     }
                 }
