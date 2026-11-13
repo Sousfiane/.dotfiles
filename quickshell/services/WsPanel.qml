@@ -42,14 +42,14 @@ Singleton {
         hoverBar = false;
     }
 
-    function showPeek(monitor) {
-        if (!ready || !monitor.activeWorkspace)
-            return;
-        screenName = monitor.name;
-        wsId = monitor.activeWorkspace.id;
-        peek = true;
-        peekTimer.restart();
-    }
+    //function showPeek(monitor) {
+    //    if (!ready || !monitor.activeWorkspace)
+    //        return;
+    //    screenName = monitor.name;
+    //    wsId = monitor.activeWorkspace.id;
+    //    peek = true;
+    //    peekTimer.restart();
+    //}
 
     Timer {
         id: hoverTimer
@@ -68,20 +68,20 @@ Singleton {
     }
 
     // one watcher per monitor: switching workspace on a monitor shows its panel
-    Instantiator {
-        model: Hyprland.monitors
+    //Instantiator {
+    //    model: Hyprland.monitors
 
-        delegate: QtObject {
-            id: watcher
-            required property var modelData
+    //    delegate: QtObject {
+    //        id: watcher
+    //        required property var modelData
 
-            property var conn: Connections {
-                target: watcher.modelData
+    //        property var conn: Connections {
+    //            target: watcher.modelData
 
-                function onActiveWorkspaceChanged() {
-                    root.showPeek(watcher.modelData);
-                }
-            }
-        }
-    }
+    //            function onActiveWorkspaceChanged() {
+    //                root.showPeek(watcher.modelData);
+    //            }
+    //        }
+    //    }
+    //}
 }

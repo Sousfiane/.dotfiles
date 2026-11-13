@@ -12,7 +12,7 @@ Singleton {
 
     readonly property bool anyOpen: Mixer.open || Bt.panelOpen || Notifs.centerOpen || Power.open || Updates.panelOpen || Dotfiles.panelOpen || Hub.open || WsPanel.open || ClipHistory.open || launcherOpen || wallpaperOpen
 
-    // what the bar listens to
+    // what the bars listen to: stays true 300 ms after the last panel closes
     property bool raised: false
 
     onAnyOpenChanged: {
@@ -28,5 +28,17 @@ Singleton {
         id: lowerTimer
         interval: 300
         onTriggered: root.raised = false
+    }
+
+    // monitor name -> true once that monitor's bar is completely slid in.
+    // SlideArea waits for this before dropping a panel.
+    property var barReady: ({})
+
+    function setBarReady(name, ready) {
+        if (barReady[name] === ready)
+            return;
+        const next = Object.assign({}, barReady);
+        next[name] = ready;
+        barReady = next;
     }
 }
