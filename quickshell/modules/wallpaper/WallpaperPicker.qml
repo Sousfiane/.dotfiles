@@ -8,6 +8,7 @@ import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import qs.config
 import Quickshell.Hyprland
+import qs.services
 import qs.components
 
 Scope {
@@ -324,6 +325,7 @@ Scope {
 
                                             Image {
                                                 id: preview
+                                                sourceSize.width: 416
 
                                                 anchors.fill: parent
 
