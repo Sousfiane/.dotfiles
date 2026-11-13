@@ -41,4 +41,28 @@ Singleton {
         next[name] = ready;
         barReady = next;
     }
+    // monitor name -> { key: [from, to] }: where each dropdown joins the bar.
+    // The bar leaves its underline open over these spans.
+    property var gaps: ({})
+
+    function setGap(screen, key, from, to) {
+        const cur = gaps[screen]?.[key];
+        if (cur && cur[0] === from && cur[1] === to)
+            return;
+        const next = Object.assign({}, gaps);
+        next[screen] = Object.assign({}, next[screen] ?? {}, {
+            [key]: [from, to]
+        });
+        gaps = next;
+    }
+
+    function clearGap(screen, key) {
+        if (!gaps[screen] || !(key in gaps[screen]))
+            return;
+        const next = Object.assign({}, gaps);
+        const inner = Object.assign({}, next[screen]);
+        delete inner[key];
+        next[screen] = inner;
+        gaps = next;
+    }
 }
