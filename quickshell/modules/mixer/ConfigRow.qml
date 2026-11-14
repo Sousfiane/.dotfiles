@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.config
+import qs.components
 
 Rectangle {
     id: root
@@ -43,22 +44,18 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 10
 
-            Text {
-                // nf-md-chip
+            Txt {
                 text: Icons.chip
                 color: Theme.dim
-                font.family: Theme.font
                 font.pixelSize: Theme.fontSize + 4
             }
 
-            Text {
+            Txt {
                 Layout.fillWidth: true
+                variant: "row"
+                font.bold: true
                 text: root.card.description
                 elide: Text.ElideRight
-                color: Theme.fg
-                font.family: Theme.font
-                font.pixelSize: Theme.fontSize - 1
-                font.bold: true
             }
         }
 
@@ -71,7 +68,7 @@ Rectangle {
             border.width: 1
             border.color: Theme.border
 
-            Text {
+            Txt {
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -79,11 +76,10 @@ Rectangle {
                     leftMargin: 10
                     rightMargin: 10
                 }
+                variant: "dim"
+                color: root.choosing ? Theme.bgSolid : Theme.fg
                 text: "▼  " + (root.activeProfile ? root.activeProfile.description : root.card.active)
                 elide: Text.ElideRight
-                color: root.choosing ? Theme.bg : Theme.fg
-                font.family: Theme.font
-                font.pixelSize: Theme.fontSize - 2
             }
 
             MouseArea {
@@ -116,9 +112,9 @@ Rectangle {
                     Layout.fillWidth: true
                     implicitHeight: 26
                     radius: 6
-                    color: highlighted ? Theme.accent : Theme.bg
+                    color: highlighted ? Theme.accent : Theme.bgSolid
 
-                    Text {
+                    Txt {
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -126,11 +122,10 @@ Rectangle {
                             leftMargin: 10
                             rightMargin: 10
                         }
+                        variant: "dim"
+                        color: option.highlighted ? Theme.bgSolid : option.modelData.available ? Theme.fg : Theme.dim
                         text: (option.isCurrent ? "● " : "   ") + option.modelData.description + (option.modelData.available ? "" : "  (unavailable)")
                         elide: Text.ElideRight
-                        color: option.highlighted ? Theme.bg : option.modelData.available ? Theme.fg : Theme.dim
-                        font.family: Theme.font
-                        font.pixelSize: Theme.fontSize - 2
                     }
 
                     MouseArea {

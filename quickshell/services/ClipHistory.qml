@@ -6,31 +6,32 @@ import QtQuick
 Singleton {
     id: root
 
+    readonly property bool open: Panels.isOpen("clipboard")
     property string query: ""
     property var items: []                       // everything parsed from clipvault
 
     readonly property ListModel entries: ListModel {}   // what the grid shows
     readonly property string cacheDir: (Quickshell.env("XDG_CACHE_HOME") || (Quickshell.env("HOME") + "/.cache")) + "/clipvault/thumbs"
 
-    onQueryChanged: applyFilter()
-
-    readonly property bool open: Panels.isOpen("clipboard")
-
     function toggle() {
         Panels.toggle("clipboard");
     }
 
     // start fresh and reload the history on every open
-    onOpenChanged: if (open) {
+    function reset() {
         query = "";
         refresh();
     }
 
+    onOpenChanged: if (open)
+        reset()
+
     // the service is created lazily, so it can be created after the panel is already open
-    Component.onCompleted: if (open) {
-        query = "";
-        refresh();
-    }
+    Component.onCompleted: if (open)
+        reset()
+
+    onQueryChanged: applyFilter()
+
     function refresh() {
         historyProcess.running = false;
         historyProcess.running = true;
@@ -95,6 +96,71 @@ Singleton {
         command: ["clipvault", "list"]
         stdout: StdioCollector {
             onStreamFinished: root.parse(this.text)
+        }
+    }
+
+    // ---------- image thumbnails ----------
+
+    // clipId -> "ready" | "failed". Reassigned on every change so tiles re-evaluate.
+    property var thumbs: ({})
+
+    // internal bookkeeping, mutated in place (nothing binds to these)
+    property var requested: ({})
+    property var queue: []
+    readonly property int maxParallel: 3
+
+    function thumbPath(clipId, ext) {
+        return cacheDir + "/" + clipId + ".thumb." + ext;
+    }
+
+    // tiles call this when they appear; each thumbnail is generated once
+    function requestThumb(clipId, ext) {
+        if (requested[clipId])
+            return;
+        requested[clipId] = true;
+        queue.push({
+            clipId: clipId,
+            imageExt: ext
+        });
+        pump();
+    }
+
+    function finishThumb(job, ok) {
+        thumbs = Object.assign({}, thumbs, {
+            [job.clipId]: ok ? "ready" : "failed"
+        });
+    }
+
+    // hand queued jobs to idle workers
+    function pump() {
+        for (let i = 0; i < workers.count && queue.length > 0; i++) {
+            const w = workers.objectAt(i);
+            if (w && w.job === null) {
+                w.job = queue.shift();
+                w.running = true;
+            }
+        }
+    }
+
+    readonly property string thumbScript: ['set -e', 'cache="$1"', 'id="$2"', 'ext="$3"', 'mkdir -p "$cache"', 'original="$cache/$id.$ext"', 'thumb="$cache/$id.thumb.$ext"', 'if [ ! -s "$original" ]; then', '  clipvault get "$id" > "$original.tmp"', '  mv "$original.tmp" "$original"', 'fi', 'if [ ! -s "$thumb" ]; then', '  if command -v magick >/dev/null 2>&1; then', '    magick "$original" -thumbnail "256x256>" "$thumb" 2>/dev/null || cp -f "$original" "$thumb"', '  else', '    cp -f "$original" "$thumb"', '  fi', 'fi'].join("\n")
+
+    Instantiator {
+        id: workers
+        model: root.maxParallel
+
+        delegate: Process {
+            id: worker
+
+            property var job: null
+
+            command: job ? ["bash", "-c", root.thumbScript, "clipboard-thumbnail", root.cacheDir, job.clipId, job.imageExt] : ["true"]
+
+            onExited: (exitCode, exitStatus) => {
+                if (job)
+                    root.finishThumb(job, exitCode === 0);
+                job = null;
+                root.pump();
+            }
         }
     }
 }
