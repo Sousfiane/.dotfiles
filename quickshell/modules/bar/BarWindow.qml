@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Layouts
 import qs.config
 import qs.services
 
@@ -114,57 +115,20 @@ PanelWindow {
             anchors.centerIn: parent
         }
 
-        PowerIcon {
-            id: power
+        RowLayout {
             anchors {
                 right: parent.right
                 rightMargin: 12
                 verticalCenter: parent.verticalCenter
             }
-        }
+            spacing: 12
 
-        BellIcon {
-            id: bell
-            anchors {
-                right: power.left
-                rightMargin: 12
-                verticalCenter: parent.verticalCenter
-            }
-        }
-
-        Volume {
-            id: volume
-            anchors {
-                right: bell.left
-                rightMargin: 12
-                verticalCenter: parent.verticalCenter
-            }
-        }
-
-        BtIcon {
-            id: bt
-            anchors {
-                right: volume.left
-                rightMargin: 12
-                verticalCenter: parent.verticalCenter
-            }
-        }
-
-        UpdatesIcon {
-            id: updates
-            anchors {
-                right: bt.left
-                rightMargin: 12
-                verticalCenter: parent.verticalCenter
-            }
-        }
-
-        DotIcon {
-            anchors {
-                right: updates.left
-                rightMargin: 12
-                verticalCenter: parent.verticalCenter
-            }
+            DotIcon {}
+            UpdatesIcon {}
+            BtIcon {}
+            Volume {}
+            BellIcon {}
+            PowerIcon {}
         }
         // 1px underline
         Repeater {

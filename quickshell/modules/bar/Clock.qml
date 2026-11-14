@@ -2,28 +2,16 @@ import Quickshell
 import QtQuick
 import qs.config
 import qs.services
+import qs.components
 
-Item {
-    implicitWidth: label.implicitWidth
-    implicitHeight: label.implicitHeight
-
+BarButton {
     SystemClock {
         id: clock
         precision: SystemClock.Minutes
     }
 
-    Text {
-        id: label
-        text: Qt.formatDateTime(clock.date, "ddd d MMM  HH:mm")
-        color: Hub.open ? Theme.accent : Theme.fg
-        font.family: Theme.font
-        font.pixelSize: Theme.fontSize
-    }
+    label: Qt.formatDateTime(clock.date, "ddd d MMM  HH:mm")
+    labelColor: Hub.open ? Theme.accent : Theme.fg
 
-    MouseArea {
-        anchors.fill: parent
-        anchors.margins: -4
-        cursorShape: Qt.PointingHandCursor
-        onClicked: Hub.toggle()
-    }
+    onClicked: Hub.toggle()
 }
