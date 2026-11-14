@@ -127,30 +127,24 @@ Scope {
                                 Layout.fillWidth: true
                                 spacing: 10
 
-                                Text {
-                                    // nf-md-git
-                                    text: String.fromCodePoint(0xF02A2)
+                                Txt {
+                                    text: Icons.git
                                     color: Dotfiles.failed ? Theme.urgent : Dotfiles.count > 0 ? Theme.accent : Theme.dim
-                                    font.family: Theme.font
                                     font.pixelSize: Theme.fontSize + 6
                                 }
 
                                 ColumnLayout {
                                     spacing: 0
 
-                                    Text {
+                                    Txt {
                                         text: "Dotfiles"
-                                        color: Theme.fg
-                                        font.family: Theme.font
-                                        font.pixelSize: Theme.fontSize + 4
-                                        font.bold: true
+                                        variant: "title"
                                     }
 
-                                    Text {
-                                        text: Dotfiles.failed ? "Could not read the repository" : Dotfiles.count === 0 ? "Working tree clean" : Dotfiles.count + (Dotfiles.count === 1 ? " change" : " changes")
+                                    Txt {
+                                        variant: "small"
                                         color: Dotfiles.failed ? Theme.urgent : Theme.dim
-                                        font.family: Theme.font
-                                        font.pixelSize: Theme.fontSize - 3
+                                        text: Dotfiles.failed ? "Could not read the repository" : Dotfiles.count === 0 ? "Working tree clean" : Dotfiles.count + (Dotfiles.count === 1 ? " change" : " changes")
                                     }
                                 }
 
@@ -158,59 +152,20 @@ Scope {
                                     Layout.fillWidth: true
                                 }
 
-                                // refresh
-                                Rectangle {
-                                    implicitWidth: refreshLabel.implicitWidth + 18
-                                    implicitHeight: 24
-                                    radius: 12
-                                    color: Dotfiles.checking ? Theme.accent : Theme.surface
-
-                                    Text {
-                                        id: refreshLabel
-                                        anchors.centerIn: parent
-                                        text: Dotfiles.checking ? "Checking…" : "Refresh"
-                                        color: Dotfiles.checking ? Theme.bg : Theme.fg
-                                        font.family: Theme.font
-                                        font.pixelSize: Theme.fontSize - 3
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: Dotfiles.refresh()
-                                    }
+                                Pill {
+                                    text: Dotfiles.checking ? "Checking…" : "Refresh"
+                                    active: Dotfiles.checking
+                                    onClicked: Dotfiles.refresh()
                                 }
 
-                                // lazygit
-                                Rectangle {
-                                    implicitWidth: gitLabel.implicitWidth + 18
-                                    implicitHeight: 24
-                                    radius: 12
-                                    color: Theme.accent
-
-                                    Text {
-                                        id: gitLabel
-                                        anchors.centerIn: parent
-                                        text: "Lazygit"
-                                        color: Theme.bg
-                                        font.family: Theme.font
-                                        font.pixelSize: Theme.fontSize - 3
-                                        font.bold: true
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: Dotfiles.openLazygit()
-                                    }
+                                Pill {
+                                    text: "Lazygit"
+                                    primary: true
+                                    onClicked: Dotfiles.openLazygit()
                                 }
                             }
 
-                            Rectangle {
-                                Layout.fillWidth: true
-                                implicitHeight: 1
-                                color: Theme.border
-                            }
+                            Divider {}
 
                             // ---------- changed files ----------
                             ListView {
@@ -226,7 +181,7 @@ Scope {
                                     id: row
                                     required property string modelData
 
-                                    // porcelain format: two status letters, a space, then the path
+                                    // status letters, then whitespace, then the path (tolerates a stripped leading space)
                                     readonly property var parts: modelData.match(/^\s*(\S{1,2})\s+(.*)$/) ?? ["", "", modelData]
                                     readonly property string code: parts[1]
                                     readonly property string path: parts[2]
@@ -234,7 +189,7 @@ Scope {
                                     width: ListView.view.width
                                     implicitHeight: 30
                                     radius: 6
-                                    color: rowHover.containsMouse ? Theme.surface : "transparent"
+                                    color: rowHover.hovered ? Theme.surface : "transparent"
 
                                     HoverHandler {
                                         id: rowHover
@@ -248,47 +203,35 @@ Scope {
                                         }
                                         spacing: 12
 
-                                        Text {
+                                        Txt {
                                             Layout.preferredWidth: 22
                                             text: row.code
                                             color: row.code.indexOf("D") !== -1 ? Theme.urgent : row.code.indexOf("?") !== -1 ? Theme.dim : Theme.accent
-                                            font.family: Theme.font
                                             font.pixelSize: Theme.fontSize - 2
                                             font.bold: true
                                         }
 
-                                        Text {
+                                        Txt {
                                             Layout.fillWidth: true
+                                            variant: "row"
                                             text: row.path
                                             elide: Text.ElideMiddle
-                                            color: Theme.fg
-                                            font.family: Theme.font
-                                            font.pixelSize: Theme.fontSize - 1
                                         }
                                     }
                                 }
                             }
 
-                            Text {
+                            Txt {
                                 Layout.fillWidth: true
                                 Layout.topMargin: 8
                                 Layout.bottomMargin: 8
                                 visible: Dotfiles.count === 0
                                 horizontalAlignment: Text.AlignHCenter
-                                text: Dotfiles.failed ? "Check the repository path in Dotfiles.qml" : "Nothing to commit"
-                                color: Theme.dim
-                                font.family: Theme.font
-                                font.pixelSize: Theme.fontSize
+                                text: Dotfiles.failed ? "Check the repository path in Config.qml" : "Nothing to commit"
                             }
 
-                            Text {
-                                Layout.fillWidth: true
-                                horizontalAlignment: Text.AlignHCenter
-                                wrapMode: Text.Wrap
+                            Hint {
                                 text: "j k scroll • Enter / g lazygit • r refresh • Esc close"
-                                color: Theme.dim
-                                font.family: Theme.font
-                                font.pixelSize: Theme.fontSize - 3
                             }
                         }
                     }
