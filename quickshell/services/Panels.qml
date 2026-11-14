@@ -5,12 +5,7 @@ import QtQuick
 Singleton {
     id: root
 
-    // the launcher and wallpaper picker keep their `open` state inside their own modules,
-    // so they report it here
-    property bool launcherOpen: false
-    property bool wallpaperOpen: false
-
-    readonly property bool anyOpen: Mixer.open || Bt.panelOpen || Notifs.centerOpen || Power.open || Updates.panelOpen || Dotfiles.panelOpen || Hub.open || WsPanel.open || ClipHistory.open || launcherOpen || wallpaperOpen
+    readonly property bool anyOpen: Mixer.open || Bt.panelOpen || Notifs.centerOpen || Power.open || Updates.panelOpen || Dotfiles.panelOpen || Hub.open || WsPanel.open || ClipHistory.open || Launcher.open || Wallpapers.open
 
     // ---------- only one dropdown at a time ----------
 
@@ -33,17 +28,12 @@ Singleton {
         if (keep !== "clipboard")
             ClipHistory.open = false;
         if (keep !== "launcher")
-            launcherOpen = false;
+            Launcher.open = false;
         if (keep !== "wallpaper")
-            wallpaperOpen = false;
+            Wallpapers.open = false;
     }
 
     // whichever panel just opened closes all the others
-    onLauncherOpenChanged: if (launcherOpen)
-        closeAll("launcher")
-    onWallpaperOpenChanged: if (wallpaperOpen)
-        closeAll("wallpaper")
-
     Connections {
         target: Mixer
         function onOpenChanged() {
@@ -98,6 +88,20 @@ Singleton {
         function onOpenChanged() {
             if (ClipHistory.open)
                 root.closeAll("clipboard");
+        }
+    }
+    Connections {
+        target: Launcher
+        function onOpenChanged() {
+            if (Launcher.open)
+                root.closeAll("launcher");
+        }
+    }
+    Connections {
+        target: Wallpapers
+        function onOpenChanged() {
+            if (Wallpapers.open)
+                root.closeAll("wallpaper");
         }
     }
 

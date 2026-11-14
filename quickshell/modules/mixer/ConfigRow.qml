@@ -45,7 +45,7 @@ Rectangle {
 
             Text {
                 // nf-md-chip
-                text: String.fromCodePoint(0xF061A)
+                text: Icons.chip
                 color: Theme.dim
                 font.family: Theme.font
                 font.pixelSize: Theme.fontSize + 4

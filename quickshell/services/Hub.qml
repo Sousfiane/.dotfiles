@@ -10,7 +10,6 @@ Singleton {
     function toggle() {
         open = !open;
     }
-
     // close the hub first, then open the picker once the hub has let go of the keyboard
     property string pending: ""
 
@@ -24,8 +23,17 @@ Singleton {
         id: pickerTimer
         interval: 220
         onTriggered: {
-            if (root.pending !== "")
-                Quickshell.execDetached(["qs", "ipc", "call", root.pending, "toggle"]);
+            switch (root.pending) {
+            case "launcher":
+                Launcher.open = true;
+                break;
+            case "wallpaper":
+                Wallpapers.open = true;
+                break;
+            case "clipboard":
+                ClipHistory.toggle();      // also refreshes the history and clears the query
+                break;
+            }
             root.pending = "";
         }
     }

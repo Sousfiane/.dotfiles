@@ -73,7 +73,7 @@ Rectangle {
                     anchors.centerIn: parent
                     visible: root.device
                     // nf-md: microphone / speaker
-                    text: String.fromCodePoint(root.input ? 0xF036C : 0xF04C3)
+                    text: root.input ? Icons.mic : Icons.speaker
                     color: root.isDefault ? Theme.accent : Theme.dim
                     font.family: Theme.font
                     font.pixelSize: Theme.fontSize + 5
@@ -177,7 +177,7 @@ Rectangle {
             // mute button
             Text {
                 // nf-md: microphone / microphone_off / volume_high / volume_off
-                text: String.fromCodePoint(root.input ? (root.muted ? 0xF036D : 0xF036C) : (root.muted ? 0xF0581 : 0xF057E))
+                text: root.input ? (root.muted ? Icons.micOff : Icons.mic) : (root.muted ? Icons.volumeOff : Icons.volumeHigh)
                 color: root.muted ? Theme.urgent : Theme.fg
                 font.family: Theme.font
                 font.pixelSize: Theme.fontSize + 3
