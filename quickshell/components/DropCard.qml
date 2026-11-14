@@ -142,10 +142,22 @@ Item {
 
         return [left, right];
     }
+    // the monitor the gap was last registered on, so it can always be cleared from there,
+    // even if the window has since moved or is already gone
+    property string reportedScreen: ""
+
+    function clearGap() {
+        if (reportedScreen !== "")
+            Panels.clearGap(reportedScreen, gapKey);
+    }
 
     function reportGap() {
         if (screenName === "")
             return;
+
+        if (reportedScreen !== "" && reportedScreen !== screenName)
+            clearGap();
+        reportedScreen = screenName;
 
         const p = root.mapToItem(null, 0, 0);
 
@@ -154,7 +166,7 @@ Item {
 
         // fully hidden: the bar's line is complete again, right now
         if (slid >= height) {
-            Panels.clearGap(screenName, gapKey);
+            clearGap();
             return;
         }
 
@@ -162,6 +174,8 @@ Item {
         const e = extentAt(Math.min(slid + 1, height));
         Panels.setGap(screenName, gapKey, p.x + e[0], p.x + e[1]);
     }
+
+    onScreenNameChanged: reportGap()
 
     onXChanged: reportGap()
     onWidthChanged: reportGap()
@@ -177,5 +191,5 @@ Item {
     }
 
     Component.onCompleted: Qt.callLater(reportGap)
-    Component.onDestruction: Panels.clearGap(screenName, gapKey)
+    Component.onDestruction: clearGap()
 }
