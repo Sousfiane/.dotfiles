@@ -48,33 +48,6 @@ hl.workspace_rule({
 	no_rounding = true,
 })
 
--- Apply blur to common UI layers
-hl.layer_rule({
-	name = "blur-ui-layers",
-	match = {
-		class = "^(waybar|wofi|notifications|swayosd|quickshell)$",
-	},
-	blur = true,
-})
-
--- Enable blur for waybar popups
-hl.layer_rule({
-	name = "waybar-blur-popups",
-	match = {
-		class = "^waybar$",
-	},
-	blur_popups = true,
-})
-
--- Ignore fully transparent pixels when blurring
-hl.layer_rule({
-	name = "ignore-alpha-ui",
-	match = {
-		class = "^(notifications|waybar|wofi|swayosd)$",
-	},
-	ignore_alpha = 0,
-})
-
 -- Programs on specific workspaces
 hl.window_rule({
 	name = "kitty-on-ws1",
@@ -117,4 +90,14 @@ hl.layer_rule({
 		namespace = "^(bar-overlay|mixer|bluetooth-panel|notif-center|power-menu|updates-panel|dotfiles-panel|workspace-panel|launcher|wallpaper-picker|clipboard-picker|hub-menu)$",
 	},
 	no_anim = true,
+})
+
+hl.layer_rule({
+	name = "quickshell-blur",
+	match = {
+		namespace = "^(quickshell|mixer|bluetooth-panel|notif-center|power-menu|updates-panel|dotfiles-panel|workspace-panel|launcher|wallpaper-picker|clipboard-picker|hub-menu)$",
+	},
+	blur = true,
+	ignore_alpha = 0.6,
+	xray = true,
 })

@@ -31,17 +31,6 @@ Singleton {
         panelOpen = false;
     }
 
-    onPanelOpenChanged: {
-        if (panelOpen) {
-            Mixer.open = false;
-            Bt.panelOpen = false;
-            Notifs.centerOpen = false;
-            Power.open = false;
-            Updates.panelOpen = false;
-            Hub.open = false;
-        }
-    }
-
     // ---------- git status ----------
 
     function refresh() {

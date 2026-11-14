@@ -18,9 +18,17 @@ Singleton {
     readonly property color iris: "#c4a7e7"
     readonly property color highlightMed: "#403d52"
 
+    // ---------- transparency: the one place to tune it ----------
+    readonly property real alpha: 0.95          // bar, dropdowns, toasts, OSD
+    readonly property real surfaceAlpha: 0.75   // rows, buttons and inputs drawn on top of those
+
+    // fully opaque versions, for anything that must never show through
+    readonly property color bgSolid: base
+    readonly property color surfaceSolid: overlay
+
     // Semantic names used by the modules
-    readonly property color bg: base
-    readonly property color surface: overlay
+    readonly property color bg: Qt.rgba(base.r, base.g, base.b, alpha)
+    readonly property color surface: Qt.rgba(overlay.r, overlay.g, overlay.b, surfaceAlpha)
     readonly property color border: iris
     readonly property color fg: text
     readonly property color dim: subtle

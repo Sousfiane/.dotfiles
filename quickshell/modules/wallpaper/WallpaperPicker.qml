@@ -21,6 +21,13 @@ Scope {
         query = "";                 // start fresh on every open
         Panels.wallpaperOpen = open;
     }
+    Connections {
+        target: Panels
+        function onWallpaperOpenChanged() {
+            if (!Panels.wallpaperOpen)
+                root.open = false;
+        }
+    }
 
     readonly property var extensions: ["png", "jpg", "jpeg", "webp", "bmp", "gif"]
     readonly property var filters: {

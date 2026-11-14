@@ -128,7 +128,7 @@ hl.bind(
 
 hl.bind(
 	mod .. " + " .. shift .. " + R",
-	hl.dsp.exec_cmd("pkill waybar && uwsm-app -- waybar"),
+	hl.dsp.exec_cmd("pkill qs && uwsm-app -- qs"),
 	{ description = "Restart Waybar" }
 )
 
