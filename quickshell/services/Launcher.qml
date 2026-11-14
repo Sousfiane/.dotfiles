@@ -6,11 +6,12 @@ import qs.config
 Singleton {
     id: root
 
-    property bool open: false
     property string query: ""
 
+    readonly property bool open: Panels.isOpen("launcher")
+
     function toggle() {
-        open = !open;
+        Panels.toggle("launcher");
     }
 
     // start fresh on every open
@@ -51,6 +52,6 @@ Singleton {
                 workingDirectory: entry.workingDirectory
             });
         }
-        open = false;
+        Panels.hide("launcher");
     }
 }

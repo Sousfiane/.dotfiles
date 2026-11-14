@@ -15,16 +15,16 @@ Singleton {
 
     // ---------- panel ----------
 
-    property bool panelOpen: false
+    readonly property bool panelOpen: Panels.isOpen("updates")
 
     function toggle() {
-        panelOpen = !panelOpen;
+        Panels.toggle("updates");
     }
 
     // change this if you use an AUR helper (e.g. "yay -Syu")
     function runUpdate() {
         Quickshell.execDetached(["uwsm", "app", "--", Config.terminal, "-e", "bash", "-c", "sudo pacman -Syu; echo; read -rp 'Press Enter to close...'"]);
-        panelOpen = false;
+        Panels.hide("updates");
     }
 
     // ---------- checking ----------

@@ -6,12 +6,8 @@ import qs.components
 
 DropdownPanel {
     name: "mixer"
-    open: Mixer.open
     edge: "right"
     cardWidth: 560
-
-    onToggleRequested: Mixer.toggle()
-    onCloseRequested: Mixer.open = false
 
     ColumnLayout {
         id: mixer
@@ -140,7 +136,7 @@ DropdownPanel {
                 Mixer.tab = event.key - Qt.Key_1;
                 break;
             case Qt.Key_Q:
-                Mixer.open = false;
+                panel.close();
                 break;
             default:
                 return;

@@ -9,12 +9,8 @@ import qs.components
 
 DropdownPanel {
     name: "notifs"
-    open: Notifs.centerOpen
     edge: "right"
     cardWidth: 380
-
-    onToggleRequested: Notifs.centerOpen = !Notifs.centerOpen
-    onCloseRequested: Notifs.centerOpen = false
 
     ColumnLayout {
         spacing: 10

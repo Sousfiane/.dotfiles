@@ -6,12 +6,8 @@ import qs.components
 
 DropdownPanel {
     name: "updates"
-    open: Updates.panelOpen
     edge: "right"
     cardWidth: 460
-
-    onToggleRequested: Updates.toggle()
-    onCloseRequested: Updates.panelOpen = false
 
     ColumnLayout {
         spacing: 12
@@ -38,7 +34,7 @@ DropdownPanel {
                 Updates.runUpdate();
                 break;
             case Qt.Key_Q:
-                Updates.panelOpen = false;
+                panel.close();
                 break;
             default:
                 return;

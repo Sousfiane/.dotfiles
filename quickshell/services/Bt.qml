@@ -11,8 +11,6 @@ Singleton {
     readonly property bool powered: adapter?.enabled ?? false
     readonly property bool scanning: adapter?.discovering ?? false
 
-    property bool panelOpen: false
-
     // ---------- used by the bar tooltip ----------
 
     readonly property var connectedDevices: powered ? Bluetooth.devices.values.filter(d => d.connected).map(d => ({
@@ -62,8 +60,10 @@ Singleton {
         return "Not paired";
     }
 
+    readonly property bool panelOpen: Panels.isOpen("bluetooth")
+
     function toggle() {
-        panelOpen = !panelOpen;
+        Panels.toggle("bluetooth");
     }
 
     function togglePower() {

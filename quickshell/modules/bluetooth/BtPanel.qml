@@ -6,12 +6,8 @@ import qs.components
 
 DropdownPanel {
     name: "bluetooth"
-    open: Bt.panelOpen
     edge: "right"
     cardWidth: 460
-
-    onToggleRequested: Bt.toggle()
-    onCloseRequested: Bt.panelOpen = false
 
     ColumnLayout {
         id: menu
@@ -52,7 +48,7 @@ DropdownPanel {
                 Bt.forget(selDev);
                 break;
             case Qt.Key_Q:
-                Bt.panelOpen = false;
+                panel.close();
                 break;
             default:
                 return;

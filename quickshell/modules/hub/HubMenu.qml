@@ -7,12 +7,8 @@ import qs.components
 
 DropdownPanel {
     name: "hub"
-    open: Hub.open
     edge: "center"
     cardWidth: 350
-
-    onToggleRequested: Hub.toggle()
-    onCloseRequested: Hub.open = false
 
     ColumnLayout {
         id: hub
@@ -81,7 +77,7 @@ DropdownPanel {
                 Hub.openPicker("clipboard");
                 break;
             case Qt.Key_Q:
-                Hub.open = false;
+                panel.close();
                 break;
             default:
                 return;

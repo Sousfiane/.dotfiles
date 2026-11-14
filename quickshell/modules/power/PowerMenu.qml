@@ -6,12 +6,8 @@ import qs.components
 
 DropdownPanel {
     name: "power"
-    open: Power.open
     edge: "right"
     cardWidth: 300
-
-    onToggleRequested: Power.toggle()
-    onCloseRequested: Power.open = false
 
     ColumnLayout {
         id: menu

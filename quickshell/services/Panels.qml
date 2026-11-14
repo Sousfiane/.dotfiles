@@ -5,107 +5,37 @@ import QtQuick
 Singleton {
     id: root
 
-    readonly property bool anyOpen: Mixer.open || Bt.panelOpen || Notifs.centerOpen || Power.open || Updates.panelOpen || Dotfiles.panelOpen || Hub.open || WsPanel.open || ClipHistory.open || Launcher.open || Wallpapers.open
+    // ---------- which dropdown is open ----------
 
-    // ---------- only one dropdown at a time ----------
+    // "" = none. Only one dropdown can be open, by construction.
+    property string current: ""
 
-    // close every dropdown except the one named in `keep` (use "" to close all)
-    function closeAll(keep) {
-        if (keep !== "mixer")
-            Mixer.open = false;
-        if (keep !== "bluetooth")
-            Bt.panelOpen = false;
-        if (keep !== "notifs")
-            Notifs.centerOpen = false;
-        if (keep !== "power")
-            Power.open = false;
-        if (keep !== "updates")
-            Updates.panelOpen = false;
-        if (keep !== "dotfiles")
-            Dotfiles.panelOpen = false;
-        if (keep !== "hub")
-            Hub.open = false;
-        if (keep !== "clipboard")
-            ClipHistory.open = false;
-        if (keep !== "launcher")
-            Launcher.open = false;
-        if (keep !== "wallpaper")
-            Wallpapers.open = false;
+    function isOpen(name) {
+        return current === name;
     }
 
-    // whichever panel just opened closes all the others
-    Connections {
-        target: Mixer
-        function onOpenChanged() {
-            if (Mixer.open)
-                root.closeAll("mixer");
-        }
+    function show(name) {
+        current = name;
     }
-    Connections {
-        target: Bt
-        function onPanelOpenChanged() {
-            if (Bt.panelOpen)
-                root.closeAll("bluetooth");
-        }
+
+    function toggle(name) {
+        current = current === name ? "" : name;
     }
-    Connections {
-        target: Notifs
-        function onCenterOpenChanged() {
-            if (Notifs.centerOpen)
-                root.closeAll("notifs");
-        }
+
+    // closes `name`, but only if it is the open one: a panel that is still sliding out
+    // must not be able to close the panel that replaced it
+    function hide(name) {
+        if (current === name)
+            current = "";
     }
-    Connections {
-        target: Power
-        function onOpenChanged() {
-            if (Power.open)
-                root.closeAll("power");
-        }
-    }
-    Connections {
-        target: Updates
-        function onPanelOpenChanged() {
-            if (Updates.panelOpen)
-                root.closeAll("updates");
-        }
-    }
-    Connections {
-        target: Dotfiles
-        function onPanelOpenChanged() {
-            if (Dotfiles.panelOpen)
-                root.closeAll("dotfiles");
-        }
-    }
-    Connections {
-        target: Hub
-        function onOpenChanged() {
-            if (Hub.open)
-                root.closeAll("hub");
-        }
-    }
-    Connections {
-        target: ClipHistory
-        function onOpenChanged() {
-            if (ClipHistory.open)
-                root.closeAll("clipboard");
-        }
-    }
-    Connections {
-        target: Launcher
-        function onOpenChanged() {
-            if (Launcher.open)
-                root.closeAll("launcher");
-        }
-    }
-    Connections {
-        target: Wallpapers
-        function onOpenChanged() {
-            if (Wallpapers.open)
-                root.closeAll("wallpaper");
-        }
+
+    function closeAll() {
+        current = "";
     }
 
     // ---------- bar visibility ----------
+
+    readonly property bool anyOpen: current !== "" || WsPanel.open
 
     // what the bars listen to: stays true 300 ms after the last panel closes
     property bool raised: false
