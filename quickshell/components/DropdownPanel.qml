@@ -18,16 +18,24 @@ Scope {
     property real padding: 16
     property string namespace: "qs-" + name   // what Hyprland layer rules match on
     property bool autoFocus: true             // false when the content has its own text input
+    property bool ipc: true                   // false when the panel registers its own IPC target
+
+    // hover panels: no keyboard focus, no click-outside, and a window only as big as the card,
+    // so the rest of the screen stays clickable
+    property bool compact: false
+    property var targetScreen: null           // a specific monitor; null = the focused one
 
     // the panel's content: exactly one item, usually a ColumnLayout
     default property Component content
 
     signal toggleRequested
     signal closeRequested
+    signal cardHoverChanged(bool hovered)
 
     // ---------- plumbing ----------
 
     IpcHandler {
+        enabled: root.ipc
         target: root.name
 
         function toggle(): void {
@@ -50,25 +58,30 @@ Scope {
         open: root.open
 
         PanelWindow {
-            screen: root.focusedScreen()
+            screen: root.targetScreen ?? root.focusedScreen()
             margins.top: Theme.barHeight
+
+            // full-screen overlay for click-driven panels, a card-sized window for hover panels
             anchors {
                 top: true
-                bottom: true
-                left: true
-                right: true
+                bottom: !root.compact
+                left: !root.compact || root.edge === "left"
+                right: !root.compact || root.edge === "right"
             }
+            implicitWidth: root.compact ? card.width + card.fl + card.fr + 2 * card.pad + 40 : 0
+            implicitHeight: root.compact ? card.height + card.pad + 40 : 0
+
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+            WlrLayershell.keyboardFocus: root.compact ? WlrKeyboardFocus.None : WlrKeyboardFocus.Exclusive
             WlrLayershell.namespace: root.namespace
 
             Item {
                 id: shell
                 anchors.fill: parent
-                focus: true
-                Component.onCompleted: if (root.autoFocus)
+                focus: !root.compact
+                Component.onCompleted: if (root.autoFocus && !root.compact)
                     forceActiveFocus()
 
                 // the content sees every key first; Escape closes if it didn't use it
@@ -83,6 +96,7 @@ Scope {
                 // click outside to close
                 MouseArea {
                     anchors.fill: parent
+                    enabled: !root.compact
                     onClicked: root.closeRequested()
                 }
 
@@ -100,8 +114,18 @@ Scope {
                             horizontalCenter: root.edge === "center" ? parent.horizontalCenter : undefined
                         }
 
-                        width: Math.min(root.cardWidth, parent.width - 64)
-                        height: Math.min(root.cardHeight > 0 ? root.cardHeight : loader.implicitHeight + 2 * root.padding, parent.height - 16)
+                        // compact windows size themselves from the card, so the card must not size itself from the window
+                        width: root.compact ? root.cardWidth : Math.min(root.cardWidth, parent.width - 64)
+                        height: {
+                            const natural = root.cardHeight > 0 ? root.cardHeight : loader.implicitHeight + 2 * root.padding;
+                            return root.compact ? natural : Math.min(natural, parent.height - 16);
+                        }
+
+                        // tells hover-driven panels whether the pointer is on the card
+                        HoverHandler {
+                            onHoveredChanged: root.cardHoverChanged(hovered)
+                            Component.onDestruction: root.cardHoverChanged(false)
+                        }
 
                         // swallow clicks on the card
                         MouseArea {
