@@ -27,8 +27,8 @@ PanelWindow {
     // ---------- auto-hide ----------
     readonly property bool fullscreen: Fullscreen.on(screen?.name ?? "")
 
-    // a dropdown is open on this monitor (they open on the focused one)
-    readonly property bool panelHere: Panels.raised && screen?.name === Hyprland.focusedMonitor?.name
+    // a dropdown is open on this monitor (or just closed on it), so the bar must be visible
+    readonly property bool panelHere: Panels.raised && screen?.name === Panels.raisedScreen
 
     // set by the pointer touching the top edge
     property bool revealed: false

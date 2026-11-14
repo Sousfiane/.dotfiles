@@ -31,6 +31,22 @@ Scope {
 
     signal cardHoverChanged(bool hovered)
 
+    // the monitor this panel appears on: it follows the focused monitor while the panel is
+    // closed, then stays put for as long as it is open
+    property var lockedScreen: null
+
+    Binding {
+        target: root
+        property: "lockedScreen"
+        value: root.focusedScreen()
+        when: !slide.alive              // frozen while open AND while sliding out
+        restoreMode: Binding.RestoreNone
+    }
+
+    // tell Panels where this panel is shown, so the right bar can come in
+    onLockedScreenChanged: if (!root.compact)
+        Panels.setScreen(root.name, lockedScreen?.name ?? "")
+
     function close() {
         Panels.hide(name);
     }
@@ -62,10 +78,11 @@ Scope {
     }
 
     SlideLoader {
+        id: slide
         open: root.open
 
         PanelWindow {
-            screen: root.targetScreen ?? root.focusedScreen()
+            screen: root.targetScreen ?? root.lockedScreen
             margins.top: Theme.barHeight
 
             // full-screen overlay for click-driven panels, a card-sized window for hover panels
@@ -81,7 +98,7 @@ Scope {
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.keyboardFocus: root.compact ? WlrKeyboardFocus.None : WlrKeyboardFocus.Exclusive
+            WlrLayershell.keyboardFocus: (root.compact || !root.open) ? WlrKeyboardFocus.None : WlrKeyboardFocus.Exclusive
             WlrLayershell.namespace: root.namespace
 
             Item {

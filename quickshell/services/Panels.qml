@@ -35,10 +35,29 @@ Singleton {
 
     // ---------- bar visibility ----------
 
+    // monitor each dropdown is (or would be) shown on, reported by the panels themselves
+    property var screens: ({})
+
+    function setScreen(name, screen) {
+        if (screens[name] === screen)
+            return;
+        screens = Object.assign({}, screens, {
+            [name]: screen
+        });
+    }
+
     readonly property bool anyOpen: current !== "" || WsPanel.open
 
-    // what the bars listen to: stays true 300 ms after the last panel closes
+    // the monitor whose bar must be visible: the one showing the open dropdown,
+    // or the one showing the workspace hover panel
+    readonly property string activeScreen: current !== "" ? (screens[current] ?? "") : WsPanel.open ? WsPanel.screenName : ""
+
+    // what the bars listen to: both stay set for 300 ms after the last panel closes
     property bool raised: false
+    property string raisedScreen: ""
+
+    onActiveScreenChanged: if (activeScreen !== "")
+        raisedScreen = activeScreen
 
     onAnyOpenChanged: {
         if (anyOpen) {
@@ -52,7 +71,10 @@ Singleton {
     Timer {
         id: lowerTimer
         interval: 300
-        onTriggered: root.raised = false
+        onTriggered: {
+            root.raised = false;
+            root.raisedScreen = "";
+        }
     }
 
     // monitor name -> true once that monitor's bar is completely slid in.
