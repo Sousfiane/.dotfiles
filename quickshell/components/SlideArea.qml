@@ -19,7 +19,7 @@ Item {
     // `force` is a safety net so a panel can never get stuck waiting.
     readonly property string screenName: root.QsWindow.window?.screen?.name ?? ""
     property bool force: false
-    readonly property bool barReady: force || Panels.barReady[screenName] !== false
+    readonly property bool barReady: force || BarState.barReady[screenName] !== false
 
     onOpenChanged: if (!open)
         force = false

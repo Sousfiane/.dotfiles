@@ -103,23 +103,15 @@ DropdownPanel {
                 height: grid.cellHeight
 
                 property bool hovered: false
-                property bool imageReady: false
-                property bool imageFailed: false
-
-                readonly property string thumbnailPath: ClipHistory.cacheDir + "/" + clipId + ".thumb." + imageExt
                 readonly property bool highlighted: hovered || grid.currentIndex === index
+                readonly property string thumb: ClipHistory.thumbs[clipId] ?? ""
+                readonly property bool imageReady: thumb === "ready"
+                readonly property bool imageFailed: thumb === "failed"
+                readonly property string thumbnailPath: ClipHistory.thumbPath(clipId, imageExt)
 
-                // image thumbnail generation
-                Process {
-                    command: ["bash", "-c", ['set -e', 'cache="$1"', 'id="$2"', 'ext="$3"', 'mkdir -p "$cache"', 'original="$cache/$id.$ext"', 'thumb="$cache/$id.thumb.$ext"', 'if [ ! -s "$original" ]; then', '  clipvault get "$id" > "$original.tmp"', '  mv "$original.tmp" "$original"', 'fi', 'if [ ! -s "$thumb" ]; then', '  if command -v magick >/dev/null 2>&1; then', '    magick "$original" -thumbnail "256x256>" "$thumb" 2>/dev/null || cp -f "$original" "$thumb"', '  else', '    cp -f "$original" "$thumb"', '  fi', 'fi'].join("\n"), "clipboard-thumbnail", ClipHistory.cacheDir, tile.clipId, tile.imageExt]
-
-                    running: tile.kind === "image"
-
-                    onExited: (exitCode, exitStatus) => {
-                        tile.imageReady = exitCode === 0;
-                        tile.imageFailed = exitCode !== 0;
-                    }
-                }
+                // ask the service for the thumbnail when the tile appears
+                Component.onCompleted: if (kind === "image")
+                    ClipHistory.requestThumb(clipId, imageExt)
 
                 Rectangle {
                     anchors.fill: parent

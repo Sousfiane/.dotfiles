@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components
 
 Item {
     id: root
@@ -30,14 +31,12 @@ Item {
         }
         spacing: 4
 
-        Text {
+        Txt {
             visible: root.header !== ""
             Layout.topMargin: root.header !== "" ? 6 : 0
-            text: root.header
-            color: Theme.dim
-            font.family: Theme.font
-            font.pixelSize: Theme.fontSize - 3
+            variant: "small"
             font.bold: true
+            text: root.header
         }
 
         Rectangle {
@@ -72,71 +71,49 @@ Item {
                     Layout.fillWidth: true
                     spacing: 0
 
-                    Text {
+                    Txt {
                         Layout.fillWidth: true
+                        variant: "row"
+                        font.bold: root.dev.connected
                         text: root.dev.name || root.dev.address
                         elide: Text.ElideRight
-                        color: Theme.fg
-                        font.family: Theme.font
-                        font.pixelSize: Theme.fontSize - 1
-                        font.bold: root.dev.connected
                     }
 
-                    Text {
+                    Txt {
                         Layout.fillWidth: true
+                        variant: "small"
+                        color: root.dev.connected ? Theme.accent : Theme.dim
                         text: root.status
                         elide: Text.ElideRight
-                        color: root.dev.connected ? Theme.accent : Theme.dim
-                        font.family: Theme.font
-                        font.pixelSize: Theme.fontSize - 3
                     }
                 }
 
                 // battery
-                Text {
+                Txt {
                     visible: root.dev.connected && root.level >= 0
-                    text: Math.round(root.level * 100) + "%"
+                    variant: "dim"
                     color: root.level < 0.2 ? Theme.urgent : Theme.dim
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 2
+                    text: Math.round(root.level * 100) + "%"
                 }
 
                 // main action
-                Rectangle {
-                    implicitWidth: 86
-                    implicitHeight: 24
-                    radius: 12
+                Pill {
+                    minWidth: 86
+                    primary: !root.dev.connected
+                    enabled: !root.busy
                     opacity: root.busy ? 0.5 : 1
-                    color: root.dev.connected ? Theme.surface : Theme.accent
-                    border.width: root.dev.connected ? 1 : 0
-                    border.color: Theme.border
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: root.busy ? "…" : root.dev.connected ? "Disconnect" : root.dev.paired ? "Connect" : "Pair"
-                        color: root.dev.connected ? Theme.fg : Theme.bg
-                        font.family: Theme.font
-                        font.pixelSize: Theme.fontSize - 3
-                        font.bold: true
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: !root.busy
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.selectRequested();
-                            root.activated();
-                        }
+                    text: root.busy ? "…" : root.dev.connected ? "Disconnect" : root.dev.paired ? "Connect" : "Pair"
+                    onClicked: {
+                        root.selectRequested();
+                        root.activated();
                     }
                 }
 
                 // forget (saved devices only)
-                Text {
+                Txt {
                     visible: root.dev.paired
                     text: "×"
                     color: Theme.dim
-                    font.family: Theme.font
                     font.pixelSize: Theme.fontSize + 4
 
                     MouseArea {

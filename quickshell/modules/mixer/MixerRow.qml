@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components
 
 Rectangle {
     id: root
@@ -69,13 +70,11 @@ Rectangle {
                     source: Quickshell.iconPath(root.iconName, "audio-volume-high")
                 }
 
-                Text {
+                Txt {
                     anchors.centerIn: parent
                     visible: root.device
-                    // nf-md: microphone / speaker
                     text: root.input ? Icons.mic : Icons.speaker
                     color: root.isDefault ? Theme.accent : Theme.dim
-                    font.family: Theme.font
                     font.pixelSize: Theme.fontSize + 5
                 }
             }
@@ -84,102 +83,56 @@ Rectangle {
                 Layout.fillWidth: true
                 spacing: 0
 
-                Text {
+                Txt {
                     Layout.fillWidth: true
+                    variant: "row"
+                    font.bold: true
                     text: root.title
                     elide: Text.ElideRight
-                    color: Theme.fg
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 1
-                    font.bold: true
                 }
 
-                Text {
+                Txt {
                     Layout.fillWidth: true
                     visible: root.subtitle !== ""
+                    variant: "dim"
                     text: root.subtitle
                     elide: Text.ElideRight
-                    color: Theme.dim
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 2
                 }
             }
 
             // stream rows: current device, click to change it
-            Rectangle {
+            Pill {
                 visible: !root.device
-                Layout.preferredWidth: 130
-                implicitHeight: 22
-                radius: 11
-                color: root.choosing ? Theme.accent : Theme.surface
-                border.width: 1
-                border.color: Theme.border
-
-                Text {
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        leftMargin: 8
-                        rightMargin: 8
-                    }
-                    text: "→ " + (root.currentTarget ? (root.currentTarget.description || root.currentTarget.name) : "no device")
-                    elide: Text.ElideRight
-                    color: root.choosing ? Theme.bg : Theme.fg
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 3
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        root.selectRequested();
-                        root.chooseRequested();
-                    }
+                maxWidth: 160
+                active: root.choosing
+                text: "→ " + (root.currentTarget ? (root.currentTarget.description || root.currentTarget.name) : "no device")
+                onClicked: {
+                    root.selectRequested();
+                    root.chooseRequested();
                 }
             }
 
             // device rows: default indicator / button
-            Rectangle {
+            Pill {
                 visible: root.device
-                implicitWidth: defaultLabel.implicitWidth + 14
-                implicitHeight: 20
-                radius: 10
-                color: root.isDefault ? Theme.accent : Theme.surface
-
-                Text {
-                    id: defaultLabel
-                    anchors.centerIn: parent
-                    text: root.isDefault ? "Default" : "Set default"
-                    color: root.isDefault ? Theme.bg : Theme.fg
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 3
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: !root.isDefault
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Mixer.makeDefault(root.node)
-                }
+                active: root.isDefault
+                text: root.isDefault ? "Default" : "Set default"
+                onClicked: if (!root.isDefault)
+                    Mixer.makeDefault(root.node)
             }
 
-            Text {
+            Txt {
                 Layout.preferredWidth: 42
                 horizontalAlignment: Text.AlignRight
+                variant: "row"
                 text: Math.round(root.vol * 100) + "%"
                 color: root.muted ? Theme.dim : (root.vol > 1 ? Theme.urgent : Theme.fg)
-                font.family: Theme.font
-                font.pixelSize: Theme.fontSize - 1
             }
 
             // mute button
-            Text {
-                // nf-md: microphone / microphone_off / volume_high / volume_off
+            Txt {
                 text: root.input ? (root.muted ? Icons.micOff : Icons.mic) : (root.muted ? Icons.volumeOff : Icons.volumeHigh)
                 color: root.muted ? Theme.urgent : Theme.fg
-                font.family: Theme.font
                 font.pixelSize: Theme.fontSize + 3
 
                 MouseArea {
@@ -197,7 +150,6 @@ Rectangle {
             implicitHeight: 18
 
             Rectangle {
-                id: track
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width
                 height: 8
@@ -262,9 +214,9 @@ Rectangle {
                     Layout.fillWidth: true
                     implicitHeight: 26
                     radius: 6
-                    color: highlighted ? Theme.accent : Theme.bg
+                    color: highlighted ? Theme.accent : Theme.bgSolid
 
-                    Text {
+                    Txt {
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -272,11 +224,10 @@ Rectangle {
                             leftMargin: 10
                             rightMargin: 10
                         }
+                        variant: "dim"
+                        color: option.highlighted ? Theme.bgSolid : Theme.fg
                         text: (option.isCurrent ? "● " : "   ") + (option.modelData.description || option.modelData.name)
                         elide: Text.ElideRight
-                        color: option.highlighted ? Theme.bg : Theme.fg
-                        font.family: Theme.font
-                        font.pixelSize: Theme.fontSize - 2
                     }
 
                     MouseArea {

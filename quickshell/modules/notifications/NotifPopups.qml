@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components
 
 PanelWindow {
     anchors {
@@ -21,6 +22,7 @@ PanelWindow {
     visible: Notifs.list.values.length > 0
     color: "transparent"
     WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.namespace: "qs-toasts"
 
     ColumnLayout {
         id: column
@@ -34,10 +36,10 @@ PanelWindow {
                 id: card
                 required property var modelData   // a Notification
 
-                // Image sent with the notification (cover art, screenshot, avatar...)
+                // image sent with the notification (cover art, screenshot, avatar...)
                 readonly property string imageSource: modelData.image ?? ""
 
-                // App icon: either an icon name or an absolute path
+                // app icon: either an icon name or an absolute path
                 readonly property string iconSource: {
                     const icon = modelData.appIcon ?? "";
                     if (icon === "")
@@ -46,16 +48,17 @@ PanelWindow {
                 }
 
                 readonly property bool hasPicture: imageSource !== "" || iconSource !== ""
+                readonly property bool critical: modelData.urgency === NotificationUrgency.Critical
 
                 Layout.fillWidth: true
                 implicitHeight: content.implicitHeight + 24
                 radius: Theme.radius
                 color: Theme.bg
                 border.width: 2
-                border.color: modelData.urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.border
+                border.color: critical ? Theme.urgent : Theme.border
 
                 Timer {
-                    running: card.modelData.urgency !== NotificationUrgency.Critical
+                    running: !card.critical
                     interval: card.modelData.expireTimeout > 0 ? card.modelData.expireTimeout * 1000 : 5000
                     onTriggered: card.modelData.expire()
                 }
@@ -75,8 +78,7 @@ PanelWindow {
                     }
                     spacing: 12
 
-                    // Picture: a real image gets a larger rounded thumbnail,
-                    // a plain app icon stays small
+                    // a real image gets a larger rounded thumbnail, a plain app icon stays small
                     ClippingRectangle {
                         visible: card.hasPicture
                         Layout.alignment: Qt.AlignTop
@@ -101,30 +103,25 @@ PanelWindow {
                         Layout.alignment: Qt.AlignTop
                         spacing: 2
 
-                        Text {
+                        Txt {
                             Layout.fillWidth: true
+                            variant: "dim"
                             text: card.modelData.appName
                             elide: Text.ElideRight
-                            color: Theme.dim
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize - 2
                         }
-                        Text {
+
+                        Txt {
                             Layout.fillWidth: true
-                            text: card.modelData.summary
-                            color: Theme.fg
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize
                             font.bold: true
+                            text: card.modelData.summary
                             wrapMode: Text.Wrap
                         }
-                        Text {
+
+                        Txt {
                             Layout.fillWidth: true
                             visible: card.modelData.body !== ""
+                            variant: "row"
                             text: card.modelData.body
-                            color: Theme.fg
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize - 1
                             wrapMode: Text.Wrap
                         }
                     }

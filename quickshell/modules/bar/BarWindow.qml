@@ -28,7 +28,7 @@ PanelWindow {
     readonly property bool fullscreen: Fullscreen.on(screen?.name ?? "")
 
     // a dropdown is open on this monitor (or just closed on it), so the bar must be visible
-    readonly property bool panelHere: Panels.raised && screen?.name === Panels.raisedScreen
+    readonly property bool panelHere: BarState.raised && screen?.name === BarState.raisedScreen
 
     // set by the pointer touching the top edge
     property bool revealed: false
@@ -37,7 +37,7 @@ PanelWindow {
 
     // the underline, split around every dropdown that is attached to this bar
     readonly property var segments: {
-        const gaps = Object.values(Panels.gaps[screen?.name ?? ""] ?? {}).sort((a, b) => a[0] - b[0]);
+        const gaps = Object.values(BarState.gaps[screen?.name ?? ""] ?? {}).sort((a, b) => a[0] - b[0]);
         const out = [];
         let x = 0;
         for (const g of gaps) {
@@ -92,8 +92,8 @@ PanelWindow {
         // true only when the bar has fully finished sliding in
         readonly property bool fullyIn: win.shown && y === 0
 
-        onFullyInChanged: Panels.setBarReady(win.screen?.name ?? "", fullyIn)
-        Component.onCompleted: Panels.setBarReady(win.screen?.name ?? "", fullyIn)
+        onFullyInChanged: BarState.setBarReady(win.screen?.name ?? "", fullyIn)
+        Component.onCompleted: BarState.setBarReady(win.screen?.name ?? "", fullyIn)
 
         Behavior on y {
             NumberAnimation {

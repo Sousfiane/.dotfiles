@@ -148,7 +148,7 @@ Item {
 
     function clearGap() {
         if (reportedScreen !== "")
-            Panels.clearGap(reportedScreen, gapKey);
+            BarState.clearGap(reportedScreen, gapKey);
     }
 
     function reportGap() {
@@ -172,7 +172,7 @@ Item {
 
         // the outline is visible one row below the edge it crosses, so measure there
         const e = extentAt(Math.min(slid + 1, height));
-        Panels.setGap(screenName, gapKey, p.x + e[0], p.x + e[1]);
+        BarState.setGap(screenName, gapKey, p.x + e[0], p.x + e[1]);
     }
 
     onScreenNameChanged: reportGap()

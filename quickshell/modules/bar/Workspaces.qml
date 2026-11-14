@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components
 
 RowLayout {
     id: root
@@ -26,14 +27,10 @@ RowLayout {
             implicitWidth: 16
             implicitHeight: 22
 
-            Text {
+            Txt {
                 anchors.centerIn: parent
 
                 text: workspace.modelData.focused ? "󱓻" : ""
-
-                color: Theme.fg
-
-                font.family: Theme.font
                 font.pixelSize: Theme.fontSize
             }
 
