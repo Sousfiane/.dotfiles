@@ -1,6 +1,7 @@
 pragma Singleton
 import Quickshell
 import QtQuick
+import qs.config
 
 Singleton {
     id: root
@@ -16,31 +17,31 @@ Singleton {
         {
             key: "L",
             label: "Lock",
-            icon: 0xF033E,
+            icon: Icons.lock,
             command: ["hyprlock"]
         },
         {
             key: "S",
             label: "Suspend",
-            icon: 0xF0904,
+            icon: Icons.suspend,
             command: ["systemctl", "suspend"]
         },
         {
             key: "O",
             label: "Log out",
-            icon: 0xF0343,
+            icon: Icons.logout,
             command: ["uwsm", "stop"]
         },
         {
             key: "R",
             label: "Reboot",
-            icon: 0xF0709,
+            icon: Icons.reboot,
             command: ["systemctl", "reboot"]
         },
         {
             key: "P",
             label: "Shutdown",
-            icon: 0xF0425,
+            icon: Icons.shutdown,
             command: ["systemctl", "poweroff"]
         }
     ]

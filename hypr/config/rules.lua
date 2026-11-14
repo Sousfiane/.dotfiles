@@ -85,18 +85,11 @@ hl.window_rule({
 })
 
 hl.layer_rule({
-	name = "quickshell-panels-no-anim",
+	name = "quickshell-rules",
 	match = {
-		namespace = "^(bar-overlay|mixer|bluetooth-panel|notif-center|power-menu|updates-panel|dotfiles-panel|workspace-panel|launcher|wallpaper-picker|clipboard-picker|hub-menu)$",
+		namespace = "^(quickshell|qs-.*|mixer|bluetooth-panel|notif-center|power-menu|updates-panel|dotfiles-panel|workspace-panel|launcher|wallpaper-picker|clipboard-picker|hub-menu)$",
 	},
 	no_anim = true,
-})
-
-hl.layer_rule({
-	name = "quickshell-blur",
-	match = {
-		namespace = "^(quickshell|mixer|bluetooth-panel|notif-center|power-menu|updates-panel|dotfiles-panel|workspace-panel|launcher|wallpaper-picker|clipboard-picker|hub-menu)$",
-	},
 	blur = true,
 	ignore_alpha = 0.6,
 	xray = true,
