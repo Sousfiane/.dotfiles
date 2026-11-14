@@ -49,23 +49,10 @@ DropdownPanel {
         }
 
         // ---------- header ----------
-        RowLayout {
-            Layout.fillWidth: true
-
-            Txt {
-                text: "Clipboard"
-                font.pixelSize: Theme.fontSize + 6
-                font.bold: true
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
-
-            Txt {
-                variant: "dim"
-                text: ClipHistory.entries.count + " entries"
-            }
+        PanelHeader {
+            icon: Icons.clipboard
+            title: "Clipboard"
+            subtitle: ClipHistory.entries.count + " entries"
         }
 
         SearchBox {

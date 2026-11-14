@@ -5,6 +5,7 @@ import qs.services
 import qs.components
 
 DropdownPanel {
+    id: panel
     name: "updates"
     edge: "right"
     cardWidth: 460
@@ -12,20 +13,15 @@ DropdownPanel {
     ColumnLayout {
         spacing: 12
 
-        function scrollBy(d) {
-            const max = Math.max(0, list.contentHeight - list.height);
-            list.contentY = Math.max(0, Math.min(max, list.contentY + d));
-        }
-
         Keys.onPressed: event => {
             switch (event.key) {
             case Qt.Key_J:
             case Qt.Key_Down:
-                scrollBy(60);
+                list.scrollBy(60);
                 break;
             case Qt.Key_K:
             case Qt.Key_Up:
-                scrollBy(-60);
+                list.scrollBy(-60);
                 break;
             case Qt.Key_R:
                 Updates.refresh();
@@ -42,35 +38,12 @@ DropdownPanel {
             event.accepted = true;
         }
 
-        // ---------- header ----------
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 10
-
-            Txt {
-                text: Icons.update
-                color: Updates.failed ? Theme.urgent : Updates.count > 0 ? Theme.accent : Theme.dim
-                font.pixelSize: Theme.fontSize + 6
-            }
-
-            ColumnLayout {
-                spacing: 0
-
-                Txt {
-                    text: "Updates"
-                    variant: "title"
-                }
-
-                Txt {
-                    variant: "small"
-                    color: Updates.failed ? Theme.urgent : Theme.dim
-                    text: Updates.failed ? "Could not check for updates" : (Updates.checking && Updates.count === 0) ? "Checking…" : Updates.count === 0 ? "System is up to date" : Updates.count + (Updates.count === 1 ? " update available" : " updates available")
-                }
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
+        PanelHeader {
+            icon: Icons.update
+            iconColor: Updates.failed ? Theme.urgent : Updates.count > 0 ? Theme.accent : Theme.dim
+            title: "Updates"
+            subtitle: Updates.failed ? "Could not check for updates" : (Updates.checking && Updates.count === 0) ? "Checking…" : Updates.count === 0 ? "System is up to date" : Updates.count + (Updates.count === 1 ? " update available" : " updates available")
+            subtitleColor: Updates.failed ? Theme.urgent : Theme.dim
 
             Pill {
                 text: Updates.checking ? "Checking…" : "Refresh"
@@ -88,48 +61,25 @@ DropdownPanel {
 
         Divider {}
 
-        // ---------- package list ----------
-        ListView {
+        ScrollList {
             id: list
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(contentHeight, 420)
             visible: Updates.count > 0
-            clip: true
-            spacing: 2
             model: Updates.packages
 
-            delegate: Rectangle {
+            delegate: ListRow {
                 id: row
                 required property var modelData
 
-                width: ListView.view.width
-                implicitHeight: 30
-                radius: 6
-                color: rowHover.hovered ? Theme.surface : "transparent"
-
-                HoverHandler {
-                    id: rowHover
+                Txt {
+                    Layout.fillWidth: true
+                    variant: "row"
+                    text: row.modelData.name
+                    elide: Text.ElideRight
                 }
 
-                RowLayout {
-                    anchors {
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 10
-                    }
-                    spacing: 12
-
-                    Txt {
-                        Layout.fillWidth: true
-                        variant: "row"
-                        text: row.modelData.name
-                        elide: Text.ElideRight
-                    }
-
-                    Txt {
-                        variant: "small"
-                        text: row.modelData.from + " → " + row.modelData.to
-                    }
+                Txt {
+                    variant: "small"
+                    text: row.modelData.from + " → " + row.modelData.to
                 }
             }
         }
