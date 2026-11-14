@@ -87,7 +87,7 @@ hl.window_rule({
 hl.layer_rule({
 	name = "quickshell-rules",
 	match = {
-		namespace = "^(quickshell|qs-.*|mixer|bluetooth-panel|notif-center|power-menu|updates-panel|dotfiles-panel|workspace-panel|launcher|wallpaper-picker|clipboard-picker|hub-menu)$",
+		namespace = "^(quickshell|qs-.*)$",
 	},
 	no_anim = true,
 	blur = true,
