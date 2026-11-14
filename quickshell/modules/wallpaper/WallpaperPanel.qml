@@ -41,25 +41,11 @@ DropdownPanel {
         }
 
         // ---------- header ----------
-        RowLayout {
-            Layout.fillWidth: true
-
-            Txt {
-                text: "Wallpapers"
-                font.pixelSize: Theme.fontSize + 6
-                font.bold: true
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
-
-            Txt {
-                variant: "dim"
-                text: Wallpapers.files.count + " images"
-            }
+        PanelHeader {
+            icon: Icons.wallpaper
+            title: "Wallpapers"
+            subtitle: Wallpapers.files.count + " images"
         }
-
         SearchBox {
             placeholder: "Search wallpapers..."
             horizontalNav: true

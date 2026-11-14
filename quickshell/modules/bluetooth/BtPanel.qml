@@ -57,34 +57,11 @@ DropdownPanel {
         }
 
         // ---------- header ----------
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 10
-
-            Txt {
-                text: Icons.bluetooth
-                color: Bt.powered ? Theme.accent : Theme.dim
-                font.pixelSize: Theme.fontSize + 6
-            }
-
-            ColumnLayout {
-                spacing: 0
-
-                Txt {
-                    text: "Bluetooth"
-                    variant: "title"
-                }
-
-                Txt {
-                    visible: Bt.adapter !== null && Bt.adapter !== undefined
-                    variant: "small"
-                    text: Bt.adapter?.name ?? ""
-                }
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
+        PanelHeader {
+            icon: Icons.bluetooth
+            iconColor: Bt.powered ? Theme.accent : Theme.dim
+            title: "Bluetooth"
+            subtitle: Bt.adapter?.name ?? ""
 
             Pill {
                 visible: Bt.powered
@@ -92,7 +69,6 @@ DropdownPanel {
                 active: Bt.scanning
                 onClicked: Bt.toggleScan()
             }
-
             // power switch
             Rectangle {
                 visible: Bt.adapter !== null && Bt.adapter !== undefined
