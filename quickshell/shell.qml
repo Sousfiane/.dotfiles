@@ -15,17 +15,17 @@ import qs.modules.hub
 
 ShellRoot {
     Bar {}
-    Launcher {}
+    LauncherPanel {}
     Osd {}
     NotifPopups {}
     NotifCenter {}
-    Clipboard {}
+    ClipboardPanel {}
     MixerPanel {}
     BtPanel {}
     PowerMenu {}
     UpdatesPanel {}
     DotfilesPanel {}
     WorkspacePanel {}
-    WallpaperPicker {}
+    WallpaperPanel {}
     HubMenu {}
 }

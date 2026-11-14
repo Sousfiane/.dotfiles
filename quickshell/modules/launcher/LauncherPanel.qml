@@ -1,0 +1,93 @@
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Layouts
+import qs.config
+import qs.services
+import qs.components
+
+DropdownPanel {
+    name: "launcher"
+    open: Launcher.open
+    edge: "center"
+    cardWidth: 560
+    cardHeight: 440
+    autoFocus: false            // the search box takes the focus itself
+
+    onToggleRequested: Launcher.toggle()
+    onCloseRequested: Launcher.open = false
+
+    ColumnLayout {
+        spacing: 8
+
+        SearchBox {
+            placeholder: "Apps..."
+
+            onTextChanged: {
+                Launcher.query = text;
+                list.currentIndex = 0;
+            }
+            onMoved: direction => {
+                if (direction === "down")
+                    list.incrementCurrentIndex();
+                else if (direction === "up")
+                    list.decrementCurrentIndex();
+            }
+            onAccepted: Launcher.launch(Launcher.results[list.currentIndex])
+        }
+
+        ListView {
+            id: list
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            model: Launcher.results
+            currentIndex: 0
+
+            delegate: Rectangle {
+                id: row
+
+                required property var modelData
+                required property int index
+
+                width: ListView.view.width
+                height: 36
+                radius: 6
+                color: (mouse.containsMouse || ListView.isCurrentItem) ? Theme.surface : "transparent"
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 120
+                    }
+                }
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    spacing: 10
+
+                    IconImage {
+                        implicitSize: 24
+                        source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
+                    }
+
+                    Txt {
+                        Layout.fillWidth: true
+                        text: row.modelData.name
+                        elide: Text.ElideRight
+                    }
+                }
+
+                MouseArea {
+                    id: mouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onEntered: list.currentIndex = row.index
+                    onClicked: Launcher.launch(row.modelData)
+                }
+            }
+        }
+    }
+}

@@ -2,6 +2,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.config
 
 Singleton {
     id: root
@@ -15,7 +16,6 @@ Singleton {
     // ---------- panel ----------
 
     property bool panelOpen: false
-    property string terminal: "kitty"               // change to your terminal
 
     function toggle() {
         panelOpen = !panelOpen;
@@ -23,7 +23,7 @@ Singleton {
 
     // change this if you use an AUR helper (e.g. "yay -Syu")
     function runUpdate() {
-        Quickshell.execDetached(["uwsm", "app", "--", terminal, "-e", "bash", "-c", "sudo pacman -Syu; echo; read -rp 'Press Enter to close...'"]);
+        Quickshell.execDetached(["uwsm", "app", "--", Config.terminal, "-e", "bash", "-c", "sudo pacman -Syu; echo; read -rp 'Press Enter to close...'"]);
         panelOpen = false;
     }
 
