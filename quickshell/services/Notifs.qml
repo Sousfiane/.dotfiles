@@ -14,17 +14,9 @@ Singleton {
     property int unread: 0
 
     // opening the center marks everything as read and closes the other panels
-    onCenterOpenChanged: {
-        if (centerOpen) {
-            unread = 0;
-            Mixer.open = false;
-            Bt.panelOpen = false;
-            Power.open = false;
-            Updates.panelOpen = false;
-            Dotfiles.panelOpen = false;
-            Hub.open = false;
-        }
-    }
+    // opening the center marks everything as read
+    onCenterOpenChanged: if (centerOpen)
+        unread = 0
 
     function clearHistory() {
         historyModel.clear();

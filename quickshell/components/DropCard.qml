@@ -50,8 +50,35 @@ Item {
         return d;
     }
 
-    readonly property string linePath: build(width, height)
-    readonly property string fillPath: linePath + " Z"
+    function buildLine(w, h) {
+        const o = 0.5;
+        const ox = pad;
+        const x0 = ox + fl;
+        const x1 = ox + fl + w;
+
+        let d = fl > 0 ? `M ${ox} ${o}` : `M ${x0 - o} 0`;
+        if (fl > 0)
+            d += ` A ${fl - o} ${fl - o} 0 0 1 ${x0 - o} ${fl}`;
+        d += ` L ${x0 - o} ${h - rl}`;
+
+        if (rl > 0)
+            d += ` A ${rl + o} ${rl + o} 0 0 0 ${x0 + rl} ${h + o}`;
+        else
+            d += ` L ${x0 - o} ${h + o}`;
+        d += ` L ${x1 - rr} ${h + o}`;
+        if (rr > 0)
+            d += ` A ${rr + o} ${rr + o} 0 0 0 ${x1 + o} ${h - rr}`;
+        else
+            d += ` L ${x1 + o} ${h + o}`;
+
+        d += ` L ${x1 + o} ${fr}`;
+        if (fr > 0)
+            d += ` A ${fr - o} ${fr - o} 0 0 1 ${x1 + fr} ${o}`;
+        return d;
+    }
+
+    readonly property string fillPath: build(width, height) + " Z"
+    readonly property string linePath: buildLine(width, height)
 
     Shape {
         x: -root.fl - root.pad
@@ -66,7 +93,7 @@ Item {
         ShapePath {
             fillColor: "transparent"
             strokeColor: root.lineColor
-            strokeWidth: 2
+            strokeWidth: 1
             joinStyle: ShapePath.RoundJoin
             capStyle: ShapePath.FlatCap
 

@@ -17,6 +17,13 @@ Scope {
     // change to foot, alacritty, ghostty...
     readonly property string terminal: "kitty"
     onOpenChanged: Panels.launcherOpen = open
+    Connections {
+        target: Panels
+        function onLauncherOpenChanged() {
+            if (!Panels.launcherOpen)
+                root.open = false;
+        }
+    }
 
     IpcHandler {
         target: "launcher"

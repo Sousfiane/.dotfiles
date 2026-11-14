@@ -19,17 +19,8 @@ Singleton {
 
     // opening the mixer closes the other panels (and loads the cards if needed)
     onOpenChanged: {
-        if (open) {
-            Bt.panelOpen = false;
-            Notifs.centerOpen = false;
-            Power.open = false;
-            Updates.panelOpen = false;
-            Dotfiles.panelOpen = false;
-            Hub.open = false;
-
-            if (tab === 4)
-                refreshCards();
-        }
+        if (open && tab === 4)
+            refreshCards();
     }
 
     onTabChanged: if (tab === 4)

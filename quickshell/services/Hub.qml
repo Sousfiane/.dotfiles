@@ -11,18 +11,6 @@ Singleton {
         open = !open;
     }
 
-    // opening the hub closes the other panels
-    onOpenChanged: {
-        if (open) {
-            Mixer.open = false;
-            Bt.panelOpen = false;
-            Notifs.centerOpen = false;
-            Power.open = false;
-            Updates.panelOpen = false;
-            Dotfiles.panelOpen = false;
-        }
-    }
-
     // close the hub first, then open the picker once the hub has let go of the keyboard
     property string pending: ""
 

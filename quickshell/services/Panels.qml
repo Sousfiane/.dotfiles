@@ -12,6 +12,97 @@ Singleton {
 
     readonly property bool anyOpen: Mixer.open || Bt.panelOpen || Notifs.centerOpen || Power.open || Updates.panelOpen || Dotfiles.panelOpen || Hub.open || WsPanel.open || ClipHistory.open || launcherOpen || wallpaperOpen
 
+    // ---------- only one dropdown at a time ----------
+
+    // close every dropdown except the one named in `keep` (use "" to close all)
+    function closeAll(keep) {
+        if (keep !== "mixer")
+            Mixer.open = false;
+        if (keep !== "bluetooth")
+            Bt.panelOpen = false;
+        if (keep !== "notifs")
+            Notifs.centerOpen = false;
+        if (keep !== "power")
+            Power.open = false;
+        if (keep !== "updates")
+            Updates.panelOpen = false;
+        if (keep !== "dotfiles")
+            Dotfiles.panelOpen = false;
+        if (keep !== "hub")
+            Hub.open = false;
+        if (keep !== "clipboard")
+            ClipHistory.open = false;
+        if (keep !== "launcher")
+            launcherOpen = false;
+        if (keep !== "wallpaper")
+            wallpaperOpen = false;
+    }
+
+    // whichever panel just opened closes all the others
+    onLauncherOpenChanged: if (launcherOpen)
+        closeAll("launcher")
+    onWallpaperOpenChanged: if (wallpaperOpen)
+        closeAll("wallpaper")
+
+    Connections {
+        target: Mixer
+        function onOpenChanged() {
+            if (Mixer.open)
+                root.closeAll("mixer");
+        }
+    }
+    Connections {
+        target: Bt
+        function onPanelOpenChanged() {
+            if (Bt.panelOpen)
+                root.closeAll("bluetooth");
+        }
+    }
+    Connections {
+        target: Notifs
+        function onCenterOpenChanged() {
+            if (Notifs.centerOpen)
+                root.closeAll("notifs");
+        }
+    }
+    Connections {
+        target: Power
+        function onOpenChanged() {
+            if (Power.open)
+                root.closeAll("power");
+        }
+    }
+    Connections {
+        target: Updates
+        function onPanelOpenChanged() {
+            if (Updates.panelOpen)
+                root.closeAll("updates");
+        }
+    }
+    Connections {
+        target: Dotfiles
+        function onPanelOpenChanged() {
+            if (Dotfiles.panelOpen)
+                root.closeAll("dotfiles");
+        }
+    }
+    Connections {
+        target: Hub
+        function onOpenChanged() {
+            if (Hub.open)
+                root.closeAll("hub");
+        }
+    }
+    Connections {
+        target: ClipHistory
+        function onOpenChanged() {
+            if (ClipHistory.open)
+                root.closeAll("clipboard");
+        }
+    }
+
+    // ---------- bar visibility ----------
+
     // what the bars listen to: stays true 300 ms after the last panel closes
     property bool raised: false
 
@@ -41,6 +132,7 @@ Singleton {
         next[name] = ready;
         barReady = next;
     }
+
     // monitor name -> { key: [from, to] }: where each dropdown joins the bar.
     // The bar leaves its underline open over these spans.
     property var gaps: ({})
