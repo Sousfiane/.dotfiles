@@ -10,11 +10,14 @@ Singleton {
     readonly property ListModel history: historyModel         // center content
 
     property bool dnd: false
-    property bool centerOpen: false
     property int unread: 0
 
-    // opening the center marks everything as read and closes the other panels
-    // opening the center marks everything as read
+    readonly property bool centerOpen: Panels.isOpen("notifs")
+
+    function toggle() {
+        Panels.toggle("notifs");
+    }
+
     onCenterOpenChanged: if (centerOpen)
         unread = 0
 

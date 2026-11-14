@@ -8,7 +8,6 @@ import qs.config
 Singleton {
     id: root
 
-    property bool open: false
     property string query: ""
 
     readonly property string dir: Config.wallpaperDir
@@ -21,8 +20,10 @@ Singleton {
         return extensions.map(e => "*" + q + "*." + e);
     }
 
+    readonly property bool open: Panels.isOpen("wallpaper")
+
     function toggle() {
-        open = !open;
+        Panels.toggle("wallpaper");
     }
 
     // start fresh on every open

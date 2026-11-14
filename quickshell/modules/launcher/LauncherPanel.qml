@@ -8,14 +8,10 @@ import qs.components
 
 DropdownPanel {
     name: "launcher"
-    open: Launcher.open
     edge: "center"
     cardWidth: 560
     cardHeight: 440
     autoFocus: false            // the search box takes the focus itself
-
-    onToggleRequested: Launcher.toggle()
-    onCloseRequested: Launcher.open = false
 
     ColumnLayout {
         spacing: 8

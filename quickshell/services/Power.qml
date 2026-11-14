@@ -6,10 +6,10 @@ import qs.config
 Singleton {
     id: root
 
-    property bool open: false
+    readonly property bool open: Panels.isOpen("power")
 
     function toggle() {
-        open = !open;
+        Panels.toggle("power");
     }
 
     // `icon` is an nf-md codepoint. Change the lock command to your locker.
@@ -47,7 +47,7 @@ Singleton {
     ]
 
     function run(action) {
-        open = false;
+        Panels.hide("power");
         Quickshell.execDetached(action.command);
     }
 }

@@ -17,15 +17,15 @@ Singleton {
 
     // ---------- panel ----------
 
-    property bool panelOpen: false
+    readonly property bool panelOpen: Panels.isOpen("dotfiles")
 
     function toggle() {
-        panelOpen = !panelOpen;
+        Panels.toggle("dotfiles");
     }
 
     function openLazygit() {
         Quickshell.execDetached(["uwsm", "app", "--", Config.terminal, "-e", "lazygit", "-p", repoPath]);
-        panelOpen = false;
+        Panels.hide("dotfiles");
     }
 
     // ---------- git status ----------

@@ -6,7 +6,6 @@ import QtQuick
 Singleton {
     id: root
 
-    property bool open: false
     property string query: ""
     property var items: []                       // everything parsed from clipvault
 
@@ -15,14 +14,23 @@ Singleton {
 
     onQueryChanged: applyFilter()
 
+    readonly property bool open: Panels.isOpen("clipboard")
+
     function toggle() {
-        open = !open;
-        if (open) {
-            query = "";
-            refresh();
-        }
+        Panels.toggle("clipboard");
     }
 
+    // start fresh and reload the history on every open
+    onOpenChanged: if (open) {
+        query = "";
+        refresh();
+    }
+
+    // the service is created lazily, so it can be created after the panel is already open
+    Component.onCompleted: if (open) {
+        query = "";
+        refresh();
+    }
     function refresh() {
         historyProcess.running = false;
         historyProcess.running = true;
@@ -40,7 +48,7 @@ Singleton {
         if (!/^[0-9]+$/.test(id))
             return;
         Quickshell.execDetached(["bash", "-c", "set -o pipefail; clipvault get \"$1\" | wl-copy", "clipboard-copy", id]);
-        open = false;
+        Panels.hide("clipboard");
     }
 
     function parse(output) {

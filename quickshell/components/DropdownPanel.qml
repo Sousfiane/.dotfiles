@@ -4,14 +4,15 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
 import qs.config
+import qs.services
 
 Scope {
     id: root
 
     // ---------- what a panel provides ----------
 
-    required property string name             // IPC target: qs ipc call <name> toggle|close
-    property bool open: false                 // bind to the panel's open state
+    required property string name             // key in Panels.current, and the IPC target
+    property bool open: Panels.isOpen(name)   // hover panels override this
     property string edge: "center"            // "left" | "right" | "center"
     property real cardWidth: 460
     property real cardHeight: 0               // 0 = fit the content
@@ -28,9 +29,15 @@ Scope {
     // the panel's content: exactly one item, usually a ColumnLayout
     default property Component content
 
-    signal toggleRequested
-    signal closeRequested
     signal cardHoverChanged(bool hovered)
+
+    function close() {
+        Panels.hide(name);
+    }
+
+    function toggle() {
+        Panels.toggle(name);
+    }
 
     // ---------- plumbing ----------
 
@@ -39,10 +46,10 @@ Scope {
         target: root.name
 
         function toggle(): void {
-            root.toggleRequested();
+            root.toggle();
         }
         function close(): void {
-            root.closeRequested();
+            root.close();
         }
     }
 
@@ -88,7 +95,7 @@ Scope {
                 Keys.forwardTo: loader.item ? [loader.item] : []
                 Keys.onPressed: event => {
                     if (event.key === Qt.Key_Escape) {
-                        root.closeRequested();
+                        root.close();
                         event.accepted = true;
                     }
                 }
@@ -97,7 +104,7 @@ Scope {
                 MouseArea {
                     anchors.fill: parent
                     enabled: !root.compact
-                    onClicked: root.closeRequested()
+                    onClicked: root.close()
                 }
 
                 SlideArea {

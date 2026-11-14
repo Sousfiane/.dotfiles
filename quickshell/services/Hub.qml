@@ -5,17 +5,18 @@ import QtQuick
 Singleton {
     id: root
 
-    property bool open: false
+    readonly property bool open: Panels.isOpen("hub")
 
     function toggle() {
-        open = !open;
+        Panels.toggle("hub");
     }
+
     // close the hub first, then open the picker once the hub has let go of the keyboard
     property string pending: ""
 
-    function openPicker(target) {
+    function openPicker(target) {       // "launcher" | "wallpaper" | "clipboard"
         pending = target;
-        open = false;
+        Panels.hide("hub");
         pickerTimer.restart();
     }
 
@@ -23,17 +24,8 @@ Singleton {
         id: pickerTimer
         interval: 220
         onTriggered: {
-            switch (root.pending) {
-            case "launcher":
-                Launcher.open = true;
-                break;
-            case "wallpaper":
-                Wallpapers.open = true;
-                break;
-            case "clipboard":
-                ClipHistory.toggle();      // also refreshes the history and clears the query
-                break;
-            }
+            if (root.pending !== "")
+                Panels.show(root.pending);
             root.pending = "";
         }
     }

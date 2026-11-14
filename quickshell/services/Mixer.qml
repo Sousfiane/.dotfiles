@@ -7,14 +7,15 @@ import QtQuick
 Singleton {
     id: root
 
-    property bool open: false
     property int tab: 0                      // 0 playback, 1 recording, 2 output, 3 input, 4 config
     readonly property real maxVolume: 1.5    // slider goes to 150% like wiremix
 
     readonly property var tabLabels: ["Playback", "Recording", "Output", "Input", "Config"]
 
+    readonly property bool open: Panels.isOpen("mixer")
+
     function toggle() {
-        open = !open;
+        Panels.toggle("mixer");
     }
 
     // opening the mixer closes the other panels (and loads the cards if needed)

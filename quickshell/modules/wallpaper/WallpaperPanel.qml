@@ -8,15 +8,11 @@ import qs.components
 
 DropdownPanel {
     name: "wallpaper"
-    open: Wallpapers.open
     edge: "center"
     cardWidth: 1000
     cardHeight: 760
     padding: 20
     autoFocus: false
-
-    onToggleRequested: Wallpapers.toggle()
-    onCloseRequested: Wallpapers.open = false
 
     ColumnLayout {
         spacing: 16

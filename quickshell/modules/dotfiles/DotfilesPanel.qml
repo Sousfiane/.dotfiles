@@ -6,12 +6,8 @@ import qs.components
 
 DropdownPanel {
     name: "dotfiles"
-    open: Dotfiles.panelOpen
     edge: "right"
     cardWidth: 460
-
-    onToggleRequested: Dotfiles.toggle()
-    onCloseRequested: Dotfiles.panelOpen = false
 
     ColumnLayout {
         spacing: 12
@@ -40,7 +36,7 @@ DropdownPanel {
                 Dotfiles.refresh();
                 break;
             case Qt.Key_Q:
-                Dotfiles.panelOpen = false;
+                panel.close();
                 break;
             default:
                 return;

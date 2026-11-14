@@ -7,6 +7,6 @@ BarButton {
     iconColor: Notifs.dnd ? Theme.dim : Notifs.unread > 0 ? Theme.accent : Theme.fg
     label: Notifs.unread > 0 && !Notifs.dnd ? String(Notifs.unread) : ""
 
-    onClicked: Notifs.centerOpen = !Notifs.centerOpen
+    onClicked: Notifs.toggle()
     onRightClicked: Notifs.dnd = !Notifs.dnd
 }
