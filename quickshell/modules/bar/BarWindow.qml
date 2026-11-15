@@ -125,6 +125,7 @@ PanelWindow {
 
             DotIcon {}
             UpdatesIcon {}
+            NetIcon {}
             BtIcon {}
             Volume {}
             BellIcon {}

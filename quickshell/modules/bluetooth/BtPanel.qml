@@ -77,19 +77,10 @@ DropdownPanel {
                 radius: 11
                 color: Bt.powered ? Theme.accent : Theme.surface
 
-                Rectangle {
-                    y: 3
-                    x: Bt.powered ? parent.width - width - 3 : 3
-                    width: 16
-                    height: 16
-                    radius: 8
-                    color: Bt.powered ? Theme.bgSolid : Theme.dim
-
-                    Behavior on x {
-                        NumberAnimation {
-                            duration: 120
-                        }
-                    }
+                Toggle {
+                    visible: Bt.adapter !== null && Bt.adapter !== undefined
+                    checked: Bt.powered
+                    onToggled: Bt.togglePower()
                 }
 
                 MouseArea {
