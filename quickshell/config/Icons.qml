@@ -40,4 +40,13 @@ Singleton {
     readonly property string wallpaper: glyph(0xF02E9)
     readonly property string clipboard: glyph(0xF0147)
     readonly property string capsLock: "⇪"
+
+    // network
+    readonly property string wifi1: glyph(0xF091F)
+    readonly property string wifi2: glyph(0xF0922)
+    readonly property string wifi3: glyph(0xF0925)
+    readonly property string wifi4: glyph(0xF0928)
+    readonly property string wifiOff: glyph(0xF05AA)
+    readonly property string ethernet: glyph(0xF0200)
+    readonly property string ethernetOff: glyph(0xF0202)
 }

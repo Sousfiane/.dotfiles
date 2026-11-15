@@ -12,6 +12,7 @@ import qs.modules.dotfiles
 import qs.modules.workspaces
 import qs.modules.wallpaper
 import qs.modules.hub
+import qs.modules.network
 
 ShellRoot {
     Bar {}
@@ -28,4 +29,5 @@ ShellRoot {
     WorkspacePanel {}
     WallpaperPanel {}
     HubMenu {}
+    NetPanel {}
 }
