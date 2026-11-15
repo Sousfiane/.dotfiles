@@ -43,6 +43,39 @@ Scope {
         restoreMode: Binding.RestoreNone
     }
 
+    // ---------- keyboard focus ----------
+
+    readonly property var lockedMonitor: lockedScreen ? Hyprland.monitorFor(lockedScreen) : null
+
+    // true for a few ms to take the keyboard back after a workspace switch
+    property bool priming: false
+
+    // wait until the switch has finished (and Hyprland has focused the new window), so the
+    // Exclusive request never overlaps with the switch itself
+    Timer {
+        id: primeDelay
+        interval: 120
+        onTriggered: {
+            root.priming = true;
+            primeEnd.restart();
+        }
+    }
+
+    Timer {
+        id: primeEnd
+        interval: 75
+        onTriggered: root.priming = false
+    }
+
+    Connections {
+        target: root.lockedMonitor
+        enabled: root.open && !root.compact
+
+        function onActiveWorkspaceChanged() {
+            primeDelay.restart();       // restarts on every change, so rapid switching only primes once at the end
+        }
+    }
+
     // tell Panels where this panel is shown, so the right bar can come in
     onLockedScreenChanged: if (!root.compact)
         Panels.setScreen(root.name, lockedScreen?.name ?? "")
@@ -98,7 +131,9 @@ Scope {
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.keyboardFocus: (root.compact || !root.open) ? WlrKeyboardFocus.None : WlrKeyboardFocus.Exclusive
+            // OnDemand most of the time: an exclusive layer makes Hyprland ignore focus changes and jump back to a
+            // stale window when it closes. Exclusive is only requested briefly, to take the keyboard back.
+            WlrLayershell.keyboardFocus: (root.compact || !root.open) ? WlrKeyboardFocus.None : (root.priming ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand)
             WlrLayershell.namespace: root.namespace
 
             Item {
