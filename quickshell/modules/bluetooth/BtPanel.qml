@@ -1,3 +1,4 @@
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
 import qs.config
@@ -85,7 +86,9 @@ DropdownPanel {
         ScrollList {
             id: list
             visible: Bt.list.length > 0
-            model: Bt.list
+            model: ScriptModel {
+                values: Bt.list
+            }
 
             delegate: BtRow {
                 required property var modelData

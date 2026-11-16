@@ -40,7 +40,10 @@ DropdownPanel {
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
-            model: Launcher.results
+            // diffed, so typing only adds and removes the rows that changed (icons aren't reloaded)
+            model: ScriptModel {
+                values: Launcher.results
+            }
             currentIndex: 0
 
             delegate: Rectangle {

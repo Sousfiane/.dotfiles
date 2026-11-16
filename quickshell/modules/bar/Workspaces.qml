@@ -17,7 +17,9 @@ RowLayout {
     spacing: 6
 
     Repeater {
-        model: root.mine
+        model: ScriptModel {
+            values: root.mine
+        }
 
         delegate: Item {
             id: workspace

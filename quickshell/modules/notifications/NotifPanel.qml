@@ -1,3 +1,4 @@
+import Quickshell
 import Quickshell.Services.Notifications
 import QtQuick
 import QtQuick.Layouts
@@ -48,20 +49,24 @@ DropdownPanel {
             maxHeight: 480
             visible: Notifs.history.length > 0
             spacing: 8
-            model: Notifs.history
+            // diffed: a new notification adds one card instead of rebuilding them all
+            model: ScriptModel {
+                values: Notifs.historyIds
+            }
 
             delegate: Rectangle {
                 id: item
-                required property var modelData
-                required property int index
+                required property var modelData      // the entry's id
+
+                readonly property var entry: Notifs.entry(modelData)
 
                 // live text while the app still has the notification open (it may update it)
-                readonly property var live: modelData.notif
-                readonly property string appName: live?.appName ?? modelData.appName
-                readonly property string summary: live?.summary ?? modelData.summary
-                readonly property string body: live?.body ?? modelData.body
-                readonly property int urgency: live?.urgency ?? modelData.urgency
-                readonly property string time: modelData.time
+                readonly property var live: entry?.notif ?? null
+                readonly property string appName: live?.appName ?? entry?.appName ?? ""
+                readonly property string summary: live?.summary ?? entry?.summary ?? ""
+                readonly property string body: live?.body ?? entry?.body ?? ""
+                readonly property int urgency: live?.urgency ?? entry?.urgency ?? 0
+                readonly property string time: entry?.time ?? ""
 
                 width: ListView.view.width
                 height: itemCol.implicitHeight + 20
@@ -114,7 +119,7 @@ DropdownPanel {
                                 anchors.fill: parent
                                 anchors.margins: -4
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Notifs.removeAt(item.index)
+                                onClicked: Notifs.remove(item.modelData)
                             }
                         }
                     }

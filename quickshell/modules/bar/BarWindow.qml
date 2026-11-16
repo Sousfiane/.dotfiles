@@ -130,16 +130,18 @@ PanelWindow {
             BellIcon {}
             PowerIcon {}
         }
-        // 1px underline
+        // 1px underline. The segments change every frame while a dropdown slides, so the model is only
+        // their count: the rectangles are kept and just follow the new positions.
         Repeater {
-            model: win.segments
+            model: win.segments.length
 
             delegate: Rectangle {
-                required property var modelData
+                required property int index
+                readonly property var seg: win.segments[index] ?? [0, 0]
 
-                x: modelData[0]
+                x: seg[0]
                 y: parent.height
-                width: modelData[1] - modelData[0]
+                width: seg[1] - seg[0]
                 height: 1
                 color: Theme.line
             }

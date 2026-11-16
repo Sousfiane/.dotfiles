@@ -1,3 +1,4 @@
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
 import qs.config
@@ -182,7 +183,9 @@ DropdownPanel {
             maxHeight: 440
             visible: Mixer.tab < 4 && Mixer.current.length > 0
             spacing: 4
-            model: Mixer.tab < 4 ? Mixer.current : []
+            model: ScriptModel {
+                values: Mixer.tab < 4 ? Mixer.current : []
+            }
 
             delegate: MixerRow {
                 required property var modelData
