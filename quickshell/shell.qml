@@ -13,6 +13,7 @@ import qs.modules.workspaces
 import qs.modules.wallpaper
 import qs.modules.hub
 import qs.modules.network
+import qs.modules.screenshot
 
 ShellRoot {
     Bar {}
@@ -30,4 +31,5 @@ ShellRoot {
     WallpaperPanel {}
     HubPanel {}
     NetPanel {}
+    ScreenshotPanel {}
 }
