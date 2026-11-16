@@ -116,14 +116,8 @@ hl.bind(mod .. " + C", hl.dsp.exec_cmd("uwsm-app -- vesktop"), { description = "
 
 hl.bind(
 	mod .. " + S",
-	hl.dsp.exec_cmd("uwsm-app -- hyprshot -m region --clipboard-only"),
+	hl.dsp.exec_cmd("qs ipc call screenshot toggle"),
 	{ description = "Screenshot region to clipboard" }
-)
-
-hl.bind(
-	mod .. " + " .. shift .. " + S",
-	hl.dsp.exec_cmd("uwsm-app -- hyprshot -m window --clipboard-only"),
-	{ description = "Screenshot window to clipboard" }
 )
 
 hl.bind(
