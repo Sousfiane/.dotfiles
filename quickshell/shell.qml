@@ -19,15 +19,15 @@ ShellRoot {
     LauncherPanel {}
     Osd {}
     NotifPopups {}
-    NotifCenter {}
+    NotifPanel {}
     ClipboardPanel {}
     MixerPanel {}
     BtPanel {}
-    PowerMenu {}
+    PowerPanel {}
     UpdatesPanel {}
     DotfilesPanel {}
     WorkspacePanel {}
     WallpaperPanel {}
-    HubMenu {}
+    HubPanel {}
     NetPanel {}
 }

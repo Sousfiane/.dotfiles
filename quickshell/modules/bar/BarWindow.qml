@@ -111,7 +111,7 @@ PanelWindow {
             }
         }
 
-        Clock {
+        ClockButton {
             anchors.centerIn: parent
         }
 
@@ -127,7 +127,7 @@ PanelWindow {
             UpdatesIcon {}
             NetIcon {}
             BtIcon {}
-            Volume {}
+            VolumeIcon {}
             BellIcon {}
             PowerIcon {}
         }
