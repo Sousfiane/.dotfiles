@@ -51,7 +51,7 @@ DropdownPanel {
 
                 width: ListView.view.width
                 height: 36
-                radius: 6
+                radius: Theme.radius
                 color: ListView.isCurrentItem ? Theme.surface : "transparent"
 
                 MotionArea {
@@ -81,16 +81,6 @@ DropdownPanel {
                         text: row.modelData.name
                         elide: Text.ElideRight
                     }
-                }
-
-                MouseArea {
-                    id: mouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-
-                    onEntered: list.currentIndex = row.index
-                    onClicked: Launcher.launch(row.modelData)
                 }
             }
         }

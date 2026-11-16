@@ -12,7 +12,7 @@ Singleton {
         Panels.toggle("power");
     }
 
-    // `icon` is an nf-md codepoint. Change the lock command to your locker.
+    // change the lock command to your locker
     readonly property var actions: [
         {
             key: "L",

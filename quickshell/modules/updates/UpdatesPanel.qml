@@ -91,6 +91,7 @@ DropdownPanel {
             Layout.bottomMargin: 8
             visible: Updates.count === 0
             horizontalAlignment: Text.AlignHCenter
+            variant: "dim"
             text: Updates.failed ? "Check your network, then press r to retry" : Updates.checking ? "Checking for updates…" : "Nothing to update"
         }
 

@@ -37,9 +37,9 @@ DropdownPanel {
             event.accepted = true;
         }
 
-        Txt {
-            text: "Power"
-            variant: "title"
+        PanelHeader {
+            icon: Icons.power
+            title: "Power"
         }
 
         Divider {}

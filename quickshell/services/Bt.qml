@@ -11,15 +11,9 @@ Singleton {
     readonly property bool powered: adapter?.enabled ?? false
     readonly property bool scanning: adapter?.discovering ?? false
 
-    // ---------- used by the bar tooltip ----------
+    // ---------- bar icon ----------
 
-    readonly property var connectedDevices: powered ? Bluetooth.devices.values.filter(d => d.connected).map(d => ({
-                name: d.name,
-                address: d.address,
-                battery: batteryOf(d)
-            })) : []
-
-    readonly property bool connected: connectedDevices.length > 0
+    readonly property bool connected: powered && Bluetooth.devices.values.some(d => d.connected)
 
     // BlueZ first (headphones etc.), UPower as a fallback (DS4 and similar)
     function batteryOf(dev) {

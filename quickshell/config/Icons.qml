@@ -39,7 +39,6 @@ Singleton {
     readonly property string apps: glyph(0xF003B)
     readonly property string wallpaper: glyph(0xF02E9)
     readonly property string clipboard: glyph(0xF0147)
-    readonly property string capsLock: "⇪"
 
     // network
     readonly property string wifi1: glyph(0xF091F)

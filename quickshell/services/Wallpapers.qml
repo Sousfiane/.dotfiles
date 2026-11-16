@@ -39,7 +39,7 @@ Singleton {
 
         Quickshell.execDetached(["bash", "-c", "pkill -x swaybg 2>/dev/null || true; " + "setsid uwsm-app -- swaybg -i \"$1\" >/dev/null 2>&1 &", "wallpaper-picker", path]);
 
-        open = false;
+        Panels.hide("wallpaper");
     }
 
     FileView {

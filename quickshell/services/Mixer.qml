@@ -18,7 +18,7 @@ Singleton {
         Panels.toggle("mixer");
     }
 
-    // opening the mixer closes the other panels (and loads the cards if needed)
+    // the Config tab reads the cards fresh every time it is shown
     onOpenChanged: {
         if (open && tab === 4)
             refreshCards();
@@ -38,7 +38,7 @@ Singleton {
     readonly property var allNodes: Pipewire.nodes.values.filter(n => n.ready && n.audio)
 
     readonly property var playback: allNodes.filter(n => n.isStream && mediaClass(n) === "Stream/Output/Audio")
-    readonly property var recording: allNodes.filter(n => n.isStream && mediaClass(n) === "Stream/Input/Audio")
+    readonly property var recording: allNodes.filter(n => n.isStream && isRecordingStream(n))
     readonly property var outputs: allNodes.filter(n => !n.isStream && n.isSink)
     readonly property var inputs: allNodes.filter(n => !n.isStream && !n.isSink)
 

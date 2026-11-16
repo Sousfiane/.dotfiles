@@ -2,6 +2,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.config
 
 Singleton {
     id: root
@@ -11,7 +12,7 @@ Singleton {
     property var items: []                       // everything parsed from clipvault
 
     readonly property ListModel entries: ListModel {}   // what the grid shows
-    readonly property string cacheDir: (Quickshell.env("XDG_CACHE_HOME") || (Quickshell.env("HOME") + "/.cache")) + "/clipvault/thumbs"
+    readonly property string cacheDir: (Quickshell.env("XDG_CACHE_HOME") || (Config.home + "/.cache")) + "/clipvault/thumbs"
 
     function toggle() {
         Panels.toggle("clipboard");
