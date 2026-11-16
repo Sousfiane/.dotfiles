@@ -8,12 +8,24 @@ Singleton {
     id: root
 
     // Each notification becomes one entry, shared by the toasts and the history:
-    //   { notif, appName, summary, body, urgency, desktopEntry, time, popupUntil }
-    // (`popupUntil`: when its toast hides, in ms since epoch; 0 = stays until clicked)
+    //   { id, notif, appName, summary, body, urgency, desktopEntry, time, timeout }
+    // (`timeout`: how long its toast stays, in ms; critical ones stay until clicked)
     // `notif` is the live Notification while the app still has it open (null once it's gone);
     // the copied text keeps the entry readable after that.
     property var history: []      // newest first, what the center shows
     property var popups: []       // the subset currently shown as toasts
+
+    // What the views use as models: ids, small stable keys for the ScriptModel diff. Delegates look their
+    // entry up with entry(id), which re-runs whenever the history changes, so a card notices when the app
+    // has withdrawn its notification (entry.notif becomes null) instead of holding on to the old object.
+    readonly property var historyIds: history.map(e => e.id)
+    readonly property var popupIds: popups.map(e => e.id)
+
+    property int nextId: 0
+
+    function entry(id) {
+        return history.find(e => e.id === id) ?? null;
+    }
 
     readonly property int maxHistory: 50
 
@@ -35,43 +47,39 @@ Singleton {
 
     // ---------- list bookkeeping ----------
 
-    function without(list, entry) {
-        return list.filter(e => e !== entry);
+    function without(list, id) {
+        return list.filter(e => e.id !== id);
     }
 
-    function hidePopup(entry) {
-        popups = without(popups, entry);
+    function hidePopup(id) {
+        popups = without(popups, id);
     }
 
     // drops the entry everywhere and lets the app know it was dismissed
-    function remove(entry) {
-        history = without(history, entry);
-        popups = without(popups, entry);
-        const n = entry.notif;
-        entry.notif = null;
+    function remove(id) {
+        const e = entry(id);
+        history = without(history, id);
+        popups = without(popups, id);
+        const n = e?.notif;
+        if (e)
+            e.notif = null;
         if (n)
             n.dismiss();
     }
 
-    function removeAt(i) {
-        if (history[i])
-            remove(history[i]);
-    }
-
     function clearHistory() {
         for (const e of history.slice())
-            remove(e);
+            remove(e.id);
         unread = 0;
     }
 
     // the app closed it, or it was dismissed: keep the text, forget the object
     function released(n) {
-        const entry = history.find(e => e.notif === n);
-        if (!entry)
+        const e = history.find(x => x.notif === n);
+        if (!e)
             return;
-        entry.notif = null;
-        popups = without(popups, entry);
-        history = history.slice();             // re-evaluate bindings on `notif`
+        e.notif = null;
+        popups = without(popups, e.id);
     }
 
     // ---------- going to the app ----------
@@ -116,7 +124,11 @@ Singleton {
     }
 
     // a click on a toast or a history entry
-    function activate(entry) {
+    function activate(id) {
+        const entry = root.entry(id);
+        if (!entry)
+            return;
+
         const invoked = invokeDefault(entry.notif);
         const desktop = desktopEntryFor(entry);
         const win = windowFor(namesFor(entry, desktop));
@@ -128,7 +140,7 @@ Singleton {
         else if (!invoked && desktop)
             Launcher.run(desktop);         // not running: start it
 
-        remove(entry);
+        remove(id);
     }
 
     // ---------- the server ----------
@@ -145,30 +157,28 @@ Singleton {
             n.closed.connect(() => root.released(n));
 
             const entry = {
+                id: root.nextId++,
                 notif: n,
                 appName: n.appName,
                 summary: n.summary,
                 body: n.body,
                 urgency: n.urgency,
                 desktopEntry: n.desktopEntry,
-                time: Qt.formatDateTime(new Date(), "HH:mm")
+                time: Qt.formatDateTime(new Date(), "HH:mm"),
+                timeout: n.expireTimeout > 0 ? n.expireTimeout : 5000      // already in ms
             };
 
             const next = [entry].concat(root.history);
             for (const old of next.splice(root.maxHistory))
-                root.remove(old);
+                root.remove(old.id);
             root.history = next;
 
             if (!root.open)
                 root.unread++;
 
-            // Do Not Disturb: still recorded in history, but only critical ones pop up.
-            // The deadline lives on the entry, so rebuilding the toast list doesn't restart it.
-            const critical = n.urgency === NotificationUrgency.Critical;
-            if (!root.dnd || critical) {
-                entry.popupUntil = critical ? 0 : Date.now() + (n.expireTimeout > 0 ? n.expireTimeout * 1000 : 5000);
+            // Do Not Disturb: still recorded in history, but only critical ones pop up
+            if (!root.dnd || n.urgency === NotificationUrgency.Critical)
                 root.popups = [entry].concat(root.popups);
-            }
         }
     }
 }

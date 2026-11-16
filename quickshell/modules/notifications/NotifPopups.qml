@@ -30,16 +30,20 @@ PanelWindow {
         spacing: 8
 
         Repeater {
-            model: Notifs.popups
+            model: ScriptModel {
+                values: Notifs.popupIds
+            }
 
             delegate: Rectangle {
                 id: card
-                required property var modelData   // an entry from Notifs (see there)
+                required property var modelData   // the entry's id (see Notifs)
 
-                readonly property var live: modelData.notif
-                readonly property string appName: live?.appName ?? modelData.appName
-                readonly property string summary: live?.summary ?? modelData.summary
-                readonly property string body: live?.body ?? modelData.body
+                readonly property var entry: Notifs.entry(modelData)
+
+                readonly property var live: entry?.notif ?? null
+                readonly property string appName: live?.appName ?? entry?.appName ?? ""
+                readonly property string summary: live?.summary ?? entry?.summary ?? ""
+                readonly property string body: live?.body ?? entry?.body ?? ""
 
                 // image sent with the notification (cover art, screenshot, avatar...)
                 readonly property string imageSource: live?.image ?? ""
@@ -53,7 +57,7 @@ PanelWindow {
                 }
 
                 readonly property bool hasPicture: imageSource !== "" || iconSource !== ""
-                readonly property bool critical: (live?.urgency ?? modelData.urgency) === NotificationUrgency.Critical
+                readonly property bool critical: (live?.urgency ?? entry?.urgency) === NotificationUrgency.Critical
 
                 Layout.fillWidth: true
                 implicitHeight: content.implicitHeight + 24
@@ -64,8 +68,8 @@ PanelWindow {
 
                 // hides the toast only; the notification stays in the center
                 Timer {
-                    running: card.modelData.popupUntil > 0
-                    interval: Math.max(1, card.modelData.popupUntil - Date.now())
+                    running: !card.critical
+                    interval: card.entry?.timeout ?? 5000
                     onTriggered: Notifs.hidePopup(card.modelData)
                 }
 

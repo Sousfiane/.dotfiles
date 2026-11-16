@@ -1,3 +1,4 @@
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
 import qs.config
@@ -66,7 +67,9 @@ DropdownPanel {
         ScrollList {
             id: list
             visible: Dotfiles.count > 0
-            model: Dotfiles.changes
+            model: ScriptModel {
+                values: Dotfiles.changes
+            }
 
             delegate: ListRow {
                 id: row

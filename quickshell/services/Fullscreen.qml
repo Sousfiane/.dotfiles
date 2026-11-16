@@ -1,21 +1,27 @@
 pragma Singleton
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Io
 import QtQuick
 
 Singleton {
     id: root
 
     // monitor name -> true when its active workspace has a fullscreen window
-    property var states: ({})
+    readonly property var states: {
+        const out = {};
+        for (const m of Hyprland.monitors.values)
+            out[m.name] = m.activeWorkspace?.hasFullscreen ?? false;
+        return out;
+    }
 
     function on(name) {
         return states[name] === true;
     }
 
-    // events come in bursts and some fire just before Hyprland has applied the change
-    // (closewindow comes before the fullscreen window is restored), so read the state a moment later
+    // Quickshell keeps hasFullscreen up to date from "fullscreen" events, but Hyprland doesn't send one
+    // in every case (see below), so re-read the workspaces over the socket. Events come in bursts and
+    // some fire just before Hyprland has applied the change (closewindow comes before the fullscreen
+    // window is restored), so read a moment later.
     function refresh() {
         settle.restart();
     }
@@ -23,39 +29,10 @@ Singleton {
     Timer {
         id: settle
         interval: 60
-        onTriggered: {
-            proc.running = false;
-            proc.running = true;
-        }
+        onTriggered: Hyprland.refreshWorkspaces()
     }
 
     Component.onCompleted: refresh()
-
-    Process {
-        id: proc
-        command: ["sh", "-c", "hyprctl -j monitors; printf '\\n@@@@\\n'; hyprctl -j workspaces"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const parts = text.split("@@@@");
-                if (parts.length < 2)
-                    return;
-
-                try {
-                    const monitors = JSON.parse(parts[0]);
-                    const workspaces = JSON.parse(parts[1]);
-                    const fullscreenIds = workspaces.filter(w => w.hasfullscreen).map(w => w.id);
-
-                    const out = ({});
-                    for (const m of monitors)
-                        out[m.name] = fullscreenIds.indexOf(m.activeWorkspace.id) !== -1;
-                    root.states = out;
-                } catch (e) {
-                    console.log("fullscreen: could not parse hyprctl output", e);
-                }
-            }
-        }
-    }
 
     Connections {
         target: Hyprland
