@@ -90,22 +90,71 @@ DropdownPanel {
             event.accepted = true;
         }
 
-        // ---------- time and date ----------
-        ColumnLayout {
+        // ---------- time and date, weather next to them ----------
+        RowLayout {
             Layout.fillWidth: true
-            spacing: 0
+            spacing: 12
 
-            Txt {
-                Layout.alignment: Qt.AlignHCenter
-                text: Qt.formatDateTime(clock.date, "HH:mm")
-                font.pixelSize: Theme.fontSize + 18
-                font.bold: true
+            // fresh weather whenever the hub opens (the service also refreshes every 30 minutes)
+            Component.onCompleted: Weather.refreshIfStale(10)
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 0
+
+                Txt {
+                    text: Qt.formatDateTime(clock.date, "HH:mm")
+                    font.pixelSize: Theme.fontSize + 18
+                    font.bold: true
+                }
+
+                Txt {
+                    variant: "dim"
+                    text: Qt.formatDateTime(clock.date, "dddd d MMMM")
+                }
             }
 
-            Txt {
-                Layout.alignment: Qt.AlignHCenter
-                variant: "dim"
-                text: Qt.formatDateTime(clock.date, "dddd d MMMM yyyy")
+            // the columns hold only fixed-size text, so this is what lets the row span the card
+            Item {
+                Layout.fillWidth: true
+            }
+
+            ColumnLayout {
+                visible: Weather.ready
+                Layout.fillWidth: false             // nested layouts fill by default: stay against the right edge
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                spacing: 0
+
+                RowLayout {
+                    Layout.alignment: Qt.AlignRight
+                    spacing: 6
+
+                    Txt {
+                        text: Weather.icon
+                        font.pixelSize: Theme.fontSize + 14
+                    }
+
+                    Txt {
+                        text: Weather.temp + "°"
+                        font.pixelSize: Theme.fontSize + 10
+                        font.bold: true
+                    }
+                }
+
+                Txt {
+                    Layout.alignment: Qt.AlignRight
+                    Layout.maximumWidth: 150
+                    variant: "dim"
+                    horizontalAlignment: Text.AlignRight
+                    elide: Text.ElideRight
+                    text: Weather.desc
+                }
+
+                Txt {
+                    Layout.alignment: Qt.AlignRight
+                    variant: "small"
+                    text: "↑" + Weather.high + "° ↓" + Weather.low + "°  " + Weather.area
+                }
             }
         }
 
