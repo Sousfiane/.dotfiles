@@ -35,8 +35,11 @@ Singleton {
         hoverBar = true;
     }
 
-    function leaveBar() {
-        hoverBar = false;
+    // adjacent dots can report the new dot's enter before the old dot's exit:
+    // only the dot currently shown may clear the hover
+    function leaveBar(screen, id) {
+        if (screen === screenName && id === wsId)
+            hoverBar = false;
     }
 
     Timer {
