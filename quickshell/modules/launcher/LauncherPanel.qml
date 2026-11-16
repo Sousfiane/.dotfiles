@@ -23,7 +23,9 @@ DropdownPanel {
             onTextChanged: {
                 Launcher.query = text;
                 list.currentIndex = 0;
+                list.positionViewAtBeginning();
             }
+
             onMoved: direction => {
                 if (direction === "down")
                     list.incrementCurrentIndex();
@@ -50,7 +52,13 @@ DropdownPanel {
                 width: ListView.view.width
                 height: 36
                 radius: 6
-                color: (mouse.containsMouse || ListView.isCurrentItem) ? Theme.surface : "transparent"
+                color: ListView.isCurrentItem ? Theme.surface : "transparent"
+
+                MotionArea {
+                    anchors.fill: parent
+                    onMoved: list.currentIndex = row.index
+                    onClicked: Launcher.launch(row.modelData)
+                }
 
                 Behavior on color {
                     ColorAnimation {

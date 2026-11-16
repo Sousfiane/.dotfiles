@@ -60,7 +60,11 @@ DropdownPanel {
             placeholder: "Search clipboard..."
             horizontalNav: true
 
-            onTextChanged: ClipHistory.query = text
+            onTextChanged: {
+                ClipHistory.query = text;
+                grid.currentIndex = 0;
+                grid.positionViewAtBeginning();
+            }
             onMoved: direction => parent.navigate(direction)
             onAccepted: parent.copyCurrent()
         }
@@ -103,8 +107,7 @@ DropdownPanel {
                 width: grid.cellWidth
                 height: grid.cellHeight
 
-                property bool hovered: false
-                readonly property bool highlighted: hovered || grid.currentIndex === index
+                readonly property bool highlighted: grid.currentIndex === index
                 readonly property string thumb: ClipHistory.thumbs[clipId] ?? ""
                 readonly property bool imageReady: thumb === "ready"
                 readonly property bool imageFailed: thumb === "failed"
@@ -193,16 +196,9 @@ DropdownPanel {
                         }
                     }
 
-                    MouseArea {
+                    MotionArea {
                         anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onEntered: {
-                            tile.hovered = true;
-                            grid.currentIndex = tile.index;
-                        }
-                        onExited: tile.hovered = false
+                        onMoved: grid.currentIndex = tile.index
                         onClicked: ClipHistory.copy(tile.clipId)
                     }
                 }
