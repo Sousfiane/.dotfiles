@@ -12,21 +12,7 @@ Singleton {
     }
 
     // close the hub first, then open the picker once the hub has let go of the keyboard
-    property string pending: ""
-
     function openPicker(target) {       // "launcher" | "wallpaper" | "clipboard" | "screenshot"
-        pending = target;
-        Panels.hide("hub");
-        pickerTimer.restart();
-    }
-
-    Timer {
-        id: pickerTimer
-        interval: 220
-        onTriggered: {
-            if (root.pending !== "")
-                Panels.show(root.pending);
-            root.pending = "";
-        }
+        Panels.closeThen(() => Panels.show(target));
     }
 }

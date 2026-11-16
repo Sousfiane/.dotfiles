@@ -64,21 +64,9 @@ Singleton {
     }
 
     // close the panel first and wait for it to slide away, so it is not in the shot
-    property var pending: null
-
+    // (it keeps the longer 400 ms wait it always had)
     function take(mode) {
-        pending = command(mode);
-        Panels.hide("screenshot");
-        shotTimer.restart();
-    }
-
-    Timer {
-        id: shotTimer
-        interval: 400
-        onTriggered: {
-            if (root.pending)
-                Quickshell.execDetached(root.pending);
-            root.pending = null;
-        }
+        const cmd = command(mode);
+        Panels.closeThen(() => Quickshell.execDetached(cmd), 400);
     }
 }

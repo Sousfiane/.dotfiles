@@ -16,13 +16,8 @@ Singleton {
         if (locked || capturing)
             return;
         capturing = true;
-        // give an open dropdown time to slide away so it is not in the screenshot
-        const panelOpen = Panels.current !== "";
-        Panels.closeAll();
-        if (panelOpen)
-            settle.restart();
-        else
-            capture();
+        // an open dropdown slides away first, so it is not in the screenshot
+        Panels.closeThen(capture);
     }
 
     function shotPath(screenName) {
@@ -46,12 +41,6 @@ Singleton {
     // the screenshots are only needed while locked
     onLockedChanged: if (!locked)
         Quickshell.execDetached(["sh", "-c", 'rm -f "$XDG_RUNTIME_DIR"/qs-lock-*.png']);
-
-    Timer {
-        id: settle
-        interval: 250
-        onTriggered: root.capture()
-    }
 
     Process {
         id: shot

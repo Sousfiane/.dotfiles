@@ -6,7 +6,7 @@ Item {
     id: root
 
     property bool open: false         // bind to the panel's open state
-    property int duration: 220
+    property int duration: Panels.slideMs
 
     default property alias content: holder.data
 
