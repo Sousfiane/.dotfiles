@@ -50,7 +50,7 @@ Scope {
             root.unlocking = false;
             root.password = "";
             root.message = "";
-            Weather.refreshIfStale(10);
+            Weather.refreshIfStale();
         }
     }
 
@@ -126,7 +126,7 @@ Scope {
                     id: wall
                     anchors.fill: parent
                     anchors.margins: -80
-                    source: Wallpapers.current ? "file://" + Wallpapers.current : ""
+                    source: Wallpapers.currentUrl
                     fillMode: Image.PreserveAspectCrop
                     asynchronous: true
                     sourceSize: Qt.size(width / 2, height / 2)   // blurred anyway
@@ -146,7 +146,7 @@ Scope {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: Qt.rgba(Theme.base.r, Theme.base.g, Theme.base.b, 0.45)
+                    color: Theme.withAlpha(Theme.base, 0.45)
                 }
 
                 // ---------- weather, top right like in the hub ----------
@@ -210,12 +210,36 @@ Scope {
                             }
                             SequentialAnimation {
                                 id: shake
-                                loops: 1
-                                NumberAnimation { target: shift; property: "x"; to: -12; duration: 50 }
-                                NumberAnimation { target: shift; property: "x"; to: 12; duration: 80 }
-                                NumberAnimation { target: shift; property: "x"; to: -8; duration: 70 }
-                                NumberAnimation { target: shift; property: "x"; to: 6; duration: 60 }
-                                NumberAnimation { target: shift; property: "x"; to: 0; duration: 50 }
+                                NumberAnimation {
+                                    target: shift
+                                    property: "x"
+                                    to: -12
+                                    duration: 50
+                                }
+                                NumberAnimation {
+                                    target: shift
+                                    property: "x"
+                                    to: 12
+                                    duration: 80
+                                }
+                                NumberAnimation {
+                                    target: shift
+                                    property: "x"
+                                    to: -8
+                                    duration: 70
+                                }
+                                NumberAnimation {
+                                    target: shift
+                                    property: "x"
+                                    to: 6
+                                    duration: 60
+                                }
+                                NumberAnimation {
+                                    target: shift
+                                    property: "x"
+                                    to: 0
+                                    duration: 50
+                                }
                             }
                             Connections {
                                 target: root

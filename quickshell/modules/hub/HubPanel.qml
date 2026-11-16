@@ -132,7 +132,7 @@ DropdownPanel {
             spacing: 12
 
             // fresh weather whenever the hub opens (the service also refreshes every 30 minutes)
-            Component.onCompleted: Weather.refreshIfStale(10)
+            Component.onCompleted: Weather.refreshIfStale()
 
             DateTimeBlock {
                 Layout.fillWidth: true

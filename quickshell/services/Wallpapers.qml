@@ -32,6 +32,7 @@ Singleton {
 
     // the wallpaper on screen, drawn by modules/background (crossfades on change)
     property string current: stateFile.text().trim()
+    readonly property string currentUrl: current ? "file://" + current : ""     // for Image.source
 
     function isCurrent(path) {
         return current === path;

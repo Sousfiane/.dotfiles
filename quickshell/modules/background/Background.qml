@@ -27,7 +27,7 @@ Variants {
         mask: Region {}   // click-through
 
         readonly property int fadeMs: 600
-        readonly property string wanted: Wallpapers.current ? "file://" + Wallpapers.current : ""
+        readonly property string wanted: Wallpapers.currentUrl
 
         // two slots: `front` is on screen, the other loads the next wallpaper underneath
         property Image front: null

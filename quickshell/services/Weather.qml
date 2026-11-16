@@ -28,9 +28,9 @@ Singleton {
             proc.running = true;
     }
 
-    // refresh when the data is older than `maxAgeMin` (used when the hub opens)
+    // refresh when the data is older than `maxAgeMin` (default 10), used when the hub or the lockscreen opens
     function refreshIfStale(maxAgeMin) {
-        if (Date.now() - fetchedAt > maxAgeMin * 60 * 1000)
+        if (Date.now() - fetchedAt > (maxAgeMin ?? 10) * 60 * 1000)
             refresh();
     }
 
