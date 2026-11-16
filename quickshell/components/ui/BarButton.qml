@@ -9,8 +9,8 @@ Item {
     property string icon: ""
     property string label: ""             // optional text after the icon (a count, the clock...)
 
-    readonly property int iconSize: Theme.fontSize + 3
-    readonly property int iconSlot: Math.round(iconSize * 1.25)   // fits the widest glyph (~1.15 em)
+    property int iconSize: Theme.fontSize + 3                            // a button can shrink a heavy glyph
+    readonly property int iconSlot: Math.round((Theme.fontSize + 3) * 1.25)   // same for every button, fits the widest glyph (~1.15 em)
 
     // state, the same rule for every bar item: alert > open > off > normal.
     // Events (unread, updates, a connected device) show through the glyph or the label, not the color.
