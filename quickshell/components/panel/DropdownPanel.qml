@@ -191,10 +191,22 @@ Scope {
                 Component.onCompleted: if (root.autoFocus && !root.compact)
                     forceActiveFocus()
 
-                // the content sees every key first; Escape closes if it didn't use it
+                // the content sees every key first; Escape closes if it didn't use it.
+                // Close on release, not press: closing hands the keyboard back to the window
+                // underneath, which would otherwise get the still-held Escape (and e.g. a
+                // fullscreen video in the browser would leave fullscreen).
+                property bool escArmed: false
                 Keys.forwardTo: loader.item ? [loader.item] : []
                 Keys.onPressed: event => {
                     if (event.key === Qt.Key_Escape) {
+                        if (!event.isAutoRepeat)
+                            escArmed = true;
+                        event.accepted = true;
+                    }
+                }
+                Keys.onReleased: event => {
+                    if (event.key === Qt.Key_Escape && !event.isAutoRepeat && escArmed) {
+                        escArmed = false;
                         root.close();
                         event.accepted = true;
                     }
