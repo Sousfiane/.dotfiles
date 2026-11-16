@@ -40,6 +40,10 @@ Singleton {
     readonly property string wallpaper: glyph(0xF02E9)
     readonly property string clipboard: glyph(0xF0147)
 
+    // workspaces
+    readonly property string workspace: glyph(0xEA71)
+    readonly property string workspaceFocused: glyph(0xF14FB)
+
     // network
     readonly property string wifi1: glyph(0xF091F)
     readonly property string wifi2: glyph(0xF0922)
