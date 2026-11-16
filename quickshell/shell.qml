@@ -15,6 +15,7 @@ import qs.modules.wallpaper
 import qs.modules.hub
 import qs.modules.network
 import qs.modules.screenshot
+import qs.modules.lock
 
 ShellRoot {
     Background {}
@@ -34,4 +35,5 @@ ShellRoot {
     HubPanel {}
     NetPanel {}
     ScreenshotPanel {}
+    LockScreen {}
 }

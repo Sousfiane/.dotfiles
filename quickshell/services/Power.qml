@@ -12,13 +12,12 @@ Singleton {
         Panels.toggle("power");
     }
 
-    // change the lock command to your locker
     readonly property var actions: [
         {
             key: "L",
             label: "Lock",
             icon: Icons.lock,
-            command: ["hyprlock"]
+            command: []             // the Quickshell lockscreen (modules/lock), see run()
         },
         {
             key: "S",
@@ -48,6 +47,9 @@ Singleton {
 
     function run(action) {
         Panels.hide("power");
-        Quickshell.execDetached(action.command);
+        if (action.key === "L")
+            Lock.lock();
+        else
+            Quickshell.execDetached(action.command);
     }
 }
