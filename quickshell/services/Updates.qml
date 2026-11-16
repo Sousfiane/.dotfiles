@@ -22,7 +22,7 @@ Singleton {
 
     // change this if you use an AUR helper (e.g. "yay -Syu")
     function runUpdate() {
-        Quickshell.execDetached(["uwsm", "app", "--", Config.terminal, "-e", "bash", "-c", "sudo pacman -Syu; echo; read -rp 'Press Enter to close...'"]);
+        Quickshell.execDetached(["uwsm", "app", "--", ...Config.floatingTerm(["bash", "-c", "sudo pacman -Syu; echo; read -rp 'Press Enter to close...'"])]);
         Panels.hide("updates");
     }
 

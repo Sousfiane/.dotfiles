@@ -23,7 +23,7 @@ Singleton {
     }
 
     function openLazygit() {
-        Quickshell.execDetached(["uwsm", "app", "--", Config.terminal, "-e", "lazygit", "-p", repoPath]);
+        Quickshell.execDetached(["uwsm", "app", "--", ...Config.floatingTerm(["lazygit", "-p", repoPath])]);
         Panels.hide("dotfiles");
     }
 

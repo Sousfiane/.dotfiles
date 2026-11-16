@@ -43,7 +43,7 @@ Singleton {
 
     // starts a desktop entry (also used by the notification center)
     function run(entry) {
-        const cmd = entry.runInTerminal ? [Config.terminal, "-e", ...entry.command] : entry.command;
+        const cmd = entry.runInTerminal ? Config.floatingTerm(entry.command) : entry.command;
 
         Quickshell.execDetached({
             command: ["uwsm", "app", "--", ...cmd],

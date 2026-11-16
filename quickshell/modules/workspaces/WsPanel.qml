@@ -3,6 +3,7 @@ import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
+import qs.config
 import qs.services
 import qs.components.panel
 import qs.components.ui
@@ -65,9 +66,11 @@ Variants {
                     required property var modelData
 
                     // Wayland app id first, Hyprland's class as fallback
-                    readonly property string cls: modelData.wayland?.appId || modelData.lastIpcObject?.class || ""
+                    readonly property string rawCls: modelData.wayland?.appId || modelData.lastIpcObject?.class || ""
+                    // floating terminals carry a custom class so Hyprland floats them: show them as the terminal
+                    readonly property string cls: rawCls === Config.floatingClass ? Config.terminal : rawCls
 
-                    // only used for the icon
+                    // gives the icon and the readable name ("Files" rather than org.gnome.Nautilus)
                     readonly property var entry: cls !== "" ? DesktopEntries.heuristicLookup(cls) : null
 
                     Layout.fillWidth: true
@@ -86,7 +89,7 @@ Variants {
                             Layout.fillWidth: true
                             variant: "row"
                             font.bold: true
-                            text: line.cls || "Unknown"
+                            text: line.entry?.name || line.cls || "Unknown"
                             elide: Text.ElideRight
                         }
 
