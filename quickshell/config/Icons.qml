@@ -21,10 +21,11 @@ Singleton {
     readonly property string bluetoothOff: glyph(0xF00B2)
 
     // audio
-    readonly property string volumeHigh: glyph(0xF057E)
-    readonly property string volumeMedium: glyph(0xF0580)
-    readonly property string volumeLow: glyph(0xF057F)
-    readonly property string volumeOff: glyph(0xF0581)
+    readonly property string volumeHigh: glyph(0xF028)     // fa-volume_up, 3 waves
+    readonly property string volumeMedium: glyph(0xEFCF)   // fa-volume, 2 waves
+    readonly property string volumeLow: glyph(0xF027)      // fa-volume_low, 1 wave
+    readonly property string volumeZero: glyph(0xF026)     // fa-volume_off, no waves
+    readonly property string volumeOff: glyph(0xEEE8)      // fa-volume_xmark, muted
     readonly property string mic: glyph(0xF036C)
     readonly property string micOff: glyph(0xF036D)
     readonly property string speaker: glyph(0xF04C3)
