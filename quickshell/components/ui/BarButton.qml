@@ -10,7 +10,18 @@ Item {
     property string label: ""             // optional text after the icon (a count, the clock...)
 
     property int iconSize: Theme.fontSize + 3                            // a button can shrink a heavy glyph
-    readonly property int iconSlot: Math.round((Theme.fontSize + 3) * 1.25)   // same for every button, fits the widest glyph (~1.15 em)
+
+    // every glyph this button can show (volume levels, wifi strengths...). The icon slot is as wide as
+    // the widest one's ink, so the visible gap between neighbours is just the bar spacing, and a
+    // changing glyph never shifts the bar
+    property var glyphs: [icon]
+    property string inkAlign: "center"   // "left" keeps a glyph's base still when its variants grow on one side
+    readonly property int iconSlot: {
+        let w = 0;
+        for (const g of glyphs)
+            w = Math.max(w, Math.ceil(glyphMetrics.tightBoundingRect(g).width));
+        return w;
+    }
 
     // state, the same rule for every bar item: alert > open > off > normal.
     // Events (unread, updates, a connected device) show through the glyph or the label, not the color.
@@ -41,9 +52,14 @@ Item {
     property string edge: ""              // "" | "left" | "right"
     property real edgeGap: 0              // its distance from that screen edge
 
-    // padding on each side; neighbours are 12 px apart, so 6 + 6 makes their areas just meet
-    readonly property real padLeft: edge === "left" ? edgeGap : 6
-    readonly property real padRight: edge === "right" ? edgeGap : 6
+    // padding on each side; neighbours are 18 px apart, so 9 + 9 makes their areas just meet
+    readonly property real padLeft: edge === "left" ? edgeGap : 9
+    readonly property real padRight: edge === "right" ? edgeGap : 9
+
+    FontMetrics {
+        id: glyphMetrics
+        font: iconText.font
+    }
 
     HoverBackdrop {
         x: row.x - root.padLeft
@@ -59,9 +75,8 @@ Item {
         id: row
         spacing: 6
 
-        // the icon sits in a fixed square slot, its ink centered. Nerd Font glyphs all advance the
-        // same width but their drawing can be twice as wide, so a changing glyph (volume levels,
-        // wifi strength) would otherwise shift or overflow the button
+        // the icon sits in a slot sized to its ink, not its advance: Nerd Font glyphs all advance the
+        // same width but their drawing can be half or twice as wide
         Item {
             visible: root.icon !== ""
             width: root.iconSlot
@@ -79,7 +94,7 @@ Item {
                 text: root.icon
                 color: root.iconColor
                 font.pixelSize: root.iconSize
-                x: Math.round((root.iconSlot - ink.tightBoundingRect.width) / 2 - ink.tightBoundingRect.x)
+                x: Math.round((root.inkAlign === "left" ? 0 : (root.iconSlot - ink.tightBoundingRect.width) / 2) - ink.tightBoundingRect.x)
             }
         }
 

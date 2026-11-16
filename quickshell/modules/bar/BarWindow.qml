@@ -117,14 +117,14 @@ PanelWindow {
 
         RowLayout {
             id: rightItems
-            readonly property real edgeGap: 12
+            readonly property real edgeGap: 16   // same as the first workspace dot on the left
 
             anchors {
                 right: parent.right
                 rightMargin: edgeGap
                 verticalCenter: parent.verticalCenter
             }
-            spacing: 12
+            spacing: 18                          // the visible gap: each slot is exactly its glyph's ink
 
             DotIcon {}
             UpdatesIcon {}
