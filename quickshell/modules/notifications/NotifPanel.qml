@@ -33,7 +33,7 @@ DropdownPanel {
         }
 
         Txt {
-            visible: Notifs.history.count === 0
+            visible: Notifs.history.length === 0
             Layout.fillWidth: true
             Layout.topMargin: 8
             Layout.bottomMargin: 8
@@ -46,25 +46,38 @@ DropdownPanel {
         ScrollList {
             id: list
             maxHeight: 480
-            visible: Notifs.history.count > 0
+            visible: Notifs.history.length > 0
             spacing: 8
             model: Notifs.history
 
             delegate: Rectangle {
                 id: item
+                required property var modelData
                 required property int index
-                required property string appName
-                required property string summary
-                required property string body
-                required property int urgency
-                required property string time
+
+                // live text while the app still has the notification open (it may update it)
+                readonly property var live: modelData.notif
+                readonly property string appName: live?.appName ?? modelData.appName
+                readonly property string summary: live?.summary ?? modelData.summary
+                readonly property string body: live?.body ?? modelData.body
+                readonly property int urgency: live?.urgency ?? modelData.urgency
+                readonly property string time: modelData.time
 
                 width: ListView.view.width
                 height: itemCol.implicitHeight + 20
                 radius: Theme.radius
                 color: Theme.surface
-                border.width: urgency === NotificationUrgency.Critical ? 1 : 0
-                border.color: Theme.urgent
+                border.width: urgency === NotificationUrgency.Critical || cardMouse.containsMouse ? 1 : 0
+                border.color: urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.accent
+
+                // click: go to the app that sent it
+                MouseArea {
+                    id: cardMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Notifs.activate(item.modelData)
+                }
 
                 ColumnLayout {
                     id: itemCol

@@ -19,7 +19,7 @@ PanelWindow {
     }
     implicitWidth: 360
     implicitHeight: column.implicitHeight
-    visible: Notifs.list.values.length > 0
+    visible: Notifs.popups.length > 0
     color: "transparent"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "qs-toasts"
@@ -30,25 +30,30 @@ PanelWindow {
         spacing: 8
 
         Repeater {
-            model: Notifs.list
+            model: Notifs.popups
 
             delegate: Rectangle {
                 id: card
-                required property var modelData   // a Notification
+                required property var modelData   // an entry from Notifs (see there)
+
+                readonly property var live: modelData.notif
+                readonly property string appName: live?.appName ?? modelData.appName
+                readonly property string summary: live?.summary ?? modelData.summary
+                readonly property string body: live?.body ?? modelData.body
 
                 // image sent with the notification (cover art, screenshot, avatar...)
-                readonly property string imageSource: modelData.image ?? ""
+                readonly property string imageSource: live?.image ?? ""
 
                 // app icon: either an icon name or an absolute path
                 readonly property string iconSource: {
-                    const icon = modelData.appIcon ?? "";
+                    const icon = live?.appIcon ?? "";
                     if (icon === "")
                         return "";
                     return icon.startsWith("/") ? "file://" + icon : Quickshell.iconPath(icon, true);
                 }
 
                 readonly property bool hasPicture: imageSource !== "" || iconSource !== ""
-                readonly property bool critical: modelData.urgency === NotificationUrgency.Critical
+                readonly property bool critical: (live?.urgency ?? modelData.urgency) === NotificationUrgency.Critical
 
                 Layout.fillWidth: true
                 implicitHeight: content.implicitHeight + 24
@@ -57,15 +62,18 @@ PanelWindow {
                 border.width: 2
                 border.color: critical ? Theme.urgent : Theme.border
 
+                // hides the toast only; the notification stays in the center
                 Timer {
-                    running: !card.critical
-                    interval: card.modelData.expireTimeout > 0 ? card.modelData.expireTimeout * 1000 : 5000
-                    onTriggered: card.modelData.expire()
+                    running: card.modelData.popupUntil > 0
+                    interval: Math.max(1, card.modelData.popupUntil - Date.now())
+                    onTriggered: Notifs.hidePopup(card.modelData)
                 }
 
+                // click: go to the app that sent it
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: card.modelData.dismiss()
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Notifs.activate(card.modelData)
                 }
 
                 RowLayout {
@@ -106,22 +114,22 @@ PanelWindow {
                         Txt {
                             Layout.fillWidth: true
                             variant: "dim"
-                            text: card.modelData.appName
+                            text: card.appName
                             elide: Text.ElideRight
                         }
 
                         Txt {
                             Layout.fillWidth: true
                             font.bold: true
-                            text: card.modelData.summary
+                            text: card.summary
                             wrapMode: Text.Wrap
                         }
 
                         Txt {
                             Layout.fillWidth: true
-                            visible: card.modelData.body !== ""
+                            visible: card.body !== ""
                             variant: "row"
-                            text: card.modelData.body
+                            text: card.body
                             wrapMode: Text.Wrap
                         }
                     }
