@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell.Networking
 import qs.config
 import qs.services
-import qs.components
+import qs.components.ui
 
 Item {
     id: root

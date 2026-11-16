@@ -1,6 +1,6 @@
 import qs.config
 import qs.services
-import qs.components
+import qs.components.ui
 
 BarButton {
     icon: Icons.update
