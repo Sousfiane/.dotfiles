@@ -41,16 +41,21 @@ Singleton {
         });
     }
 
+    // starts a desktop entry (also used by the notification center)
+    function run(entry) {
+        const cmd = entry.runInTerminal ? [Config.terminal, "-e", ...entry.command] : entry.command;
+
+        Quickshell.execDetached({
+            command: ["uwsm", "app", "--", ...cmd],
+            workingDirectory: entry.workingDirectory
+        });
+    }
+
+    // picked from the launcher: counts towards the ranking, then closes it
     function launch(entry) {
         if (entry) {
             LauncherHistory.record(entry.id);
-
-            const cmd = entry.runInTerminal ? [Config.terminal, "-e", ...entry.command] : entry.command;
-
-            Quickshell.execDetached({
-                command: ["uwsm", "app", "--", ...cmd],
-                workingDirectory: entry.workingDirectory
-            });
+            run(entry);
         }
         Panels.hide("launcher");
     }
