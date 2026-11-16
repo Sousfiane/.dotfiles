@@ -28,10 +28,13 @@ Item {
     implicitWidth: row.implicitWidth
     implicitHeight: row.implicitHeight
 
-    // padding on each side; neighbours are 12 px apart, so 6 + 6 makes their areas just meet.
-    // The item at the end of the bar sets its outer side to its distance from the screen edge.
-    property real padLeft: 6
-    property real padRight: 6
+    // the item at an end of the bar: its backdrop and click area reach the screen edge, square on that side
+    property string edge: ""              // "" | "left" | "right"
+    property real edgeGap: 0              // its distance from that screen edge
+
+    // padding on each side; neighbours are 12 px apart, so 6 + 6 makes their areas just meet
+    readonly property real padLeft: edge === "left" ? edgeGap : 6
+    readonly property real padRight: edge === "right" ? edgeGap : 6
 
     HoverBackdrop {
         x: row.x - root.padLeft
@@ -39,6 +42,8 @@ Item {
         anchors.verticalCenter: row.verticalCenter
         hovered: mouse.containsMouse
         pressed: mouse.pressed
+        squareLeft: root.edge === "left"
+        squareRight: root.edge === "right"
     }
 
     Row {

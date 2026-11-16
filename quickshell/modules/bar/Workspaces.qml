@@ -43,6 +43,7 @@ RowLayout {
                 anchors.verticalCenter: parent.verticalCenter
                 hovered: mouse.containsMouse
                 pressed: mouse.pressed
+                squareLeft: workspace.reach > 0
             }
 
             Txt {
