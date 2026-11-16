@@ -12,6 +12,9 @@ RowLayout {
 
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
 
+    // distance from the screen edge: the first cell reaches out to it
+    property real edgeGap: 0
+
     readonly property var mine: Hyprland.workspaces.values.filter(w => w.id > 0 && w.monitor === monitor).sort((a, b) => a.id - b.id)
 
     // cells touch, so the whole strip is clickable; the gap between dots is inside each cell
@@ -26,13 +29,18 @@ RowLayout {
             id: workspace
 
             required property var modelData
+            required property int index
+
+            // the first cell extends to the screen edge (backdrop and click area)
+            readonly property real reach: index === 0 ? root.edgeGap : 0
 
             implicitWidth: 24
             implicitHeight: Theme.barHeight
 
             HoverBackdrop {
-                anchors.centerIn: parent
-                width: parent.width - 2
+                x: -workspace.reach
+                width: parent.width + workspace.reach
+                anchors.verticalCenter: parent.verticalCenter
                 hovered: mouse.containsMouse
                 pressed: mouse.pressed
             }
@@ -46,7 +54,9 @@ RowLayout {
 
             MouseArea {
                 id: mouse
-                anchors.fill: parent
+                x: -workspace.reach
+                width: parent.width + workspace.reach
+                height: parent.height
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 

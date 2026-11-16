@@ -28,12 +28,14 @@ Item {
     implicitWidth: row.implicitWidth
     implicitHeight: row.implicitHeight
 
-    // 6 px of padding on each side; neighbours are 12 px apart, so their areas just meet
-    readonly property real pad: 6
+    // padding on each side; neighbours are 12 px apart, so 6 + 6 makes their areas just meet.
+    // The item at the end of the bar sets its outer side to its distance from the screen edge.
+    property real padLeft: 6
+    property real padRight: 6
 
     HoverBackdrop {
-        x: row.x - root.pad
-        width: row.width + 2 * root.pad
+        x: row.x - root.padLeft
+        width: row.width + root.padLeft + root.padRight
         anchors.verticalCenter: row.verticalCenter
         hovered: mouse.containsMouse
         pressed: mouse.pressed
@@ -62,8 +64,8 @@ Item {
     MouseArea {
         id: mouse
         // as wide as the backdrop and as tall as the bar, so the top edge of the screen is clickable too
-        x: -root.pad
-        width: root.width + 2 * root.pad
+        x: -root.padLeft
+        width: root.width + root.padLeft + root.padRight
         height: Theme.barHeight
         anchors.verticalCenter: parent.verticalCenter
         hoverEnabled: true
