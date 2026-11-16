@@ -106,6 +106,7 @@ PanelWindow {
                             sourceSize.width: 128
                             sourceSize.height: 128
                             asynchronous: true
+                            mipmap: true
                             smooth: true
                         }
                     }

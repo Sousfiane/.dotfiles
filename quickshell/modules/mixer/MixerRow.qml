@@ -64,7 +64,7 @@ Rectangle {
                 Layout.preferredWidth: 24
                 Layout.preferredHeight: 24
 
-                IconImage {
+                AppIcon {
                     anchors.fill: parent
                     visible: !root.device
                     source: Quickshell.iconPath(root.iconName, "audio-volume-high")

@@ -73,7 +73,7 @@ Variants {
                     Layout.fillWidth: true
                     spacing: 10
 
-                    IconImage {
+                    AppIcon {
                         implicitSize: 22
                         source: Quickshell.iconPath(line.entry?.icon ?? line.cls.toLowerCase(), "application-x-executable")
                     }
