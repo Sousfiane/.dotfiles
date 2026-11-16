@@ -61,7 +61,7 @@ Item {
                 spacing: 10
 
                 // freedesktop icon BlueZ reports for the device (headset, gamepad, keyboard...)
-                IconImage {
+                AppIcon {
                     Layout.preferredWidth: 26
                     Layout.preferredHeight: 26
                     source: Quickshell.iconPath(root.dev.icon || "bluetooth", "bluetooth")

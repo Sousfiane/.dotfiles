@@ -74,7 +74,7 @@ DropdownPanel {
                     anchors.leftMargin: 8
                     spacing: 10
 
-                    IconImage {
+                    AppIcon {
                         implicitSize: 24
                         source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
                     }
