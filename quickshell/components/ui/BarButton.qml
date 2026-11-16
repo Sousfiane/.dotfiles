@@ -28,6 +28,27 @@ Item {
     implicitWidth: row.implicitWidth
     implicitHeight: row.implicitHeight
 
+    // hover feedback: a rounded backdrop, brighter while pressed. Neutral on purpose, so it never
+    // competes with the state colors of the icon.
+    Rectangle {
+        anchors {
+            fill: row
+            leftMargin: -6
+            rightMargin: -6
+            topMargin: -4
+            bottomMargin: -4
+        }
+        radius: Theme.radius
+        color: mouse.pressed ? Theme.highlightMed : Theme.surface
+        opacity: mouse.containsMouse ? 1 : 0
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 120
+            }
+        }
+    }
+
     Row {
         id: row
         spacing: 6
@@ -50,8 +71,14 @@ Item {
 
     MouseArea {
         id: mouse
-        anchors.fill: parent
-        anchors.margins: -4
+        // same area as the backdrop: what lights up is what's clickable (neighbours, 12 px apart, just meet)
+        anchors {
+            fill: parent
+            leftMargin: -6
+            rightMargin: -6
+            topMargin: -4
+            bottomMargin: -4
+        }
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
