@@ -9,6 +9,9 @@ Item {
     property string icon: ""
     property string label: ""             // optional text after the icon (a count, the clock...)
 
+    readonly property int iconSize: Theme.fontSize + 3
+    readonly property int iconSlot: Math.round(iconSize * 1.25)   // fits the widest glyph (~1.15 em)
+
     // state, the same rule for every bar item: alert > open > off > normal.
     // Events (unread, updates, a connected device) show through the glyph or the label, not the color.
     property bool alert: false            // something is wrong (a check failed, no internet)
@@ -56,12 +59,28 @@ Item {
         id: row
         spacing: 6
 
-        Txt {
+        // the icon sits in a fixed square slot, its ink centered. Nerd Font glyphs all advance the
+        // same width but their drawing can be twice as wide, so a changing glyph (volume levels,
+        // wifi strength) would otherwise shift or overflow the button
+        Item {
             visible: root.icon !== ""
-            text: root.icon
-            color: root.iconColor
-            font.pixelSize: Theme.fontSize + 3
+            width: root.iconSlot
+            height: iconText.implicitHeight
             anchors.verticalCenter: parent.verticalCenter
+
+            TextMetrics {
+                id: ink
+                font: iconText.font
+                text: root.icon
+            }
+
+            Txt {
+                id: iconText
+                text: root.icon
+                color: root.iconColor
+                font.pixelSize: root.iconSize
+                x: Math.round((root.iconSlot - ink.tightBoundingRect.width) / 2 - ink.tightBoundingRect.x)
+            }
         }
 
         Txt {
