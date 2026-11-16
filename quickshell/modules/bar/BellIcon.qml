@@ -1,6 +1,6 @@
 import qs.config
 import qs.services
-import qs.components
+import qs.components.ui
 
 BarButton {
     icon: Notifs.dnd ? Icons.bellOff : Notifs.unread > 0 ? Icons.bellRing : Icons.bell
