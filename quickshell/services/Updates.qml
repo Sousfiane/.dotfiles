@@ -15,7 +15,7 @@ Singleton {
 
     // ---------- panel ----------
 
-    readonly property bool panelOpen: Panels.isOpen("updates")
+    readonly property bool open: Panels.isOpen("updates")
 
     function toggle() {
         Panels.toggle("updates");

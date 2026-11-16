@@ -17,7 +17,7 @@ Singleton {
 
     // ---------- panel ----------
 
-    readonly property bool panelOpen: Panels.isOpen("dotfiles")
+    readonly property bool open: Panels.isOpen("dotfiles")
 
     function toggle() {
         Panels.toggle("dotfiles");
