@@ -27,6 +27,35 @@ DropdownPanel {
 
         readonly property date today: clock.date
 
+        // day whose events are listed under the calendar (starts on today)
+        property date selected: new Date()
+        readonly property var selectedEvents: Calendar.eventsOn(selected.getFullYear(), selected.getMonth(), selected.getDate())
+        readonly property bool selectedIsToday: sameDay(selected, today)
+
+        function sameDay(a, b) {
+            return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+        }
+
+        // select a day, and show its month if it is not the one on screen
+        function select(y, m, d) {
+            selected = new Date(y, m, d);
+            if (y !== viewYear || m !== viewMonth) {
+                viewYear = y;
+                viewMonth = m;
+            }
+        }
+
+        function moveDay(n) {
+            select(selected.getFullYear(), selected.getMonth(), selected.getDate() + n);
+        }
+
+        // load the events of the month on screen (and refresh old data when the hub opens)
+        onViewMonthChanged: Calendar.show(viewYear, viewMonth)
+        Component.onCompleted: {
+            Calendar.show(viewYear, viewMonth);
+            Calendar.refreshIfStale(5);
+        }
+
         // 6 weeks of days, starting on Monday
         readonly property var cells: {
             const y = viewYear;
@@ -52,8 +81,7 @@ DropdownPanel {
         }
 
         function goToday() {
-            viewYear = today.getFullYear();
-            viewMonth = today.getMonth();
+            select(today.getFullYear(), today.getMonth(), today.getDate());
         }
 
         Keys.onPressed: event => {
@@ -65,6 +93,14 @@ DropdownPanel {
             case Qt.Key_Right:
             case Qt.Key_L:
                 shiftMonth(1);
+                break;
+            case Qt.Key_J:
+            case Qt.Key_Down:
+                moveDay(1);
+                break;
+            case Qt.Key_K:
+            case Qt.Key_Up:
+                moveDay(-1);
                 break;
             case Qt.Key_T:
                 goToday();
@@ -254,19 +290,55 @@ DropdownPanel {
 
                     readonly property bool inMonth: modelData.month === hub.viewMonth
                     readonly property bool isToday: modelData.day === hub.today.getDate() && modelData.month === hub.today.getMonth() && modelData.year === hub.today.getFullYear()
+                    readonly property bool isSelected: modelData.day === hub.selected.getDate() && modelData.month === hub.selected.getMonth() && modelData.year === hub.selected.getFullYear()
+                    readonly property var events: Calendar.eventsOn(modelData.year, modelData.month, modelData.day)
 
                     width: 42
                     height: 30
                     radius: 8
-                    color: isToday ? Theme.accent : "transparent"
+                    color: isToday ? Theme.accent : dayMouse.containsMouse ? Theme.surface : "transparent"
+                    border.width: isSelected && !isToday ? 1 : 0
+                    border.color: Theme.accent
 
                     Txt {
                         anchors.centerIn: parent
+                        anchors.verticalCenterOffset: -2
                         variant: "row"
                         text: dayCell.modelData.day
                         color: dayCell.isToday ? Theme.bgSolid : dayCell.inMonth ? Theme.fg : Theme.dim
                         opacity: dayCell.inMonth || dayCell.isToday ? 1 : 0.5
-                        font.bold: dayCell.isToday
+                        font.bold: dayCell.isToday || dayCell.isSelected
+                    }
+
+                    // one dot per event (up to three), in its calendar's color
+                    Row {
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            bottom: parent.bottom
+                            bottomMargin: 3
+                        }
+                        spacing: 2
+                        opacity: dayCell.inMonth || dayCell.isToday ? 1 : 0.5
+
+                        Repeater {
+                            model: dayCell.events.slice(0, 3)
+
+                            delegate: Rectangle {
+                                required property var modelData
+                                width: 4
+                                height: 4
+                                radius: 2
+                                color: dayCell.isToday ? Theme.bgSolid : modelData.color
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        id: dayMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: hub.select(dayCell.modelData.year, dayCell.modelData.month, dayCell.modelData.day)
                     }
                 }
             }
@@ -275,6 +347,118 @@ DropdownPanel {
             WheelHandler {
                 acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                 onWheel: event => hub.shiftMonth(event.angleDelta.y > 0 ? -1 : 1)
+            }
+        }
+
+        Divider {}
+
+        // ---------- events of the selected day ----------
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                Txt {
+                    Layout.fillWidth: true
+                    variant: "heading"
+                    text: hub.selectedIsToday ? "Today" : Qt.formatDate(hub.selected, "dddd d MMMM")
+                }
+
+                Txt {
+                    variant: "small"
+                    text: Calendar.loading ? "syncing…" : hub.selectedEvents.length === 0 ? "" : hub.selectedEvents.length + (hub.selectedEvents.length === 1 ? " event" : " events")
+                }
+            }
+
+            Repeater {
+                model: hub.selectedEvents.slice(0, 5)
+
+                delegate: RowLayout {
+                    id: evRow
+                    required property var modelData
+
+                    // "All day", "14:00 – 15:00", or the part of a multi-day event that falls on this day
+                    readonly property string when: {
+                        const ev = modelData;
+                        if (ev.allDay)
+                            return "All day";
+                        const s = Calendar.parse(ev.start);
+                        const e = Calendar.parse(ev.end);
+                        const startsHere = hub.sameDay(s, hub.selected);
+                        const endsHere = hub.sameDay(e, hub.selected) || (e - s === 0);
+                        if (startsHere && endsHere)
+                            return Qt.formatTime(s, "HH:mm") + (e > s ? " – " + Qt.formatTime(e, "HH:mm") : "");
+                        if (startsHere)
+                            return "from " + Qt.formatTime(s, "HH:mm");
+                        if (endsHere)
+                            return "until " + Qt.formatTime(e, "HH:mm");
+                        return "All day";
+                    }
+
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    Rectangle {
+                        Layout.fillHeight: true
+                        implicitWidth: 3
+                        radius: 2
+                        color: evRow.modelData.color
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 0
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+
+                            Txt {
+                                Layout.fillWidth: true
+                                variant: "row"
+                                font.bold: true
+                                text: evRow.modelData.title
+                                elide: Text.ElideRight
+                            }
+
+                            Txt {
+                                variant: "small"
+                                text: evRow.when
+                            }
+                        }
+
+                        Txt {
+                            Layout.fillWidth: true
+                            variant: "small"
+                            text: evRow.modelData.calendar + (evRow.modelData.location ? "  ·  " + evRow.modelData.location : "")
+                            elide: Text.ElideRight
+                        }
+                    }
+                }
+            }
+
+            Txt {
+                visible: hub.selectedEvents.length > 5
+                variant: "small"
+                text: "+ " + (hub.selectedEvents.length - 5) + " more"
+            }
+
+            Txt {
+                visible: Calendar.loaded && hub.selectedEvents.length === 0
+                variant: "dim"
+                text: "No events"
+            }
+
+            // the reason, when the calendar cannot be read
+            Txt {
+                visible: Calendar.error !== ""
+                Layout.fillWidth: true
+                variant: "small"
+                color: Theme.urgent
+                wrapMode: Text.Wrap
+                text: "Calendar: " + Calendar.error
             }
         }
 
@@ -367,7 +551,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: "h l month • t today • a w c s open • Esc close"
+            text: "h l month • j k day • t today • a w c s open • Esc close"
         }
     }
 }

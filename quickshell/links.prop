@@ -3,3 +3,4 @@ $DOTFILES/quickshell/config=$HOME/.config/quickshell/config
 $DOTFILES/quickshell/modules=$HOME/.config/quickshell/modules
 $DOTFILES/quickshell/services=$HOME/.config/quickshell/services
 $DOTFILES/quickshell/components=$HOME/.config/quickshell/components
+$DOTFILES/quickshell/scripts=$HOME/.config/quickshell/scripts
