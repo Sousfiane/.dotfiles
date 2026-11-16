@@ -62,8 +62,8 @@ RowLayout {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: workspace.modelData.activate()
-                onEntered: WsPanel.enterBar(root.screen.name, workspace.modelData.id)
-                onExited: WsPanel.leaveBar()
+                onEntered: Ws.enterBar(root.screen.name, workspace.modelData.id)
+                onExited: Ws.leaveBar()
             }
         }
     }

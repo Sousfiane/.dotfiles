@@ -7,11 +7,11 @@ Singleton {
 
     // ---------- when the bar must be visible ----------
 
-    readonly property bool anyOpen: Panels.current !== "" || WsPanel.open
+    readonly property bool anyOpen: Panels.current !== "" || Ws.open
 
     // the monitor whose bar must be visible: the one showing the open dropdown,
     // or the one showing the workspace hover panel
-    readonly property string activeScreen: Panels.current !== "" ? Panels.activeScreen : WsPanel.open ? WsPanel.screenName : ""
+    readonly property string activeScreen: Panels.current !== "" ? Panels.activeScreen : Ws.open ? Ws.screenName : ""
 
     // what the bars listen to: both stay set for 300 ms after the last panel closes
     property bool raised: false
