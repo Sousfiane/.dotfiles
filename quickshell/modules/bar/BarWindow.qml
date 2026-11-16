@@ -103,9 +103,10 @@ PanelWindow {
 
         Workspaces {
             screen: win.screen
+            edgeGap: 4                    // the cells carry their own padding: the first dot stays 16 px in
             anchors {
                 left: parent.left
-                leftMargin: 4             // the cells carry their own padding: the first dot stays 16 px in
+                leftMargin: edgeGap
                 verticalCenter: parent.verticalCenter
             }
         }
@@ -115,9 +116,12 @@ PanelWindow {
         }
 
         RowLayout {
+            id: rightItems
+            readonly property real edgeGap: 12
+
             anchors {
                 right: parent.right
-                rightMargin: 12
+                rightMargin: edgeGap
                 verticalCenter: parent.verticalCenter
             }
             spacing: 12
@@ -128,7 +132,9 @@ PanelWindow {
             BtIcon {}
             VolumeIcon {}
             BellIcon {}
-            PowerIcon {}
+            PowerIcon {
+                padRight: rightItems.edgeGap          // last one: reaches the screen edge
+            }
         }
         // 1px underline. The segments change every frame while a dropdown slides, so the model is only
         // their count: the rectangles are kept and just follow the new positions.
