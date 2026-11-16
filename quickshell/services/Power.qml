@@ -17,7 +17,7 @@ Singleton {
             key: "L",
             label: "Lock",
             icon: Icons.lock,
-            command: []             // the Quickshell lockscreen (modules/lock), see run()
+            command: ["qs", "ipc", "call", "lock", "lock"]     // the Quickshell lockscreen (modules/lock)
         },
         {
             key: "S",
@@ -47,9 +47,6 @@ Singleton {
 
     function run(action) {
         Panels.hide("power");
-        if (action.key === "L")
-            Lock.lock();
-        else
-            Quickshell.execDetached(action.command);
+        Quickshell.execDetached(action.command);
     }
 }
