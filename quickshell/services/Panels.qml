@@ -8,6 +8,10 @@ Singleton {
     // "" = none. Only one dropdown can be open, by construction.
     property string current: ""
 
+    // how long a dropdown takes to slide in or out, and to be fully gone after closing
+    readonly property int slideMs: 220
+    readonly property int closeMs: slideMs + 40
+
     function isOpen(name) {
         return current === name;
     }
@@ -29,6 +33,42 @@ Singleton {
 
     function closeAll() {
         current = "";
+    }
+
+    // close whatever is open, then run `fn` once it has slid away (after `delay` ms, closeMs by default).
+    // Also waits for a panel that was closed just before: the power menu closes itself, then locks.
+    // A newer call replaces a pending one.
+    function closeThen(fn, delay) {
+        closeAll();
+        const wait = closedAt + (delay ?? closeMs) - Date.now();
+        if (wait <= 0) {
+            fn();
+            return;
+        }
+        afterClose = fn;
+        closeTimer.interval = wait;
+        closeTimer.restart();
+    }
+
+    // when a dropdown last went away (opening another one counts too)
+    property real closedAt: 0
+    property string lastShown: ""
+    onCurrentChanged: {
+        if (lastShown !== "")
+            closedAt = Date.now();
+        lastShown = current;
+    }
+
+    property var afterClose: null
+
+    Timer {
+        id: closeTimer
+        onTriggered: {
+            const fn = root.afterClose;
+            root.afterClose = null;
+            if (fn)
+                fn();
+        }
     }
 
     // monitor each dropdown is (or would be) shown on, reported by the panels themselves

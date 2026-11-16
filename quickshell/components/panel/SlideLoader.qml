@@ -1,11 +1,12 @@
 import Quickshell
 import QtQuick
+import qs.services
 
 LazyLoader {
     id: root
 
     property bool open: false
-    property int closeDelay: 260      // keep this a bit longer than SlideArea.duration
+    property int closeDelay: Panels.closeMs
 
     property bool alive: false
     active: alive
