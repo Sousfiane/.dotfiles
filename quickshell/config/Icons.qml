@@ -41,6 +41,21 @@ Singleton {
     readonly property string clipboard: glyph(0xF0147)
     readonly property string screenshot: glyph(0xF0100)
 
+    // weather
+    readonly property string weatherSunny: glyph(0xF0599)
+    readonly property string weatherNight: glyph(0xF0594)
+    readonly property string weatherPartly: glyph(0xF0595)
+    readonly property string weatherNightPartly: glyph(0xF0F31)
+    readonly property string weatherCloudy: glyph(0xF0590)
+    readonly property string weatherFog: glyph(0xF0591)
+    readonly property string weatherRain: glyph(0xF0597)
+    readonly property string weatherPouring: glyph(0xF0596)
+    readonly property string weatherSleet: glyph(0xF067F)
+    readonly property string weatherSnow: glyph(0xF0598)
+    readonly property string weatherSnowHeavy: glyph(0xF0F36)
+    readonly property string weatherThunder: glyph(0xF0593)
+    readonly property string weatherThunderRain: glyph(0xF067E)
+
     // screenshot modes
     readonly property string shotRegion: glyph(0xF019E)
     readonly property string shotWindow: glyph(0xF0614)

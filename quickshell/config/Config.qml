@@ -14,6 +14,9 @@ Singleton {
         return [terminal, "--class", floatingClass, "-e", ...cmd];
     }
 
+    // weather in the hub: a city ("Paris", "Lyon"...), or "" to locate by IP address
+    property string weatherLocation: "Lille"
+
     property string dotfilesRepo: home + "/.dotfiles"
     property string wallpaperDir: home + "/.wallpapers"
     property string wallpaperState: home + "/.swaybg"
