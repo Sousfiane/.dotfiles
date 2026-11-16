@@ -4,7 +4,8 @@ import qs.components.ui
 
 BarButton {
     icon: !Bt.powered ? Icons.bluetoothOff : Bt.connected ? Icons.bluetoothConnected : Icons.bluetooth
-    iconColor: !Bt.powered ? Theme.dim : Bt.connected ? Theme.accent : Theme.fg
+    open: Bt.open
+    off: !Bt.powered
 
     onClicked: Bt.toggle()
     onRightClicked: Bt.togglePower()

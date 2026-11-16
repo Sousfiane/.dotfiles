@@ -4,7 +4,9 @@ import qs.components.ui
 
 BarButton {
     icon: Net.icon
-    iconColor: !Net.online ? Theme.dim : Net.degraded ? Theme.urgent : Theme.fg
+    alert: Net.degraded
+    open: Net.open
+    off: !Net.online
 
     onClicked: Net.toggle()
     onRightClicked: Net.toggleWifi()
