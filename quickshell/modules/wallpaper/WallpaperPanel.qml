@@ -51,7 +51,11 @@ DropdownPanel {
             placeholder: "Search wallpapers..."
             horizontalNav: true
 
-            onTextChanged: Wallpapers.query = text
+            onTextChanged: {
+                Wallpapers.query = text;
+                grid.currentIndex = 0;
+                grid.positionViewAtBeginning();
+            }
             onMoved: direction => parent.navigate(direction)
             onAccepted: parent.applyCurrent()
         }
@@ -93,9 +97,8 @@ DropdownPanel {
                 width: grid.cellWidth
                 height: grid.cellHeight
 
-                property bool hovered: false
                 readonly property bool current: Wallpapers.isCurrent(filePath)
-                readonly property bool highlighted: hovered || grid.currentIndex === index
+                readonly property bool highlighted: grid.currentIndex === index
 
                 Rectangle {
                     anchors.fill: parent
@@ -181,16 +184,9 @@ DropdownPanel {
                         }
                     }
 
-                    MouseArea {
+                    MotionArea {
                         anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onEntered: {
-                            tile.hovered = true;
-                            grid.currentIndex = tile.index;
-                        }
-                        onExited: tile.hovered = false
+                        onMoved: grid.currentIndex = tile.index
                         onClicked: Wallpapers.apply(tile.filePath)
                     }
                 }
