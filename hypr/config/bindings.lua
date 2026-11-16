@@ -84,7 +84,7 @@ hl.bind(mod .. " + " .. alt .. " + Space", hl.dsp.exec_cmd("qs ipc call hub togg
 -- 🔌 Session
 --------------------------------------------------
 
-hl.bind(mod .. " + Backspace", hl.dsp.exec_cmd("uwsm-app -- hyprlock"), { description = "Lock screen" })
+hl.bind(mod .. " + Backspace", hl.dsp.exec_cmd("qs ipc call lock lock"), { description = "Lock screen" })
 
 hl.bind(
 	mod .. " + " .. shift .. " + Backspace",
