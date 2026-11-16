@@ -63,7 +63,7 @@ RowLayout {
 
                 onClicked: workspace.modelData.activate()
                 onEntered: Ws.enterBar(root.screen.name, workspace.modelData.id)
-                onExited: Ws.leaveBar()
+                onExited: Ws.leaveBar(root.screen.name, workspace.modelData.id)
             }
         }
     }
