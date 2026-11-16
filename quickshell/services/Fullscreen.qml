@@ -18,10 +18,10 @@ Singleton {
         return states[name] === true;
     }
 
-    // Quickshell keeps hasFullscreen up to date from "fullscreen" events, but Hyprland doesn't send one
-    // in every case (see below), so re-read the workspaces over the socket. Events come in bursts and
-    // some fire just before Hyprland has applied the change (closewindow comes before the fullscreen
-    // window is restored), so read a moment later.
+    // Quickshell keeps hasFullscreen and each monitor's activeWorkspace up to date from events, but
+    // Hyprland doesn't send the right ones in every case (see below), so re-read both over the socket.
+    // Events come in bursts and some fire just before Hyprland has applied the change (closewindow comes
+    // before the fullscreen window is restored), so read a moment later.
     function refresh() {
         settle.restart();
     }
@@ -29,7 +29,10 @@ Singleton {
     Timer {
         id: settle
         interval: 60
-        onTriggered: Hyprland.refreshWorkspaces()
+        onTriggered: {
+            Hyprland.refreshMonitors();
+            Hyprland.refreshWorkspaces();
+        }
     }
 
     Component.onCompleted: refresh()
@@ -49,6 +52,9 @@ Singleton {
             case "openwindow":
             case "closewindow":
             case "movewindow":
+            // moving a workspace to another monitor sends no "workspace" event, and the "focusedmon"
+            // before it still names the old one: monitors keep a stale activeWorkspace until refreshed
+            case "moveworkspacev2":
             case "monitoradded":
             case "monitorremoved":
                 root.refresh();
