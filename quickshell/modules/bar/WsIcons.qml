@@ -49,7 +49,7 @@ RowLayout {
             Txt {
                 anchors.centerIn: parent
 
-                text: workspace.modelData.focused ? "󱓻" : ""
+                text: workspace.modelData.focused ? Icons.workspaceFocused : Icons.workspace
                 font.pixelSize: Theme.fontSize
             }
 
