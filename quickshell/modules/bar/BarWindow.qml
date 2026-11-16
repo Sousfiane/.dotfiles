@@ -133,7 +133,8 @@ PanelWindow {
             VolumeIcon {}
             BellIcon {}
             PowerIcon {
-                padRight: rightItems.edgeGap          // last one: reaches the screen edge
+                edge: "right"                         // last one: reaches the screen edge
+                edgeGap: rightItems.edgeGap
             }
         }
         // 1px underline. The segments change every frame while a dropdown slides, so the model is only
