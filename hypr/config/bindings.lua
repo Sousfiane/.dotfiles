@@ -78,7 +78,7 @@ hl.bind(mod .. " + C", hl.dsp.exec_cmd("qs ipc call notifs toggle"), { descripti
 hl.bind(mod .. " + D", hl.dsp.exec_cmd("qs ipc call dotfiles toggle"), { description = "Menu: Dotfiles" })
 hl.bind(mod .. " + Escape", hl.dsp.exec_cmd("qs ipc call power toggle"), { description = "Menu: PowerMenu" })
 
-hl.bind(mod .. " + " .. alt .. " + Space", hl.dsp.exec_cmd("os-menu"), { description = "Menu: General" })
+hl.bind(mod .. " + " .. alt .. " + Space", hl.dsp.exec_cmd("qs ipc call hub toggle"), { description = "Menu: General" })
 
 --------------------------------------------------
 -- 🔌 Session
