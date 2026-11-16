@@ -12,13 +12,13 @@ Singleton {
     property bool dnd: false
     property int unread: 0
 
-    readonly property bool centerOpen: Panels.isOpen("notifs")
+    readonly property bool open: Panels.isOpen("notifs")
 
     function toggle() {
         Panels.toggle("notifs");
     }
 
-    onCenterOpenChanged: if (centerOpen)
+    onOpenChanged: if (open)
         unread = 0
 
     function clearHistory() {
@@ -50,7 +50,7 @@ Singleton {
             });
             while (historyModel.count > 50)
                 historyModel.remove(historyModel.count - 1);
-            if (!root.centerOpen)
+            if (!root.open)
                 root.unread++;
 
             // Do Not Disturb: still recorded in history, but only critical ones pop up

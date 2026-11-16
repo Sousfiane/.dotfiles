@@ -60,7 +60,7 @@ Singleton {
         return "Not paired";
     }
 
-    readonly property bool panelOpen: Panels.isOpen("bluetooth")
+    readonly property bool open: Panels.isOpen("bluetooth")
 
     function toggle() {
         Panels.toggle("bluetooth");
@@ -77,9 +77,9 @@ Singleton {
     }
 
     // scan while the panel is open, stop when it closes
-    onPanelOpenChanged: {
+    onOpenChanged: {
         if (adapter && adapter.enabled)
-            adapter.discovering = panelOpen;
+            adapter.discovering = open;
     }
 
     function activate(d) {
