@@ -30,14 +30,16 @@ Singleton {
     onOpenChanged: if (open)
         query = ""
 
+    // the wallpaper on screen, drawn by modules/background (crossfades on change)
+    property string current: stateFile.text().trim()
+
     function isCurrent(path) {
-        return stateFile.text().trim() === path;
+        return current === path;
     }
 
     function apply(path) {
+        current = path;
         stateFile.setText(path + "\n");
-
-        Quickshell.execDetached(["bash", "-c", "pkill -x swaybg 2>/dev/null || true; " + "setsid uwsm-app -- swaybg -i \"$1\" >/dev/null 2>&1 &", "wallpaper-picker", path]);
 
         Panels.hide("wallpaper");
     }

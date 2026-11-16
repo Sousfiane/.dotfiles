@@ -1,4 +1,5 @@
 import Quickshell
+import qs.modules.background
 import qs.modules.bar
 import qs.modules.launcher
 import qs.modules.osd
@@ -16,6 +17,7 @@ import qs.modules.network
 import qs.modules.screenshot
 
 ShellRoot {
+    Background {}
     Bar {}
     LauncherPanel {}
     Osd {}
