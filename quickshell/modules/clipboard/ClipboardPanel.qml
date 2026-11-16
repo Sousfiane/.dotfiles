@@ -2,7 +2,6 @@ import Quickshell.Widgets
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Quickshell.Io
 import qs.config
 import qs.services
 import qs.components.panel

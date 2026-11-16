@@ -100,6 +100,7 @@ DropdownPanel {
             Layout.bottomMargin: 8
             visible: Dotfiles.count === 0
             horizontalAlignment: Text.AlignHCenter
+            variant: "dim"
             text: Dotfiles.failed ? "Check the repository path in Config.qml" : "Nothing to commit"
         }
 

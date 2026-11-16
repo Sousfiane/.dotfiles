@@ -6,6 +6,7 @@ import qs.components.panel
 import qs.components.ui
 
 DropdownPanel {
+    id: panel
     name: "bluetooth"
     edge: "right"
     cardWidth: 460
@@ -70,38 +71,20 @@ DropdownPanel {
                 active: Bt.scanning
                 onClicked: Bt.toggleScan()
             }
-            // power switch
-            Rectangle {
-                visible: Bt.adapter !== null && Bt.adapter !== undefined
-                implicitWidth: 40
-                implicitHeight: 22
-                radius: 11
-                color: Bt.powered ? Theme.accent : Theme.surface
 
-                Toggle {
-                    visible: Bt.adapter !== null && Bt.adapter !== undefined
-                    checked: Bt.powered
-                    onToggled: Bt.togglePower()
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Bt.togglePower()
-                }
+            Toggle {
+                visible: !!Bt.adapter
+                checked: Bt.powered
+                onToggled: Bt.togglePower()
             }
         }
 
         Divider {}
 
         // ---------- devices ----------
-        ListView {
+        ScrollList {
             id: list
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(contentHeight, 420)
             visible: Bt.list.length > 0
-            clip: true
-            spacing: 2
             model: Bt.list
 
             delegate: BtRow {
@@ -127,6 +110,7 @@ DropdownPanel {
             visible: Bt.list.length === 0
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
+            variant: "dim"
             text: !Bt.adapter ? "No Bluetooth adapter found" : !Bt.powered ? "Bluetooth is off  (p to turn it on)" : Bt.scanning ? "Searching for devices…" : "No devices  (s to scan)"
         }
 

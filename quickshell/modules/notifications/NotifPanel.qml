@@ -1,5 +1,3 @@
-import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Notifications
 import QtQuick
 import QtQuick.Layouts
@@ -17,15 +15,10 @@ DropdownPanel {
         spacing: 10
 
         // ---------- header ----------
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-
-            Txt {
-                Layout.fillWidth: true
-                text: "Notifications"
-                variant: "heading"
-            }
+        PanelHeader {
+            icon: Notifs.dnd ? Icons.bellOff : Icons.bell
+            iconColor: Notifs.dnd ? Theme.dim : Theme.accent
+            title: "Notifications"
 
             Pill {
                 text: "Do not disturb"
@@ -45,16 +38,15 @@ DropdownPanel {
             Layout.topMargin: 8
             Layout.bottomMargin: 8
             horizontalAlignment: Text.AlignHCenter
+            variant: "dim"
             text: "No notifications"
         }
 
         // ---------- history ----------
-        ListView {
+        ScrollList {
             id: list
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(contentHeight, 480)
+            maxHeight: 480
             visible: Notifs.history.count > 0
-            clip: true
             spacing: 8
             model: Notifs.history
 
@@ -69,7 +61,7 @@ DropdownPanel {
 
                 width: ListView.view.width
                 height: itemCol.implicitHeight + 20
-                radius: 6
+                radius: Theme.radius
                 color: Theme.surface
                 border.width: urgency === NotificationUrgency.Critical ? 1 : 0
                 border.color: Theme.urgent

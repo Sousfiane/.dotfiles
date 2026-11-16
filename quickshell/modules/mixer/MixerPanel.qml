@@ -6,6 +6,7 @@ import qs.components.panel
 import qs.components.ui
 
 DropdownPanel {
+    id: panel
     name: "mixer"
     edge: "right"
     cardWidth: 560
@@ -145,9 +146,9 @@ DropdownPanel {
             event.accepted = true;
         }
 
-        Txt {
-            text: "Mixer"
-            variant: "title"
+        PanelHeader {
+            icon: Icons.volumeHigh
+            title: "Mixer"
         }
 
         // ---------- tabs ----------
@@ -176,12 +177,10 @@ DropdownPanel {
         }
 
         // tabs 1-4: applications and devices
-        ListView {
+        ScrollList {
             id: list
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(contentHeight, 440)
+            maxHeight: 440
             visible: Mixer.tab < 4 && Mixer.current.length > 0
-            clip: true
             spacing: 4
             model: Mixer.tab < 4 ? Mixer.current : []
 
@@ -214,12 +213,10 @@ DropdownPanel {
         }
 
         // Config tab: sound cards and their profiles
-        ListView {
+        ScrollList {
             id: configList
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(contentHeight, 440)
+            maxHeight: 440
             visible: Mixer.tab === 4 && Mixer.cards.length > 0
-            clip: true
             spacing: 4
             model: Mixer.tab === 4 ? Mixer.cards : []
 
@@ -255,6 +252,7 @@ DropdownPanel {
             Layout.bottomMargin: 8
             visible: Mixer.current.length === 0
             horizontalAlignment: Text.AlignHCenter
+            variant: "dim"
             text: ["No application is playing audio", "No application is recording", "No output devices", "No input devices", "No sound cards found"][Mixer.tab]
         }
 

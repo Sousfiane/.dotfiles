@@ -1,5 +1,4 @@
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
@@ -17,7 +16,7 @@ PanelWindow {
         left: true
         right: true
     }
-    implicitHeight: Theme.barHeight + 1      // was Theme.barHeight
+    implicitHeight: Theme.barHeight + 1
 
     // the extra row only holds the underline, so tiled windows still start at the old position
     exclusionMode: ExclusionMode.Normal

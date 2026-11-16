@@ -7,6 +7,7 @@ import qs.components.panel
 import qs.components.ui
 
 DropdownPanel {
+    id: panel
     name: "hub"
     edge: "center"
     cardWidth: 350

@@ -9,7 +9,6 @@ Singleton {
 
     property int count: 0
     property var packages: []                       // everything, parsed
-    readonly property var firstTen: packages.slice(0, 10)
     property bool failed: false
     readonly property bool checking: proc.running
 

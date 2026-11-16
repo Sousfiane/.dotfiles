@@ -3,7 +3,6 @@ import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
-import qs.config
 import qs.services
 import qs.components.panel
 import qs.components.ui
