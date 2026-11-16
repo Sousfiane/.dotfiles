@@ -177,6 +177,9 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                // keep the drag until release, even when the pointer leaves the slider:
+                // otherwise the ListView takes it over as a flick once the pointer drifts vertically
+                preventStealing: true
 
                 function setFrom(x) {
                     Mixer.setVolume(root.node, Math.max(0, Math.min(1, x / width)) * Mixer.maxVolume);
