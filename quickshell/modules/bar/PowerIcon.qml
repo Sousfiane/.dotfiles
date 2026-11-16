@@ -4,6 +4,7 @@ import qs.components.ui
 
 BarButton {
     icon: Icons.power
-    iconColor: Power.open ? Theme.accent : Theme.fg
+    open: Power.open
+
     onClicked: Power.toggle()
 }
