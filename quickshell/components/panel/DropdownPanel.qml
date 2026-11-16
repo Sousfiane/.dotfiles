@@ -67,12 +67,27 @@ Scope {
         onTriggered: root.priming = false
     }
 
+    // anything that moves the keyboard elsewhere while the panel is open (a workspace switch, the pointer
+    // reaching another monitor, a keybind focusing a window) is answered by taking it back, so Escape and
+    // the panel's keys work whichever screen is focused. Restarts on every change: a burst primes once.
     Connections {
         target: root.lockedMonitor
         enabled: root.open && !root.compact
 
         function onActiveWorkspaceChanged() {
-            primeDelay.restart();       // restarts on every change, so rapid switching only primes once at the end
+            primeDelay.restart();
+        }
+    }
+
+    Connections {
+        target: Hyprland
+        enabled: root.open && !root.compact
+
+        function onFocusedMonitorChanged() {
+            primeDelay.restart();
+        }
+        function onActiveToplevelChanged() {
+            primeDelay.restart();
         }
     }
 
@@ -108,6 +123,39 @@ Scope {
             if (Quickshell.screens[i].name === name)
                 return Quickshell.screens[i];
         return Quickshell.screens[0];
+    }
+
+    // ---------- the other monitors ----------
+
+    // while a click-driven panel is open, every other monitor gets an invisible layer that closes it on click,
+    // so clicking anywhere behaves the same whichever screen the pointer is on
+    Variants {
+        model: root.open && !root.compact ? Quickshell.screens.filter(s => s.name !== root.lockedScreen?.name) : []
+
+        PanelWindow {
+            required property var modelData
+
+            screen: modelData
+            margins.top: Theme.barHeight        // like the panel's own overlay: the bar stays usable
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
+
+            color: "transparent"
+            exclusionMode: ExclusionMode.Ignore
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.None      // the keyboard stays with the panel
+            WlrLayershell.namespace: "qs-catcher"
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.AllButtons
+                onClicked: root.close()
+            }
+        }
     }
 
     SlideLoader {
