@@ -103,6 +103,7 @@ Scope {
                 source: surface.screen ? "file://" + Lock.shotPath(surface.screen.name) : ""
                 fillMode: Image.PreserveAspectCrop
                 cache: false
+                visible: content.opacity < 1      // fully covered once faded in: don't draw it every frame
             }
 
             Item {
