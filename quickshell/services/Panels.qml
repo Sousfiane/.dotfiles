@@ -44,4 +44,18 @@ Singleton {
 
     // the monitor showing the open dropdown ("" when none)
     readonly property string activeScreen: current !== "" ? (screens[current] ?? "") : ""
+
+    // edge each dropdown hangs from ("left" | "right" | "center"), reported by the panels themselves
+    property var edges: ({})
+
+    function setEdge(name, edge) {
+        if (edges[name] === edge)
+            return;
+        edges = Object.assign({}, edges, {
+            [name]: edge
+        });
+    }
+
+    // the open dropdown's edge ("" when none): the clock lights up for any center panel
+    readonly property string activeEdge: current !== "" ? (edges[current] ?? "") : ""
 }

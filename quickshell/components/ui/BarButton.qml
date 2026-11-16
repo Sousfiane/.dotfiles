@@ -1,5 +1,7 @@
+import Quickshell
 import QtQuick
 import qs.config
+import qs.services
 
 Item {
     id: root
@@ -13,7 +15,11 @@ Item {
     property bool open: false             // its panel is showing
     property bool off: false              // what it controls is disabled (muted, powered off, offline, DND)
 
-    readonly property color stateColor: alert ? Theme.urgent : open ? Theme.accent : off ? Theme.dim : Theme.fg
+    // only the bar on the monitor showing the panel lights up
+    readonly property string screenName: root.QsWindow.window?.screen?.name ?? ""
+    readonly property bool openHere: open && (Panels.activeScreen === "" || Panels.activeScreen === screenName)
+
+    readonly property color stateColor: alert ? Theme.urgent : openHere ? Theme.accent : off ? Theme.dim : Theme.fg
     property color iconColor: stateColor
     property color labelColor: stateColor
     readonly property bool hovered: mouse.containsMouse

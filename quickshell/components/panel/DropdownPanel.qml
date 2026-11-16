@@ -95,6 +95,12 @@ Scope {
     onLockedScreenChanged: if (!root.compact)
         Panels.setScreen(root.name, lockedScreen?.name ?? "")
 
+    // and which edge it hangs from, so the bar item above it can light up
+    onEdgeChanged: if (!root.compact)
+        Panels.setEdge(root.name, edge)
+    Component.onCompleted: if (!root.compact)
+        Panels.setEdge(root.name, edge)
+
     function close() {
         Panels.hide(name);
     }

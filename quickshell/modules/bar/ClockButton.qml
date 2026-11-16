@@ -10,7 +10,7 @@ BarButton {
     }
 
     label: Qt.formatDateTime(clock.date, "ddd d MMM  HH:mm")
-    open: Hub.open
+    open: Panels.activeEdge === "center"     // the hub, and every other panel under the clock
 
     onClicked: Hub.toggle()
 }
