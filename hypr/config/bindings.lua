@@ -42,8 +42,8 @@ hl.bind(mod .. " + P", function()
 	end
 end, { description = "Toggle picture-in-picture / popup mode" })
 
-hl.bind(mod .. "+ T", function()
-	local tv = hl.get_monitor("name: HDMI-1-A")
+hl.bind(mod .. " + T", function()
+	local tv = hl.get_monitor("HDMI-A-1")
 	if tv == nil then
 		hl.monitor({
 			output = "HDMI-A-1",
@@ -72,9 +72,9 @@ end, { description = "Toggle external TV monitor" })
 hl.bind(mod .. " + Space", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { description = "Menu: Apps" })
 hl.bind(mod .. " + W", hl.dsp.exec_cmd("qs ipc call wallpaper toggle"), { description = "Menu: Wallpapers" })
 hl.bind(mod .. " + V", hl.dsp.exec_cmd("qs ipc call clipboard toggle"), { description = "Menu: Clipboard" })
-hl.bind(mod .. " + M", hl.dsp.exec_cmd("qs ipc call mixer toggle"), { description = "Menu: Clipboard" })
-hl.bind(mod .. " + U", hl.dsp.exec_cmd("qs ipc call updates toggle"), { description = "Menu: Clipboard" })
-hl.bind(mod .. " + C", hl.dsp.exec_cmd("qs ipc call notifs toggle"), { description = "Menu: Clipboard" })
+hl.bind(mod .. " + M", hl.dsp.exec_cmd("qs ipc call mixer toggle"), { description = "Menu: Mixer" })
+hl.bind(mod .. " + U", hl.dsp.exec_cmd("qs ipc call updates toggle"), { description = "Menu: Updates" })
+hl.bind(mod .. " + N", hl.dsp.exec_cmd("qs ipc call notifs toggle"), { description = "Menu: Notifications" })
 hl.bind(mod .. " + D", hl.dsp.exec_cmd("qs ipc call dotfiles toggle"), { description = "Menu: Dotfiles" })
 hl.bind(mod .. " + Escape", hl.dsp.exec_cmd("qs ipc call power toggle"), { description = "Menu: PowerMenu" })
 
@@ -104,7 +104,7 @@ hl.bind(
 	{ description = "Open floating terminal" }
 )
 
-hl.bind(mod .. " + N", hl.dsp.exec_cmd("uwsm-app -- nautilus"), { description = "Open file manager (Nautilus)" })
+hl.bind(mod .. " + E", hl.dsp.exec_cmd("uwsm-app -- nautilus"), { description = "Open file manager (Nautilus)" })
 
 hl.bind(mod .. " + B", hl.dsp.exec_cmd("uwsm-app -- zen-browser"), { description = "Open browser (Zen)" })
 
@@ -117,13 +117,13 @@ hl.bind(mod .. " + C", hl.dsp.exec_cmd("uwsm-app -- vesktop"), { description = "
 hl.bind(
 	mod .. " + S",
 	hl.dsp.exec_cmd("qs ipc call screenshot toggle"),
-	{ description = "Screenshot region to clipboard" }
+	{ description = "Menu: Screenshot" }
 )
 
 hl.bind(
 	mod .. " + " .. shift .. " + R",
 	hl.dsp.exec_cmd("pkill qs && uwsm-app -- qs"),
-	{ description = "Restart Waybar" }
+	{ description = "Restart Quickshell" }
 )
 
 --------------------------------------------------
@@ -131,8 +131,8 @@ hl.bind(
 --------------------------------------------------
 
 hl.bind(mod .. " + H", hl.dsp.layout("focus l"), { description = "Focus window left" })
-hl.bind(mod .. " + J", hl.dsp.layout("focus u"), { description = "Focus window up" })
-hl.bind(mod .. " + K", hl.dsp.layout("focus d"), { description = "Focus window down" })
+hl.bind(mod .. " + J", hl.dsp.layout("focus d"), { description = "Focus window down" })
+hl.bind(mod .. " + K", hl.dsp.layout("focus u"), { description = "Focus window up" })
 hl.bind(mod .. " + L", hl.dsp.layout("focus r"), { description = "Focus window right" })
 
 --------------------------------------------------
@@ -212,12 +212,12 @@ hl.bind(
 hl.bind(
 	"XF86AudioMute",
 	hl.dsp.exec_cmd(osdclient .. " --output-volume mute-toggle"),
-	{ locked = true, repeating = true, description = "Toggle audio mute" }
+	{ locked = true, description = "Toggle audio mute" }
 )
 hl.bind(
 	"XF86AudioMicMute",
 	hl.dsp.exec_cmd(osdclient .. " --input-volume mute-toggle"),
-	{ locked = true, repeating = true, description = "Toggle microphone mute" }
+	{ locked = true, description = "Toggle microphone mute" }
 )
 
 hl.bind(
@@ -271,7 +271,7 @@ hl.bind(
 -- 🔠 Caps Lock OSD
 --------------------------------------------------
 
-hl.bind("Caps_Lock", hl.dsp.exec_cmd(osdclient .. " --caps-lock"), { description = "Caps Lock OSD toggle" })
+hl.bind("Caps_Lock", hl.dsp.exec_cmd(osdclient .. " --caps-lock"), { release = true, description = "Caps Lock OSD toggle" })
 
 -- ==========================================
 -- OBS Studio Global Shortcuts Configuration
