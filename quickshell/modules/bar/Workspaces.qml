@@ -14,7 +14,8 @@ RowLayout {
 
     readonly property var mine: Hyprland.workspaces.values.filter(w => w.id > 0 && w.monitor === monitor).sort((a, b) => a.id - b.id)
 
-    spacing: 6
+    // cells touch, so the whole strip is clickable; the gap between dots is inside each cell
+    spacing: 0
 
     Repeater {
         model: ScriptModel {
@@ -26,8 +27,15 @@ RowLayout {
 
             required property var modelData
 
-            implicitWidth: 16
-            implicitHeight: 22
+            implicitWidth: 24
+            implicitHeight: Theme.barHeight
+
+            HoverBackdrop {
+                anchors.centerIn: parent
+                width: parent.width - 2
+                hovered: mouse.containsMouse
+                pressed: mouse.pressed
+            }
 
             Txt {
                 anchors.centerIn: parent
@@ -37,6 +45,7 @@ RowLayout {
             }
 
             MouseArea {
+                id: mouse
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
