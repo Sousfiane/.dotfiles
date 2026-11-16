@@ -45,6 +45,7 @@ Variants {
             if (img === front)
                 return;
             fade.stop();
+            fade.duration = front ? win.fadeMs : 0;     // the very first wallpaper appears without a fade
             if (front)
                 front.z = 0;
             img.z = 1;
@@ -62,9 +63,14 @@ Variants {
             property: "opacity"
             from: 0
             to: 1
-            // the very first wallpaper appears without a fade
-            duration: (slotA.source != "" && slotB.source != "") ? win.fadeMs : 0
             easing.type: Easing.InOutQuad
+
+            // the old wallpaper is hidden now: free its decoded image
+            onFinished: {
+                const back = win.front === slotA ? slotB : slotA;
+                if (back.source != win.wanted)
+                    back.source = "";
+            }
         }
 
         Image {
