@@ -39,6 +39,14 @@ Singleton {
     readonly property string apps: glyph(0xF003B)
     readonly property string wallpaper: glyph(0xF02E9)
     readonly property string clipboard: glyph(0xF0147)
+    readonly property string screenshot: glyph(0xF0100)
+
+    // screenshot modes
+    readonly property string shotRegion: glyph(0xF019E)
+    readonly property string shotWindow: glyph(0xF0614)
+    readonly property string shotMonitor: glyph(0xF0379)
+    readonly property string shotActiveWindow: glyph(0xF08C6)
+    readonly property string shotActiveMonitor: glyph(0xF1265)
 
     // workspaces
     readonly property string workspace: glyph(0xEA71)

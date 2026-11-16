@@ -78,6 +78,9 @@ DropdownPanel {
             case Qt.Key_C:
                 Hub.openPicker("clipboard");
                 break;
+            case Qt.Key_S:
+                Hub.openPicker("screenshot");
+                break;
             case Qt.Key_Q:
                 panel.close();
                 break;
@@ -252,6 +255,12 @@ DropdownPanel {
                         key: "C",
                         icon: Icons.clipboard,
                         target: "clipboard"
+                    },
+                    {
+                        label: "Screenshot",
+                        key: "S",
+                        icon: Icons.screenshot,
+                        target: "screenshot"
                     }
                 ]
 
@@ -309,7 +318,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: "h l month • t today • a w c open • Esc close"
+            text: "h l month • t today • a w c s open • Esc close"
         }
     }
 }
