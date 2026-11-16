@@ -101,7 +101,7 @@ PanelWindow {
             }
         }
 
-        Workspaces {
+        WsIcons {
             screen: win.screen
             edgeGap: 4                    // the cells carry their own padding: the first dot stays 16 px in
             anchors {

@@ -20,19 +20,19 @@ Variants {
         edge: "left"
         cardWidth: 340
 
-        open: WsPanel.open && WsPanel.screenName === modelData.name
+        open: Ws.open && Ws.screenName === modelData.name
 
-        onCardHoverChanged: hovered => WsPanel.hoverCard = hovered
+        onCardHoverChanged: hovered => Ws.hoverCard = hovered
 
         ColumnLayout {
             id: ws
             spacing: 8
 
-            readonly property var windows: Hyprland.toplevels.values.filter(w => w.workspace?.id === WsPanel.wsId)
-            readonly property var workspace: Hyprland.workspaces.values.find(w => w.id === WsPanel.wsId) ?? null
+            readonly property var windows: Hyprland.toplevels.values.filter(w => w.workspace?.id === Ws.wsId)
+            readonly property var workspace: Hyprland.workspaces.values.find(w => w.id === Ws.wsId) ?? null
 
             // "Workspace 3" for numbered ones, the real name for named ones
-            readonly property string title: workspace && String(workspace.name) !== String(workspace.id) ? workspace.name : "Workspace " + WsPanel.wsId
+            readonly property string title: workspace && String(workspace.name) !== String(workspace.id) ? workspace.name : "Workspace " + Ws.wsId
 
             // header: name on the left, window count on the right
             RowLayout {

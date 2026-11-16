@@ -26,7 +26,7 @@ ShellRoot {
     PowerPanel {}
     UpdatesPanel {}
     DotfilesPanel {}
-    WorkspacePanel {}
+    WsPanel {}
     WallpaperPanel {}
     HubPanel {}
     NetPanel {}
