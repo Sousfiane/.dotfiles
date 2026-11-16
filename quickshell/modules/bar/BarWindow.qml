@@ -105,7 +105,7 @@ PanelWindow {
             screen: win.screen
             anchors {
                 left: parent.left
-                leftMargin: 8
+                leftMargin: 4             // the cells carry their own padding: the first dot stays 16 px in
                 verticalCenter: parent.verticalCenter
             }
         }
