@@ -3,6 +3,7 @@ import qs.services
 import qs.components.ui
 
 BarButton {
+    iconSize: Theme.fontSize + 4
     icon: Icons.power
     open: Power.open
 
