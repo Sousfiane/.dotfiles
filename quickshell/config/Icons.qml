@@ -42,6 +42,13 @@ Singleton {
     readonly property string clipboard: glyph(0xF0147)
     readonly property string screenshot: glyph(0xF0100)
 
+    // media
+    readonly property string music: glyph(0xF075A)
+    readonly property string play: glyph(0xF040A)
+    readonly property string pause: glyph(0xF03E4)
+    readonly property string next: glyph(0xF04AD)
+    readonly property string previous: glyph(0xF04AE)
+
     // weather
     readonly property string weatherSunny: glyph(0xF0599)
     readonly property string weatherNight: glyph(0xF0594)
