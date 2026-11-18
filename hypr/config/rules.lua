@@ -96,6 +96,7 @@ hl.layer_rule({
 })
 
 hl.layer_rule({
+	name = "noanim-layers",
 	match = { class = "hyprshot" },
 	no_anim = true,
 })
