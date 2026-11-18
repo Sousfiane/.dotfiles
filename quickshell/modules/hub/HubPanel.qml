@@ -117,6 +117,16 @@ DropdownPanel {
             case Qt.Key_S:
                 Hub.openPicker("screenshot");
                 break;
+            case Qt.Key_P:
+            case Qt.Key_Space:
+                Media.toggle();
+                break;
+            case Qt.Key_N:
+                Media.next();
+                break;
+            case Qt.Key_B:
+                Media.previous();
+                break;
             case Qt.Key_Q:
                 panel.close();
                 break;
@@ -150,6 +160,15 @@ DropdownPanel {
         }
 
         Divider {}
+
+        // ---------- now playing (only while a player has a track) ----------
+        NowPlaying {
+            Layout.fillWidth: true
+        }
+
+        Divider {
+            visible: Media.active
+        }
 
         // ---------- calendar header ----------
         RowLayout {
@@ -506,7 +525,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: "h l month • j k day • t today • a w c s open • Esc close"
+            text: Media.active ? "h l month • j k day • t today • p/b/n media • a w c s open • Esc" : "h l month • j k day • t today • a w c s open • Esc close"
         }
     }
 }
