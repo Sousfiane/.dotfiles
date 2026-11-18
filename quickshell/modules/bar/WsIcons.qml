@@ -6,7 +6,9 @@ import qs.config
 import qs.services
 import qs.components.ui
 
-RowLayout {
+// Workspace numbers. Same color rule as the other bar items: urgent > card open > shown > idle.
+// The workspace this monitor shows sits on a small rounded chip that slides from number to number.
+Item {
     id: root
     required property ShellScreen screen
 
@@ -17,53 +19,105 @@ RowLayout {
 
     readonly property var mine: Hyprland.workspaces.values.filter(w => w.id > 0 && w.monitor === monitor).sort((a, b) => a.id - b.id)
 
-    // cells touch, so the whole strip is clickable; the gap between dots is inside each cell
-    spacing: 0
+    // the workspace shown on this monitor (focused or not)
+    readonly property int activeId: monitor?.activeWorkspace?.id ?? -1
+    readonly property int activeIndex: mine.findIndex(w => w.id === activeId)
+    readonly property bool monitorFocused: Hyprland.focusedMonitor === monitor
 
-    Repeater {
-        model: ScriptModel {
-            values: root.mine
+    readonly property int cellWidth: 24
+
+    implicitWidth: row.implicitWidth
+    implicitHeight: Theme.barHeight
+
+    // the active chip: a small rounded block behind the shown number, sliding between workspaces.
+    // Smaller than the hover backdrop so the two never look alike. Dimmer when another monitor has focus
+    Rectangle {
+        visible: root.activeIndex >= 0
+        width: root.cellWidth - 4
+        height: 20
+        radius: Theme.radius
+        anchors.verticalCenter: parent.verticalCenter
+        x: root.activeIndex * root.cellWidth + (root.cellWidth - width) / 2
+        color: Theme.highlightMed
+        opacity: root.monitorFocused ? 1 : 0.5
+
+        Behavior on x {
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.OutCubic
+            }
         }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 120
+            }
+        }
+    }
 
-        delegate: Item {
-            id: workspace
+    // cells touch, so the whole strip is clickable; the gap between numbers is inside each cell
+    RowLayout {
+        id: row
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: 0
 
-            required property var modelData
-            required property int index
-
-            // the first cell extends to the screen edge (backdrop and click area)
-            readonly property real reach: index === 0 ? root.edgeGap : 0
-
-            implicitWidth: 24
-            implicitHeight: Theme.barHeight
-
-            HoverBackdrop {
-                x: -workspace.reach
-                width: parent.width + workspace.reach
-                anchors.verticalCenter: parent.verticalCenter
-                hovered: mouse.containsMouse
-                pressed: mouse.pressed
-                squareLeft: workspace.reach > 0
+        Repeater {
+            model: ScriptModel {
+                values: root.mine
             }
 
-            Txt {
-                anchors.centerIn: parent
+            delegate: Item {
+                id: workspace
 
-                text: workspace.modelData.focused ? Icons.workspaceFocused : Icons.workspace
-                font.pixelSize: Theme.fontSize
-            }
+                required property var modelData
+                required property int index
 
-            MouseArea {
-                id: mouse
-                x: -workspace.reach
-                width: parent.width + workspace.reach
-                height: parent.height
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                readonly property bool shown: modelData.id === root.activeId
+                readonly property bool cardOpen: Ws.open && Ws.screenName === root.screen.name && Ws.wsId === modelData.id
 
-                onClicked: workspace.modelData.activate()
-                onEntered: Ws.enterBar(root.screen.name, workspace.modelData.id)
-                onExited: Ws.leaveBar(root.screen.name, workspace.modelData.id)
+                // named workspaces show their first letter
+                readonly property string label: String(modelData.name) === String(modelData.id) ? String(modelData.id) : String(modelData.name).charAt(0).toUpperCase()
+
+                // the first cell extends to the screen edge (backdrop and click area)
+                readonly property real reach: index === 0 ? root.edgeGap : 0
+
+                implicitWidth: root.cellWidth
+                implicitHeight: Theme.barHeight
+
+                HoverBackdrop {
+                    x: -workspace.reach
+                    width: parent.width + workspace.reach
+                    anchors.verticalCenter: parent.verticalCenter
+                    hovered: mouse.containsMouse
+                    pressed: mouse.pressed
+                    squareLeft: workspace.reach > 0
+                }
+
+                Txt {
+                    anchors.centerIn: parent
+                    text: workspace.label
+                    font.pixelSize: Theme.fontSize
+                    font.bold: workspace.shown
+                    color: workspace.modelData.urgent ? Theme.urgent : workspace.cardOpen ? Theme.accent : workspace.shown ? Theme.fg : Theme.dim
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 120
+                        }
+                    }
+                }
+
+                MouseArea {
+                    id: mouse
+                    x: -workspace.reach
+                    width: parent.width + workspace.reach
+                    height: parent.height
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: workspace.modelData.activate()
+                    onEntered: Ws.enterBar(root.screen.name, workspace.modelData.id)
+                    onExited: Ws.leaveBar(root.screen.name, workspace.modelData.id)
+                }
             }
         }
     }
