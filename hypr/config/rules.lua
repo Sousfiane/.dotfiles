@@ -94,3 +94,8 @@ hl.layer_rule({
 	ignore_alpha = 0.6,
 	xray = true,
 })
+
+hl.layer_rule({
+	match = { class = "hyprshot" },
+	no_anim = true,
+})
