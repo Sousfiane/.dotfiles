@@ -178,7 +178,8 @@ DropdownPanel {
                     discardSelected();
                     break;
                 case Qt.Key_C:
-                    commitInput.forceActiveFocus();
+                    if (Dotfiles.stagedCount > 0)
+                        commitInput.forceActiveFocus();
                     break;
                 case Qt.Key_P:
                     if (shift)
@@ -419,11 +420,15 @@ DropdownPanel {
             text: Dotfiles.diffLoading ? "Loading…" : "No changes against HEAD"
         }
 
-        // ---------- commit ----------
+        // ---------- commit, once something is staged ----------
         RowLayout {
-            visible: !menu.diffOpen
+            visible: !menu.diffOpen && Dotfiles.stagedCount > 0
             Layout.fillWidth: true
             spacing: 8
+
+            // unstaging the last file while typing: give the keys back to the list
+            onVisibleChanged: if (!visible && commitInput.activeFocus)
+                menu.forceActiveFocus()
 
             Rectangle {
                 Layout.fillWidth: true
@@ -464,7 +469,7 @@ DropdownPanel {
                         visible: commitInput.text.length === 0
                         enabled: false
                         variant: "dim"
-                        text: Dotfiles.stagedCount > 0 ? `Commit message · ${Dotfiles.stagedCount} staged` : "Commit message · everything"
+                        text: `Commit message · ${Dotfiles.stagedCount} staged`
                     }
                 }
             }
@@ -550,7 +555,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: menu.diffOpen ? "j k scroll • J K next / prev file • Space stage • h back • q close" : passInput.activeFocus ? "Enter send • Esc cancel" : commitInput.activeFocus ? "Enter commit • Esc back to the list" : "j k select • Space stage • a all • Enter diff • d discard • c commit • p pull • P push • Esc close"
+            text: menu.diffOpen ? "j k scroll • J K next / prev file • Space stage • h back • q close" : passInput.activeFocus ? "Enter send • Esc cancel" : commitInput.activeFocus ? "Enter commit • Esc back to the list" : "j k select • Space stage • a all • Enter diff • d discard • " + (Dotfiles.stagedCount > 0 ? "c commit • " : "") + "p pull • P push • Esc close"
         }
     }
 }

@@ -299,7 +299,7 @@ Singleton {
             run(["checkout", "HEAD", "--", f.path], "Discard");
     }
 
-    // commits what's staged, or everything when nothing is
+    // commits what's staged
     function commit(msg) {
         const text = msg.trim();
         if (text === "") {
@@ -307,13 +307,11 @@ Singleton {
             messageError = true;
             return;
         }
-        if (count === 0) {
-            message = "Nothing to commit";
+        if (stagedCount === 0) {
+            message = "Nothing staged";
             messageError = true;
             return;
         }
-        if (stagedCount === 0)
-            run(["add", "-A"], "", true);
         run(["commit", "-q", "-m", text], "Commit", false, ok => {
             if (ok)
                 root.draft = "";
