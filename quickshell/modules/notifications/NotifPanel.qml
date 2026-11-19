@@ -8,12 +8,76 @@ import qs.components.panel
 import qs.components.ui
 
 DropdownPanel {
+    id: panel
     name: "notifs"
     edge: "right"
     cardWidth: 380
 
     ColumnLayout {
+        id: menu
         spacing: 10
+
+        property int sel: 0
+        readonly property int count: Notifs.historyIds.length
+        readonly property int selIndex: Math.max(0, Math.min(sel, count - 1))
+        readonly property var selId: Notifs.historyIds[selIndex] ?? null
+
+        onSelIndexChanged: list.positionViewAtIndex(selIndex, ListView.Contain)
+
+        function select(i) {
+            sel = Math.max(0, Math.min(count - 1, i));
+        }
+
+        // the same slide-out as the × and the swipe; the next card takes the selection
+        function dismissSelected() {
+            if (selId === null)
+                return;
+            const card = list.itemAtIndex(selIndex);
+            if (card)
+                card.dismiss();
+            else
+                Notifs.remove(selId);
+        }
+
+        Keys.onPressed: event => {
+            switch (event.key) {
+            case Qt.Key_J:
+            case Qt.Key_Down:
+                select(selIndex + 1);
+                break;
+            case Qt.Key_K:
+            case Qt.Key_Up:
+                select(selIndex - 1);
+                break;
+            case Qt.Key_G:
+                select(event.modifiers & Qt.ShiftModifier ? count - 1 : 0);
+                break;
+            case Qt.Key_Return:
+            case Qt.Key_Enter:
+            case Qt.Key_Space:
+            case Qt.Key_L:
+                if (selId !== null)
+                    Notifs.activate(selId);
+                break;
+            case Qt.Key_D:
+            case Qt.Key_X:
+            case Qt.Key_Delete:
+                dismissSelected();
+                break;
+            case Qt.Key_C:
+                Notifs.clearHistory();
+                break;
+            case Qt.Key_N:
+                Notifs.dnd = !Notifs.dnd;
+                break;
+            case Qt.Key_Q:
+                panel.close();
+                break;
+            default:
+                return;
+            }
+            event.accepted = true;
+        }
 
         // ---------- header ----------
         PanelHeader {
@@ -67,6 +131,9 @@ DropdownPanel {
             delegate: Item {
                 id: item
                 required property var modelData      // the entry's id
+                required property int index
+
+                readonly property bool selected: index === menu.selIndex
 
                 readonly property var entry: Notifs.entry(modelData)
 
@@ -119,7 +186,7 @@ DropdownPanel {
                     height: itemCol.implicitHeight + 20
                     radius: Theme.radius
                     color: Theme.surface
-                    border.width: item.urgency === NotificationUrgency.Critical || cardMouse.containsMouse ? 1 : 0
+                    border.width: item.urgency === NotificationUrgency.Critical || item.selected || cardMouse.containsMouse ? 1 : 0
                     border.color: item.urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.accent
                     // fades as it is pushed away
                     opacity: 1 - 0.8 * Math.min(1, x / width)
@@ -221,6 +288,10 @@ DropdownPanel {
                     }
                 }
             }
+        }
+
+        Hint {
+            text: "j k select • Enter open • d dismiss • c clear • n do not disturb • Esc close"
         }
     }
 }
