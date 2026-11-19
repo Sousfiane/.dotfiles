@@ -30,7 +30,10 @@ Singleton {
     readonly property int maxHistory: 50
 
     property bool dnd: false
-    property int unread: 0
+    // everything up to this id has been seen (the center was open when it came, or opened since).
+    // Derived from the history, so a notification removed from a toast or the center leaves the count too
+    property int seenUpTo: -1
+    readonly property int unread: history.filter(e => e.id > seenUpTo).length
 
     readonly property bool open: Panels.isOpen("notifs")
 
@@ -40,7 +43,7 @@ Singleton {
 
     onOpenChanged: {
         if (open) {
-            unread = 0;
+            seenUpTo = nextId - 1;
             Hyprland.refreshToplevels();       // fresh focus order for the window lookup
         }
     }
@@ -70,7 +73,6 @@ Singleton {
     function clearHistory() {
         for (const e of history.slice())
             remove(e.id);
-        unread = 0;
     }
 
     // the app closed it, or it was dismissed: keep the text, forget the object
@@ -173,8 +175,8 @@ Singleton {
                 root.remove(old.id);
             root.history = next;
 
-            if (!root.open)
-                root.unread++;
+            if (root.open)
+                root.seenUpTo = entry.id;
 
             // Do Not Disturb: still recorded in history, but only critical ones pop up
             if (!root.dnd || n.urgency === NotificationUrgency.Critical)
