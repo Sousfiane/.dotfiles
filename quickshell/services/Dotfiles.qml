@@ -49,7 +49,7 @@ Singleton {
     onOpenChanged: {
         if (open) {
             refresh();
-            fetch();
+            fetch(true);
         }
     }
 
@@ -154,13 +154,29 @@ Singleton {
         return lines.some(l => /Permission denied|Could not read from remote|passphrase|terminal prompts disabled|could not read (Username|Password)/i.test(l));
     }
 
-    // the same command in a floating terminal, which stays open until a key is pressed so its output can be read
-    function inTerminal(args, label) {
-        const script = 'git -C "$0" "$@"; echo; read -n1 -s -p "Press a key to close"';
-        Quickshell.execDetached(["uwsm", "app", "--", ...Config.floatingTerm(["bash", "-c", script, root.repoPath, ...args])]);
-        Panels.hide("dotfiles");
-        message = label + " needs your SSH passphrase: continued in a terminal";
-        messageError = false;
+    // ---------- SSH passphrase ----------
+
+    // No SSH agent holds the key, so a remote command that needs it fails. The panel then asks for the
+    // passphrase and runs the command again with scripts/askpass.sh answering ssh's prompt. The passphrase
+    // only lives in that one command's environment; nothing keeps it afterwards.
+    property var authJob: null
+    readonly property bool askingPass: authJob !== null
+    readonly property string askpass: Quickshell.shellDir + "/scripts/askpass.sh"
+
+    function submitPass(pass) {
+        const j = authJob;
+        authJob = null;
+        if (!j || pass === "")
+            return;
+        queue = [Object.assign({}, j, {
+                pass: pass
+            })].concat(queue);
+        next();
+    }
+
+    function cancelPass() {
+        authJob = null;
+        message = "";
     }
 
     function next() {
@@ -170,6 +186,14 @@ Singleton {
         queue = queue.slice(1);
         if (!job.current.quiet)
             busy = job.current.label;
+        job.environment = Object.assign({
+            GIT_TERMINAL_PROMPT: "0",
+            GIT_EDITOR: "true",
+            SSH_ASKPASS_REQUIRE: job.current.pass ? "force" : "never"
+        }, job.current.pass ? {
+            SSH_ASKPASS: root.askpass,
+            QS_SSH_PASS: job.current.pass
+        } : {});
         job.command = ["sh", "-c", "git -C \"$0\" \"$@\" 2>&1; printf '\\n%s' \"$?\"", root.repoPath, ...job.current.args];
         job.running = true;
     }
@@ -182,9 +206,18 @@ Singleton {
         const said = lines.filter(l => l.trim() !== "");
 
         if (!ok && j.remote && needsAuth(said)) {
-            // no SSH agent holds the key: a terminal can ask for the passphrase. Background fetches just give up
-            if (!j.quiet)
-                inTerminal(j.args, j.label);
+            // the key needs its passphrase: ask for it in the panel. Background fetches just give up
+            if (!j.quiet) {
+                authJob = {
+                    args: j.args,
+                    label: j.label,
+                    quiet: false,
+                    done: j.done,
+                    remote: true
+                };
+                message = j.pass ? "Wrong passphrase" : "";
+                messageError = !!j.pass;
+            }
         } else if (!ok) {
             // git puts the reason last ("fatal: ...", "error: ..."), after hints
             const reason = said.filter(l => /^(fatal|error):/.test(l)).pop() ?? said.pop() ?? "exit code " + code;
@@ -196,6 +229,9 @@ Singleton {
         }
 
         busy = "";
+        // forget the passphrase as soon as its command is over
+        job.current = null;
+        job.environment = {};
         if (j.done)
             j.done(ok);
         if (queue.length === 0)
@@ -208,12 +244,8 @@ Singleton {
 
         property var current: null
 
-        // no terminal to answer a password prompt: fail instead of hanging
-        environment: ({
-                GIT_TERMINAL_PROMPT: "0",
-                SSH_ASKPASS_REQUIRE: "never",
-                GIT_EDITOR: "true"
-            })
+        // set for each command in next(): no terminal to answer a prompt, so fail instead of hanging,
+        // unless a passphrase was typed in the panel for this command
 
         stdout: StdioCollector {
             onStreamFinished: root.finished(text)
@@ -296,8 +328,9 @@ Singleton {
         run(upstream === "" ? ["push", "-q", "-u", "origin", "HEAD"] : ["push", "-q"], "Push");
     }
 
-    function fetch() {
-        run(["fetch", "-q"], "Fetch", true);
+    // quiet when the panel fetches on its own: no passphrase prompt, no error
+    function fetch(quiet) {
+        run(["fetch", "-q"], "Fetch", quiet ?? false);
     }
 
     // ---------- diff ----------

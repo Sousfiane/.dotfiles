@@ -65,6 +65,13 @@ DropdownPanel {
             }
         }
 
+        function submitPass() {
+            const pass = passInput.text;
+            passInput.text = "";
+            Dotfiles.submitPass(pass);
+            menu.forceActiveFocus();
+        }
+
         function submitCommit() {
             Dotfiles.commit(commitInput.text);
             menu.forceActiveFocus();
@@ -180,7 +187,7 @@ DropdownPanel {
                         Dotfiles.pull();
                     break;
                 case Qt.Key_F:
-                    Dotfiles.fetch();
+                    Dotfiles.fetch(false);
                     break;
                 case Qt.Key_R:
                     Dotfiles.refresh();
@@ -470,6 +477,67 @@ DropdownPanel {
             }
         }
 
+        // ---------- SSH passphrase, when a pull or push needs it ----------
+        RowLayout {
+            visible: Dotfiles.askingPass
+            Layout.fillWidth: true
+            spacing: 8
+
+            onVisibleChanged: {
+                passInput.text = "";
+                if (visible)
+                    passInput.forceActiveFocus();
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: 30
+                radius: Theme.radius
+                color: Theme.surface
+                border.width: 1
+                border.color: Theme.border
+
+                TextInput {
+                    id: passInput
+                    anchors {
+                        fill: parent
+                        leftMargin: 10
+                        rightMargin: 10
+                    }
+                    verticalAlignment: TextInput.AlignVCenter
+                    echoMode: TextInput.Password
+                    color: Theme.fg
+                    font.family: Theme.font
+                    font.pixelSize: Theme.fontSize - 1
+                    clip: true
+
+                    Keys.onReturnPressed: menu.submitPass()
+                    Keys.onEnterPressed: menu.submitPass()
+                    Keys.onEscapePressed: event => {
+                        Dotfiles.cancelPass();
+                        menu.forceActiveFocus();
+                        event.accepted = true;
+                    }
+
+                    Txt {
+                        anchors.fill: parent
+                        verticalAlignment: Text.AlignVCenter
+                        visible: passInput.text.length === 0
+                        enabled: false
+                        variant: "dim"
+                        text: "SSH passphrase to " + (Dotfiles.authJob?.label ?? "").toLowerCase()
+                    }
+                }
+            }
+
+            Pill {
+                text: Dotfiles.authJob?.label ?? "Send"
+                primary: true
+                minWidth: 64
+                onClicked: menu.submitPass()
+            }
+        }
+
         // what the last action said
         Txt {
             Layout.fillWidth: true
@@ -482,7 +550,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: menu.diffOpen ? "j k scroll • J K next / prev file • Space stage • h back • q close" : commitInput.activeFocus ? "Enter commit • Esc back to the list" : "j k select • Space stage • a all • Enter diff • d discard • c commit • p pull • P push • Esc close"
+            text: menu.diffOpen ? "j k scroll • J K next / prev file • Space stage • h back • q close" : passInput.activeFocus ? "Enter send • Esc cancel" : commitInput.activeFocus ? "Enter commit • Esc back to the list" : "j k select • Space stage • a all • Enter diff • d discard • c commit • p pull • P push • Esc close"
         }
     }
 }
