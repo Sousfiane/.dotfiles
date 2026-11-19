@@ -30,7 +30,7 @@ Item {
     implicitHeight: Theme.barHeight
 
     // the active chip: a small rounded block behind the shown number, sliding between workspaces.
-    // Smaller than the hover backdrop so the two never look alike. Dimmer when another monitor has focus
+    // Dimmer when another monitor has focus
     Rectangle {
         visible: root.activeIndex >= 0
         width: root.cellWidth - 4
@@ -77,20 +77,11 @@ Item {
                 // named workspaces show their first letter
                 readonly property string label: String(modelData.name) === String(modelData.id) ? String(modelData.id) : String(modelData.name).charAt(0).toUpperCase()
 
-                // the first cell extends to the screen edge (backdrop and click area)
+                // the first cell extends to the screen edge (click area)
                 readonly property real reach: index === 0 ? root.edgeGap : 0
 
                 implicitWidth: root.cellWidth
                 implicitHeight: Theme.barHeight
-
-                HoverBackdrop {
-                    x: -workspace.reach
-                    width: parent.width + workspace.reach
-                    anchors.verticalCenter: parent.verticalCenter
-                    hovered: mouse.containsMouse
-                    pressed: mouse.pressed
-                    squareLeft: workspace.reach > 0
-                }
 
                 Txt {
                     anchors.centerIn: parent

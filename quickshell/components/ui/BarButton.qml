@@ -48,7 +48,7 @@ Item {
     implicitWidth: row.implicitWidth
     implicitHeight: row.implicitHeight
 
-    // the item at an end of the bar: its backdrop and click area reach the screen edge, square on that side
+    // the item at an end of the bar: its click area reaches the screen edge
     property string edge: ""              // "" | "left" | "right"
     property real edgeGap: 0              // its distance from that screen edge
 
@@ -59,16 +59,6 @@ Item {
     FontMetrics {
         id: glyphMetrics
         font: iconText.font
-    }
-
-    HoverBackdrop {
-        x: row.x - root.padLeft
-        width: row.width + root.padLeft + root.padRight
-        anchors.verticalCenter: row.verticalCenter
-        hovered: mouse.containsMouse
-        pressed: mouse.pressed
-        squareLeft: root.edge === "left"
-        squareRight: root.edge === "right"
     }
 
     Row {
@@ -108,7 +98,7 @@ Item {
 
     MouseArea {
         id: mouse
-        // as wide as the backdrop and as tall as the bar, so the top edge of the screen is clickable too
+        // as wide as the padded row and as tall as the bar, so the top edge of the screen is clickable too
         x: -root.padLeft
         width: root.width + root.padLeft + root.padRight
         height: Theme.barHeight
