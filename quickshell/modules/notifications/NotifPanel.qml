@@ -54,7 +54,17 @@ DropdownPanel {
                 values: Notifs.historyIds
             }
 
-            delegate: Rectangle {
+            // the cards below a removed one slide up into its place
+            displaced: Transition {
+                NumberAnimation {
+                    property: "y"
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            // the delegate holds the card in place; the card itself slides right when dismissed
+            delegate: Item {
                 id: item
                 required property var modelData      // the entry's id
 
@@ -68,77 +78,146 @@ DropdownPanel {
                 readonly property int urgency: live?.urgency ?? entry?.urgency ?? 0
                 readonly property string time: entry?.time ?? ""
 
-                width: ListView.view.width
-                height: itemCol.implicitHeight + 20
-                radius: Theme.radius
-                color: Theme.surface
-                border.width: urgency === NotificationUrgency.Critical || cardMouse.containsMouse ? 1 : 0
-                border.color: urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.accent
+                // dragged past this far, a released card goes; short of it, it springs back
+                readonly property real dismissAt: width * 0.3
+                property bool leaving: false
 
-                // click: go to the app that sent it
-                MouseArea {
-                    id: cardMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Notifs.activate(item.modelData)
+                // slide out to the right, then drop it from the history
+                function dismiss() {
+                    if (leaving)
+                        return;
+                    leaving = true;
+                    snapBack.stop();
+                    slideOut.start();
                 }
 
-                ColumnLayout {
-                    id: itemCol
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        top: parent.top
-                        margins: 10
-                    }
-                    spacing: 2
+                width: ListView.view.width
+                height: card.height
 
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 8
+                NumberAnimation {
+                    id: slideOut
+                    target: card
+                    property: "x"
+                    to: item.width
+                    duration: 180
+                    easing.type: Easing.InCubic
+                    onFinished: Notifs.remove(item.modelData)
+                }
+
+                NumberAnimation {
+                    id: snapBack
+                    target: card
+                    property: "x"
+                    to: 0
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                Rectangle {
+                    id: card
+                    width: parent.width
+                    height: itemCol.implicitHeight + 20
+                    radius: Theme.radius
+                    color: Theme.surface
+                    border.width: item.urgency === NotificationUrgency.Critical || cardMouse.containsMouse ? 1 : 0
+                    border.color: item.urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.accent
+                    // fades as it is pushed away
+                    opacity: 1 - 0.8 * Math.min(1, x / width)
+
+                    // click: go to the app that sent it. Drag right: dismiss it
+                    MouseArea {
+                        id: cardMouse
+
+                        property bool swiped: false
+
+                        anchors.fill: parent
+                        enabled: !item.leaving
+                        hoverEnabled: true
+                        cursorShape: drag.active ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+
+                        drag.target: card
+                        drag.axis: Drag.XAxis
+                        drag.minimumX: 0
+                        drag.maximumX: card.width
+
+                        onPressed: {
+                            swiped = false;
+                            snapBack.stop();
+                        }
+                        onPositionChanged: {
+                            if (drag.active)
+                                swiped = true;
+                        }
+                        onReleased: {
+                            if (card.x > item.dismissAt)
+                                item.dismiss();
+                            else if (card.x > 0)
+                                snapBack.start();
+                        }
+                        // a drag that ends is not a click
+                        onClicked: {
+                            if (!swiped)
+                                Notifs.activate(item.modelData);
+                        }
+                    }
+
+                    ColumnLayout {
+                        id: itemCol
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                            top: parent.top
+                            margins: 10
+                        }
+                        spacing: 2
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+
+                            Txt {
+                                Layout.fillWidth: true
+                                variant: "dim"
+                                text: item.appName
+                                elide: Text.ElideRight
+                            }
+
+                            Txt {
+                                variant: "dim"
+                                text: item.time
+                            }
+
+                            Txt {
+                                variant: "dim"
+                                text: "×"
+                                font.pixelSize: Theme.fontSize + 2
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    anchors.margins: -4
+                                    enabled: !item.leaving
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: item.dismiss()
+                                }
+                            }
+                        }
 
                         Txt {
                             Layout.fillWidth: true
-                            variant: "dim"
-                            text: item.appName
+                            text: item.summary
+                            wrapMode: Text.Wrap
+                            font.bold: true
+                        }
+
+                        Txt {
+                            Layout.fillWidth: true
+                            visible: item.body !== ""
+                            variant: "row"
+                            text: item.body
+                            wrapMode: Text.Wrap
+                            maximumLineCount: 4
                             elide: Text.ElideRight
                         }
-
-                        Txt {
-                            variant: "dim"
-                            text: item.time
-                        }
-
-                        Txt {
-                            variant: "dim"
-                            text: "×"
-                            font.pixelSize: Theme.fontSize + 2
-
-                            MouseArea {
-                                anchors.fill: parent
-                                anchors.margins: -4
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: Notifs.remove(item.modelData)
-                            }
-                        }
-                    }
-
-                    Txt {
-                        Layout.fillWidth: true
-                        text: item.summary
-                        wrapMode: Text.Wrap
-                        font.bold: true
-                    }
-
-                    Txt {
-                        Layout.fillWidth: true
-                        visible: item.body !== ""
-                        variant: "row"
-                        text: item.body
-                        wrapMode: Text.Wrap
-                        maximumLineCount: 4
-                        elide: Text.ElideRight
                     }
                 }
             }
