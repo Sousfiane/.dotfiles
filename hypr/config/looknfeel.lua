@@ -57,7 +57,7 @@ hl.config({
 
 hl.curve("easeInOutQuart", { type = "bezier", points = { { 0.77, 0 }, { 0.175, 1 } } })
 
-hl.animation({ leaf = "windows", enabled = true, speed = 2, bezier = "easeInOutQuart", style = "slidefade" })
+hl.animation({ leaf = "windows", enabled = true, speed = 2, bezier = "easeInOutQuart", style = "slide" })
 hl.animation({ leaf = "layersIn", enabled = true, speed = 2, bezier = "easeInOutQuart", style = "popin" })
 hl.animation({ leaf = "layersOut", enabled = true, speed = 4, bezier = "easeInOutQuart", style = "popin" })
 hl.animation({ leaf = "fade", enabled = true, speed = 2, bezier = "easeInOutQuart" })
