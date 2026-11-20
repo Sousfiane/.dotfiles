@@ -159,14 +159,8 @@ DropdownPanel {
             }
         }
 
-        Txt {
-            Layout.fillWidth: true
-            Layout.topMargin: 8
-            Layout.bottomMargin: 8
+        EmptyState {
             visible: Net.rows.length === 0
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-            variant: "dim"
             text: Net.devices.length === 0 ? "No network devices found (is NetworkManager running?)" : !Net.wifiOn && Net.wifiDevice ? "Wi-Fi is off  (w to turn it on)" : Net.scanning ? "Searching for networks…" : "Nothing to show"
         }
 

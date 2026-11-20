@@ -73,28 +73,18 @@ Variants {
             }
         }
 
-        Image {
+        WallLayer {
             id: slotA
-            anchors.fill: parent
-            fillMode: Image.PreserveAspectCrop
-            asynchronous: true
-            cache: false
-            opacity: 0
-            sourceSize: Qt.size(win.width * win.screen.devicePixelRatio, win.height * win.screen.devicePixelRatio)
-            onStatusChanged: if (status === Image.Ready && source == win.wanted)
-                win.reveal(slotA)
+            wanted: win.wanted
+            dpr: win.screen.devicePixelRatio
+            onWantedReady: win.reveal(slotA)
         }
 
-        Image {
+        WallLayer {
             id: slotB
-            anchors.fill: parent
-            fillMode: Image.PreserveAspectCrop
-            asynchronous: true
-            cache: false
-            opacity: 0
-            sourceSize: Qt.size(win.width * win.screen.devicePixelRatio, win.height * win.screen.devicePixelRatio)
-            onStatusChanged: if (status === Image.Ready && source == win.wanted)
-                win.reveal(slotB)
+            wanted: win.wanted
+            dpr: win.screen.devicePixelRatio
+            onWantedReady: win.reveal(slotB)
         }
     }
 }

@@ -6,17 +6,15 @@ import qs.config
 import qs.services
 import qs.components.ui
 
-Rectangle {
+SelectableCard {
     id: root
 
     required property var node
     property bool device: false      // hardware device (vs. application stream)
     property bool input: false       // microphone side
-    property bool selected: false
     property bool choosing: false    // device chooser open on this row
     property int chooseIndex: 0
 
-    signal selectRequested
     signal chooseRequested
     signal choiceHovered(int i)
     signal choicePicked(var target)
@@ -34,16 +32,6 @@ Rectangle {
     readonly property string iconName: props["application.icon-name"] || appName.toLowerCase()
 
     implicitHeight: body.implicitHeight + 20
-    radius: Theme.radius
-    color: selected ? Theme.surface : "transparent"
-    border.width: selected ? 1 : 0
-    border.color: Theme.accent
-
-    // clicking anywhere on the row selects it
-    MouseArea {
-        anchors.fill: parent
-        onClicked: root.selectRequested()
-    }
 
     ColumnLayout {
         id: body
@@ -198,50 +186,14 @@ Rectangle {
         }
 
         // device chooser, expands under the slider
-        ColumnLayout {
-            Layout.fillWidth: true
+        ChoiceList {
             visible: root.choosing
-            spacing: 2
-
-            Repeater {
-                model: root.choosing ? Mixer.targets(root.node) : []
-
-                delegate: Rectangle {
-                    id: option
-                    required property var modelData
-                    required property int index
-
-                    readonly property bool highlighted: root.chooseIndex === index
-                    readonly property bool isCurrent: modelData === root.currentTarget
-
-                    Layout.fillWidth: true
-                    implicitHeight: 26
-                    radius: 6
-                    color: highlighted ? Theme.accent : Theme.bgSolid
-
-                    Txt {
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            leftMargin: 10
-                            rightMargin: 10
-                        }
-                        variant: "dim"
-                        color: option.highlighted ? Theme.bgSolid : Theme.fg
-                        text: (option.isCurrent ? "● " : "   ") + (option.modelData.description || option.modelData.name)
-                        elide: Text.ElideRight
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: root.choiceHovered(option.index)
-                        onClicked: root.choicePicked(option.modelData)
-                    }
-                }
-            }
+            choices: Mixer.targets(root.node)
+            highlight: root.chooseIndex
+            labelOf: t => t.description || t.name
+            isCurrent: t => t === root.currentTarget
+            onHovered: i => root.choiceHovered(i)
+            onPicked: t => root.choicePicked(t)
         }
     }
 }

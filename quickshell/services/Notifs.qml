@@ -27,6 +27,22 @@ Singleton {
         return history.find(e => e.id === id) ?? null;
     }
 
+    // what a toast or a history card shows: the live notification's text while the app still has it
+    // open (it may update it), the copy kept in the entry after that
+    function view(id) {
+        const e = entry(id);
+        const n = e?.notif ?? null;
+        return {
+            live: n,
+            appName: n?.appName ?? e?.appName ?? "",
+            summary: n?.summary ?? e?.summary ?? "",
+            body: n?.body ?? e?.body ?? "",
+            urgency: n?.urgency ?? e?.urgency ?? 0,
+            time: e?.time ?? "",
+            timeout: e?.timeout ?? 5000
+        };
+    }
+
     readonly property int maxHistory: 50
 
     property bool dnd: false
@@ -113,7 +129,7 @@ Singleton {
     // the app's most recently focused window, or null
     function windowFor(names) {
         const matches = Hyprland.toplevels.values.filter(w => {
-            const cls = (w.wayland?.appId || w.lastIpcObject?.class || "").toLowerCase();
+            const cls = Ws.windowClass(w).toLowerCase();
             return cls !== "" && names.some(n => cls === n || cls.endsWith("." + n) || n.endsWith("." + cls));
         });
         matches.sort((a, b) => (a.lastIpcObject?.focusHistoryID ?? 1e9) - (b.lastIpcObject?.focusHistoryID ?? 1e9));

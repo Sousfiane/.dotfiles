@@ -4,23 +4,18 @@ import qs.config
 
 // one entry of a keyboard menu (power, screenshot): icon, label and shortcut key.
 // Hovering selects it, clicking runs it.
-Rectangle {
+SelectableCard {
     id: root
 
     property string icon: ""
     property string label: ""
     property string key: ""
-    property bool current: false
 
     signal entered
     signal clicked
 
     Layout.fillWidth: true
     implicitHeight: 44
-    radius: Theme.radius
-    color: current ? Theme.surface : "transparent"
-    border.width: current ? 1 : 0
-    border.color: Theme.accent
 
     RowLayout {
         anchors {
@@ -34,14 +29,14 @@ Rectangle {
             Layout.preferredWidth: 26
             horizontalAlignment: Text.AlignHCenter
             text: root.icon
-            color: root.current ? Theme.accent : Theme.fg
+            color: root.selected ? Theme.accent : Theme.fg
             font.pixelSize: Theme.fontSize + 6
         }
 
         Txt {
             Layout.fillWidth: true
             text: root.label
-            font.bold: root.current
+            font.bold: root.selected
             elide: Text.ElideRight
         }
 

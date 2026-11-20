@@ -43,7 +43,7 @@ DropdownPanel {
             icon: Icons.update
             iconColor: Updates.failed ? Theme.urgent : Updates.count > 0 ? Theme.accent : Theme.dim
             title: "Updates"
-            subtitle: Updates.failed ? "Could not check for updates" : (Updates.checking && Updates.count === 0) ? "Checking…" : Updates.count === 0 ? "System is up to date" : Updates.count + (Updates.count === 1 ? " update available" : " updates available")
+            subtitle: Updates.failed ? "Could not check for updates" : (Updates.checking && Updates.count === 0) ? "Checking…" : Updates.count === 0 ? "System is up to date" : Fmt.plural(Updates.count, "update") + " available"
             subtitleColor: Updates.failed ? Theme.urgent : Theme.dim
 
             Pill {
@@ -85,13 +85,8 @@ DropdownPanel {
             }
         }
 
-        Txt {
-            Layout.fillWidth: true
-            Layout.topMargin: 8
-            Layout.bottomMargin: 8
+        EmptyState {
             visible: Updates.count === 0
-            horizontalAlignment: Text.AlignHCenter
-            variant: "dim"
             text: Updates.failed ? "Check your network, then press r to retry" : Updates.checking ? "Checking for updates…" : "Nothing to update"
         }
 

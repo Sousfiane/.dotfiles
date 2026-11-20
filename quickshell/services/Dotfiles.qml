@@ -56,10 +56,7 @@ Singleton {
     // ---------- git status ----------
 
     function refresh() {
-        if (statusProc.running)
-            statusProc.again = true;
-        else
-            statusProc.running = true;
+        statusProc.refresh();
     }
 
     // "## main...origin/main [ahead 1, behind 2]", "## No commits yet on main", "## HEAD (no branch)"
@@ -102,10 +99,9 @@ Singleton {
         files = list;
     }
 
-    Process {
+    PolledProcess {
         id: statusProc
-
-        property bool again: false     // asked while running: look once more when done
+        interval: 60 * 1000
 
         command: ["bash", "-c", "set -o pipefail; git -C \"$0\" status --porcelain=v1 -z -b --untracked-files=all | tr '\\0' '\\n'", root.repoPath]
         running: true
@@ -114,20 +110,7 @@ Singleton {
             onStreamFinished: root.parseStatus(text)
         }
 
-        onExited: (code, status) => {
-            root.failed = code !== 0;
-            if (again) {
-                again = false;
-                running = true;
-            }
-        }
-    }
-
-    Timer {
-        interval: 60 * 1000
-        running: true
-        repeat: true
-        onTriggered: root.refresh()
+        onExited: (code, status) => root.failed = code !== 0
     }
 
     // ---------- actions ----------

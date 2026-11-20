@@ -48,7 +48,7 @@ Variants {
 
                 Txt {
                     variant: "dim"
-                    text: ws.windows.length === 0 ? "empty" : ws.windows.length + (ws.windows.length === 1 ? " window" : " windows")
+                    text: ws.windows.length === 0 ? "empty" : Fmt.plural(ws.windows.length, "window")
                 }
             }
 
@@ -66,7 +66,7 @@ Variants {
                     required property var modelData
 
                     // Wayland app id first, Hyprland's class as fallback
-                    readonly property string rawCls: modelData.wayland?.appId || modelData.lastIpcObject?.class || ""
+                    readonly property string rawCls: Ws.windowClass(modelData)
                     // floating terminals carry a custom class so Hyprland floats them: show them as the terminal
                     readonly property string cls: rawCls === Config.floatingClass ? Config.terminal : rawCls
 
