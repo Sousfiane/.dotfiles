@@ -19,17 +19,19 @@ DropdownPanel {
         id: menu
         spacing: 12
 
-        property int sel: 0
+        Selection {
+            id: nav
+            count: Dotfiles.count
+            view: fileList
+        }
         readonly property int count: Dotfiles.count
-        readonly property int selIndex: Math.max(0, Math.min(sel, count - 1))
-        readonly property var selFile: Dotfiles.files[selIndex] ?? null
+        readonly property var selFile: Dotfiles.files[nav.index] ?? null
         readonly property string selPath: selFile?.path ?? ""
 
         property bool diffOpen: false
         // the path waiting for a second `d` before its changes are thrown away
         property string armed: ""
 
-        onSelIndexChanged: fileList.positionViewAtIndex(selIndex, ListView.Contain)
         onSelPathChanged: {
             armed = "";
             if (diffOpen)
@@ -37,10 +39,6 @@ DropdownPanel {
         }
         onCountChanged: if (count === 0 && diffOpen)
             closeDiff()
-
-        function select(i) {
-            sel = Math.max(0, Math.min(count - 1, i));
-        }
 
         function openDiff() {
             if (!selFile)
@@ -99,14 +97,14 @@ DropdownPanel {
                 case Qt.Key_J:
                 case Qt.Key_Down:
                     if (shift)
-                        select(selIndex + 1);
+                        nav.move(1);
                     else
                         diffList.scrollBy(40);
                     break;
                 case Qt.Key_K:
                 case Qt.Key_Up:
                     if (shift)
-                        select(selIndex - 1);
+                        nav.move(-1);
                     else
                         diffList.scrollBy(-40);
                     break;
@@ -152,14 +150,14 @@ DropdownPanel {
                 switch (event.key) {
                 case Qt.Key_J:
                 case Qt.Key_Down:
-                    select(selIndex + 1);
+                    nav.move(1);
                     break;
                 case Qt.Key_K:
                 case Qt.Key_Up:
-                    select(selIndex - 1);
+                    nav.move(-1);
                     break;
                 case Qt.Key_G:
-                    select(shift ? count - 1 : 0);
+                    nav.select(shift ? count - 1 : 0);
                     break;
                 case Qt.Key_Space:
                 case Qt.Key_S:
@@ -252,7 +250,7 @@ DropdownPanel {
                 readonly property var file: Dotfiles.files[index] ?? null
                 readonly property bool armed: menu.armed !== "" && menu.armed === modelData
 
-                selected: index === menu.selIndex
+                selected: index === nav.index
 
                 // staged box: full when all of the file is staged, half when part of it is
                 Rectangle {
@@ -277,7 +275,7 @@ DropdownPanel {
                         anchors.margins: -6
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            menu.select(row.index);
+                            nav.select(row.index);
                             Dotfiles.toggleStage(row.file);
                         }
                     }
@@ -318,7 +316,7 @@ DropdownPanel {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            menu.select(row.index);
+                            nav.select(row.index);
                             menu.openDiff();
                         }
                     }
@@ -430,48 +428,17 @@ DropdownPanel {
             onVisibleChanged: if (!visible && commitInput.activeFocus)
                 menu.forceActiveFocus()
 
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: 30
-                radius: Theme.radius
-                color: Theme.surface
-                border.width: commitInput.activeFocus ? 1 : 0
-                border.color: Theme.border
+            InputField {
+                id: commitInput
+                borderWidth: activeFocus ? 1 : 0
+                placeholder: `Commit message · ${Dotfiles.stagedCount} staged`
 
-                TextInput {
-                    id: commitInput
-                    anchors {
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 10
-                    }
-                    verticalAlignment: TextInput.AlignVCenter
-                    color: Theme.fg
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 1
-                    clip: true
-                    selectByMouse: true
+                // the draft lives in the service, so closing the panel doesn't lose it
+                text: Dotfiles.draft
+                onTextChanged: Dotfiles.draft = text
 
-                    // the draft lives in the service, so closing the panel doesn't lose it
-                    text: Dotfiles.draft
-                    onTextChanged: Dotfiles.draft = text
-
-                    Keys.onReturnPressed: menu.submitCommit()
-                    Keys.onEnterPressed: menu.submitCommit()
-                    Keys.onEscapePressed: event => {
-                        menu.forceActiveFocus();
-                        event.accepted = true;
-                    }
-
-                    Txt {
-                        anchors.fill: parent
-                        verticalAlignment: Text.AlignVCenter
-                        visible: commitInput.text.length === 0
-                        enabled: false
-                        variant: "dim"
-                        text: `Commit message · ${Dotfiles.stagedCount} staged`
-                    }
-                }
+                onAccepted: menu.submitCommit()
+                onCancelled: menu.forceActiveFocus()
             }
 
             Pill {
@@ -494,44 +461,15 @@ DropdownPanel {
                     passInput.forceActiveFocus();
             }
 
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: 30
-                radius: Theme.radius
-                color: Theme.surface
-                border.width: 1
-                border.color: Theme.border
+            InputField {
+                id: passInput
+                password: true
+                placeholder: "SSH passphrase to " + (Dotfiles.authJob?.label ?? "").toLowerCase()
 
-                TextInput {
-                    id: passInput
-                    anchors {
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 10
-                    }
-                    verticalAlignment: TextInput.AlignVCenter
-                    echoMode: TextInput.Password
-                    color: Theme.fg
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 1
-                    clip: true
-
-                    Keys.onReturnPressed: menu.submitPass()
-                    Keys.onEnterPressed: menu.submitPass()
-                    Keys.onEscapePressed: event => {
-                        Dotfiles.cancelPass();
-                        menu.forceActiveFocus();
-                        event.accepted = true;
-                    }
-
-                    Txt {
-                        anchors.fill: parent
-                        verticalAlignment: Text.AlignVCenter
-                        visible: passInput.text.length === 0
-                        enabled: false
-                        variant: "dim"
-                        text: "SSH passphrase to " + (Dotfiles.authJob?.label ?? "").toLowerCase()
-                    }
+                onAccepted: menu.submitPass()
+                onCancelled: {
+                    Dotfiles.cancelPass();
+                    menu.forceActiveFocus();
                 }
             }
 

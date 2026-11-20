@@ -16,25 +16,22 @@ DropdownPanel {
         id: menu
         spacing: 12
 
-        property int sel: 0
-        readonly property int selIndex: Math.max(0, Math.min(sel, Bt.list.length - 1))
-        readonly property var selDev: Bt.list[selIndex] ?? null
-
-        onSelIndexChanged: list.positionViewAtIndex(selIndex, ListView.Contain)
-
-        function move(d) {
-            sel = Math.max(0, Math.min(Bt.list.length - 1, selIndex + d));
+        Selection {
+            id: nav
+            count: Bt.list.length
+            view: list
         }
+        readonly property var selDev: Bt.list[nav.index] ?? null
 
         Keys.onPressed: event => {
             switch (event.key) {
             case Qt.Key_J:
             case Qt.Key_Down:
-                move(1);
+                nav.move(1);
                 break;
             case Qt.Key_K:
             case Qt.Key_Up:
-                move(-1);
+                nav.move(-1);
                 break;
             case Qt.Key_Return:
             case Qt.Key_Enter:
@@ -96,11 +93,11 @@ DropdownPanel {
 
                 width: ListView.view.width
                 dev: modelData
-                selected: menu.selIndex === index
+                selected: nav.index === index
 
                 header: (index === 0 || Bt.groupOf(Bt.list[index - 1]) !== Bt.groupOf(modelData)) ? ["Connected", "My devices", "Available"][Bt.groupOf(modelData)] : ""
 
-                onSelectRequested: menu.sel = index
+                onSelectRequested: nav.select(index)
                 onActivated: Bt.activate(modelData)
                 onForgetRequested: Bt.forget(modelData)
             }

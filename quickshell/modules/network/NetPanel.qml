@@ -16,15 +16,12 @@ DropdownPanel {
         spacing: 12
         focus: true
 
-        property int sel: 0
-        readonly property int selIndex: Math.max(0, Math.min(sel, Net.rows.length - 1))
-        readonly property var selRow: Net.rows[selIndex] ?? null
-
-        onSelIndexChanged: list.positionViewAtIndex(selIndex, ListView.Contain)
-
-        function move(d) {
-            sel = Math.max(0, Math.min(Net.rows.length - 1, selIndex + d));
+        Selection {
+            id: nav
+            count: Net.rows.length
+            view: list
         }
+        readonly property var selRow: Net.rows[nav.index] ?? null
 
         // when the password prompt closes, the keys come back to the panel
         Connections {
@@ -40,11 +37,11 @@ DropdownPanel {
             switch (event.key) {
             case Qt.Key_J:
             case Qt.Key_Down:
-                move(1);
+                nav.move(1);
                 break;
             case Qt.Key_K:
             case Qt.Key_Up:
-                move(-1);
+                nav.move(-1);
                 break;
             case Qt.Key_Return:
             case Qt.Key_Enter:
@@ -153,10 +150,10 @@ DropdownPanel {
 
                 width: ListView.view.width
                 row: modelData
-                selected: menu.selIndex === index
+                selected: nav.index === index
                 header: (index === 0 || Net.rows[index - 1].group !== modelData.group) ? modelData.group : ""
 
-                onSelectRequested: menu.sel = index
+                onSelectRequested: nav.select(index)
                 onActivated: Net.request(modelData)
                 onForgetRequested: Net.forget(modelData.net)
             }
