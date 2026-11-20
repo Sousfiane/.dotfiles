@@ -29,14 +29,14 @@ Singleton {
     // ---------- checking ----------
 
     function refresh() {
-        if (!proc.running)
-            proc.running = true;
+        proc.refresh();
     }
 
-    Process {
+    PolledProcess {
         id: proc
         command: ["checkupdates"]
         running: true                               // check once at startup
+        interval: 30 * 60 * 1000                    // then every 30 minutes
 
         stdout: StdioCollector {
             onStreamFinished: {
@@ -57,12 +57,5 @@ Singleton {
         onExited: (code, status) => {
             root.failed = code !== 0 && code !== 2;
         }
-    }
-
-    Timer {
-        interval: 30 * 60 * 1000                    // every 30 minutes
-        running: true
-        repeat: true
-        onTriggered: root.refresh()
     }
 }

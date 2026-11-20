@@ -3,15 +3,13 @@ import QtQuick.Layouts
 import qs.config
 import qs.components.ui
 
-Rectangle {
+SelectableCard {
     id: root
 
     required property var card
-    property bool selected: false
     property bool choosing: false
     property int chooseIndex: 0
 
-    signal selectRequested
     signal chooseRequested
     signal choiceHovered(int i)
     signal choicePicked(var profile)
@@ -19,15 +17,6 @@ Rectangle {
     readonly property var activeProfile: card.profiles.find(p => p.name === card.active) ?? null
 
     implicitHeight: body.implicitHeight + 20
-    radius: Theme.radius
-    color: selected ? Theme.surface : "transparent"
-    border.width: selected ? 1 : 0
-    border.color: Theme.accent
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: root.selectRequested()
-    }
 
     ColumnLayout {
         id: body
@@ -93,50 +82,15 @@ Rectangle {
         }
 
         // profile chooser, expands under the pill
-        ColumnLayout {
-            Layout.fillWidth: true
+        ChoiceList {
             visible: root.choosing
-            spacing: 2
-
-            Repeater {
-                model: root.choosing ? root.card.profiles : []
-
-                delegate: Rectangle {
-                    id: option
-                    required property var modelData
-                    required property int index
-
-                    readonly property bool highlighted: root.chooseIndex === index
-                    readonly property bool isCurrent: modelData.name === root.card.active
-
-                    Layout.fillWidth: true
-                    implicitHeight: 26
-                    radius: 6
-                    color: highlighted ? Theme.accent : Theme.bgSolid
-
-                    Txt {
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            leftMargin: 10
-                            rightMargin: 10
-                        }
-                        variant: "dim"
-                        color: option.highlighted ? Theme.bgSolid : option.modelData.available ? Theme.fg : Theme.dim
-                        text: (option.isCurrent ? "● " : "   ") + option.modelData.description + (option.modelData.available ? "" : "  (unavailable)")
-                        elide: Text.ElideRight
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: root.choiceHovered(option.index)
-                        onClicked: root.choicePicked(option.modelData)
-                    }
-                }
-            }
+            choices: root.card.profiles
+            highlight: root.chooseIndex
+            labelOf: p => p.description
+            isCurrent: p => p.name === root.card.active
+            isAvailable: p => p.available
+            onHovered: i => root.choiceHovered(i)
+            onPicked: p => root.choicePicked(p)
         }
     }
 }

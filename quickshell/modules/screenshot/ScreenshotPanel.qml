@@ -60,7 +60,7 @@ DropdownPanel {
                     icon: modelData.icon
                     label: modelData.label
                     key: modelData.key
-                    current: nav.index === index
+                    selected: nav.index === index
                     onEntered: nav.select(index)
                     onClicked: Screenshot.take(modelData)
                 }

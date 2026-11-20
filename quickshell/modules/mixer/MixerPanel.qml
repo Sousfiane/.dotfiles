@@ -42,6 +42,14 @@ DropdownPanel {
             choosing = true;
         }
 
+        // a row's chooser button, or s / o: open the chooser on the selected row, or close it
+        function toggleChooser() {
+            if (choosing)
+                choosing = false;
+            else
+                openChooser();
+        }
+
         function moveChoice(d) {
             const n = Mixer.tab === 4 ? selNode.profiles.length : Mixer.targets(selNode).length;
             chooseIdx = Math.max(0, Math.min(n - 1, chooseIdx + d));
@@ -117,10 +125,7 @@ DropdownPanel {
                 break;
             case Qt.Key_S:
             case Qt.Key_O:
-                if (choosing)
-                    choosing = false;
-                else
-                    openChooser();
+                toggleChooser();
                 break;
             case Qt.Key_M:
                 Mixer.toggleMute(selNode);
@@ -199,12 +204,7 @@ DropdownPanel {
 
                 onSelectRequested: nav.select(index)
 
-                onChooseRequested: {
-                    if (mixer.choosing && nav.index === index)
-                        mixer.choosing = false;
-                    else
-                        mixer.openChooser();
-                }
+                onChooseRequested: mixer.toggleChooser()
                 onChoiceHovered: i => mixer.chooseIdx = i
                 onChoicePicked: target => {
                     Mixer.moveStream(modelData, target);
@@ -233,12 +233,7 @@ DropdownPanel {
 
                 onSelectRequested: nav.select(index)
 
-                onChooseRequested: {
-                    if (mixer.choosing && nav.index === index)
-                        mixer.choosing = false;
-                    else
-                        mixer.openChooser();
-                }
+                onChooseRequested: mixer.toggleChooser()
                 onChoiceHovered: i => mixer.chooseIdx = i
                 onChoicePicked: profile => {
                     Mixer.setProfile(modelData, profile);
@@ -247,13 +242,8 @@ DropdownPanel {
             }
         }
 
-        Txt {
-            Layout.fillWidth: true
-            Layout.topMargin: 8
-            Layout.bottomMargin: 8
+        EmptyState {
             visible: Mixer.current.length === 0
-            horizontalAlignment: Text.AlignHCenter
-            variant: "dim"
             text: ["No application is playing audio", "No application is recording", "No output devices", "No input devices", "No sound cards found"][Mixer.tab]
         }
 

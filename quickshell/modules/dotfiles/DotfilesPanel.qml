@@ -211,7 +211,7 @@ DropdownPanel {
                 if (Dotfiles.failed)
                     return "Could not read the repository";
                 const sync = Dotfiles.upstream === "" ? "no upstream" : Dotfiles.ahead || Dotfiles.behind ? `↑${Dotfiles.ahead} ↓${Dotfiles.behind}` : "up to date";
-                const changes = Dotfiles.count === 0 ? "clean" : Dotfiles.count + (Dotfiles.count === 1 ? " change" : " changes");
+                const changes = Dotfiles.count === 0 ? "clean" : Fmt.plural(Dotfiles.count, "change");
                 return [Dotfiles.branch, sync, changes].filter(s => s !== "").join(" · ");
             }
 
@@ -324,14 +324,9 @@ DropdownPanel {
             }
         }
 
-        Txt {
-            Layout.fillWidth: true
-            Layout.topMargin: 8
-            Layout.bottomMargin: 8
+        EmptyState {
             visible: !menu.diffOpen && Dotfiles.count === 0
-            horizontalAlignment: Text.AlignHCenter
-            variant: "dim"
-            text: Dotfiles.failed ? "Check the repository path in Config.qml" : Dotfiles.ahead > 0 ? "Nothing to commit, " + Dotfiles.ahead + (Dotfiles.ahead === 1 ? " commit" : " commits") + " to push" : "Nothing to commit"
+            text: Dotfiles.failed ? "Check the repository path in Config.qml" : Dotfiles.ahead > 0 ? "Nothing to commit, " + Fmt.plural(Dotfiles.ahead, "commit") + " to push" : "Nothing to commit"
         }
 
         // ---------- one file's diff ----------
@@ -340,17 +335,11 @@ DropdownPanel {
             Layout.fillWidth: true
             spacing: 10
 
-            Txt {
-                text: "‹"
-                font.pixelSize: Theme.fontSize + 4
+            IconButton {
+                flat: true
+                icon: "‹"
                 color: Theme.dim
-
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -6
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: menu.closeDiff()
-                }
+                onClicked: menu.closeDiff()
             }
 
             Txt {
@@ -408,13 +397,8 @@ DropdownPanel {
             }
         }
 
-        Txt {
-            Layout.fillWidth: true
-            Layout.topMargin: 8
-            Layout.bottomMargin: 8
+        EmptyState {
             visible: menu.diffOpen && Dotfiles.diffLines.length === 0
-            horizontalAlignment: Text.AlignHCenter
-            variant: "dim"
             text: Dotfiles.diffLoading ? "Loading…" : "No changes against HEAD"
         }
 

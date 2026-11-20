@@ -66,6 +66,7 @@ DropdownPanel {
             for (let i = 0; i < 42; i++) {
                 const d = new Date(y, m, 1 - offset + i);
                 out.push({
+                    date: d,
                     day: d.getDate(),
                     month: d.getMonth(),
                     year: d.getFullYear()
@@ -175,24 +176,10 @@ DropdownPanel {
             Layout.fillWidth: true
             spacing: 8
 
-            Rectangle {
-                implicitWidth: 28
-                implicitHeight: 28
-                radius: 14
-                color: prevMouse.containsMouse ? Theme.surface : "transparent"
-
-                Txt {
-                    anchors.centerIn: parent
-                    text: "‹"
-                    font.pixelSize: Theme.fontSize + 6
-                }
-                MouseArea {
-                    id: prevMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: hub.shiftMonth(-1)
-                }
+            IconButton {
+                icon: "‹"
+                size: Theme.fontSize + 6
+                onClicked: hub.shiftMonth(-1)
             }
 
             Txt {
@@ -209,24 +196,10 @@ DropdownPanel {
                 }
             }
 
-            Rectangle {
-                implicitWidth: 28
-                implicitHeight: 28
-                radius: 14
-                color: nextMouse.containsMouse ? Theme.surface : "transparent"
-
-                Txt {
-                    anchors.centerIn: parent
-                    text: "›"
-                    font.pixelSize: Theme.fontSize + 6
-                }
-                MouseArea {
-                    id: nextMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: hub.shiftMonth(1)
-                }
+            IconButton {
+                icon: "›"
+                size: Theme.fontSize + 6
+                onClicked: hub.shiftMonth(1)
             }
         }
 
@@ -263,8 +236,8 @@ DropdownPanel {
                     required property var modelData
 
                     readonly property bool inMonth: modelData.month === hub.viewMonth
-                    readonly property bool isToday: modelData.day === hub.today.getDate() && modelData.month === hub.today.getMonth() && modelData.year === hub.today.getFullYear()
-                    readonly property bool isSelected: modelData.day === hub.selected.getDate() && modelData.month === hub.selected.getMonth() && modelData.year === hub.selected.getFullYear()
+                    readonly property bool isToday: hub.sameDay(modelData.date, hub.today)
+                    readonly property bool isSelected: hub.sameDay(modelData.date, hub.selected)
                     readonly property var events: Calendar.eventsOn(modelData.year, modelData.month, modelData.day)
 
                     width: 42
@@ -342,7 +315,7 @@ DropdownPanel {
 
                 Txt {
                     variant: "small"
-                    text: Calendar.loading ? "syncing…" : hub.selectedEvents.length === 0 ? "" : hub.selectedEvents.length + (hub.selectedEvents.length === 1 ? " event" : " events")
+                    text: Calendar.loading ? "syncing…" : hub.selectedEvents.length === 0 ? "" : Fmt.plural(hub.selectedEvents.length, "event")
                 }
             }
 

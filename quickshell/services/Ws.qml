@@ -29,6 +29,11 @@ Singleton {
     onOpenChanged: if (open)
         Hyprland.refreshToplevels()
 
+    // a Hyprland window's app id (Wayland) or class (XWayland), "" when unknown
+    function windowClass(w) {
+        return w.wayland?.appId || w.lastIpcObject?.class || "";
+    }
+
     function enterBar(screen, id) {
         screenName = screen;
         wsId = id;

@@ -93,13 +93,8 @@ DropdownPanel {
             }
         }
 
-        Txt {
+        EmptyState {
             visible: Notifs.history.length === 0
-            Layout.fillWidth: true
-            Layout.topMargin: 8
-            Layout.bottomMargin: 8
-            horizontalAlignment: Text.AlignHCenter
-            variant: "dim"
             text: "No notifications"
         }
 
@@ -131,15 +126,7 @@ DropdownPanel {
 
                 readonly property bool selected: index === nav.index
 
-                readonly property var entry: Notifs.entry(modelData)
-
-                // live text while the app still has the notification open (it may update it)
-                readonly property var live: entry?.notif ?? null
-                readonly property string appName: live?.appName ?? entry?.appName ?? ""
-                readonly property string summary: live?.summary ?? entry?.summary ?? ""
-                readonly property string body: live?.body ?? entry?.body ?? ""
-                readonly property int urgency: live?.urgency ?? entry?.urgency ?? 0
-                readonly property string time: entry?.time ?? ""
+                readonly property var note: Notifs.view(modelData)
 
                 // dragged past this far, a released card goes; short of it, it springs back
                 readonly property real dismissAt: width * 0.3
@@ -182,8 +169,8 @@ DropdownPanel {
                     height: itemCol.implicitHeight + 20
                     radius: Theme.radius
                     color: Theme.surface
-                    border.width: item.urgency === NotificationUrgency.Critical || item.selected || cardMouse.containsMouse ? 1 : 0
-                    border.color: item.urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.accent
+                    border.width: item.note.urgency === NotificationUrgency.Critical || item.selected || cardMouse.containsMouse ? 1 : 0
+                    border.color: item.note.urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.accent
                     // fades as it is pushed away
                     opacity: 1 - 0.8 * Math.min(1, x / width)
 
@@ -241,42 +228,36 @@ DropdownPanel {
                             Txt {
                                 Layout.fillWidth: true
                                 variant: "dim"
-                                text: item.appName
+                                text: item.note.appName
                                 elide: Text.ElideRight
                             }
 
                             Txt {
                                 variant: "dim"
-                                text: item.time
+                                text: item.note.time
                             }
 
-                            Txt {
-                                variant: "dim"
-                                text: "×"
-                                font.pixelSize: Theme.fontSize + 2
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    anchors.margins: -4
-                                    enabled: !item.leaving
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: item.dismiss()
-                                }
+                            IconButton {
+                                flat: true
+                                icon: "×"
+                                size: Theme.fontSize + 2
+                                color: Theme.dim
+                                onClicked: item.dismiss()      // ignored while already leaving
                             }
                         }
 
                         Txt {
                             Layout.fillWidth: true
-                            text: item.summary
+                            text: item.note.summary
                             wrapMode: Text.Wrap
                             font.bold: true
                         }
 
                         Txt {
                             Layout.fillWidth: true
-                            visible: item.body !== ""
+                            visible: item.note.body !== ""
                             variant: "row"
-                            text: item.body
+                            text: item.note.body
                             wrapMode: Text.Wrap
                             maximumLineCount: 4
                             elide: Text.ElideRight

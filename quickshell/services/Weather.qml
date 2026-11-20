@@ -10,7 +10,6 @@ Singleton {
     id: root
 
     property bool ready: false              // at least one successful fetch
-    property real fetchedAt: 0              // ms since epoch
 
     property int temp: 0                    // °C
     property int feelsLike: 0
@@ -24,14 +23,12 @@ Singleton {
     readonly property string icon: iconFor(code, night)
 
     function refresh() {
-        if (!proc.running)
-            proc.running = true;
+        proc.refresh();
     }
 
     // refresh when the data is older than `maxAgeMin` (default 10), used when the hub or the lockscreen opens
     function refreshIfStale(maxAgeMin) {
-        if (Date.now() - fetchedAt > (maxAgeMin ?? 10) * 60 * 1000)
-            refresh();
+        proc.refreshIfStale(maxAgeMin ?? 10);
     }
 
     function iconFor(c, isNight) {
@@ -67,8 +64,9 @@ Singleton {
         return h * 60 + +m[2];
     }
 
-    Process {
+    PolledProcess {
         id: proc
+        interval: 30 * 60 * 1000            // every 30 minutes
         command: ["curl", "-sf", "--max-time", "10", "https://wttr.in/" + encodeURIComponent(Config.weatherLocation) + "?format=j1"]
         running: true                       // once at startup
 
@@ -92,19 +90,12 @@ Singleton {
                     const set = root.minutes(today.astronomy?.[0]?.sunset);
                     root.night = rise >= 0 && set >= 0 && (n < rise || n >= set);
 
-                    root.fetchedAt = Date.now();
+                    proc.fetchedAt = Date.now();
                     root.ready = true;
                 } catch (e) {
                     // keep the last good data; wttr.in sometimes answers with an error page
                 }
             }
         }
-    }
-
-    Timer {
-        interval: 30 * 60 * 1000            // every 30 minutes
-        running: true
-        repeat: true
-        onTriggered: root.refresh()
     }
 }

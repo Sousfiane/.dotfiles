@@ -14,7 +14,6 @@ Singleton {
     property string error: ""               // last failure, "" when fine
     property bool loaded: false             // at least one successful fetch
     readonly property bool loading: proc.running
-    property real fetchedAt: 0
 
     // loaded window: [winStart, winEnd), first days of months
     property date winStart: new Date(0)
@@ -69,12 +68,8 @@ Singleton {
     }
 
     function refreshIfStale(maxAgeMin) {
-        if (Date.now() - fetchedAt > maxAgeMin * 60 * 1000)
-            refresh();
+        proc.refreshIfStale(maxAgeMin);
     }
-
-    // a fetch asked for while one is running is done right after it
-    property bool again: false
 
     function refresh() {
         if (winEnd <= winStart) {           // nothing shown yet: the months around today
@@ -82,20 +77,18 @@ Singleton {
             winStart = new Date(t.getFullYear(), t.getMonth() - 1, 1);
             winEnd = new Date(t.getFullYear(), t.getMonth() + 2, 1);
         }
-        if (proc.running) {
-            again = true;
-            return;
-        }
-        proc.command = ["python3", "-I", Quickshell.shellDir + "/scripts/calendar.py", isoDate(winStart), isoDate(winEnd)];
-        proc.running = true;
+        proc.refresh();
     }
 
     function isoDate(d) {
         return key(d.getFullYear(), d.getMonth(), d.getDate());
     }
 
-    Process {
+    // a fetch asked for while one runs is done right after it, with the window as it is then
+    PolledProcess {
         id: proc
+        interval: 15 * 60 * 1000            // every 15 minutes
+        command: ["python3", "-I", Quickshell.shellDir + "/scripts/calendar.py", root.isoDate(root.winStart), root.isoDate(root.winEnd)]
 
         stdout: StdioCollector {
             onStreamFinished: {
@@ -119,22 +112,10 @@ Singleton {
                 root.events = d.events;
                 root.error = "";
                 root.loaded = true;
-                root.fetchedAt = Date.now();
+                proc.fetchedAt = Date.now();
             }
-        }
-
-        onExited: if (root.again) {
-            root.again = false;
-            root.refresh();
         }
     }
 
     Component.onCompleted: refresh()
-
-    Timer {
-        interval: 15 * 60 * 1000            // every 15 minutes
-        running: true
-        repeat: true
-        onTriggered: root.refresh()
-    }
 }

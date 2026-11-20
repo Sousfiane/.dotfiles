@@ -31,16 +31,11 @@ RowLayout {
             font.pixelSize: Theme.fontSize + 14
         }
 
-        Image {
+        AppIcon {
             id: cover
             anchors.fill: parent
             source: root.player?.trackArtUrl ?? ""
             fillMode: Image.PreserveAspectCrop
-            sourceSize.width: 128
-            sourceSize.height: 128
-            asynchronous: true
-            smooth: true
-            mipmap: true
         }
     }
 
@@ -119,30 +114,13 @@ RowLayout {
                     }
                 ]
 
-                delegate: Rectangle {
-                    id: ctl
+                delegate: IconButton {
                     required property var modelData
 
-                    implicitWidth: 28
-                    implicitHeight: 28
-                    radius: 14
-                    color: ctlMouse.containsMouse && modelData.enabled ? Theme.surface : "transparent"
-                    opacity: modelData.enabled ? 1 : 0.4
-
-                    Txt {
-                        anchors.centerIn: parent
-                        text: ctl.modelData.icon
-                        color: ctlMouse.containsMouse && ctl.modelData.enabled ? Theme.accent : Theme.fg
-                        font.pixelSize: Theme.fontSize + 4
-                    }
-
-                    MouseArea {
-                        id: ctlMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: ctl.modelData.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: ctl.modelData.action()
-                    }
+                    icon: modelData.icon
+                    enabled: modelData.enabled
+                    hoverColor: Theme.accent
+                    onClicked: modelData.action()
                 }
             }
         }

@@ -38,26 +38,21 @@ PanelWindow {
                 id: card
                 required property var modelData   // the entry's id (see Notifs)
 
-                readonly property var entry: Notifs.entry(modelData)
-
-                readonly property var live: entry?.notif ?? null
-                readonly property string appName: live?.appName ?? entry?.appName ?? ""
-                readonly property string summary: live?.summary ?? entry?.summary ?? ""
-                readonly property string body: live?.body ?? entry?.body ?? ""
+                readonly property var note: Notifs.view(modelData)
 
                 // image sent with the notification (cover art, screenshot, avatar...)
-                readonly property string imageSource: live?.image ?? ""
+                readonly property string imageSource: note.live?.image ?? ""
 
                 // app icon: either an icon name or an absolute path
                 readonly property string iconSource: {
-                    const icon = live?.appIcon ?? "";
+                    const icon = note.live?.appIcon ?? "";
                     if (icon === "")
                         return "";
                     return icon.startsWith("/") ? "file://" + icon : Quickshell.iconPath(icon, true);
                 }
 
                 readonly property bool hasPicture: imageSource !== "" || iconSource !== ""
-                readonly property bool critical: (live?.urgency ?? entry?.urgency) === NotificationUrgency.Critical
+                readonly property bool critical: note.urgency === NotificationUrgency.Critical
 
                 Layout.fillWidth: true
                 implicitHeight: content.implicitHeight + 24
@@ -69,7 +64,7 @@ PanelWindow {
                 // hides the toast only; the notification stays in the center
                 Timer {
                     running: !card.critical
-                    interval: card.entry?.timeout ?? 5000
+                    interval: card.note.timeout
                     onTriggered: Notifs.hidePopup(card.modelData)
                 }
 
@@ -99,15 +94,10 @@ PanelWindow {
                         radius: card.imageSource !== "" ? Theme.radius : 0
                         color: "transparent"
 
-                        Image {
+                        AppIcon {
                             anchors.fill: parent
                             source: card.imageSource !== "" ? card.imageSource : card.iconSource
                             fillMode: card.imageSource !== "" ? Image.PreserveAspectCrop : Image.PreserveAspectFit
-                            sourceSize.width: 128
-                            sourceSize.height: 128
-                            asynchronous: true
-                            mipmap: true
-                            smooth: true
                         }
                     }
 
@@ -119,22 +109,22 @@ PanelWindow {
                         Txt {
                             Layout.fillWidth: true
                             variant: "dim"
-                            text: card.appName
+                            text: card.note.appName
                             elide: Text.ElideRight
                         }
 
                         Txt {
                             Layout.fillWidth: true
                             font.bold: true
-                            text: card.summary
+                            text: card.note.summary
                             wrapMode: Text.Wrap
                         }
 
                         Txt {
                             Layout.fillWidth: true
-                            visible: card.body !== ""
+                            visible: card.note.body !== ""
                             variant: "row"
-                            text: card.body
+                            text: card.note.body
                             wrapMode: Text.Wrap
                         }
                     }

@@ -4,8 +4,11 @@ import QtQuick
 // size, so for themes that only ship a few PNG sizes (zen: 16/32/48/64/128)
 // Qt picks the nearest smaller one and upscales it, which looks blurry.
 // Decoding well above the display size and mipmapping down keeps it crisp.
+// Also used for cover art and notification images (set `fillMode`).
 Item {
     property alias source: image.source
+    property alias fillMode: image.fillMode
+    readonly property alias status: image.status
     property real implicitSize: 24
 
     implicitWidth: implicitSize

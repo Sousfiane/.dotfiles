@@ -103,14 +103,8 @@ DropdownPanel {
             }
         }
 
-        Txt {
-            Layout.fillWidth: true
-            Layout.topMargin: 8
-            Layout.bottomMargin: 8
+        EmptyState {
             visible: Bt.list.length === 0
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-            variant: "dim"
             text: !Bt.adapter ? "No Bluetooth adapter found" : !Bt.powered ? "Bluetooth is off  (p to turn it on)" : Bt.scanning ? "Searching for devices…" : "No devices  (s to scan)"
         }
 
