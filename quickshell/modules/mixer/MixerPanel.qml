@@ -17,19 +17,17 @@ DropdownPanel {
         spacing: 12
 
         // keyboard selection (a node on tabs 1-4, a card on the Config tab)
-        property int sel: 0
-        readonly property int selIndex: Math.max(0, Math.min(sel, Mixer.current.length - 1))
-        readonly property var selNode: Mixer.current[selIndex] ?? null
+        Selection {
+            id: nav
+            count: Mixer.current.length
+            view: Mixer.tab === 4 ? configList : list
+            onIndexChanged: mixer.choosing = false
+        }
+        readonly property var selNode: Mixer.current[nav.index] ?? null
 
         // chooser state: target device (tabs 1-2) or card profile (Config)
         property bool choosing: false
         property int chooseIdx: 0
-
-        onSelIndexChanged: {
-            choosing = false;
-            const l = Mixer.tab === 4 ? configList : list;
-            l.positionViewAtIndex(selIndex, ListView.Contain);
-        }
 
         function openChooser() {
             if (!selNode || Mixer.tab === 2 || Mixer.tab === 3)
@@ -64,7 +62,7 @@ DropdownPanel {
             if (choosing)
                 moveChoice(d);
             else
-                sel = Math.max(0, Math.min(Mixer.current.length - 1, selIndex + d));
+                nav.move(d);
         }
 
         function adjust(d) {
@@ -75,7 +73,7 @@ DropdownPanel {
             target: Mixer
 
             function onTabChanged() {
-                mixer.sel = 0;
+                nav.sel = 0;
                 mixer.choosing = false;
             }
         }
@@ -195,14 +193,14 @@ DropdownPanel {
                 node: modelData
                 device: Mixer.tab >= 2
                 input: Mixer.tab === 1 || Mixer.tab === 3
-                selected: mixer.selIndex === index
-                choosing: mixer.choosing && mixer.selIndex === index
+                selected: nav.index === index
+                choosing: mixer.choosing && nav.index === index
                 chooseIndex: mixer.chooseIdx
 
-                onSelectRequested: mixer.sel = index
+                onSelectRequested: nav.select(index)
 
                 onChooseRequested: {
-                    if (mixer.choosing && mixer.selIndex === index)
+                    if (mixer.choosing && nav.index === index)
                         mixer.choosing = false;
                     else
                         mixer.openChooser();
@@ -229,14 +227,14 @@ DropdownPanel {
 
                 width: ListView.view.width
                 card: modelData
-                selected: mixer.selIndex === index
-                choosing: mixer.choosing && mixer.selIndex === index
+                selected: nav.index === index
+                choosing: mixer.choosing && nav.index === index
                 chooseIndex: mixer.chooseIdx
 
-                onSelectRequested: mixer.sel = index
+                onSelectRequested: nav.select(index)
 
                 onChooseRequested: {
-                    if (mixer.choosing && mixer.selIndex === index)
+                    if (mixer.choosing && nav.index === index)
                         mixer.choosing = false;
                     else
                         mixer.openChooser();

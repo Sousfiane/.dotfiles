@@ -17,22 +17,18 @@ DropdownPanel {
         id: menu
         spacing: 10
 
-        property int sel: 0
-        readonly property int count: Notifs.historyIds.length
-        readonly property int selIndex: Math.max(0, Math.min(sel, count - 1))
-        readonly property var selId: Notifs.historyIds[selIndex] ?? null
-
-        onSelIndexChanged: list.positionViewAtIndex(selIndex, ListView.Contain)
-
-        function select(i) {
-            sel = Math.max(0, Math.min(count - 1, i));
+        Selection {
+            id: nav
+            count: Notifs.historyIds.length
+            view: list
         }
+        readonly property var selId: Notifs.historyIds[nav.index] ?? null
 
         // the same slide-out as the × and the swipe; the next card takes the selection
         function dismissSelected() {
             if (selId === null)
                 return;
-            const card = list.itemAtIndex(selIndex);
+            const card = list.itemAtIndex(nav.index);
             if (card)
                 card.dismiss();
             else
@@ -43,14 +39,14 @@ DropdownPanel {
             switch (event.key) {
             case Qt.Key_J:
             case Qt.Key_Down:
-                select(selIndex + 1);
+                nav.move(1);
                 break;
             case Qt.Key_K:
             case Qt.Key_Up:
-                select(selIndex - 1);
+                nav.move(-1);
                 break;
             case Qt.Key_G:
-                select(event.modifiers & Qt.ShiftModifier ? count - 1 : 0);
+                nav.select(event.modifiers & Qt.ShiftModifier ? nav.count - 1 : 0);
                 break;
             case Qt.Key_Return:
             case Qt.Key_Enter:
@@ -133,7 +129,7 @@ DropdownPanel {
                 required property var modelData      // the entry's id
                 required property int index
 
-                readonly property bool selected: index === menu.selIndex
+                readonly property bool selected: index === nav.index
 
                 readonly property var entry: Notifs.entry(modelData)
 

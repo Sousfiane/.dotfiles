@@ -14,19 +14,18 @@ DropdownPanel {
         id: menu
         spacing: 12
 
-        property int sel: 0
-
-        function move(d) {
-            sel = Math.max(0, Math.min(Power.actions.length - 1, sel + d));
+        Selection {
+            id: nav
+            count: Power.actions.length
         }
 
         Keys.onPressed: event => {
             if (event.key === Qt.Key_Down || event.key === Qt.Key_J)
-                move(1);
+                nav.move(1);
             else if (event.key === Qt.Key_Up || event.key === Qt.Key_K)
-                move(-1);
+                nav.move(-1);
             else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
-                Power.run(Power.actions[sel]);
+                Power.run(Power.actions[nav.index]);
             else {
                 // a single letter runs the matching action directly
                 const a = Power.actions.find(x => x.key === event.text.toUpperCase());
@@ -51,66 +50,16 @@ DropdownPanel {
             Repeater {
                 model: Power.actions
 
-                delegate: Rectangle {
-                    id: btn
+                delegate: MenuRow {
                     required property var modelData
                     required property int index
 
-                    readonly property bool current: menu.sel === index
-
-                    Layout.fillWidth: true
-                    implicitHeight: 44
-                    radius: Theme.radius
-                    color: current ? Theme.surface : "transparent"
-                    border.width: current ? 1 : 0
-                    border.color: Theme.accent
-
-                    RowLayout {
-                        anchors {
-                            fill: parent
-                            leftMargin: 12
-                            rightMargin: 12
-                        }
-                        spacing: 12
-
-                        Txt {
-                            Layout.preferredWidth: 26
-                            horizontalAlignment: Text.AlignHCenter
-                            text: btn.modelData.icon
-                            color: btn.current ? Theme.accent : Theme.fg
-                            font.pixelSize: Theme.fontSize + 6
-                        }
-
-                        Txt {
-                            Layout.fillWidth: true
-                            text: btn.modelData.label
-                            font.bold: btn.current
-                        }
-
-                        // shortcut key
-                        Rectangle {
-                            implicitWidth: 22
-                            implicitHeight: 22
-                            radius: 6
-                            color: Theme.surface
-                            border.width: 1
-                            border.color: Theme.border
-
-                            Txt {
-                                anchors.centerIn: parent
-                                variant: "small"
-                                text: btn.modelData.key
-                            }
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: menu.sel = btn.index
-                        onClicked: Power.run(btn.modelData)
-                    }
+                    icon: modelData.icon
+                    label: modelData.label
+                    key: modelData.key
+                    current: nav.index === index
+                    onEntered: nav.select(index)
+                    onClicked: Power.run(modelData)
                 }
             }
         }

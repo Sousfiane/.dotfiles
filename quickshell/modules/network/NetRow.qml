@@ -160,45 +160,14 @@ Item {
             Layout.bottomMargin: 8
             spacing: 8
 
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: 30
-                radius: 6
+            InputField {
+                id: pass
                 color: Theme.bgSolid
-                border.width: 1
-                border.color: Theme.border
+                password: true
+                placeholder: "Password"
 
-                TextInput {
-                    id: pass
-                    anchors {
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 10
-                    }
-                    verticalAlignment: TextInput.AlignVCenter
-                    echoMode: TextInput.Password
-                    color: Theme.fg
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 1
-                    clip: true
-                    selectByMouse: true
-
-                    Keys.onReturnPressed: root.submit()
-                    Keys.onEnterPressed: root.submit()
-                    Keys.onEscapePressed: event => {
-                        Net.promptNet = null;
-                        event.accepted = true;
-                    }
-
-                    Txt {
-                        anchors.fill: parent
-                        verticalAlignment: Text.AlignVCenter
-                        visible: pass.text.length === 0
-                        enabled: false
-                        variant: "dim"
-                        text: "Password"
-                    }
-                }
+                onAccepted: root.submit()
+                onCancelled: Net.promptNet = null
             }
 
             Pill {
