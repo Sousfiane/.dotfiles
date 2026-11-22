@@ -21,6 +21,12 @@ Scope {
     property string namespace: "qs-" + name   // what Hyprland layer rules match on
     property bool autoFocus: true             // false when the content has its own text input
     property bool ipc: true                   // false when the panel registers its own IPC target
+    // the card animates its own height changes; false when the content already animates its size
+    // (then the card just follows it, frame by frame, instead of chasing it with a second animation)
+    property bool animateHeight: true
+
+    // fully slid in and staying: content can start its own size animations from here
+    property bool settled: false
 
     // hover panels: no keyboard focus, no click-outside, and a window only as big as the card,
     // so the rest of the screen stays clickable
@@ -230,6 +236,8 @@ Scope {
                 SlideArea {
                     id: area
                     open: root.open
+                    onSettledChanged: root.settled = settled
+                    Component.onDestruction: root.settled = false
 
                     DropCard {
                         id: card
@@ -253,7 +261,7 @@ Scope {
                         // smoothly; not while it slides in or out, where it just takes its size
                         height: targetHeight
                         Behavior on height {
-                            enabled: area.settled
+                            enabled: area.settled && root.animateHeight
                             Anim {}
                         }
 

@@ -12,6 +12,7 @@ DropdownPanel {
     name: "notifs"
     edge: "right"
     cardWidth: 380
+    animateHeight: false          // the history list animates its own height, the card follows it
 
     ColumnLayout {
         id: menu
@@ -102,6 +103,7 @@ DropdownPanel {
         ScrollList {
             id: list
             maxHeight: 480
+            animateHeight: panel.settled
             visible: Notifs.history.length > 0
             spacing: 8
             // diffed: a new notification adds one card instead of rebuilding them all
