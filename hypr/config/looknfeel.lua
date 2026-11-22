@@ -55,11 +55,21 @@ hl.config({
 	},
 })
 
-hl.curve("easeInOutQuart", { type = "bezier", points = { { 0.77, 0 }, { 0.175, 1 } } })
+-- Same curves and durations as quickshell/config/Motion.qml (speed is in tenths of a second):
+--   move  (easeInOutQuart) A -> B, both on screen   2   = 200 ms
+--   enter (easeOutExpo)    arriving                  2   = 200 ms
+--   exit  (easeInQuart)    leaving                   1.5 = 150 ms
+hl.curve("move", { type = "bezier", points = { { 0.77, 0 }, { 0.175, 1 } } })
+hl.curve("enter", { type = "bezier", points = { { 0.16, 1 }, { 0.3, 1 } } })
+hl.curve("exit", { type = "bezier", points = { { 0.7, 0 }, { 0.84, 0 } } })
 
-hl.animation({ leaf = "windows", enabled = true, speed = 2, bezier = "easeInOutQuart", style = "slide" })
-hl.animation({ leaf = "layersIn", enabled = true, speed = 2, bezier = "easeInOutQuart", style = "popin" })
-hl.animation({ leaf = "layersOut", enabled = true, speed = 4, bezier = "easeInOutQuart", style = "popin" })
-hl.animation({ leaf = "fade", enabled = true, speed = 2, bezier = "easeInOutQuart" })
+hl.animation({ leaf = "windows", enabled = true, speed = 2, bezier = "move", style = "slide" })
+hl.animation({ leaf = "windowsIn", enabled = true, speed = 2, bezier = "enter", style = "slide" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.5, bezier = "exit", style = "slide" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 2, bezier = "enter", style = "popin" })
+hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "exit", style = "popin" })
+hl.animation({ leaf = "fadeIn", enabled = true, speed = 2, bezier = "enter" })
+hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.5, bezier = "exit" })
+hl.animation({ leaf = "fadeSwitch", enabled = true, speed = 1.2, bezier = "enter" })
 hl.animation({ leaf = "border", enabled = false })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 2, bezier = "easeInOutQuart", style = "slidefade 10%" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 2, bezier = "move", style = "slidefade 10%" })

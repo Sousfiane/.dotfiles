@@ -55,7 +55,7 @@ DropdownPanel {
                 width: ListView.view.width
                 height: 36
                 radius: Theme.radius
-                color: ListView.isCurrentItem ? Theme.surface : "transparent"
+                color: ListView.isCurrentItem ? Theme.surface : Theme.surfaceClear
 
                 MotionArea {
                     anchors.fill: parent
@@ -64,9 +64,7 @@ DropdownPanel {
                 }
 
                 Behavior on color {
-                    ColorAnimation {
-                        duration: 120
-                    }
+                    CAnim {}
                 }
 
                 RowLayout {

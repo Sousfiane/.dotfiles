@@ -109,12 +109,20 @@ DropdownPanel {
                 values: Notifs.historyIds
             }
 
+            // a new card fades in while the others make room for it
+            add: Transition {
+                Anim {
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                    curve: Motion.enter
+                }
+            }
+
             // the cards below a removed one slide up into its place
             displaced: Transition {
-                NumberAnimation {
+                Anim {
                     property: "y"
-                    duration: 200
-                    easing.type: Easing.OutCubic
                 }
             }
 
@@ -144,23 +152,22 @@ DropdownPanel {
                 width: ListView.view.width
                 height: card.height
 
-                NumberAnimation {
+                Anim {
                     id: slideOut
                     target: card
                     property: "x"
                     to: item.width
-                    duration: 180
-                    easing.type: Easing.InCubic
+                    duration: Motion.out
+                    curve: Motion.exit
                     onFinished: Notifs.remove(item.modelData)
                 }
 
-                NumberAnimation {
+                Anim {
                     id: snapBack
                     target: card
                     property: "x"
                     to: 0
-                    duration: 200
-                    easing.type: Easing.OutCubic
+                    curve: Motion.enter
                 }
 
                 Rectangle {
@@ -169,8 +176,11 @@ DropdownPanel {
                     height: itemCol.implicitHeight + 20
                     radius: Theme.radius
                     color: Theme.surface
-                    border.width: item.note.urgency === NotificationUrgency.Critical || item.selected || cardMouse.containsMouse ? 1 : 0
-                    border.color: item.note.urgency === NotificationUrgency.Critical ? Theme.urgent : Theme.accent
+                    border.width: 1
+                    border.color: item.note.urgency === NotificationUrgency.Critical ? Theme.urgent : item.selected || cardMouse.containsMouse ? Theme.accent : Theme.accentClear
+                    Behavior on border.color {
+                        CAnim {}
+                    }
                     // fades as it is pushed away
                     opacity: 1 - 0.8 * Math.min(1, x / width)
 

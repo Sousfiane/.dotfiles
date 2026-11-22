@@ -42,14 +42,11 @@ Item {
         opacity: root.monitorFocused ? 1 : 0.5
 
         Behavior on x {
-            NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
-            }
+            Anim {}
         }
         Behavior on opacity {
-            NumberAnimation {
-                duration: 120
+            Anim {
+                duration: Motion.fast
             }
         }
     }
@@ -91,9 +88,7 @@ Item {
                     color: workspace.modelData.urgent ? Theme.urgent : workspace.cardOpen ? Theme.accent : workspace.shown ? Theme.fg : Theme.dim
 
                     Behavior on color {
-                        ColorAnimation {
-                            duration: 120
-                        }
+                        CAnim {}
                     }
                 }
 

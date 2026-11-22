@@ -1,6 +1,7 @@
 pragma Singleton
 import Quickshell
 import QtQuick
+import qs.config
 
 Singleton {
     id: root
@@ -8,9 +9,8 @@ Singleton {
     // "" = none. Only one dropdown can be open, by construction.
     property string current: ""
 
-    // how long a dropdown takes to slide in or out, and to be fully gone after closing
-    readonly property int slideMs: 220
-    readonly property int closeMs: slideMs + 40
+    // how long a dropdown takes to be fully gone after closing (its slide out, plus a margin)
+    readonly property int closeMs: Motion.out + 40
 
     function isOpen(name) {
         return current === name;

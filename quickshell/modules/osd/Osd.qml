@@ -9,6 +9,7 @@ Scope {
     id: root
 
     property bool shown: false
+    property bool loaded: false        // stays true while it fades out after `shown` goes false
     property bool ready: false         // ignore the initial values at startup
 
     Timer {
@@ -26,8 +27,16 @@ Scope {
     function show() {
         if (!ready)
             return;
+        loaded = true;
         shown = true;
         hideTimer.restart();
+    }
+
+    // unload once the fade out is over
+    Timer {
+        running: root.loaded && !root.shown
+        interval: Motion.out + 20
+        onTriggered: root.loaded = false
     }
 
     Connections {
@@ -38,7 +47,7 @@ Scope {
     }
 
     LazyLoader {
-        active: root.shown
+        active: root.loaded
 
         PanelWindow {
             anchors.bottom: true
@@ -56,6 +65,18 @@ Scope {
                 radius: Theme.radius
                 color: Theme.bg
                 border.color: Theme.border
+
+                // created at 0, so it fades in on the first frame too
+                property bool started: false
+                Component.onCompleted: Qt.callLater(() => started = true)
+
+                opacity: root.shown && started ? 1 : 0
+                Behavior on opacity {
+                    Anim {
+                        duration: root.shown ? Motion.normal : Motion.out
+                        curve: root.shown ? Motion.enter : Motion.exit
+                    }
+                }
 
                 Item {
                     anchors.fill: parent

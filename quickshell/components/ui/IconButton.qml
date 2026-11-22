@@ -24,7 +24,10 @@ Item {
         anchors.fill: parent
         visible: !root.flat
         radius: width / 2
-        color: root.hovered ? Theme.surface : "transparent"
+        color: root.hovered ? Theme.surface : Theme.surfaceClear
+        Behavior on color {
+            CAnim {}
+        }
     }
 
     Txt {
@@ -32,6 +35,9 @@ Item {
         anchors.centerIn: parent
         text: root.icon
         color: root.hovered ? root.hoverColor : root.color
+        Behavior on color {
+            CAnim {}
+        }
         font.pixelSize: root.size
     }
 

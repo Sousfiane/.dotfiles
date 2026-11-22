@@ -35,6 +35,9 @@ ColumnLayout {
             implicitHeight: 26
             radius: 6
             color: highlighted ? Theme.accent : Theme.bgSolid
+            Behavior on color {
+                CAnim {}
+            }
 
             Txt {
                 anchors {
@@ -46,6 +49,9 @@ ColumnLayout {
                 }
                 variant: "dim"
                 color: option.highlighted ? Theme.bgSolid : option.available ? Theme.fg : Theme.dim
+                Behavior on color {
+                    CAnim {}
+                }
                 text: (root.isCurrent(option.modelData) ? "● " : "   ") + root.labelOf(option.modelData) + (option.available ? "" : "  (unavailable)")
                 elide: Text.ElideRight
             }

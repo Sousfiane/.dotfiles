@@ -82,7 +82,7 @@ Scope {
         }
     }
 
-    readonly property int fadeMs: 350
+    readonly property int fadeMs: Motion.slow
 
     Timer {
         id: release
@@ -115,9 +115,8 @@ Scope {
 
                 opacity: shown ? 1 : 0
                 Behavior on opacity {
-                    NumberAnimation {
+                    Anim {
                         duration: root.fadeMs
-                        easing.type: Easing.InOutQuad
                     }
                 }
 
@@ -172,9 +171,9 @@ Scope {
 
                     scale: content.shown ? 1 : 0.96
                     Behavior on scale {
-                        NumberAnimation {
+                        Anim {
                             duration: root.fadeMs
-                            easing.type: Easing.OutCubic
+                            curve: Motion.enter
                         }
                     }
 
@@ -200,9 +199,7 @@ Scope {
                             border.color: root.message !== "" ? Theme.urgent : root.busy ? Theme.gold : input.activeFocus ? Theme.accent : Theme.highlightMed
 
                             Behavior on border.color {
-                                ColorAnimation {
-                                    duration: 150
-                                }
+                                CAnim {}
                             }
 
                             // shake on a wrong password
@@ -294,8 +291,9 @@ Scope {
                                                 opacity: 0
                                                 Component.onCompleted: opacity = 1
                                                 Behavior on opacity {
-                                                    NumberAnimation {
-                                                        duration: 90
+                                                    Anim {
+                                                        duration: Motion.fast
+                                                        curve: Motion.enter
                                                     }
                                                 }
                                             }

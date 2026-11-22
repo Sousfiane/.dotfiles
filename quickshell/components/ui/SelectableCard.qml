@@ -11,9 +11,15 @@ Rectangle {
     signal selectRequested
 
     radius: Theme.radius
-    color: selected ? Theme.surface : "transparent"
-    border.width: selected ? 1 : 0
-    border.color: Theme.accent
+    color: selected ? Theme.surface : Theme.surfaceClear
+    border.width: 1
+    border.color: selected ? Theme.accent : Theme.accentClear
+    Behavior on color {
+        CAnim {}
+    }
+    Behavior on border.color {
+        CAnim {}
+    }
 
     MouseArea {
         anchors.fill: parent

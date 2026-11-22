@@ -83,6 +83,9 @@ Item {
                 id: iconText
                 text: root.icon
                 color: root.iconColor
+                Behavior on color {
+                    CAnim {}
+                }
                 font.pixelSize: root.iconSize
                 x: Math.round((root.inkAlign === "left" ? 0 : (root.iconSlot - ink.tightBoundingRect.width) / 2) - ink.tightBoundingRect.x)
             }
@@ -92,6 +95,9 @@ Item {
             visible: root.label !== ""
             text: root.label
             color: root.labelColor
+            Behavior on color {
+                CAnim {}
+            }
             anchors.verticalCenter: parent.verticalCenter
         }
     }

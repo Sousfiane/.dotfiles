@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import qs.components.ui
 
 PanelWindow {
     id: win
@@ -95,9 +96,9 @@ PanelWindow {
         Component.onCompleted: BarState.setBarReady(win.screen?.name ?? "", fullyIn)
 
         Behavior on y {
-            NumberAnimation {
-                duration: 200
-                easing.type: win.shown ? Easing.OutCubic : Easing.InCubic
+            Anim {
+                duration: win.shown ? Motion.normal : Motion.out
+                curve: win.shown ? Motion.enter : Motion.exit
             }
         }
 

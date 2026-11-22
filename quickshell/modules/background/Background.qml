@@ -1,7 +1,9 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
+import qs.config
 import qs.services
+import qs.components.ui
 
 // Wallpaper on every screen, on the background layer (replaces swaybg).
 // A new wallpaper fades in over the old one once it has finished loading.
@@ -26,7 +28,7 @@ Variants {
         WlrLayershell.namespace: "qs-wallpaper"
         mask: Region {}   // click-through
 
-        readonly property int fadeMs: 600
+        readonly property int fadeMs: Motion.slow
         readonly property string wanted: Wallpapers.currentUrl
 
         // two slots: `front` is on screen, the other loads the next wallpaper underneath
@@ -58,12 +60,11 @@ Variants {
         onWantedChanged: load()
         Component.onCompleted: load()
 
-        NumberAnimation {
+        Anim {
             id: fade
             property: "opacity"
             from: 0
             to: 1
-            easing.type: Easing.InOutQuad
 
             // the old wallpaper is hidden now: free its decoded image
             onFinished: {

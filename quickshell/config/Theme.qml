@@ -41,6 +41,11 @@ Singleton {
     readonly property color urgent: love
     readonly property color line: muted
 
+    // the same colours fully see-through: fade to these instead of "transparent", which is
+    // transparent *black* and would dip through a dark tint on the way
+    readonly property color surfaceClear: withAlpha(overlay, 0)
+    readonly property color accentClear: withAlpha(iris, 0)
+
     readonly property string font: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
     readonly property int radius: 6

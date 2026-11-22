@@ -12,6 +12,9 @@ Rectangle {
     implicitHeight: 22
     radius: 11
     color: checked ? Theme.accent : Theme.surface
+    Behavior on color {
+        CAnim {}
+    }
 
     Rectangle {
         y: 3
@@ -20,10 +23,13 @@ Rectangle {
         height: 16
         radius: 8
         color: root.checked ? Theme.bgSolid : Theme.dim
+        Behavior on color {
+            CAnim {}
+        }
 
         Behavior on x {
-            NumberAnimation {
-                duration: 120
+            Anim {
+                duration: Motion.fast
             }
         }
     }

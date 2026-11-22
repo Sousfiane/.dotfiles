@@ -21,6 +21,9 @@ RowLayout {
         visible: root.icon !== ""
         text: root.icon
         color: root.iconColor
+        Behavior on color {
+            CAnim {}
+        }
         font.pixelSize: Theme.fontSize + 6
     }
 

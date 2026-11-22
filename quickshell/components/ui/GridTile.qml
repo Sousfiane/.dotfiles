@@ -35,8 +35,8 @@ Item {
             border.color: Theme.accent
 
             Behavior on border.width {
-                NumberAnimation {
-                    duration: 100
+                Anim {
+                    duration: Motion.fast
                 }
             }
         }

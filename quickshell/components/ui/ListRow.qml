@@ -13,7 +13,10 @@ Rectangle {
     width: ListView.view ? ListView.view.width : implicitWidth
     implicitHeight: 30
     radius: Theme.radius
-    color: selected || hovered ? Theme.surface : "transparent"
+    color: selected || hovered ? Theme.surface : Theme.surfaceClear
+    Behavior on color {
+        CAnim {}
+    }
 
     HoverHandler {
         id: hover

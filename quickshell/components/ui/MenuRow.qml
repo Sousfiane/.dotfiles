@@ -30,6 +30,9 @@ SelectableCard {
             horizontalAlignment: Text.AlignHCenter
             text: root.icon
             color: root.selected ? Theme.accent : Theme.fg
+            Behavior on color {
+                CAnim {}
+            }
             font.pixelSize: Theme.fontSize + 6
         }
 

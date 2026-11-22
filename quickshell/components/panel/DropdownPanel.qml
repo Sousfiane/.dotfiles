@@ -5,6 +5,7 @@ import Quickshell.Wayland
 import QtQuick
 import qs.config
 import qs.services
+import qs.components.ui
 
 Scope {
     id: root
@@ -180,7 +181,8 @@ Scope {
                 right: !root.compact || root.edge === "right"
             }
             implicitWidth: root.compact ? card.width + card.fl + card.fr + 2 * card.pad + 40 : 0
-            implicitHeight: root.compact ? card.height + card.pad + 40 : 0
+            // grows at once, so the card never outgrows its window; shrinks along with the card
+            implicitHeight: root.compact ? Math.max(card.height, card.targetHeight) + card.pad + 40 : 0
 
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
@@ -226,6 +228,7 @@ Scope {
                 }
 
                 SlideArea {
+                    id: area
                     open: root.open
 
                     DropCard {
@@ -241,9 +244,17 @@ Scope {
 
                         // compact windows size themselves from the card, so the card must not size itself from the window
                         width: root.compact ? root.cardWidth : Math.min(root.cardWidth, parent.width - 64)
-                        height: {
+                        readonly property real targetHeight: {
                             const natural = root.cardHeight > 0 ? root.cardHeight : loader.implicitHeight + 2 * root.padding;
                             return root.compact ? natural : Math.min(natural, parent.height - 16);
+                        }
+
+                        // content that changes size (a prompt, a diff, a list growing) resizes the card
+                        // smoothly; not while it slides in or out, where it just takes its size
+                        height: targetHeight
+                        Behavior on height {
+                            enabled: area.settled
+                            Anim {}
                         }
 
                         // tells hover-driven panels whether the pointer is on the card
@@ -257,13 +268,22 @@ Scope {
                             anchors.fill: parent
                         }
 
-                        Loader {
-                            id: loader
-                            anchors {
-                                fill: parent
-                                margins: root.padding
+                        // the content takes its new size at once; the card reveals or trims it as it resizes
+                        Item {
+                            anchors.fill: parent
+                            clip: card.height !== card.targetHeight
+
+                            Loader {
+                                id: loader
+                                anchors {
+                                    top: parent.top
+                                    left: parent.left
+                                    right: parent.right
+                                    margins: root.padding
+                                }
+                                height: card.targetHeight - 2 * root.padding
+                                sourceComponent: root.content
                             }
-                            sourceComponent: root.content
                         }
                     }
                 }

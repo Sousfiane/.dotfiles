@@ -1,12 +1,13 @@
 import Quickshell
 import QtQuick
+import qs.config
 import qs.services
+import qs.components.ui
 
 Item {
     id: root
 
     property bool open: false         // bind to the panel's open state
-    property int duration: Panels.slideMs
 
     default property alias content: holder.data
 
@@ -32,10 +33,13 @@ Item {
     readonly property bool shown: open && started && height > 0 && barReady
     property real progress: shown ? 1 : 0
 
+    // fully slid in and staying: what the panel's own animations (a height change) wait for
+    readonly property bool settled: shown && progress === 1
+
     Behavior on progress {
-        NumberAnimation {
-            duration: root.duration
-            easing.type: root.shown ? Easing.OutCubic : Easing.InCubic
+        Anim {
+            duration: root.shown ? Motion.normal : Motion.out
+            curve: root.shown ? Motion.enter : Motion.exit
         }
     }
 
