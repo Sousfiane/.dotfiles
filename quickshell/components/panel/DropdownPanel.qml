@@ -187,8 +187,16 @@ Scope {
                 right: !root.compact || root.edge === "right"
             }
             implicitWidth: root.compact ? card.width + card.fl + card.fr + 2 * card.pad + 40 : 0
-            // grows at once, so the card never outgrows its window; shrinks along with the card
-            implicitHeight: root.compact ? Math.max(card.height, card.targetHeight) + card.pad + 40 : 0
+            // grows at once, so the card never outgrows its window, and never shrinks while open: resizing the
+            // surface lags behind the card (stutter) or flashes a frame (blink). The window goes away on close,
+            // and the mask below keeps the unused space underneath click-through.
+            implicitHeight: root.compact ? card.windowHeight + card.pad + 40 : 0
+            mask: root.compact ? cardRegion : null
+
+            Region {
+                id: cardRegion
+                item: card
+            }
 
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
@@ -264,6 +272,15 @@ Scope {
                             enabled: area.settled && root.animateHeight
                             Anim {}
                         }
+
+                        // the height the compact window holds: the tallest the card has been since it opened
+                        property real windowHeight: 0
+                        function syncWindow() {
+                            windowHeight = Math.max(windowHeight, height, targetHeight);
+                        }
+                        onHeightChanged: syncWindow()
+                        onTargetHeightChanged: syncWindow()
+                        Component.onCompleted: syncWindow()
 
                         // tells hover-driven panels whether the pointer is on the card
                         HoverHandler {
