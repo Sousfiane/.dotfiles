@@ -104,7 +104,7 @@ PanelWindow {
 
         WsIcons {
             screen: win.screen
-            edgeGap: 4                    // the cells carry their own padding: the first dot stays 16 px in
+            edgeGap: 11                   // the cells carry 5 px of padding: the first dot stays 16 px in
             anchors {
                 left: parent.left
                 leftMargin: edgeGap

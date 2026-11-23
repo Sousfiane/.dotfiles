@@ -5,7 +5,7 @@ import QtQuick
 // The one motion vocabulary, shared with Hyprland (hypr/config/looknfeel.lua uses the same
 // curves and durations: Hyprland's `speed` is in tenths of a second, so 2 = 200 ms).
 //
-//   move   something going from A to B, both on screen   (windows, workspaces, the ws chip)
+//   move   something going from A to B, both on screen   (windows, workspaces, the ws pill)
 //   enter  something arriving: fast start, soft landing  (panels, bar, popups)
 //   exit   something leaving: soft start, gone fast      (always a bit shorter than enter)
 Singleton {

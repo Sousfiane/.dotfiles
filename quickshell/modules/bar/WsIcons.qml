@@ -6,8 +6,10 @@ import qs.config
 import qs.services
 import qs.components.ui
 
-// Workspace numbers. Same color rule as the other bar items: urgent > card open > shown > idle.
-// The workspace this monitor shows sits on a small rounded chip that slides from number to number.
+// Workspace dots. Idle workspaces are small dots; the one this monitor shows stretches into a
+// wide pill. Each cell animates its own width, so switching squashes the pill across: the old one
+// shrinks while the new one grows and the dots in between slide over.
+// Same color rule as the other bar items: urgent > card open > shown > idle.
 Item {
     id: root
     required property ShellScreen screen
@@ -21,37 +23,16 @@ Item {
 
     // the workspace shown on this monitor (focused or not)
     readonly property int activeId: monitor?.activeWorkspace?.id ?? -1
-    readonly property int activeIndex: mine.findIndex(w => w.id === activeId)
     readonly property bool monitorFocused: Hyprland.focusedMonitor === monitor
 
-    readonly property int cellWidth: 24
+    readonly property int dotSize: 6
+    readonly property int pillWidth: 22
+    readonly property int cellPadding: 5     // each side of a dot; also the gap between cells
 
     implicitWidth: row.implicitWidth
     implicitHeight: Theme.barHeight
 
-    // the active chip: a small rounded block behind the shown number, sliding between workspaces.
-    // Dimmer when another monitor has focus
-    Rectangle {
-        visible: root.activeIndex >= 0
-        width: root.cellWidth - 4
-        height: 20
-        radius: Theme.radius
-        anchors.verticalCenter: parent.verticalCenter
-        x: root.activeIndex * root.cellWidth + (root.cellWidth - width) / 2
-        color: Theme.highlightMed
-        opacity: root.monitorFocused ? 1 : 0.5
-
-        Behavior on x {
-            Anim {}
-        }
-        Behavior on opacity {
-            Anim {
-                duration: Motion.fast
-            }
-        }
-    }
-
-    // cells touch, so the whole strip is clickable; the gap between numbers is inside each cell
+    // cells touch, so the whole strip is clickable; the gap between dots is inside each cell
     RowLayout {
         id: row
         anchors.verticalCenter: parent.verticalCenter
@@ -71,24 +52,41 @@ Item {
                 readonly property bool shown: modelData.id === root.activeId
                 readonly property bool cardOpen: Ws.open && Ws.screenName === root.screen.name && Ws.wsId === modelData.id
 
-                // named workspaces show their first letter
-                readonly property string label: String(modelData.name) === String(modelData.id) ? String(modelData.id) : String(modelData.name).charAt(0).toUpperCase()
-
                 // the first cell extends to the screen edge (click area)
                 readonly property real reach: index === 0 ? root.edgeGap : 0
 
-                implicitWidth: root.cellWidth
+                implicitWidth: dot.width + root.cellPadding * 2
                 implicitHeight: Theme.barHeight
 
-                Txt {
-                    anchors.centerIn: parent
-                    text: workspace.label
-                    font.pixelSize: Theme.fontSize
-                    font.bold: workspace.shown
-                    color: workspace.modelData.urgent ? Theme.urgent : workspace.cardOpen ? Theme.accent : workspace.shown ? Theme.fg : Theme.dim
+                Rectangle {
+                    id: dot
 
+                    readonly property real grow: mouse.containsMouse && !workspace.shown ? 2 : 0
+
+                    anchors.centerIn: parent
+                    width: (workspace.shown ? root.pillWidth : root.dotSize) + dot.grow
+                    height: root.dotSize + dot.grow
+                    radius: height / 2
+
+                    color: workspace.modelData.urgent ? Theme.urgent : workspace.cardOpen || workspace.shown ? Theme.accent : Theme.dim
+                    // the shown pill dims when another monitor has focus
+                    opacity: workspace.shown && !root.monitorFocused ? 0.5 : 1
+
+                    Behavior on width {
+                        Anim {}
+                    }
+                    Behavior on height {
+                        Anim {
+                            duration: Motion.fast
+                        }
+                    }
                     Behavior on color {
                         CAnim {}
+                    }
+                    Behavior on opacity {
+                        Anim {
+                            duration: Motion.fast
+                        }
                     }
                 }
 
