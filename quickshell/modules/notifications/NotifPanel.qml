@@ -151,7 +151,7 @@ DropdownPanel {
                     slideOut.start();
                 }
 
-                width: ListView.view.width
+                width: ListView.view.rowWidth
                 height: card.height
 
                 Anim {

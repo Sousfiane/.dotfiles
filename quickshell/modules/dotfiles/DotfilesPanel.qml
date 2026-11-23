@@ -375,7 +375,7 @@ DropdownPanel {
 
                 readonly property string kind: modelData.startsWith("+") ? "add" : modelData.startsWith("-") ? "del" : modelData.startsWith("@@") ? "hunk" : "ctx"
 
-                width: ListView.view.width
+                width: ListView.view.rowWidth
                 height: lineText.implicitHeight + (kind === "hunk" ? 8 : 0)
                 color: kind === "add" ? Theme.withAlpha(Theme.foam, 0.10) : kind === "del" ? Theme.withAlpha(Theme.love, 0.10) : "transparent"
 

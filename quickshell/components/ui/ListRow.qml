@@ -10,7 +10,7 @@ Rectangle {
 
     default property alias content: row.data
 
-    width: ListView.view ? ListView.view.width : implicitWidth
+    width: ListView.view ? (ListView.view.rowWidth ?? ListView.view.width) : implicitWidth
     implicitHeight: 30
     radius: Theme.radius
     color: selected || hovered ? Theme.surface : Theme.surfaceClear

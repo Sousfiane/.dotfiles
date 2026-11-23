@@ -91,7 +91,7 @@ DropdownPanel {
                 required property var modelData
                 required property int index
 
-                width: ListView.view.width
+                width: ListView.view.rowWidth
                 dev: modelData
                 selected: nav.index === index
 

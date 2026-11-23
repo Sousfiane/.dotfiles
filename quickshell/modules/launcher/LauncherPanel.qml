@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import qs.config
 import qs.services
@@ -46,13 +47,21 @@ DropdownPanel {
             }
             currentIndex: 0
 
+            // rows leave a gutter for the scrollbar while it shows (same as ScrollList)
+            readonly property real rowWidth: width - (vbar.size < 1 ? vbar.width + 6 : 0)
+
+            ScrollBar.vertical: ScrollBar {
+                id: vbar
+                policy: ScrollBar.AsNeeded
+            }
+
             delegate: Rectangle {
                 id: row
 
                 required property var modelData
                 required property int index
 
-                width: ListView.view.width
+                width: ListView.view.rowWidth
                 height: 36
                 radius: Theme.radius
                 color: ListView.isCurrentItem ? Theme.surface : Theme.surfaceClear

@@ -194,7 +194,7 @@ DropdownPanel {
                 required property var modelData
                 required property int index
 
-                width: ListView.view.width
+                width: ListView.view.rowWidth
                 node: modelData
                 device: Mixer.tab >= 2
                 input: Mixer.tab === 1 || Mixer.tab === 3
@@ -225,7 +225,7 @@ DropdownPanel {
                 required property var modelData
                 required property int index
 
-                width: ListView.view.width
+                width: ListView.view.rowWidth
                 card: modelData
                 selected: nav.index === index
                 choosing: mixer.choosing && nav.index === index
