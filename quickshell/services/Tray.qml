@@ -1,6 +1,7 @@
 pragma Singleton
 import Quickshell
 import Quickshell.Services.SystemTray
+import Quickshell.Io
 import QtQuick
 
 // The system tray: apps living in the background (Vesktop, EasyEffects...). The bar keeps them in a
@@ -29,8 +30,10 @@ Singleton {
     }
 
     // the app went away while its menu was showing
-    onItemsChanged: if (open && !items.includes(menuItem))
-        Panels.hide("tray")
+    function checkMenuItem() {
+        if (open && !items.includes(menuItem))
+            Panels.hide("tray");
+    }
 
     function name(item) {
         return item?.tooltipTitle || item?.title || item?.id || "";
@@ -38,16 +41,52 @@ Singleton {
 
     // ---------- the icons ----------
 
-    // left: the app's own action (most bring their window back); apps that only have a menu show it
+    // left: the app's own action (most bring their window back); apps that can't do that show their menu
     function click(item, button) {
         if (button === Qt.RightButton)
             openMenu(item);
         else if (button === Qt.MiddleButton)
             item.secondaryActivate();
-        else if (item.onlyMenu)
+        else if (item.onlyMenu || menuOnly.includes(item.id))
             openMenu(item);
         else
             item.activate();
+    }
+
+    // ---------- apps with nothing to activate ----------
+
+    // AppIndicator apps (nm-applet, Electron apps like Vesktop...) don't implement Activate at all, and don't
+    // say they're menu-only either, so a left click would do nothing. Quickshell can't tell, so ask D-Bus:
+    // the ids of the registered items whose interface has no Activate method.
+    property var menuOnly: []
+
+    onItemsChanged: {
+        checkMenuItem();
+        probe.restart();
+    }
+    Component.onCompleted: probe.restart()
+
+    Timer {
+        id: probe
+        interval: 500                        // let a burst of (un)registrations settle
+        onTriggered: {
+            prober.running = false;
+            prober.running = true;
+        }
+    }
+
+    Process {
+        id: prober
+        command: ["sh", "-c", `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher \
+org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems | tr ' ' '\\n' | sed -n 's/^"\\(.*\\)"$/\\1/p' |
+while read -r e; do
+    svc=\${e%%/*}; obj=/\${e#*/}; [ "$svc" = "$e" ] && obj=/StatusNotifierItem
+    busctl --user introspect "$svc" "$obj" org.kde.StatusNotifierItem 2>/dev/null | grep -q '^\\.Activate ' ||
+        busctl --user get-property "$svc" "$obj" org.kde.StatusNotifierItem Id | cut -d'"' -f2
+done`]
+        stdout: StdioCollector {
+            onStreamFinished: root.menuOnly = text.split("\n").filter(l => l !== "")
+        }
     }
 
     // DBusMenu labels mark their access key with "_" ("_Quit"); "__" is a real underscore

@@ -34,7 +34,7 @@ Item {
     }
 
     readonly property int iconSize: 16
-    readonly property int gap: 14                  // between the icons and the chevron
+    readonly property int gap: 9                   // between the icons and the chevron (+ the row's padding: 14)
 
     implicitHeight: toggle.implicitHeight
     implicitWidth: toggle.implicitWidth + (expanded ? icons.implicitWidth + gap : 0)
@@ -68,6 +68,9 @@ Item {
                 verticalCenter: parent.verticalCenter
             }
             spacing: 12
+            // room for the hover highlight of the first and last icon, which the drawer would clip
+            leftPadding: 5
+            rightPadding: 5
 
             opacity: root.expanded ? 1 : 0
             Behavior on opacity {
@@ -89,6 +92,18 @@ Item {
 
                     width: root.iconSize
                     height: root.iconSize
+
+                    // the hover shows even on icons that are grey to begin with (symbolic ones like nm-applet's)
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width + 10
+                        height: parent.height + 10
+                        radius: Theme.radius
+                        color: slot.lit ? Theme.surface : Theme.surfaceClear
+                        Behavior on color {
+                            CAnim {}
+                        }
+                    }
 
                     AppIcon {
                         anchors.fill: parent
