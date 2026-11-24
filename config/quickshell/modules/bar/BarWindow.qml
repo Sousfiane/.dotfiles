@@ -36,6 +36,9 @@ PanelWindow {
 
     readonly property bool shown: !fullscreen || panelHere || revealed
 
+    // the stand-in title bar only answers the pointer: a dropdown alone brings back just the bar
+    readonly property bool titleShown: fullscreen && revealed
+
     // the underline, split around every dropdown that is attached to this bar
     readonly property var segments: {
         const gaps = Object.values(BarState.gaps[screen?.name ?? ""] ?? {}).sort((a, b) => a[0] - b[0]);
@@ -67,7 +70,8 @@ PanelWindow {
         x: 0
         y: 0
         width: win.width
-        height: win.shown ? win.height : 2   // shown in fullscreen: the title bar below is clickable too
+        // shown in fullscreen: the title bar below is clickable too, but only while it is down
+        height: !win.shown ? 2 : win.titleShown ? win.height : Theme.barHeight + 1
     }
 
     HoverHandler {
@@ -165,7 +169,18 @@ PanelWindow {
         screenName: win.screen?.name ?? ""
         visible: win.fullscreen
         width: parent.width
+        z: -1                          // tucks behind the bar when it is pulled up
+
+        // pulled up behind the bar while only a dropdown holds the bar out
+        property real tuck: win.titleShown ? 0 : -(height + bar.height + 1)
+        Behavior on tuck {
+            Anim {
+                duration: win.titleShown ? Motion.normal : Motion.out
+                curve: win.titleShown ? Motion.enter : Motion.exit
+            }
+        }
+
         // hangs right under the underline and rides the bar's slide, so the two move as one block
-        y: bar.y + bar.height + 1
+        y: bar.y + bar.height + 1 + tuck
     }
 }
