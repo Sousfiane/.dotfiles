@@ -1,0 +1,54 @@
+# The desktop: Hyprland, the Quickshell shell, and everything they run.
+# archinstall's Hyprland profile brings part of it; listing it all here means the install doesn't depend
+# on that profile (packages already installed are skipped).
+
+# ---------- Hyprland ----------
+hyprland
+hyprpm                       # plugins (autostart.lua: hyprpm reload)
+hypridle                     # screens off when idle
+uwsm                         # session manager: apps are started with `uwsm app`
+xdg-desktop-portal-hyprland  # screen sharing, file pickers
+qt5-wayland
+qt6-wayland
+sddm                         # login screen (enabled by steps/services.sh)
+
+# ---------- Quickshell and what it calls ----------
+quickshell
+kitty                        # Config.terminal: the floating terminal (updates, terminal apps)
+clipvault-bin                # clipboard history: stored from autostart.lua, read by the panel
+wl-clipboard                 # wl-paste / wl-copy, for the clipboard history
+grim                         # the lock screen's capture of each screen
+hyprshot                     # the screenshot panel (pulls slurp)
+libpulse                     # pactl: the mixer moves app streams and sets card profiles with it
+pacman-contrib               # checkupdates: the updates panel
+nm-connection-editor         # the network panel's "Edit"
+upower                       # device batteries the Bluetooth panel can't get from BlueZ
+libsecret                    # secret-tool: the calendar's password, from the keyring
+python                       # scripts/calendar.py
+curl                         # weather
+
+# ---------- audio, network, Bluetooth (services: steps/services.sh) ----------
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulse
+wireplumber
+gst-plugin-pipewire
+networkmanager
+bluez
+bluez-utils
+
+# ---------- session ----------
+polkit-gnome                 # password prompts for system actions (autostart.lua)
+gnome-keyring
+xdg-user-dirs
+xdg-utils
+
+# ---------- look ----------
+ttf-jetbrains-mono-nerd      # the shell's font
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+rose-pine-gtk-theme-full     # GTK theme (set by steps/system.sh)
+qt6ct
+nwg-look

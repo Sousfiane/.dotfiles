@@ -1,0 +1,24 @@
+# Not installed by these scripts: the base system archinstall sets up (kernel, boot, drivers) and the tools
+# the steps install themselves. Listed only so `install/install.sh check` doesn't report them as missing
+# from the other lists.
+
+# ---------- archinstall ----------
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+amd-ucode
+mkinitcpio
+grub
+efibootmgr
+sudo
+zram-generator
+nvidia-open
+libva-nvidia-driver
+opencl-nvidia
+wpa_supplicant
+
+# ---------- the steps themselves ----------
+git                          # bootstrap.sh
+yay                          # steps/yay.sh

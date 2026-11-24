@@ -1,0 +1,7 @@
+# Removed by the packages step when installed: what archinstall adds that the desktop replaces.
+
+network-manager-applet       # "Use NetworkManager": the network panel replaces it
+dunst                        # Hyprland profile: a second notification daemon, competing with Quickshell's
+polkit-kde-agent             # Hyprland profile: a second password-prompt agent, next to polkit-gnome
+dolphin                      # Hyprland profile: Nautilus is the file manager
+wofi                         # Hyprland profile: the Quickshell launcher replaces it

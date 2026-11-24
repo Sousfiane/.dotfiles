@@ -1,16 +1,7 @@
 #!/usr/bin/env bash
+# the symlinks: every folder's links.prop maps a file of the repo to where it goes ($DOTFILES/x=$HOME/y)
 
-set -euo pipefail
-
-# Ensure DOTFILES is set
-if [ -z "${DOTFILES:-}" ]; then
-  echo "Error: DOTFILES environment variable is not set."
-  echo "Please run this script through install-all.sh or export DOTFILES manually."
-  exit 1
-fi
-
-
-source $DOTFILES/install/utils/messages.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../lib.sh"
 
 link_file () {
     local src=$1 dst=$2
@@ -107,14 +98,4 @@ do
 done
 }
 
-create_env_file () {
-    if test -f "$HOME/.env.sh"; then
-        success "$HOME/.env.sh file already exists, skipping"
-    else
-        echo "export DOTFILES=$DOTFILES" > $HOME/.env.sh
-        success 'created ~/.env.sh'
-    fi
-}
-
 install_dotfiles
-create_env_file

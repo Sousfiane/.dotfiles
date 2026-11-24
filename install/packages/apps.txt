@@ -1,0 +1,37 @@
+# Applications and tools. `install/install.sh check` lists what's installed but missing here.
+
+# ---------- shell and terminal ----------
+zsh                          # made the login shell by steps/system.sh
+tmux
+neovim
+btop
+fastfetch
+fd
+fzf
+unzip
+nodejs
+npm
+xdotool
+
+# ---------- desktop apps ----------
+zen-browser-bin
+nautilus
+libreoffice-fresh
+vesktop-bin                  # Discord (SUPER+C)
+
+# ---------- media ----------
+spotify-launcher
+spicetify-cli
+easyeffects                  # started by autostart.lua
+obs-studio-liberty
+
+# ---------- games ----------
+steam                        # from multilib (enabled by steps/pacman.sh)
+prismlauncher
+nvibrant-bin
+
+# ---------- system ----------
+nvtop
+libva-utils
+networkmanager-openvpn
+os-prober                    # finds other systems for the boot menu
