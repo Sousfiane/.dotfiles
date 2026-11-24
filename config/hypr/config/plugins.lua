@@ -21,6 +21,7 @@ if hl.plugin.hyprbars ~= nil then
 				col = { text = "rgb(e0def4)" },
 				bar_text_font = "JetBrainsMonoNL NF", -- same as kitty
 				bar_text_size = 10,
+				bar_text_weight = "semibold",
 				bar_text_align = "center",
 				bar_part_of_window = true,
 				bar_precedence_over_border = true,

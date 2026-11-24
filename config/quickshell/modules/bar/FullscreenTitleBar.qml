@@ -28,7 +28,8 @@ Rectangle {
         text: root.target?.title ?? ""
         color: Theme.text
         font.family: "JetBrainsMonoNL NF"
-        font.pointSize: 10
+        font.pixelSize: 10             // hyprbars bar_text_size is in pixels
+        font.weight: Font.DemiBold     // bar_text_weight = "semibold"
     }
 
     // double-click anywhere on the bar leaves fullscreen, like hyprbars' on_double_click enters it
