@@ -4,8 +4,8 @@ local shift = "SHIFT"
 local ctrl = "CTRL"
 local alt = "ALT"
 
--- OSD client
-local osdclient = "swayosd-client --monitor \"$(hyprctl monitors -j | jq -r '.[] | select(.focused == true).name')\""
+-- Quickshell commands (volume, media, OSD): `qs ipc call <target> <function>`
+local qs = "qs ipc call "
 
 --------------------------------------------------
 -- 🪟 Window management
@@ -196,39 +196,28 @@ hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description
 hl.bind(mod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window with mouse" })
 
 --------------------------------------------------
--- 🔊 Volume / brightness (OSD)
+-- 🔊 Volume (Quickshell shows the OSD)
 --------------------------------------------------
 
 hl.bind(
 	"XF86AudioRaiseVolume",
-	hl.dsp.exec_cmd(osdclient .. " --output-volume +5"),
+	hl.dsp.exec_cmd(qs .. "audio up"),
 	{ locked = true, repeating = true, description = "Raise volume" }
 )
 hl.bind(
 	"XF86AudioLowerVolume",
-	hl.dsp.exec_cmd(osdclient .. " --output-volume -5"),
+	hl.dsp.exec_cmd(qs .. "audio down"),
 	{ locked = true, repeating = true, description = "Lower volume" }
 )
 hl.bind(
 	"XF86AudioMute",
-	hl.dsp.exec_cmd(osdclient .. " --output-volume mute-toggle"),
+	hl.dsp.exec_cmd(qs .. "audio mute"),
 	{ locked = true, description = "Toggle audio mute" }
 )
 hl.bind(
 	"XF86AudioMicMute",
-	hl.dsp.exec_cmd(osdclient .. " --input-volume mute-toggle"),
+	hl.dsp.exec_cmd(qs .. "audio micMute"),
 	{ locked = true, description = "Toggle microphone mute" }
-)
-
-hl.bind(
-	"XF86MonBrightnessUp",
-	hl.dsp.exec_cmd(osdclient .. " --brightness +5"),
-	{ locked = true, repeating = true, description = "Raise screen brightness" }
-)
-hl.bind(
-	"XF86MonBrightnessDown",
-	hl.dsp.exec_cmd(osdclient .. " --brightness -5"),
-	{ locked = true, repeating = true, description = "Lower screen brightness" }
 )
 
 hl.bind(
@@ -248,22 +237,22 @@ hl.bind(
 
 hl.bind(
 	"XF86AudioNext",
-	hl.dsp.exec_cmd(osdclient .. " --playerctl next"),
+	hl.dsp.exec_cmd(qs .. "media next"),
 	{ locked = true, description = "Next media track" }
 )
 hl.bind(
 	"XF86AudioPrev",
-	hl.dsp.exec_cmd(osdclient .. " --playerctl previous"),
+	hl.dsp.exec_cmd(qs .. "media previous"),
 	{ locked = true, description = "Previous media track" }
 )
 hl.bind(
 	"XF86AudioPlay",
-	hl.dsp.exec_cmd(osdclient .. " --playerctl play-pause"),
+	hl.dsp.exec_cmd(qs .. "media toggle"),
 	{ locked = true, description = "Play/Pause media" }
 )
 hl.bind(
 	"XF86AudioPause",
-	hl.dsp.exec_cmd(osdclient .. " --playerctl play-pause"),
+	hl.dsp.exec_cmd(qs .. "media toggle"),
 	{ locked = true, description = "Play/Pause media" }
 )
 
@@ -271,7 +260,7 @@ hl.bind(
 -- 🔠 Caps Lock OSD
 --------------------------------------------------
 
-hl.bind("Caps_Lock", hl.dsp.exec_cmd(osdclient .. " --caps-lock"), { release = true, description = "Caps Lock OSD toggle" })
+hl.bind("Caps_Lock", hl.dsp.exec_cmd(qs .. "osd caps"), { release = true, description = "Caps Lock OSD toggle" })
 
 -- ==========================================
 -- OBS Studio Global Shortcuts Configuration

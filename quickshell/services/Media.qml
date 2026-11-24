@@ -1,5 +1,6 @@
 pragma Singleton
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Mpris
 import QtQuick
 
@@ -29,6 +30,21 @@ Singleton {
     function previous() {
         if (player?.canGoPrevious)
             player.previous();
+    }
+
+    // the media keys (hypr/config/bindings.lua): `qs ipc call media toggle` and so on
+    IpcHandler {
+        target: "media"
+
+        function toggle(): void {
+            root.toggle();
+        }
+        function next(): void {
+            root.next();
+        }
+        function previous(): void {
+            root.previous();
+        }
     }
 
     // seconds -> "m:ss"

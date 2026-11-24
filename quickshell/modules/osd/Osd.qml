@@ -1,16 +1,22 @@
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Layouts
 import qs.config
 import qs.services
 import qs.components.ui
 
+// a short-lived bubble at the bottom of the screen: the volume, the microphone, Caps Lock
 Scope {
     id: root
 
     property bool shown: false
     property bool loaded: false        // stays true while it fades out after `shown` goes false
     property bool ready: false         // ignore the initial values at startup
+
+    property string kind: "volume"     // "volume" | "mic" | "caps"
+    property bool capsOn: false
 
     Timer {
         running: true
@@ -24,9 +30,10 @@ Scope {
         onTriggered: root.shown = false
     }
 
-    function show() {
+    function show(what) {
         if (!ready)
             return;
+        kind = what;
         loaded = true;
         shown = true;
         hideTimer.restart();
@@ -42,8 +49,59 @@ Scope {
     Connections {
         target: Audio
         function onChanged() {
-            root.show();
+            root.show("volume");
         }
+        function onMicChanged() {
+            root.show("mic");
+        }
+    }
+
+    // ---------- Caps Lock ----------
+
+    // bound on the key's release, so Hyprland already has the new state: read it from the main keyboard
+    Process {
+        id: capsProc
+        command: ["hyprctl", "devices", "-j"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const kbs = JSON.parse(text).keyboards ?? [];
+                    const kb = kbs.find(k => k.main) ?? kbs[0];
+                    root.capsOn = kb?.capsLock ?? false;
+                    root.show("caps");
+                } catch (e) {}
+            }
+        }
+    }
+
+    IpcHandler {
+        target: "osd"
+
+        // `qs ipc call osd caps`
+        function caps(): void {
+            capsProc.running = true;
+        }
+    }
+
+    // ---------- what it shows ----------
+
+    readonly property bool isCaps: kind === "caps"
+    readonly property real value: kind === "mic" ? Audio.micVolume : Audio.volume
+    readonly property bool off: kind === "mic" ? Audio.micMuted : kind === "caps" ? !capsOn : Audio.muted
+
+    readonly property string icon: {
+        if (kind === "mic")
+            return off ? Icons.micOff : Icons.mic;
+        if (kind === "caps")
+            return Icons.capsLock;
+        const pct = Math.round(value * 100);
+        return off ? Icons.volumeOff : pct === 0 ? Icons.volumeZero : pct < 34 ? Icons.volumeLow : pct < 67 ? Icons.volumeMedium : Icons.volumeHigh;
+    }
+
+    readonly property string text: {
+        if (kind === "caps")
+            return capsOn ? "Caps Lock on" : "Caps Lock off";
+        return off ? "muted" : Math.round(value * 100) + "%";
     }
 
     LazyLoader {
@@ -78,39 +136,43 @@ Scope {
                     }
                 }
 
-                Item {
-                    anchors.fill: parent
+                RowLayout {
+                    anchors {
+                        fill: parent
+                        leftMargin: 14
+                        rightMargin: 14
+                    }
+                    spacing: 12
 
+                    Txt {
+                        Layout.preferredWidth: 20
+                        horizontalAlignment: Text.AlignHCenter
+                        text: root.icon
+                        color: root.off ? Theme.dim : Theme.accent
+                        font.pixelSize: Theme.fontSize + 3
+                    }
+
+                    // Caps Lock has no level: its text takes the bar's place
                     Rectangle {
-                        anchors {
-                            left: parent.left
-                            right: valueText.left
-                            verticalCenter: parent.verticalCenter
-                            leftMargin: 14
-                            rightMargin: 12
-                        }
-                        height: 8
+                        visible: !root.isCaps
+                        Layout.fillWidth: true
+                        implicitHeight: 8
                         radius: 4
                         color: Theme.surface
 
                         Rectangle {
-                            width: parent.width * Math.min(Audio.volume, 1)
+                            width: parent.width * Math.min(root.value, 1)
                             height: parent.height
                             radius: 4
-                            color: Audio.muted ? Theme.dim : Theme.accent
+                            color: root.off ? Theme.dim : Theme.accent
                         }
                     }
 
                     Txt {
-                        id: valueText
-                        anchors {
-                            right: parent.right
-                            rightMargin: 14
-                            verticalCenter: parent.verticalCenter
-                        }
-                        width: 50
-                        horizontalAlignment: Text.AlignRight
-                        text: Audio.muted ? "muted" : Math.round(Audio.volume * 100) + "%"
+                        Layout.fillWidth: root.isCaps
+                        Layout.preferredWidth: root.isCaps ? -1 : 50
+                        horizontalAlignment: root.isCaps ? Text.AlignLeft : Text.AlignRight
+                        text: root.text
                     }
                 }
             }

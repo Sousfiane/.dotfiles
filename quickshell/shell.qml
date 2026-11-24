@@ -16,8 +16,12 @@ import qs.modules.hub
 import qs.modules.network
 import qs.modules.screenshot
 import qs.modules.lock
+import qs.services
 
 ShellRoot {
+    // singletons are created on first use: these hold IPC targets (media keys) that must exist from the start
+    readonly property var ipcServices: [Media]
+
     Background {}
     Bar {}
     LauncherPanel {}

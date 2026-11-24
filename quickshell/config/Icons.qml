@@ -28,6 +28,7 @@ Singleton {
     readonly property string volumeOff: glyph(0xEEE8)      // fa-volume_xmark, muted
     readonly property string mic: glyph(0xF036C)
     readonly property string micOff: glyph(0xF036D)
+    readonly property string capsLock: glyph(0xF0632)     // md-apple_keyboard_caps
     readonly property string speaker: glyph(0xF04C3)
     readonly property string chip: glyph(0xF061A)
 
@@ -79,4 +80,5 @@ Singleton {
     readonly property string wifiOff: glyph(0xF05AA)
     readonly property string ethernet: glyph(0xF0200)
     readonly property string ethernetOff: glyph(0xF0202)
+
 }
