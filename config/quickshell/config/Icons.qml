@@ -42,7 +42,6 @@ Singleton {
     readonly property string wallpaper: glyph(0xF02E9)
     readonly property string clipboard: glyph(0xF0147)
     readonly property string screenshot: glyph(0xF0100)
-    readonly property string fullscreenExit: glyph(0xF0294)
 
     // media
     readonly property string music: glyph(0xF075A)

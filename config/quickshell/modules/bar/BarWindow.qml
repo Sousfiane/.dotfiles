@@ -128,7 +128,6 @@ PanelWindow {
             }
             spacing: 18                          // the visible gap: each slot is exactly its glyph's ink
 
-            FullscreenIcon {}
             TrayIcon {}
             DotIcon {}
             UpdatesIcon {}
