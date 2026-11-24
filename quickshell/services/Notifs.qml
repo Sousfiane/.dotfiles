@@ -1,5 +1,6 @@
 pragma Singleton
 import Quickshell
+import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 import QtQuick
@@ -7,59 +8,19 @@ import QtQuick
 Singleton {
     id: root
 
-    // Each notification becomes one entry, shared by the toasts and the history:
-    //   { id, notif, appName, summary, body, image, appIcon, urgency, desktopEntry, time, timeout }
-    // (`timeout`: how long its toast stays, in ms; critical ones stay until clicked)
-    // `notif` is the live Notification while the app still has it open (null once it's gone);
-    // the copied text keeps the entry readable after that.
-    property var history: []      // newest first, what the center shows
-    property var popups: []       // the subset currently shown as toasts
-
-    // What the views use as models: ids, small stable keys for the ScriptModel diff. Delegates look their
-    // entry up with entry(id), which re-runs whenever the history changes, so a card notices when the app
-    // has withdrawn its notification (entry.notif becomes null) instead of holding on to the old object.
-    readonly property var historyIds: history.map(e => e.id)
-    readonly property var popupIds: popups.map(e => e.id)
-
-    property int nextId: 0
-
-    function entry(id) {
-        return history.find(e => e.id === id) ?? null;
-    }
-
-    // what a toast or a history card shows: the live notification's text while the app still has it
-    // open (it may update it), the copy kept in the entry after that
-    function view(id) {
-        const e = entry(id);
-        const n = e?.notif ?? null;
-        return {
-            live: n,
-            appName: n?.appName ?? e?.appName ?? "",
-            summary: n?.summary ?? e?.summary ?? "",
-            body: n?.body ?? e?.body ?? "",
-            // sent with it: cover art, screenshot, avatar... A saved copy wins over the live one (see saveImage)
-            image: e?.image.startsWith("file://") ? e.image : n?.image ?? e?.image ?? "",
-            icon: iconSource(n?.appIcon ?? e?.appIcon ?? ""),
-            urgency: n?.urgency ?? e?.urgency ?? 0,
-            time: e?.time ?? "",
-            timeout: e?.timeout ?? 5000
-        };
-    }
-
-    // app icon: either an icon name or an absolute path
-    function iconSource(icon) {
-        if (icon === "")
-            return "";
-        return icon.startsWith("/") ? "file://" + icon : Quickshell.iconPath(icon, true);
-    }
+    // Every notification is a Notif (see Notif.qml), shared by the toasts and the center. The views take
+    // these lists as models: a ScriptModel diffs them by object, so a change touches one card only.
+    property var history: []      // Notif objects, newest first, what the center shows
+    readonly property var popups: history.filter(n => n.popup)
 
     readonly property int maxHistory: 50
+    property int nextId: 0
 
     property bool dnd: false
     // everything up to this id has been seen (the center was open when it came, or opened since).
     // Derived from the history, so a notification removed from a toast or the center leaves the count too
     property int seenUpTo: -1
-    readonly property int unread: history.filter(e => e.id > seenUpTo).length
+    readonly property int unread: history.filter(n => n.id > seenUpTo).length
 
     readonly property bool open: Panels.isOpen("notifs")
 
@@ -76,63 +37,47 @@ Singleton {
 
     // ---------- list bookkeeping ----------
 
-    function without(list, id) {
-        return list.filter(e => e.id !== id);
-    }
-
-    function hidePopup(id) {
-        popups = without(popups, id);
-    }
-
-    // drops the entry everywhere and lets the app know it was dismissed
-    function remove(id) {
-        const e = entry(id);
-        history = without(history, id);
-        popups = without(popups, id);
-        const n = e?.notif;
-        if (e)
-            e.notif = null;
-        if (n)
-            n.dismiss();
+    // drops it everywhere and lets the app know it was dismissed
+    function remove(n: Notif) {
+        if (!history.includes(n))
+            return;
+        history = history.filter(x => x !== n);
+        n.notification?.dismiss();
+        dropImage(n.savedImage);
+        // a toast or card may still be sliding out with it
+        n.destroy(1000);
     }
 
     function clearHistory() {
-        for (const e of history.slice())
-            remove(e.id);
+        for (const n of history.slice())
+            remove(n);
     }
 
-    // the app closed it, or it was dismissed: keep the text, forget the object
-    function released(n) {
-        const e = history.find(x => x.notif === n);
-        if (!e)
-            return;
-        e.notif = null;
-        popups = without(popups, e.id);
+    // its toast's time is up: the app may have asked not to be kept around
+    function expire(n: Notif) {
+        if (n.fleeting)
+            remove(n);
+        else
+            n.popup = false;
     }
 
     // ---------- going to the app ----------
 
     // the notification's own "default" action: the app opens the right tab or conversation itself
-    function invokeDefault(n) {
-        if (!n)
-            return false;
-        for (let i = 0; i < n.actions.length; i++) {
-            if (n.actions[i].identifier === "default") {
-                n.actions[i].invoke();
-                return true;
-            }
-        }
-        return false;
+    function invokeDefault(live) {
+        const action = live?.actions.find(a => a.identifier === "default");
+        action?.invoke();
+        return !!action;
     }
 
-    function desktopEntryFor(entry) {
-        const id = (entry.desktopEntry || "").replace(/\.desktop$/, "");
-        return (id !== "" ? DesktopEntries.byId(id) : null) ?? (entry.appName !== "" ? DesktopEntries.heuristicLookup(entry.appName) : null);
+    function desktopEntryFor(n) {
+        const id = n.desktopEntry.replace(/\.desktop$/, "");
+        return (id !== "" ? DesktopEntries.byId(id) : null) ?? (n.appName !== "" ? DesktopEntries.heuristicLookup(n.appName) : null);
     }
 
     // every name the app's windows could go by, lowercased
-    function namesFor(entry, desktop) {
-        const names = [entry.desktopEntry.replace(/\.desktop$/, ""), entry.appName, desktop?.id ?? "", desktop?.startupClass ?? ""];
+    function namesFor(n, desktop) {
+        const names = [n.desktopEntry.replace(/\.desktop$/, ""), n.appName, desktop?.id ?? "", desktop?.startupClass ?? ""];
         return names.map(s => s.toLowerCase()).filter(s => s !== "");
     }
 
@@ -152,14 +97,10 @@ Singleton {
     }
 
     // a click on a toast or a history entry
-    function activate(id) {
-        const entry = root.entry(id);
-        if (!entry)
-            return;
-
-        const invoked = invokeDefault(entry.notif);
-        const desktop = desktopEntryFor(entry);
-        const win = windowFor(namesFor(entry, desktop));
+    function activate(n: Notif) {
+        const invoked = invokeDefault(n.notification);
+        const desktop = desktopEntryFor(n);
+        const win = windowFor(namesFor(n, desktop));
 
         Panels.hide("notifs");
 
@@ -168,74 +109,123 @@ Singleton {
         else if (!invoked && desktop)
             Launcher.run(desktop);         // not running: start it
 
-        remove(id);
+        remove(n);
     }
 
-    // ---------- images ----------
+    // ---------- saved images ----------
 
-    // An image sent as raw data (image://qsimage/...: chat avatars and the like) only exists while the app
-    // keeps its notification open, and cards are rebuilt (on scrolling, on reopening the center). So the
-    // first card that shows one saves what it drew to a file, and the entry points to that from then on.
-    // Files are named by entry id: a later run overwrites them, so there are never more than maxHistory.
+    // raw images copied to files (see Notif.setImage), named by time and id so they never clash
     readonly property string imageDir: Quickshell.cachePath("notif-images")
 
-    Component.onCompleted: Quickshell.execDetached(["mkdir", "-p", imageDir])
+    function dropImage(path: string) {
+        if (path.startsWith(imageDir + "/"))
+            Quickshell.execDetached(["rm", "-f", path]);
+    }
 
-    // `item`: the card's loaded picture, drawn at 128px (the size AppIcon decodes at)
-    function saveImage(id, item) {
-        const e = entry(id);
-        if (!e || !e.image.startsWith("image://qsimage/") || e.saving)
+    // ---------- the history on disk ----------
+
+    // so a restart or a config reload doesn't lose it. Live notifications aren't carried over
+    // (keepOnReload is off): what comes back is the copy, still readable and clickable to go to the app.
+    FileView {
+        id: store
+        path: Quickshell.statePath("notifs.json")
+        blockLoading: true
+        printErrors: false
+    }
+
+    readonly property var savedFields: ["id", "appName", "appIcon", "desktopEntry", "summary", "body", "image", "savedImage", "urgency", "time"]
+
+    function save() {
+        const entries = history.filter(n => !n.fleeting).map(n => {
+            const e = {};
+            for (const f of savedFields)
+                e[f] = n[f];
+            // a raw image that isn't saved yet won't exist after a restart
+            if (e.image.startsWith("image://qsimage/"))
+                e.image = "";
+            return e;
+        });
+        store.setText(JSON.stringify({
+            nextId,
+            seenUpTo,
+            history: entries
+        }));
+    }
+
+    // written once per event loop turn, whatever changed in it
+    property bool saveQueued: false
+    function queueSave() {
+        if (saveQueued)
             return;
-        e.saving = true;
-        item.grabToImage(result => {
-            const path = `${imageDir}/${id}.png`;
-            if (!result.saveToFile(path) || !entry(id))
-                return;
-            // ids restart after a reload while Qt's image cache may not, so the URL gets a unique stamp:
-            // a reused file name never shows the previous sender's avatar
-            e.image = `file://${path}?${Date.now()}`;
-            history = history.slice();      // let the views pick up the new source
-        }, Qt.size(128, 128));
+        saveQueued = true;
+        Qt.callLater(() => {
+            saveQueued = false;
+            save();
+        });
+    }
+
+    onHistoryChanged: queueSave()
+    onSeenUpToChanged: queueSave()
+
+    Component {
+        id: notifComp
+        Notif {
+            id: made
+            // edits made after it came (a player's next track, an image saved to a file) are kept too
+            onSummaryChanged: root.queueSave()
+            onBodyChanged: root.queueSave()
+            onImageChanged: root.queueSave()
+            onExpired: root.expire(made)
+        }
+    }
+
+    Component.onCompleted: {
+        Quickshell.execDetached(["mkdir", "-p", imageDir]);
+        try {
+            const data = JSON.parse(store.text() || "{}");
+            const restored = (data.history ?? []).map(e => notifComp.createObject(root, e));
+            history = restored.slice(0, maxHistory);
+            nextId = Math.max(data.nextId ?? 0, ...restored.map(n => n.id + 1));
+            seenUpTo = data.seenUpTo ?? nextId - 1;
+        } catch (e) {
+            console.warn("Could not load the notification history:", e);
+        }
     }
 
     // ---------- the server ----------
 
     NotificationServer {
         id: server
+        keepOnReload: false
+        persistenceSupported: true
         actionsSupported: true
         bodyMarkupSupported: true
         imageSupported: true
 
-        onNotification: n => {
-            // kept alive for as long as it is in the history, so it stays clickable
-            n.tracked = true;
-            n.closed.connect(() => root.released(n));
+        onNotification: live => {
+            // kept alive while it is in the history, so it stays clickable
+            live.tracked = true;
 
-            const entry = {
-                id: root.nextId++,
-                notif: n,
-                appName: n.appName,
-                summary: n.summary,
-                body: n.body,
-                image: n.image,
-                appIcon: n.appIcon,
-                urgency: n.urgency,
-                desktopEntry: n.desktopEntry,
-                time: Qt.formatDateTime(new Date(), "HH:mm"),
-                timeout: n.expireTimeout > 0 ? n.expireTimeout : 5000      // already in ms
-            };
+            const n = notifComp.createObject(root, {
+                id: root.nextId++
+            });
+            n.follow(live);
+            // the app closed it, or it was dismissed: the copy stays, its toast goes
+            live.closed.connect(() => {
+                n.notification = null;
+                n.popup = false;
+            });
 
-            const next = [entry].concat(root.history);
+            const next = [n].concat(root.history);
             for (const old of next.splice(root.maxHistory))
-                root.remove(old.id);
+                root.remove(old);
             root.history = next;
 
             if (root.open)
-                root.seenUpTo = entry.id;
+                root.seenUpTo = n.id;
 
             // Do Not Disturb: still recorded in history, but only critical ones pop up
-            if (!root.dnd || n.urgency === NotificationUrgency.Critical)
-                root.popups = [entry].concat(root.popups);
+            n.popup = !root.dnd || n.critical;
         }
     }
 }

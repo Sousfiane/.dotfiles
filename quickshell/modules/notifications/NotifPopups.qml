@@ -1,7 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
-import Quickshell.Services.Notifications
 import QtQuick
 import QtQuick.Layouts
 import qs.config
@@ -49,7 +48,7 @@ PanelWindow {
         spacing: 8
 
         model: ScriptModel {
-            values: Notifs.popupIds
+            values: Notifs.popups
         }
 
         // new toasts slide in from the screen edge, gone ones slide back out to it,
@@ -90,38 +89,26 @@ PanelWindow {
 
         delegate: Rectangle {
             id: card
-            required property var modelData   // the entry's id (see Notifs)
+            required property Notif modelData
+            readonly property Notif notif: modelData
 
-            property var note: Notifs.view(modelData)
-
-            // freeze what it shows while it slides out: the entry may already be gone from Notifs
-            ListView.onRemove: note = note
-
-            readonly property string imageSource: note.image
-            readonly property string iconSource: note.icon
-
-            readonly property bool hasPicture: imageSource !== "" || iconSource !== ""
-            readonly property bool critical: note.urgency === NotificationUrgency.Critical
+            readonly property bool isImage: notif.image !== ""
+            readonly property bool hasPicture: isImage || notif.iconSource !== ""
 
             width: ListView.view.width
             implicitHeight: content.implicitHeight + 24
             radius: Theme.radius
             color: Theme.bg
             border.width: 2
-            border.color: critical ? Theme.urgent : Theme.border
+            border.color: notif.critical ? Theme.urgent : Theme.border
 
-            // hides the toast only; the notification stays in the center
-            Timer {
-                running: !card.critical
-                interval: card.note.timeout
-                onTriggered: Notifs.hidePopup(card.modelData)
-            }
-
-            // click: go to the app that sent it
+            // click: go to the app that sent it. Its time is paused while the pointer is on it
             MouseArea {
                 anchors.fill: parent
+                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Notifs.activate(card.modelData)
+                onContainsMouseChanged: card.notif.hovered = containsMouse
+                onClicked: Notifs.activate(card.notif)
             }
 
             RowLayout {
@@ -138,19 +125,15 @@ PanelWindow {
                 ClippingRectangle {
                     visible: card.hasPicture
                     Layout.alignment: Qt.AlignTop
-                    Layout.preferredWidth: card.imageSource !== "" ? 64 : 40
-                    Layout.preferredHeight: card.imageSource !== "" ? 64 : 40
-                    radius: card.imageSource !== "" ? Theme.radius : 0
+                    Layout.preferredWidth: card.isImage ? 64 : 40
+                    Layout.preferredHeight: card.isImage ? 64 : 40
+                    radius: card.isImage ? Theme.radius : 0
                     color: "transparent"
 
                     AppIcon {
-                        id: pic
                         anchors.fill: parent
-                        source: card.imageSource !== "" ? card.imageSource : card.iconSource
-                        fillMode: card.imageSource !== "" ? Image.PreserveAspectCrop : Image.PreserveAspectFit
-                        // keep a copy of a raw image, for the center (see Notifs.saveImage)
-                        onStatusChanged: if (status === Image.Ready && card.imageSource !== "")
-                            Notifs.saveImage(card.modelData, pic)
+                        source: card.isImage ? card.notif.image : card.notif.iconSource
+                        fillMode: card.isImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
                     }
                 }
 
@@ -162,22 +145,22 @@ PanelWindow {
                     Txt {
                         Layout.fillWidth: true
                         variant: "dim"
-                        text: card.note.appName
+                        text: card.notif.appName
                         elide: Text.ElideRight
                     }
 
                     Txt {
                         Layout.fillWidth: true
                         font.bold: true
-                        text: card.note.summary
+                        text: card.notif.summary
                         wrapMode: Text.Wrap
                     }
 
                     Txt {
                         Layout.fillWidth: true
-                        visible: card.note.body !== ""
+                        visible: card.notif.body !== ""
                         variant: "row"
-                        text: card.note.body
+                        text: card.notif.body
                         wrapMode: Text.Wrap
                     }
                 }

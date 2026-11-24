@@ -1,6 +1,5 @@
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Services.Notifications
 import QtQuick
 import QtQuick.Layouts
 import qs.config
@@ -21,20 +20,20 @@ DropdownPanel {
 
         Selection {
             id: nav
-            count: Notifs.historyIds.length
+            count: Notifs.history.length
             view: list
         }
-        readonly property var selId: Notifs.historyIds[nav.index] ?? null
+        readonly property Notif selected: Notifs.history[nav.index] ?? null
 
         // the same slide-out as the × and the swipe; the next card takes the selection
         function dismissSelected() {
-            if (selId === null)
+            if (!selected)
                 return;
             const card = list.itemAtIndex(nav.index);
             if (card)
                 card.dismiss();
             else
-                Notifs.remove(selId);
+                Notifs.remove(selected);
         }
 
         Keys.onPressed: event => {
@@ -54,8 +53,8 @@ DropdownPanel {
             case Qt.Key_Enter:
             case Qt.Key_Space:
             case Qt.Key_L:
-                if (selId !== null)
-                    Notifs.activate(selId);
+                if (selected)
+                    Notifs.activate(selected);
                 break;
             case Qt.Key_D:
             case Qt.Key_X:
@@ -109,7 +108,7 @@ DropdownPanel {
             spacing: 8
             // diffed: a new notification adds one card instead of rebuilding them all
             model: ScriptModel {
-                values: Notifs.historyIds
+                values: Notifs.history
             }
 
             // a new card fades in while the others make room for it
@@ -132,12 +131,12 @@ DropdownPanel {
             // the delegate holds the card in place; the card itself slides right when dismissed
             delegate: Item {
                 id: item
-                required property var modelData      // the entry's id
+                required property Notif modelData
                 required property int index
 
                 readonly property bool selected: index === nav.index
 
-                readonly property var note: Notifs.view(modelData)
+                readonly property Notif notif: modelData
 
                 // dragged past this far, a released card goes; short of it, it springs back
                 readonly property real dismissAt: width * 0.3
@@ -162,7 +161,7 @@ DropdownPanel {
                     to: item.width
                     duration: Motion.out
                     curve: Motion.exit
-                    onFinished: Notifs.remove(item.modelData)
+                    onFinished: Notifs.remove(item.notif)
                 }
 
                 Anim {
@@ -180,7 +179,7 @@ DropdownPanel {
                     radius: Theme.radius
                     color: Theme.surface
                     border.width: 1
-                    border.color: item.note.urgency === NotificationUrgency.Critical ? Theme.urgent : item.selected || cardMouse.containsMouse ? Theme.accent : Theme.accentClear
+                    border.color: item.notif.critical ? Theme.urgent : item.selected || cardMouse.containsMouse ? Theme.accent : Theme.accentClear
                     Behavior on border.color {
                         CAnim {}
                     }
@@ -220,7 +219,7 @@ DropdownPanel {
                         // a drag that ends is not a click
                         onClicked: {
                             if (!swiped)
-                                Notifs.activate(item.modelData);
+                                Notifs.activate(item.notif);
                         }
                     }
 
@@ -235,11 +234,11 @@ DropdownPanel {
                         spacing: 10
 
                         // same as the toast: a real image gets a larger rounded thumbnail, a plain app icon stays small.
-                        // Hidden if it no longer loads (some images only live as long as the app's notification)
+                        // Hidden if it doesn't load (a file gone since, an image never saved)
                         ClippingRectangle {
                             id: thumb
-                            readonly property bool isImage: item.note.image !== ""
-                            visible: (isImage || item.note.icon !== "") && pic.status !== Image.Error
+                            readonly property bool isImage: item.notif.image !== ""
+                            visible: (isImage || item.notif.iconSource !== "") && pic.status !== Image.Error
                             Layout.alignment: Qt.AlignTop
                             Layout.topMargin: 2
                             Layout.preferredWidth: isImage ? 56 : 32
@@ -250,10 +249,8 @@ DropdownPanel {
                             AppIcon {
                                 id: pic
                                 anchors.fill: parent
-                                source: thumb.isImage ? item.note.image : item.note.icon
+                                source: thumb.isImage ? item.notif.image : item.notif.iconSource
                                 fillMode: thumb.isImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
-                                onStatusChanged: if (status === Image.Ready && thumb.isImage)
-                                    Notifs.saveImage(item.modelData, pic)
                             }
                         }
 
@@ -269,13 +266,13 @@ DropdownPanel {
                                 Txt {
                                     Layout.fillWidth: true
                                     variant: "dim"
-                                    text: item.note.appName
+                                    text: item.notif.appName
                                     elide: Text.ElideRight
                                 }
 
                                 Txt {
                                     variant: "dim"
-                                    text: item.note.time
+                                    text: item.notif.timeText
                                 }
 
                                 IconButton {
@@ -289,16 +286,16 @@ DropdownPanel {
 
                             Txt {
                                 Layout.fillWidth: true
-                                text: item.note.summary
+                                text: item.notif.summary
                                 wrapMode: Text.Wrap
                                 font.bold: true
                             }
 
                             Txt {
                                 Layout.fillWidth: true
-                                visible: item.note.body !== ""
+                                visible: item.notif.body !== ""
                                 variant: "row"
-                                text: item.note.body
+                                text: item.notif.body
                                 wrapMode: Text.Wrap
                                 maximumLineCount: 4
                                 elide: Text.ElideRight
