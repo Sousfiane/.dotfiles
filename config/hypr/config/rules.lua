@@ -100,3 +100,10 @@ hl.layer_rule({
 	match = { class = "hyprshot" },
 	no_anim = true,
 })
+
+hl.window_rule({
+	-- hyprbars has no inactive title color: titles are subtle (plugins.lua), the focused one gets Theme.text
+	name = "titlebar-focused-text",
+	match = { focus = true },
+	["hyprbars:title_color"] = "rgb(e0def4)",
+})

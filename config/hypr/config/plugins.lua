@@ -18,7 +18,7 @@ if hl.plugin.hyprbars ~= nil then
 				bar_color = "rgba(191724cc)", -- same as kitty: background #191724, background_opacity 0.8
 				-- blur the bar ourselves: without it, the blurred background shows through as blocky garbage
 				bar_blur = true,
-				col = { text = "rgb(908caa)" }, -- rose pine subtle: chrome should sit back from the content
+				col = { text = "rgb(908caa)" }, -- rose pine subtle; the focused window gets Theme.text (rules.lua)
 				bar_text_font = "JetBrainsMonoNL NF", -- same as kitty
 				bar_text_size = 12,
 				bar_text_weight = "semibold",

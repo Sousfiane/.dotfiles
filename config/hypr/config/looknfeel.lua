@@ -4,8 +4,9 @@ hl.config({
 		gaps_in = 4,
 		gaps_out = 8,
 
-		border_size = 2,
-		col = { active_border = "rgba(c4a7e7e6)", inactive_border = "rgba(6e6a86b3)" },
+		-- no borders: the hyprbars title bar shows focus (grey dots and a dim title when unfocused)
+		border_size = 0,
+		col = { active_border = "rgb(6e6a86)", inactive_border = "rgb(6e6a86)" },
 
 		layout = "scrolling",
 

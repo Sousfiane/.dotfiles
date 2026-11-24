@@ -26,7 +26,7 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
         text: root.target?.title ?? ""
-        color: Theme.subtle
+        color: Theme.text
         font.family: "JetBrainsMonoNL NF"
         font.pixelSize: 12             // hyprbars bar_text_size is in pixels
         font.weight: Font.DemiBold     // bar_text_weight = "semibold"
