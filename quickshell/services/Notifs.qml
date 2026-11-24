@@ -8,7 +8,7 @@ Singleton {
     id: root
 
     // Each notification becomes one entry, shared by the toasts and the history:
-    //   { id, notif, appName, summary, body, urgency, desktopEntry, time, timeout }
+    //   { id, notif, appName, summary, body, image, appIcon, urgency, desktopEntry, time, timeout }
     // (`timeout`: how long its toast stays, in ms; critical ones stay until clicked)
     // `notif` is the live Notification while the app still has it open (null once it's gone);
     // the copied text keeps the entry readable after that.
@@ -37,10 +37,20 @@ Singleton {
             appName: n?.appName ?? e?.appName ?? "",
             summary: n?.summary ?? e?.summary ?? "",
             body: n?.body ?? e?.body ?? "",
+            // sent with it: cover art, screenshot, avatar... A saved copy wins over the live one (see saveImage)
+            image: e?.image.startsWith("file://") ? e.image : n?.image ?? e?.image ?? "",
+            icon: iconSource(n?.appIcon ?? e?.appIcon ?? ""),
             urgency: n?.urgency ?? e?.urgency ?? 0,
             time: e?.time ?? "",
             timeout: e?.timeout ?? 5000
         };
+    }
+
+    // app icon: either an icon name or an absolute path
+    function iconSource(icon) {
+        if (icon === "")
+            return "";
+        return icon.startsWith("/") ? "file://" + icon : Quickshell.iconPath(icon, true);
     }
 
     readonly property int maxHistory: 50
@@ -161,6 +171,33 @@ Singleton {
         remove(id);
     }
 
+    // ---------- images ----------
+
+    // An image sent as raw data (image://qsimage/...: chat avatars and the like) only exists while the app
+    // keeps its notification open, and cards are rebuilt (on scrolling, on reopening the center). So the
+    // first card that shows one saves what it drew to a file, and the entry points to that from then on.
+    // Files are named by entry id: a later run overwrites them, so there are never more than maxHistory.
+    readonly property string imageDir: Quickshell.cachePath("notif-images")
+
+    Component.onCompleted: Quickshell.execDetached(["mkdir", "-p", imageDir])
+
+    // `item`: the card's loaded picture, drawn at 128px (the size AppIcon decodes at)
+    function saveImage(id, item) {
+        const e = entry(id);
+        if (!e || !e.image.startsWith("image://qsimage/") || e.saving)
+            return;
+        e.saving = true;
+        item.grabToImage(result => {
+            const path = `${imageDir}/${id}.png`;
+            if (!result.saveToFile(path) || !entry(id))
+                return;
+            // ids restart after a reload while Qt's image cache may not, so the URL gets a unique stamp:
+            // a reused file name never shows the previous sender's avatar
+            e.image = `file://${path}?${Date.now()}`;
+            history = history.slice();      // let the views pick up the new source
+        }, Qt.size(128, 128));
+    }
+
     // ---------- the server ----------
 
     NotificationServer {
@@ -180,6 +217,8 @@ Singleton {
                 appName: n.appName,
                 summary: n.summary,
                 body: n.body,
+                image: n.image,
+                appIcon: n.appIcon,
                 urgency: n.urgency,
                 desktopEntry: n.desktopEntry,
                 time: Qt.formatDateTime(new Date(), "HH:mm"),

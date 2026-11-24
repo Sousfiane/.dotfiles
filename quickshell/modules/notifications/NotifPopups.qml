@@ -94,23 +94,11 @@ PanelWindow {
 
             property var note: Notifs.view(modelData)
 
-            // image sent with the notification (cover art, screenshot, avatar...)
-            property string imageSource: note.live?.image ?? ""
-
-            // app icon: either an icon name or an absolute path
-            property string iconSource: {
-                const icon = note.live?.appIcon ?? "";
-                if (icon === "")
-                    return "";
-                return icon.startsWith("/") ? "file://" + icon : Quickshell.iconPath(icon, true);
-            }
-
             // freeze what it shows while it slides out: the entry may already be gone from Notifs
-            ListView.onRemove: {
-                note = note;
-                imageSource = imageSource;
-                iconSource = iconSource;
-            }
+            ListView.onRemove: note = note
+
+            readonly property string imageSource: note.image
+            readonly property string iconSource: note.icon
 
             readonly property bool hasPicture: imageSource !== "" || iconSource !== ""
             readonly property bool critical: note.urgency === NotificationUrgency.Critical
@@ -156,9 +144,13 @@ PanelWindow {
                     color: "transparent"
 
                     AppIcon {
+                        id: pic
                         anchors.fill: parent
                         source: card.imageSource !== "" ? card.imageSource : card.iconSource
                         fillMode: card.imageSource !== "" ? Image.PreserveAspectCrop : Image.PreserveAspectFit
+                        // keep a copy of a raw image, for the center (see Notifs.saveImage)
+                        onStatusChanged: if (status === Image.Ready && card.imageSource !== "")
+                            Notifs.saveImage(card.modelData, pic)
                     }
                 }
 

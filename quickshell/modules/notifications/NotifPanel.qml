@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Widgets
 import Quickshell.Services.Notifications
 import QtQuick
 import QtQuick.Layouts
@@ -223,7 +224,7 @@ DropdownPanel {
                         }
                     }
 
-                    ColumnLayout {
+                    RowLayout {
                         id: itemCol
                         anchors {
                             left: parent.left
@@ -231,48 +232,77 @@ DropdownPanel {
                             top: parent.top
                             margins: 10
                         }
-                        spacing: 2
+                        spacing: 10
 
-                        RowLayout {
+                        // same as the toast: a real image gets a larger rounded thumbnail, a plain app icon stays small.
+                        // Hidden if it no longer loads (some images only live as long as the app's notification)
+                        ClippingRectangle {
+                            id: thumb
+                            readonly property bool isImage: item.note.image !== ""
+                            visible: (isImage || item.note.icon !== "") && pic.status !== Image.Error
+                            Layout.alignment: Qt.AlignTop
+                            Layout.topMargin: 2
+                            Layout.preferredWidth: isImage ? 56 : 32
+                            Layout.preferredHeight: isImage ? 56 : 32
+                            radius: isImage ? Theme.radius : 0
+                            color: "transparent"
+
+                            AppIcon {
+                                id: pic
+                                anchors.fill: parent
+                                source: thumb.isImage ? item.note.image : item.note.icon
+                                fillMode: thumb.isImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
+                                onStatusChanged: if (status === Image.Ready && thumb.isImage)
+                                    Notifs.saveImage(item.modelData, pic)
+                            }
+                        }
+
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            spacing: 8
+                            Layout.alignment: Qt.AlignTop
+                            spacing: 2
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 8
+
+                                Txt {
+                                    Layout.fillWidth: true
+                                    variant: "dim"
+                                    text: item.note.appName
+                                    elide: Text.ElideRight
+                                }
+
+                                Txt {
+                                    variant: "dim"
+                                    text: item.note.time
+                                }
+
+                                IconButton {
+                                    flat: true
+                                    icon: "×"
+                                    size: Theme.fontSize + 2
+                                    color: Theme.dim
+                                    onClicked: item.dismiss()      // ignored while already leaving
+                                }
+                            }
 
                             Txt {
                                 Layout.fillWidth: true
-                                variant: "dim"
-                                text: item.note.appName
-                                elide: Text.ElideRight
+                                text: item.note.summary
+                                wrapMode: Text.Wrap
+                                font.bold: true
                             }
 
                             Txt {
-                                variant: "dim"
-                                text: item.note.time
+                                Layout.fillWidth: true
+                                visible: item.note.body !== ""
+                                variant: "row"
+                                text: item.note.body
+                                wrapMode: Text.Wrap
+                                maximumLineCount: 4
+                                elide: Text.ElideRight
                             }
-
-                            IconButton {
-                                flat: true
-                                icon: "×"
-                                size: Theme.fontSize + 2
-                                color: Theme.dim
-                                onClicked: item.dismiss()      // ignored while already leaving
-                            }
-                        }
-
-                        Txt {
-                            Layout.fillWidth: true
-                            text: item.note.summary
-                            wrapMode: Text.Wrap
-                            font.bold: true
-                        }
-
-                        Txt {
-                            Layout.fillWidth: true
-                            visible: item.note.body !== ""
-                            variant: "row"
-                            text: item.note.body
-                            wrapMode: Text.Wrap
-                            maximumLineCount: 4
-                            elide: Text.ElideRight
                         }
                     }
                 }
