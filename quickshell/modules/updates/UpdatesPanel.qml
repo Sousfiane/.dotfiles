@@ -43,7 +43,7 @@ DropdownPanel {
             icon: Icons.update
             iconColor: Updates.failed ? Theme.urgent : Updates.count > 0 ? Theme.accent : Theme.dim
             title: "Updates"
-            subtitle: Updates.failed ? "Could not check for updates" : (Updates.checking && Updates.count === 0) ? "Checking…" : Updates.count === 0 ? "System is up to date" : Fmt.plural(Updates.count, "update") + " available"
+            subtitle: Updates.updating ? "Updating in the terminal…" : Updates.failed ? "Could not check for updates" : (Updates.checking && Updates.count === 0) ? "Checking…" : Updates.count === 0 ? "System is up to date" : Fmt.plural(Updates.count, "update") + " available" + (Updates.aurCount > 0 ? `  •  ${Updates.aurCount} from the AUR` : "")
             subtitleColor: Updates.failed ? Theme.urgent : Theme.dim
 
             Pill {
@@ -53,7 +53,7 @@ DropdownPanel {
             }
 
             Pill {
-                visible: Updates.count > 0
+                visible: Updates.count > 0 && !Updates.updating
                 text: "Update"
                 primary: true
                 onClicked: Updates.runUpdate()
@@ -76,6 +76,13 @@ DropdownPanel {
                     variant: "row"
                     text: row.modelData.name
                     elide: Text.ElideRight
+                }
+
+                Txt {
+                    visible: row.modelData.aur
+                    variant: "small"
+                    color: Theme.gold
+                    text: "AUR"
                 }
 
                 Txt {
