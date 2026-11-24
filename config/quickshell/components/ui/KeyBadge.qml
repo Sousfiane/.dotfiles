@@ -7,7 +7,7 @@ Rectangle {
 
     implicitWidth: 22
     implicitHeight: 22
-    radius: 6
+    radius: Theme.radius
     color: Theme.surface
     border.width: 1
     border.color: Theme.border

@@ -256,7 +256,7 @@ DropdownPanel {
                 Rectangle {
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
-                    radius: 3
+                    radius: Theme.radiusSmall
                     color: "transparent"
                     border.width: 1
                     border.color: row.file?.staged ? Theme.foam : Theme.line

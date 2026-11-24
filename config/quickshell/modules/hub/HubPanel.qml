@@ -242,7 +242,7 @@ DropdownPanel {
 
                     width: 42
                     height: 30
-                    radius: 8
+                    radius: Theme.radius
                     color: isToday ? Theme.accent : dayMouse.containsMouse ? Theme.surface : Theme.surfaceClear
                     border.width: 1
                     border.color: isSelected && !isToday ? Theme.accent : Theme.accentClear

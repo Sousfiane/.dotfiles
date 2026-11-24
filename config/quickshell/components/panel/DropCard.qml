@@ -14,7 +14,7 @@ Item {
 
     property color color: Theme.bg           // same as the bar
     property color lineColor: Theme.line     // 1px outline
-    property real radius: Theme.radius + 6   // rounded bottom corners
+    property real radius: Theme.radiusLarge   // rounded bottom corners
     property real flare: 14                  // size of the concave corners at the bar
 
     // children declared inside a DropCard land in the card, on top of the shape

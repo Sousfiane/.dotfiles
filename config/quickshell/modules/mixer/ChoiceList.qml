@@ -33,7 +33,7 @@ ColumnLayout {
 
             Layout.fillWidth: true
             implicitHeight: 26
-            radius: 6
+            radius: Theme.radius
             color: highlighted ? Theme.accent : Theme.bgSolid
             Behavior on color {
                 CAnim {}

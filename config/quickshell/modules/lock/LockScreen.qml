@@ -193,7 +193,7 @@ Scope {
                             Layout.alignment: Qt.AlignHCenter
                             implicitWidth: 320
                             implicitHeight: 52
-                            radius: Theme.radius * 2
+                            radius: Theme.radiusLarge
                             color: Theme.bg
                             border.width: 2
                             border.color: root.message !== "" ? Theme.urgent : root.busy ? Theme.gold : input.activeFocus ? Theme.accent : Theme.highlightMed

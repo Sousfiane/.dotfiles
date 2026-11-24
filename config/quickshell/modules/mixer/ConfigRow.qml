@@ -52,7 +52,7 @@ SelectableCard {
         Rectangle {
             Layout.fillWidth: true
             implicitHeight: 28
-            radius: 8
+            radius: Theme.radius
             color: root.choosing ? Theme.accent : Theme.surface
             border.width: 1
             border.color: Theme.border

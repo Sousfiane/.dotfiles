@@ -14,7 +14,7 @@ hl.config({
 	},
 
 	decoration = {
-		rounding = 6,
+		rounding = 6, -- keep in sync with Theme.radius (quickshell/config/Theme.qml)
 		rounding_power = 2,
 
 		active_opacity = 1.0,

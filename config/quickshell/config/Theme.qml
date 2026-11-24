@@ -48,6 +48,10 @@ Singleton {
 
     readonly property string font: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
+    // corner radii; keep radius in sync with decoration.rounding (hypr/config/looknfeel.lua)
+    // and radiusLarge/radius with rounding_large/rounding_small (hypr/hyprtoolkit.conf)
+    readonly property int radiusSmall: 3
     readonly property int radius: 6
+    readonly property int radiusLarge: 12
     readonly property int barHeight: 32
 }
