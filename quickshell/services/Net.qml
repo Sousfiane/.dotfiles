@@ -88,27 +88,108 @@ Singleton {
         }
     }
 
-    // ---------- IP address (nmcli, optional) ----------
+    // ---------- the active connection's details (nmcli) ----------
 
-    property string ip: ""
+    property string ip: ""                // in the header
+    property var details: []              // [{ label, value }], the panel's details section
+    property bool detailsShown: false
 
-    function refreshIp() {
-        ipProc.running = false;
-        if (activeDevice)
-            ipProc.running = true;
-        else
+    function refreshDetails() {
+        infoProc.running = false;
+        if (activeDevice) {
+            infoProc.running = true;
+        } else {
             ip = "";
+            details = [];
+        }
     }
 
-    onActiveDeviceChanged: refreshIp()
+    onActiveDeviceChanged: refreshDetails()
+
+    // `nmcli -t` lines are "KEY:value" (or "KEY[n]:value" for lists); values can contain ":" themselves
+    function parseInfo(text) {
+        const kv = {};
+        for (const line of text.split("\n")) {
+            const i = line.indexOf(":");
+            if (i < 0)
+                continue;
+            const key = line.slice(0, i).replace(/\[\d+\]$/, "");
+            const value = line.slice(i + 1).trim();
+            if (value !== "" && value !== "--")
+                (kv[key] = kv[key] ?? []).push(value);
+        }
+        const one = k => kv[k]?.[0] ?? "";
+        const all = k => kv[k] ?? [];
+
+        ip = one("IP4.ADDRESS");
+
+        const method = {
+            auto: "DHCP",
+            manual: "static",
+            "link-local": "link-local"
+        }[one("ipv4.method")];
+        const speed = one("CAPABILITIES.SPEED");
+
+        details = [
+            {
+                label: "Connection",
+                value: one("GENERAL.CONNECTION")
+            },
+            {
+                label: "Address",
+                value: method ?? ""
+            },
+            {
+                label: "IPv4",
+                value: all("IP4.ADDRESS").join(", ")
+            },
+            {
+                label: "Gateway",
+                value: one("IP4.GATEWAY")
+            },
+            {
+                label: "DNS",
+                value: all("IP4.DNS").concat(all("IP6.DNS")).join(", ")
+            },
+            {
+                label: "IPv6",
+                // the link-local one (fe80::) is always there and says nothing
+                value: all("IP6.ADDRESS").filter(a => !a.startsWith("fe80:")).join(", ")
+            },
+            {
+                label: "Speed",
+                value: /^\d/.test(speed) && !speed.startsWith("0 ") ? speed : ""
+            },
+            {
+                label: "MAC",
+                value: one("GENERAL.HWADDR")
+            },
+            {
+                label: "MTU",
+                value: one("GENERAL.MTU")
+            }
+        ].filter(d => d.value !== "");
+    }
 
     Process {
-        id: ipProc
-        command: ["nmcli", "-g", "IP4.ADDRESS", "device", "show", root.activeDevice ? root.activeDevice.name : ""]
+        id: infoProc
+        // the device's state, then how its connection gets an address (DHCP or static)
+        command: ["sh", "-c", 'nmcli -t -f GENERAL.HWADDR,GENERAL.MTU,GENERAL.CONNECTION,CAPABILITIES.SPEED,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS,IP6.ADDRESS,IP6.DNS device show "$1"; ' + 'con=$(nmcli -g GENERAL.CONNECTION device show "$1"); [ -n "$con" ] && nmcli -t -f ipv4.method connection show "$con"', "sh", root.activeDevice ? root.activeDevice.name : ""]
 
         stdout: StdioCollector {
-            onStreamFinished: root.ip = text.trim().split(/[|\n]/)[0] ?? ""
+            onStreamFinished: root.parseInfo(text)
         }
+    }
+
+    // NetworkManager's own editor, for what the panel doesn't do (static IP, DNS, MTU, VPN...)
+    function editConnections() {
+        Panels.hide("network");
+        Quickshell.execDetached(["uwsm", "app", "--", "nm-connection-editor"]);
+    }
+
+    // a click on a detail copies it
+    function copy(value) {
+        Quickshell.clipboardText = value;
     }
 
     // ---------- the list the panel shows ----------
@@ -187,7 +268,8 @@ Singleton {
             wifiDevice.scannerEnabled = open;
         if (open) {
             wifiExpanded = false;
-            refreshIp();
+            detailsShown = false;
+            refreshDetails();
         }
         rebuild();
     }

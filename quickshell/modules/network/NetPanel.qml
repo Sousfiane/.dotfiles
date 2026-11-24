@@ -58,6 +58,13 @@ DropdownPanel {
             case Qt.Key_E:
                 Net.wifiExpanded = !Net.wifiExpanded;
                 break;
+            case Qt.Key_I:
+                if (Net.activeDevice)
+                    Net.detailsShown = !Net.detailsShown;
+                break;
+            case Qt.Key_C:
+                Net.editConnections();
+                break;
             case Qt.Key_F:
                 if (selRow && selRow.type === "wifi")
                     Net.forget(selRow.net);
@@ -119,6 +126,76 @@ DropdownPanel {
             }
         }
 
+        // ---------- the active connection: details, and NetworkManager's editor for the rest ----------
+        RowLayout {
+            visible: Net.devices.length > 0
+            Layout.fillWidth: true
+            spacing: 8
+
+            Txt {
+                Layout.fillWidth: true
+                variant: "dim"
+                text: Net.activeDevice ? "Connection details" : "Connections"
+            }
+
+            Pill {
+                text: "Edit"
+                onClicked: Net.editConnections()
+            }
+
+            Pill {
+                visible: Net.activeDevice !== null && Net.details.length > 0
+                text: Net.detailsShown ? "Hide" : "Show"
+                active: Net.detailsShown
+                onClicked: Net.detailsShown = !Net.detailsShown
+            }
+        }
+
+        // label / value rows; a click on a value copies it
+        ColumnLayout {
+            visible: Net.detailsShown && Net.activeDevice !== null
+            Layout.fillWidth: true
+            Layout.leftMargin: 4
+            spacing: 4
+
+            Repeater {
+                model: Net.details
+
+                delegate: RowLayout {
+                    id: detail
+                    required property var modelData
+
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    Txt {
+                        Layout.preferredWidth: 80
+                        Layout.alignment: Qt.AlignTop
+                        variant: "dim"
+                        text: detail.modelData.label
+                    }
+
+                    Txt {
+                        Layout.fillWidth: true
+                        text: detail.modelData.value
+                        wrapMode: Text.WrapAnywhere
+                        color: copyArea.containsMouse ? Theme.accent : Theme.fg
+                        Behavior on color {
+                            CAnim {}
+                        }
+
+                        MouseArea {
+                            id: copyArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Net.copy(detail.modelData.value)
+                        }
+                    }
+                }
+            }
+        }
+
         Divider {}
 
         // when wired, the Wi-Fi list stays out of the way until asked for
@@ -165,7 +242,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: Net.kind === "wired" ? "j k select • Enter connect • e Wi-Fi list • w Wi-Fi on/off • Esc close" : "j k select • Enter connect • f forget • s scan • w Wi-Fi on/off • Esc close"
+            text: Net.kind === "wired" ? "j k select • Enter connect • i details • c edit • e Wi-Fi list • w Wi-Fi on/off • Esc close" : "j k select • Enter connect • i details • c edit • f forget • s scan • w Wi-Fi on/off • Esc close"
         }
     }
 }

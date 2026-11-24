@@ -19,6 +19,7 @@ noto-fonts-cjk
 noto-fonts-emoji
 npm
 networkmanager-openvpn
+nm-connection-editor
 nvtop
 nwg-look
 os-prober
