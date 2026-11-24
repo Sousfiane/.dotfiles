@@ -32,6 +32,17 @@ Rectangle {
         font.weight: Font.DemiBold     // bar_text_weight = "semibold"
     }
 
+    // 1px hairline closing the bar + title bar block off from the content, like macOS's title bar separator
+    Rectangle {
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: 1
+        color: Theme.line
+    }
+
     // double-click anywhere on the bar leaves fullscreen, like hyprbars' on_double_click enters it
     MouseArea {
         anchors.fill: parent
