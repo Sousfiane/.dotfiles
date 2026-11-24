@@ -27,6 +27,7 @@ if hl.plugin.hyprbars ~= nil then
 				bar_buttons_alignment = "right",
 				bar_padding = 8,
 				bar_button_padding = 6,
+				-- fullscreen hides this bar: the way back is the button in the quickshell bar (top edge)
 				on_double_click = "hyprctl dispatch 'hl.dsp.window.fullscreen()'",
 			},
 		},
