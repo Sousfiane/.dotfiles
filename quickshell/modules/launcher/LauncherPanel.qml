@@ -79,6 +79,7 @@ DropdownPanel {
                 RowLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 8
+                    anchors.rightMargin: 10
                     spacing: 10
 
                     AppIcon {
@@ -89,6 +90,15 @@ DropdownPanel {
                     Txt {
                         Layout.fillWidth: true
                         text: row.modelData.name
+                        elide: Text.ElideRight
+                    }
+
+                    // for an action, the app it belongs to
+                    Txt {
+                        Layout.maximumWidth: list.width * 0.4
+                        visible: text !== ""
+                        variant: "dim"
+                        text: row.modelData.detail ?? ""
                         elide: Text.ElideRight
                     }
                 }
