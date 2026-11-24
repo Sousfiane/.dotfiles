@@ -6,7 +6,8 @@ source_if_exists () {
     fi
 }
 
-source_if_exists $HOME/.env.sh
+# the repo: always here (install/install.sh refuses to run from anywhere else)
+export DOTFILES="$HOME/.dotfiles"
 
 export FZF_DEFAULT_OPTS="
 	--color=fg:#908caa,bg:#191724,hl:#ebbcba

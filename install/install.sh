@@ -66,6 +66,7 @@ if [[ ${1:-} == "check" ]]; then
 fi
 
 [[ $EUID -eq 0 ]] && fail "Run this as your user, not as root: sudo is asked for when needed."
+[[ $DOTFILES == "$HOME/.dotfiles" ]] || fail "The repo must be at ~/.dotfiles (it's at $DOTFILES): configs and scripts refer to it there."
 
 # what to run: the steps asked for, or all of them. Checked before anything runs.
 selected=("$@")

@@ -3,8 +3,8 @@
 
 set -euo pipefail
 
-# the repo, found from this file: no need to export DOTFILES before running anything
-DOTFILES="${DOTFILES:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)}"
+# the repo, found from this file. It must be ~/.dotfiles: configs refer to it there (install.sh checks)
+DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export DOTFILES
 INSTALL_DIR="$DOTFILES/install"
 PACKAGES_DIR="$INSTALL_DIR/packages"

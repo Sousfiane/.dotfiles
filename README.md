@@ -1,10 +1,6 @@
-# Screenshots
-![rice-1](assets/rice-1.png)
-![rice-1](assets/rice-2.png)
+# .dotfiles
 
----
-
-This is my first **I3-WM** customization for **Arch Linux**.
+Arch Linux with Hyprland and a Quickshell desktop.
 
 ## Installing
 
@@ -28,7 +24,9 @@ It clones this repo to `~/.dotfiles` and runs `install/install.sh`, which goes t
 | `packages` | installs `packages/desktop.txt` and `packages/apps.txt`, removes `packages/remove.txt` (what archinstall adds that the desktop replaces) |
 | `links` | links the files where their folder says (see below) |
 | `services` | enables NetworkManager, Bluetooth and sddm |
-| `system` | `~/.env.sh`, zsh as the login shell, the GTK theme |
+| `system` | zsh as the login shell, the GTK theme |
+
+**The repo must live at `~/.dotfiles`:** configs and scripts refer to it there (`$DOTFILES`, set in `home/zprofile`), and `install.sh` refuses to run from anywhere else.
 
 Every step checks before it acts, so running it again is safe. Afterwards:
 

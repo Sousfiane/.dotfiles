@@ -1,16 +1,7 @@
 #!/usr/bin/env bash
-# the user's side of the system: where the dotfiles are, zsh as the shell, the GTK theme
+# the user's side of the system: zsh as the shell, the GTK theme
 
 source "$(dirname "${BASH_SOURCE[0]}")/../lib.sh"
-
-# ---------- ~/.env.sh: tells the zsh profile where the dotfiles are ----------
-
-if [[ -f "$HOME/.env.sh" ]]; then
-    success "~/.env.sh already exists"
-else
-    echo "export DOTFILES=$DOTFILES" >"$HOME/.env.sh"
-    success "Created ~/.env.sh"
-fi
 
 # ---------- zsh as the login shell ----------
 
