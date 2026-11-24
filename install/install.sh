@@ -4,6 +4,7 @@
 #   install/install.sh                    every step, in order
 #   install/install.sh packages links     only these steps (after a `git pull`, say)
 #   install/install.sh check              how the installed packages differ from the lists
+#   install/install.sh calendar           an optional step: runs only when named
 #
 # Every step checks before it acts, so running it again is safe: it only does what's missing.
 
@@ -11,12 +12,15 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 # the order steps run in; each is install/steps/<name>.sh
 STEPS=(pacman yay packages links services system)
+# steps a full install leaves out, run by name whenever: calendar needs the desktop session (the keyring)
+OPTIONAL=(calendar)
 
 LOG="$HOME/.cache/dotfiles-install.log"
 
 usage() {
     echo "usage: install/install.sh [step...] | check"
     echo "steps: ${STEPS[*]}"
+    echo "optional, by name only: ${OPTIONAL[*]}"
 }
 
 # ---------- check: the lists against the machine ----------
@@ -72,7 +76,7 @@ fi
 selected=("$@")
 [[ ${#selected[@]} -eq 0 ]] && selected=("${STEPS[@]}")
 for s in "${selected[@]}"; do
-    [[ " ${STEPS[*]} " == *" $s "* ]] || { usage; fail "Unknown step: $s"; }
+    [[ " ${STEPS[*]} ${OPTIONAL[*]} " == *" $s "* ]] || { usage; fail "Unknown step: $s"; }
     [[ -f "$INSTALL_DIR/steps/$s.sh" ]] || fail "Missing step script: install/steps/$s.sh"
 done
 
@@ -81,15 +85,21 @@ mkdir -p "$(dirname "$LOG")"
 exec > >(tee -a "$LOG") 2>&1
 info "Log: $LOG"
 
-# sudo once, kept alive until the install ends
-sudo -v
-while true; do
-    sudo -n true
-    sleep 50
-    kill -0 "$$" 2>/dev/null || exit
-done 2>/dev/null &
-SUDO_KEEPALIVE=$!
-trap 'kill $SUDO_KEEPALIVE 2>/dev/null' EXIT
+# sudo once, kept alive until the install ends; not asked when only optional steps run (they don't need it)
+needs_sudo=false
+for s in "${selected[@]}"; do
+    [[ " ${STEPS[*]} " == *" $s "* ]] && needs_sudo=true
+done
+if $needs_sudo; then
+    sudo -v
+    while true; do
+        sudo -n true
+        sleep 50
+        kill -0 "$$" 2>/dev/null || exit
+    done 2>/dev/null &
+    SUDO_KEEPALIVE=$!
+    trap 'kill $SUDO_KEEPALIVE 2>/dev/null' EXIT
+fi
 
 for s in "${selected[@]}"; do
     title "$s"
@@ -97,4 +107,4 @@ for s in "${selected[@]}"; do
 done
 
 title "Done"
-success "Installed: ${selected[*]}"
+success "Ran: ${selected[*]}"

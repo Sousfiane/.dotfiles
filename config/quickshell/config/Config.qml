@@ -18,7 +18,7 @@ Singleton {
     property string weatherLocation: "Lille"
 
     // calendar in the hub (CalDAV). Server, user and app password live in the keyring, not here:
-    //   secret-tool store --label="Nextcloud calendar" service nextcloud-caldav url <https://...> user <user>
+    // `~/.dotfiles/install/install.sh calendar` asks for them and stores them
     // color per calendar name; unlisted calendars use Theme.accent. Nextcloud's own colors are ignored.
     //   e.g. ({ "Personal": Theme.foam, "Work": Theme.gold })
     property var calendarColors: ({})

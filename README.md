@@ -35,6 +35,14 @@ Every step checks before it acts, so running it again is safe. Afterwards:
 ~/.dotfiles/install/install.sh check            # installed packages vs. the lists
 ```
 
+Once in the desktop, from a terminal (the keyring isn't reachable from a console login):
+
+```sh
+~/.dotfiles/install/install.sh calendar         # the Nextcloud calendar: server, user, app password
+```
+
+It checks them against the server, then stores them in the keyring, never in the repo. Run it again to replace them.
+
 ## Layout
 
 Where a file sits in the repo is where it goes:
