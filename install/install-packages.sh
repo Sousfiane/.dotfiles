@@ -40,18 +40,3 @@ if pacman -Q network-manager-applet &>/dev/null; then
     sudo pacman -Rns --noconfirm network-manager-applet
     success "nm-applet removed"
 fi
-
-# Install specific packages based on HOSTNAME
-if [[ $HOSTNAME == "PC" ]];then
-    specific_list=$PACKAGE_LIST_DIR/desktop.packages
-fi
-
-if [[ $HOSTNAME == "macbook" ]];then
-    specific_list=$PACKAGE_LIST_DIR/laptop.packages
-fi
-
-if [ -z specific_list ]; then
-    info "No specific packages to install, Skipping..."
-else
-    yay -S --noconfirm --needed - < "$specific_list"
-fi
