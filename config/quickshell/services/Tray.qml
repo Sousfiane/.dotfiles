@@ -41,16 +41,30 @@ Singleton {
 
     // ---------- the icons ----------
 
-    // left: the app's own action (most bring their window back); apps that can't do that show their menu
+    // left: the app's own action (most bring their window back). Apps that can't do that get launched again
+    // from their desktop entry, which for single-instance apps (Steam, Vesktop...) brings the running window
+    // up; with no entry to launch, the menu. Right: the menu.
     function click(item, button) {
         if (button === Qt.RightButton)
             openMenu(item);
         else if (button === Qt.MiddleButton)
             item.secondaryActivate();
-        else if (item.onlyMenu || menuOnly.includes(item.id))
-            openMenu(item);
-        else
+        else if (!item.onlyMenu && !menuOnly.includes(item.id))
             item.activate();
+        else if (entry(item))
+            entry(item).execute();
+        else
+            openMenu(item);
+    }
+
+    // the desktop entry behind a tray item: its id is usually the app's ("steam"), sometimes with a suffix
+    // ("vesktop_status_icon_1")
+    function entry(item) {
+        const id = item.id ?? "";
+        const base = id.replace(/[_-]status[_-]?icon.*$/i, "").replace(/[_-]client$/i, "");
+        return DesktopEntries.byId(id) ?? DesktopEntries.byId(base)
+            ?? (base !== "" ? DesktopEntries.heuristicLookup(base) : null)
+            ?? (item.title ? DesktopEntries.heuristicLookup(item.title) : null);
     }
 
     // ---------- apps with nothing to activate ----------
