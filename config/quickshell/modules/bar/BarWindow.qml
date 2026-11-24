@@ -89,7 +89,8 @@ PanelWindow {
         height: Theme.barHeight
         color: Theme.bg
 
-        y: win.shown ? 0 : -(height + 1)
+        // in fullscreen it also takes the title bar hanging under it out of the screen: one block, like macOS
+        y: win.shown ? 0 : -(bar.height + 1 + (win.fullscreen ? fsTitle.height : 0))
         // true only when the bar has fully finished sliding in
         readonly property bool fullyIn: win.shown && y === 0
 
@@ -164,13 +165,7 @@ PanelWindow {
         screenName: win.screen?.name ?? ""
         visible: win.fullscreen
         width: parent.width
-        // under the underline when shown, fully above the screen when not: the bar's own slide
-        y: win.shown ? bar.height + 1 : -fsTitle.height
-        Behavior on y {
-            Anim {
-                duration: win.shown ? Motion.normal : Motion.out
-                curve: win.shown ? Motion.enter : Motion.exit
-            }
-        }
+        // hangs right under the underline and rides the bar's slide, so the two move as one block
+        y: bar.y + bar.height + 1
     }
 }
