@@ -6,7 +6,7 @@ import qs.config
 import qs.services
 import qs.components.ui
 
-// The system tray as a drawer: one quiet chevron in the bar, the apps' icons sliding out of it on hover.
+// The system tray as a drawer: three quiet dots in the bar, the apps' icons popping out of them on hover.
 // They're drawn in greyscale so they sit in the bar like its own glyphs, and get their colours back
 // under the pointer. Left click: the app's action; right click: its menu, as a dropdown.
 Item {
@@ -50,7 +50,7 @@ Item {
         margin: 9                                  // the bar's padding around each item
     }
 
-    // the icons, revealed from the chevron leftwards
+    // the icons, revealed from the dots leftwards
     Item {
         anchors {
             left: parent.left
@@ -72,20 +72,34 @@ Item {
             leftPadding: 5
             rightPadding: 5
 
-            opacity: root.expanded ? 1 : 0
-            Behavior on opacity {
-                Anim {
-                    duration: root.expanded ? Motion.normal : Motion.fast
-                    curve: root.expanded ? Motion.enter : Motion.exit
-                }
-            }
-
             Repeater {
                 model: Tray.items
 
                 delegate: Item {
                     id: slot
                     required property SystemTrayItem modelData
+                    required property int index
+
+                    // opening, the icons pop out one after the other, the one next to the dots first: each fades
+                    // in, grows to its size and slides out of the dots. Closing is quick and all at once.
+                    readonly property int order: Tray.items.length - 1 - index
+                    property real shown: root.expanded ? 1 : 0
+                    Behavior on shown {
+                        SequentialAnimation {
+                            PauseAnimation {
+                                duration: root.expanded ? slot.order * 45 : 0
+                            }
+                            Anim {
+                                duration: root.expanded ? Motion.normal : Motion.fast
+                                curve: root.expanded ? Motion.enter : Motion.exit
+                            }
+                        }
+                    }
+                    opacity: shown
+                    scale: 0.6 + 0.4 * shown
+                    transform: Translate {
+                        x: (1 - slot.shown) * 10
+                    }
 
                     readonly property bool lit: area.containsMouse || (Tray.open && Tray.menuItem === modelData)
                     readonly property bool wantsAttention: modelData.status === Status.NeedsAttention
@@ -144,15 +158,15 @@ Item {
         }
     }
 
-    // the chevron: points to where the icons come from; clicking it works too (no hover on touch)
+    // the dots: a quarter turn while the drawer is open; clicking them works too (no hover on touch)
     BarButton {
         id: toggle
         anchors {
             right: parent.right
             verticalCenter: parent.verticalCenter
         }
-        icon: root.expanded ? Icons.chevronRight : Icons.chevronLeft
-        glyphs: [Icons.chevronLeft, Icons.chevronRight]
+        icon: Icons.dots
+        iconRotation: root.expanded ? 90 : 0
         open: Tray.open
         onClicked: root.expanded = !root.expanded
 

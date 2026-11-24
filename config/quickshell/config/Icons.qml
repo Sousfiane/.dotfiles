@@ -82,6 +82,7 @@ Singleton {
     readonly property string ethernetOff: glyph(0xF0202)
 
     // tray
+    readonly property string dots: glyph(0xF01D8)            // md-dots_horizontal, the drawer
     readonly property string chevronLeft: glyph(0xF0141)
     readonly property string chevronRight: glyph(0xF0142)
     readonly property string checkboxOn: glyph(0xF0132)

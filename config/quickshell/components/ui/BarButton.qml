@@ -16,6 +16,7 @@ Item {
     // changing glyph never shifts the bar
     property var glyphs: [icon]
     property string inkAlign: "center"   // "left" keeps a glyph's base still when its variants grow on one side
+    property real iconRotation: 0         // degrees; turns smoothly, around the middle of the glyph's ink
     readonly property int iconSlot: {
         let w = 0;
         for (const g of glyphs)
@@ -88,6 +89,16 @@ Item {
                 }
                 font.pixelSize: root.iconSize
                 x: Math.round((root.inkAlign === "left" ? 0 : (root.iconSlot - ink.tightBoundingRect.width) / 2) - ink.tightBoundingRect.x)
+
+                // around the ink's centre, not the text box's (whose line height would make the glyph drift)
+                transform: Rotation {
+                    origin.x: ink.tightBoundingRect.x + ink.tightBoundingRect.width / 2
+                    origin.y: iconText.baselineOffset + ink.tightBoundingRect.y + ink.tightBoundingRect.height / 2
+                    angle: root.iconRotation
+                    Behavior on angle {
+                        Anim {}
+                    }
+                }
             }
         }
 
