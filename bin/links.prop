@@ -1,12 +1,10 @@
 $DOTFILES/bin/tmux-sessionizer.sh=$HOME/.local/bin/tmux-sessionizer
-$DOTFILES/bin/keybindings.sh=$HOME/.local/bin/keybindings
 $DOTFILES/bin/console-mode.sh=$HOME/.local/bin/console-mode
 $DOTFILES/bin/install-pkg.sh=$HOME/.local/bin/install-pkg
 $DOTFILES/bin/remove-pkg.sh=$HOME/.local/bin/remove-pkg
 $DOTFILES/bin/update-pkg.sh=$HOME/.local/bin/update-pkg
 $DOTFILES/bin/popup.sh=$HOME/.local/bin/popup
 $DOTFILES/bin/finder.sh=$HOME/.local/bin/finder
-$DOTFILES/bin/power-profiles.sh=$HOME/.local/bin/power-profiles
 $DOTFILES/bin/nvcat=$HOME/.local/bin/nvcat
 $DOTFILES/bin/headset-toggle.sh=$HOME/.local/bin/headset-toggle
 $DOTFILES/bin/discord-converter.sh=$HOME/.local/bin/discord-converter
