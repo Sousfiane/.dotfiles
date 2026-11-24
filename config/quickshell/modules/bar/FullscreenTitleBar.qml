@@ -12,9 +12,9 @@ Rectangle {
     readonly property var target: Fullscreen.window(screenName)
 
     // hyprbars: bar_height, bar_color, col.text, bar_text_font/size, button size/padding, bar_padding
-    readonly property int barHeight: 24
-    readonly property int dotSize: 10
-    readonly property int dotGap: 6
+    readonly property int barHeight: 28
+    readonly property int dotSize: 12
+    readonly property int dotGap: 8
     readonly property int edgePad: 8
 
     height: barHeight
@@ -26,9 +26,9 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
         text: root.target?.title ?? ""
-        color: Theme.text
+        color: Theme.subtle
         font.family: "JetBrainsMonoNL NF"
-        font.pixelSize: 10             // hyprbars bar_text_size is in pixels
+        font.pixelSize: 12             // hyprbars bar_text_size is in pixels
         font.weight: Font.DemiBold     // bar_text_weight = "semibold"
     }
 
@@ -64,7 +64,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
-                    anchors.margins: -3          // a little easier to hit than the 10 px dot
+                    anchors.margins: -3          // a little easier to hit than the 12 px dot
                     cursorShape: Qt.PointingHandCursor
                     onClicked: parent.modelData.run()
                 }
