@@ -1,2 +1,0 @@
-$DOTFILES/nvim/lua=$HOME/.config/nvim/lua
-$DOTFILES/nvim/init.lua=$HOME/.config/nvim/init.lua

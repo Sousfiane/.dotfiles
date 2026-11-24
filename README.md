@@ -26,7 +26,7 @@ It clones this repo to `~/.dotfiles` and runs `install/install.sh`, which goes t
 | `pacman` | enables multilib, full system upgrade |
 | `yay` | builds the AUR helper |
 | `packages` | installs `packages/desktop.txt` and `packages/apps.txt`, removes `packages/remove.txt` (what archinstall adds that the desktop replaces) |
-| `links` | links each folder's files where its `links.prop` says |
+| `links` | links the files where their folder says (see below) |
 | `services` | enables NetworkManager, Bluetooth and sddm |
 | `system` | `~/.env.sh`, zsh as the login shell, the GTK theme |
 
@@ -36,3 +36,15 @@ Every step checks before it acts, so running it again is safe. Afterwards:
 ~/.dotfiles/install/install.sh packages links   # only some steps (after a git pull)
 ~/.dotfiles/install/install.sh check            # installed packages vs. the lists
 ```
+
+## Layout
+
+Where a file sits in the repo is where it goes:
+
+| In the repo | Linked to |
+|---|---|
+| `config/<app>/<entry>` | `~/.config/<app>/<entry>` |
+| `home/<name>` | `~/.<name>` (`home/zshrc` → `~/.zshrc`) |
+| `local/<folder>/<entry>` | `~/.local/<folder>/<entry>` (`local/bin/popup` → `~/.local/bin/popup`) |
+
+Each entry at the top of an app folder is one link, so a file added inside a subfolder is live at once. A new app folder, or a new file at its top, needs `install.sh links`. Names starting with a dot (editor files) aren't linked.
