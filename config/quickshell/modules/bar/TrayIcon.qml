@@ -1,14 +1,12 @@
 import Quickshell
 import Quickshell.Services.SystemTray
 import QtQuick
-import QtQuick.Effects
 import qs.config
 import qs.services
 import qs.components.ui
 
 // The system tray as a drawer: three quiet dots in the bar, the apps' icons popping out of them on hover.
-// They're drawn in greyscale so they sit in the bar like its own glyphs, and get their colours back
-// under the pointer. Left click: the app's action; right click: its menu, as a dropdown.
+// Tucked away behind the dots, they keep their own colours. Left click: the app's action; right click: its menu, as a dropdown.
 Item {
     id: root
 
@@ -102,12 +100,11 @@ Item {
                     }
 
                     readonly property bool lit: area.containsMouse || (Tray.open && Tray.menuItem === modelData)
-                    readonly property bool wantsAttention: modelData.status === Status.NeedsAttention
 
                     width: root.iconSize
                     height: root.iconSize
 
-                    // the hover shows even on icons that are grey to begin with (symbolic ones like nm-applet's)
+                    // the hover shows as a backdrop, so it reads on grey symbolic icons too (nm-applet's)
                     Rectangle {
                         anchors.centerIn: parent
                         width: parent.width + 10
@@ -123,22 +120,6 @@ Item {
                         anchors.fill: parent
                         implicitSize: root.iconSize
                         source: slot.modelData.icon
-
-                        layer.enabled: true
-                        layer.effect: MultiEffect {
-                            saturation: slot.lit || slot.wantsAttention ? 0 : -1
-                            Behavior on saturation {
-                                Anim {
-                                    duration: Motion.fast
-                                }
-                            }
-                        }
-                        opacity: slot.lit ? 1 : 0.75
-                        Behavior on opacity {
-                            Anim {
-                                duration: Motion.fast
-                            }
-                        }
                     }
 
                     MouseArea {
