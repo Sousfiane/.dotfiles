@@ -39,6 +39,21 @@ PanelWindow {
     // the stand-in title bar only answers the pointer: a dropdown alone brings back just the bar
     readonly property bool titleShown: fullscreen && revealed
 
+    // the title bar is down, or riding the bar out of the screen. Only then does the bar's slide take
+    // the title bar's height too: a bar hiding on its own (a fullscreen window landing on this monitor,
+    // a dropdown closing) travels just its own height, at its own pace.
+    property bool titleOut: false
+    onTitleShownChanged: {
+        if (titleShown)
+            titleOut = true;
+        else if (shown)
+            titleOut = false;          // the bar stays: only the title bar tucks back
+    }
+    onShownChanged: {
+        if (shown && !titleShown)
+            titleOut = false;          // back for a dropdown: the bar comes alone
+    }
+
     // the underline, split around every dropdown that is attached to this bar
     readonly property var segments: {
         const gaps = Object.values(BarState.gaps[screen?.name ?? ""] ?? {}).sort((a, b) => a[0] - b[0]);
@@ -94,7 +109,7 @@ PanelWindow {
         color: Theme.bg
 
         // in fullscreen it also takes the title bar hanging under it out of the screen: one block, like macOS
-        y: win.shown ? 0 : -(bar.height + 1 + (win.fullscreen ? fsTitle.height : 0))
+        y: win.shown ? 0 : -(bar.height + 1 + (win.titleOut ? fsTitle.height : 0))
         // true only when the bar has fully finished sliding in
         readonly property bool fullyIn: win.shown && y === 0
 
@@ -172,11 +187,14 @@ PanelWindow {
         z: -1                          // tucks behind the bar when it is pulled up
 
         // pulled up behind the bar while only a dropdown holds the bar out
-        property real tuck: win.titleShown ? 0 : -(height + bar.height + 1)
+        property real tuck: win.titleOut ? 0 : -(height + bar.height + 1)
+        // tucking in while the bar slides down (it came back for a dropdown) runs on the bar's own
+        // curve, so the two cancel out and the title bar never peeks out under it
+        readonly property bool withBar: win.titleOut || bar.y !== 0
         Behavior on tuck {
             Anim {
-                duration: win.titleShown ? Motion.normal : Motion.out
-                curve: win.titleShown ? Motion.enter : Motion.exit
+                duration: fsTitle.withBar ? Motion.normal : Motion.out
+                curve: fsTitle.withBar ? Motion.enter : Motion.exit
             }
         }
 
