@@ -16,6 +16,7 @@ import qs.modules.hub
 import qs.modules.network
 import qs.modules.screenshot
 import qs.modules.lock
+import qs.modules.tray
 import qs.services
 
 ShellRoot {
@@ -40,4 +41,5 @@ ShellRoot {
     NetPanel {}
     ScreenshotPanel {}
     LockScreen {}
+    TrayPanel {}
 }

@@ -81,4 +81,11 @@ Singleton {
     readonly property string ethernet: glyph(0xF0200)
     readonly property string ethernetOff: glyph(0xF0202)
 
+    // tray
+    readonly property string chevronLeft: glyph(0xF0141)
+    readonly property string chevronRight: glyph(0xF0142)
+    readonly property string checkboxOn: glyph(0xF0132)
+    readonly property string checkboxOff: glyph(0xF0131)
+    readonly property string radioOn: glyph(0xF043E)
+    readonly property string radioOff: glyph(0xF043D)
 }
