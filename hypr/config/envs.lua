@@ -1,5 +1,3 @@
-local hostname = os.getenv("HOSTNAME") or ""
-
 -- Cursor size
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
@@ -23,10 +21,8 @@ hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 
 -- NVIDIA specific
-if hostname == "PC" then
-	hl.env("NVD_BACKEND", "direct")
-	hl.env("LIBVA_DRIVER_NAME", "nvidia")
-	hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
-	hl.env("MOZ_DISABLE_RDD_SANDBOX", "1")
-	hl.env("CUDA_DISABLE_PERF_BOOST", "1")
-end
+hl.env("NVD_BACKEND", "direct")
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("MOZ_DISABLE_RDD_SANDBOX", "1")
+hl.env("CUDA_DISABLE_PERF_BOOST", "1")

@@ -8,7 +8,6 @@ source_if_exists () {
 
 source_if_exists $HOME/.env.sh
 
-export HOSTNAME=$(hostnamectl hostname)
 export FZF_DEFAULT_OPTS="
 	--color=fg:#908caa,bg:#191724,hl:#ebbcba
 	--color=fg+:#e0def4,bg+:#26233a,hl+:#ebbcba
