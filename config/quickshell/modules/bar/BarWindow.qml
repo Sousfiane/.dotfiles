@@ -17,7 +17,8 @@ PanelWindow {
         left: true
         right: true
     }
-    implicitHeight: Theme.barHeight + 1
+    // in fullscreen the window grows to hold the stand-in title bar under the underline
+    implicitHeight: Theme.barHeight + 1 + (fullscreen ? fsTitle.height : 0)
 
     // the extra row only holds the underline, so tiled windows still start at the old position
     exclusionMode: ExclusionMode.Normal
@@ -66,7 +67,7 @@ PanelWindow {
         x: 0
         y: 0
         width: win.width
-        height: win.shown ? win.height : 2
+        height: win.shown ? win.height : 2   // shown in fullscreen: the title bar below is clickable too
     }
 
     HoverHandler {
@@ -154,6 +155,22 @@ PanelWindow {
                 width: seg[1] - seg[0]
                 height: 1
                 color: Theme.line
+            }
+        }
+    }
+
+    // ---------- fullscreen: the window's title bar comes back with the bar ----------
+    FullscreenTitleBar {
+        id: fsTitle
+        screenName: win.screen?.name ?? ""
+        visible: win.fullscreen
+        width: parent.width
+        // under the underline when shown, fully above the screen when not: the bar's own slide
+        y: win.shown ? bar.height + 1 : -fsTitle.height
+        Behavior on y {
+            Anim {
+                duration: win.shown ? Motion.normal : Motion.out
+                curve: win.shown ? Motion.enter : Motion.exit
             }
         }
     }

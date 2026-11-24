@@ -1,4 +1,3 @@
-import Quickshell
 import qs.config
 import qs.services
 import qs.components.ui
@@ -9,10 +8,5 @@ BarButton {
     visible: Fullscreen.on(screenName)
     icon: Icons.fullscreenExit
 
-    // the fullscreen window of this monitor, not the focused one (focus may be on another monitor)
-    onClicked: Quickshell.execDetached(["hyprctl", "eval",
-        `local ws = hl.get_active_workspace("${screenName}")
-         if ws ~= nil and ws.fullscreen_window ~= nil then
-             hl.dispatch(hl.dsp.window.fullscreen({ window = ws.fullscreen_window }))
-         end`])
+    onClicked: Fullscreen.exit(screenName)
 }

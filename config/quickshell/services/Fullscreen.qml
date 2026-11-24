@@ -18,6 +18,38 @@ Singleton {
         return states[name] === true;
     }
 
+    // the fullscreen window on monitor `name` (a HyprlandToplevel), null when there is none
+    function window(name) {
+        const ws = Hyprland.monitors.values.find(m => m.name === name)?.activeWorkspace;
+        if (!(ws?.hasFullscreen ?? false))
+            return null;
+        return ws.toplevels.values.find(t => t.wayland?.fullscreen) ?? null;
+    }
+
+    // Run Lua against the fullscreen window of monitor `name` (bound to `w`): that window, not the
+    // focused one, since a click on the bar doesn't move focus and focus may be on another monitor.
+    function act(name, lua) {
+        Quickshell.execDetached(["hyprctl", "eval", `local ws = hl.get_active_workspace("${name}")
+            local w = ws ~= nil and ws.fullscreen_window or nil
+            if w ~= nil then ${lua} end`]);
+    }
+
+    function exit(name) {
+        act(name, "hl.dispatch(hl.dsp.window.fullscreen({ window = w }))");
+    }
+
+    function close(name) {
+        act(name, "hl.dispatch(hl.dsp.window.close({ window = w }))");
+    }
+
+    // out of fullscreen into a floating window, sized and centered like SUPER+SHIFT+F
+    function float(name) {
+        act(name, `hl.dispatch(hl.dsp.window.fullscreen({ window = w }))
+            hl.dispatch(hl.dsp.window.float({ window = w, action = "enable" }))
+            hl.dispatch(hl.dsp.window.resize({ x = 875, y = 600, window = w }))
+            hl.dispatch(hl.dsp.window.center({ window = w }))`);
+    }
+
     // Quickshell keeps hasFullscreen and each monitor's activeWorkspace up to date from events, but
     // Hyprland doesn't send the right ones in every case (see below), so re-read both over the socket.
     // Events come in bursts and some fire just before Hyprland has applied the change (closewindow comes
