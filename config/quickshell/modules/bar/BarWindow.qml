@@ -118,7 +118,7 @@ PanelWindow {
 
         Behavior on y {
             Anim {
-                duration: win.shown ? Motion.normal : Motion.out
+                duration: win.shown ? Motion.barIn : Motion.barOut
                 curve: win.shown ? Motion.enter : Motion.exit
             }
         }
@@ -193,7 +193,7 @@ PanelWindow {
         readonly property bool withBar: win.titleOut || bar.y !== 0
         Behavior on tuck {
             Anim {
-                duration: fsTitle.withBar ? Motion.normal : Motion.out
+                duration: fsTitle.withBar ? Motion.barIn : Motion.barOut
                 curve: fsTitle.withBar ? Motion.enter : Motion.exit
             }
         }

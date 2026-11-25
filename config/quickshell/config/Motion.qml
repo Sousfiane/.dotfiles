@@ -19,4 +19,6 @@ Singleton {
     readonly property int normal: 200    // moves and entrances
     readonly property int out: 150       // exits
     readonly property int slow: 350      // full-screen fades (lock screen, wallpaper)
+    readonly property int barIn: 140     // the bar sliding in: snappier than a panel
+    readonly property int barOut: 100    // the bar sliding out
 }
