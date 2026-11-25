@@ -8,7 +8,7 @@ import qs.components.ui
 
 // A macOS-style dock at the bottom of every monitor: pinned apps, then the other running ones.
 // Hidden while windows are open: touching the bottom edge brings it up. Stays up on an empty
-// workspace, and never shows over a fullscreen window.
+// workspace. Over a fullscreen window it only comes up from the edge, after a slightly longer push.
 //   left click   start the app, or focus its window (again: the next one)
 //   middle click a new window
 //   right click  pin / unpin, its windows, close
@@ -22,7 +22,7 @@ Variants {
         required property var modelData
         screen: modelData
 
-        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.layer: WlrLayer.Overlay     // Top sits under fullscreen windows
         WlrLayershell.namespace: "qs-dock"
         exclusionMode: ExclusionMode.Ignore
         color: "transparent"
@@ -118,7 +118,7 @@ Variants {
         property var menuItem: null            // the icon whose right-click menu is open
         property real menuCenter: 0
 
-        readonly property bool shown: !fullscreen && items.length > 0 && (revealed || menuItem !== null || emptyWorkspace || Dock.forced || dragKey !== "")
+        readonly property bool shown: items.length > 0 && (revealed || menuItem !== null || (!fullscreen && emptyWorkspace) || Dock.forced || dragKey !== "")
 
         onFullscreenChanged: if (fullscreen) {
             revealed = false;
@@ -127,7 +127,7 @@ Variants {
 
         Timer {
             id: showTimer
-            interval: 100                       // brushing the edge on the way to something else doesn't count
+            interval: win.fullscreen ? 250 : 100  // brushing the edge on the way to something else doesn't count
             onTriggered: win.revealed = true
         }
         Timer {
@@ -166,7 +166,7 @@ Variants {
         Item {
             id: hit
             x: plate.x
-            width: win.fullscreen ? 0 : plate.width
+            width: plate.width
             height: win.shown ? win.iconSize * win.maxScale + win.pad * 2 + win.dotRow + win.margin : 2
             y: win.height - height
         }
