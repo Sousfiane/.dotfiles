@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+# BlueZ pairing agent for the Quickshell Bluetooth panel.
+#
+# Quickshell can pair, but it never registers an agent, so BlueZ pairs without
+# saving a bond and then refuses HID devices (DS4 etc.) as "!bonded".
+# This answers pairing requests the way a no-screen device expects ("just works").
+#
+# New devices can only pair while the adapter is pairable, which the panel
+# turns on only while it's open, so this doesn't let random devices in.
+
+import dbus
+import dbus.mainloop.glib
+import dbus.service
+from gi.repository import GLib
+
+BUS = "org.bluez"
+AGENT_PATH = "/dotfiles/bt_agent"
+CAPABILITY = "NoInputNoOutput"
+
+
+class Rejected(dbus.DBusException):
+    _dbus_error_name = "org.bluez.Error.Rejected"
+
+
+def trusted(device):
+    props = dbus.Interface(
+        dbus.SystemBus().get_object(BUS, device), "org.freedesktop.DBus.Properties"
+    )
+    return bool(props.Get("org.bluez.Device1", "Trusted"))
+
+
+class Agent(dbus.service.Object):
+    @dbus.service.method("org.bluez.Agent1", in_signature="", out_signature="")
+    def Release(self):
+        pass
+
+    # incoming "just works" pairing (DS4 in Share+PS mode)
+    @dbus.service.method("org.bluez.Agent1", in_signature="o", out_signature="")
+    def RequestAuthorization(self, device):
+        print(f"pairing accepted: {device}", flush=True)
+
+    # numeric comparison: there's no prompt to show, so accept
+    @dbus.service.method("org.bluez.Agent1", in_signature="ou", out_signature="")
+    def RequestConfirmation(self, device, passkey):
+        print(f"pairing confirmed: {device} ({passkey:06d})", flush=True)
+
+    # old pre-2.1 devices that want a PIN
+    @dbus.service.method("org.bluez.Agent1", in_signature="o", out_signature="s")
+    def RequestPinCode(self, device):
+        return "0000"
+
+    @dbus.service.method("org.bluez.Agent1", in_signature="o", out_signature="u")
+    def RequestPasskey(self, device):
+        return dbus.UInt32(0)
+
+    @dbus.service.method("org.bluez.Agent1", in_signature="os", out_signature="")
+    def DisplayPinCode(self, device, pincode):
+        print(f"pin for {device}: {pincode}", flush=True)
+
+    @dbus.service.method("org.bluez.Agent1", in_signature="ouq", out_signature="")
+    def DisplayPasskey(self, device, passkey, entered):
+        pass
+
+    # a device asking to use a service (HID, audio…): only ones we trust
+    @dbus.service.method("org.bluez.Agent1", in_signature="os", out_signature="")
+    def AuthorizeService(self, device, uuid):
+        if not trusted(device):
+            raise Rejected("device not trusted")
+
+    @dbus.service.method("org.bluez.Agent1", in_signature="", out_signature="")
+    def Cancel(self):
+        pass
+
+
+def register():
+    manager = dbus.Interface(
+        dbus.SystemBus().get_object(BUS, "/org/bluez"), "org.bluez.AgentManager1"
+    )
+    manager.RegisterAgent(AGENT_PATH, CAPABILITY)
+    manager.RequestDefaultAgent(AGENT_PATH)
+    print("agent registered", flush=True)
+
+
+def main():
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    bus = dbus.SystemBus()
+    Agent(bus, AGENT_PATH)
+
+    # fires now if bluetoothd is up, and again whenever it restarts
+    bus.watch_name_owner(BUS, lambda owner: owner and register())
+
+    GLib.MainLoop().run()
+
+
+if __name__ == "__main__":
+    main()

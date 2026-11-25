@@ -70,10 +70,14 @@ Singleton {
             adapter.discovering = !adapter.discovering;
     }
 
-    // scan while the panel is open, stop when it closes
+    // scan and accept pairing while the panel is open, stop when it closes.
+    // pairable matters for devices that start the pairing themselves (DS4 etc.):
+    // without it bluez refuses them and they drop right after connecting
     onOpenChanged: {
-        if (adapter && adapter.enabled)
+        if (adapter && adapter.enabled) {
             adapter.discovering = open;
+            adapter.pairable = open;
+        }
     }
 
     function activate(d) {
