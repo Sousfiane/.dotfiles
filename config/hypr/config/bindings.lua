@@ -187,6 +187,12 @@ hl.bind(
 	{ description = "Toggle previous workspace" }
 )
 
+hl.bind(
+	mod .. " + " .. shift .. " + N",
+	hl.dsp.focus({ workspace = "empty" }),
+	{ description = "Go to first empty workspace" }
+)
+
 --------------------------------------------------
 -- 🖱️ Mouse actions
 --------------------------------------------------
