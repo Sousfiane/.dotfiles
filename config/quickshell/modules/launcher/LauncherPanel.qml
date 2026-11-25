@@ -68,8 +68,10 @@ DropdownPanel {
 
                 MotionArea {
                     anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onMoved: list.currentIndex = row.index
-                    onClicked: Launcher.launch(row.modelData)
+                    // right click pins the app to the dock (or unpins it)
+                    onClicked: mouse => mouse.button === Qt.RightButton ? Dock.togglePin(row.modelData.entry.id) : Launcher.launch(row.modelData)
                 }
 
                 Behavior on color {
@@ -91,6 +93,13 @@ DropdownPanel {
                         Layout.fillWidth: true
                         text: row.modelData.name
                         elide: Text.ElideRight
+                    }
+
+                    // pinned to the dock
+                    Txt {
+                        visible: !row.modelData.action && Dock.isPinned(row.modelData.entry.id)
+                        variant: "dim"
+                        text: Icons.glyph(0xF0403)
                     }
 
                     // for an action, the app it belongs to

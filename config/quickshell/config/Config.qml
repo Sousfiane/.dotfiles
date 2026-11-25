@@ -23,6 +23,11 @@ Singleton {
     //   e.g. ({ "Personal": Theme.foam, "Work": Theme.gold })
     property var calendarColors: ({})
 
+    // the dock's pins before you change them (right-click an icon, or an app in the launcher, to pin/unpin).
+    // Desktop entry ids: the .desktop file name without the extension. Your changes are kept in
+    // ~/.local/state/quickshell/.../dock-pins.json; delete it to come back to this list.
+    property var dockPins: ["kitty", "zen", "org.gnome.Nautilus", "vesktop", "spotify-launcher"]
+
     property string dotfilesRepo: home + "/.dotfiles"
     property string wallpaperDir: home + "/.wallpapers"
     property string wallpaperState: home + "/.swaybg"
