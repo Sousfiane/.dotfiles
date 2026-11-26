@@ -6,10 +6,11 @@ preview='
     printf "%s\n" "${dir##*/}"
     printf "%s\n\n" "$dir"
 
-    # Rosé Pine ANSI Escape Codes
-    pine="\033[38;2;49;116;143m"
-    gold="\033[38;2;246;193;119m"
-    foam="\033[38;2;156;207;216m"
+    # colours of the terminal, which kitty sets from the theme (the "terminal" map in theme.json names a
+    # palette colour for each): green is pine, yellow gold, blue foam
+    pine="\033[32m"
+    gold="\033[33m"
+    foam="\033[34m"
     reset="\033[0m"
 
     if git -C "$dir" rev-parse --is-inside-work-tree &>/dev/null; then
@@ -49,7 +50,7 @@ fzf_args=(
     --preview-window='right:50%:wrap'
     --bind='alt-j:preview-down,alt-k:preview-up'
     --bind='alt-d:preview-half-page-down,alt-u:preview-half-page-up'
-    --color='pointer:#eb6f92,marker:#eb6f92'
+    --color='pointer:red,marker:red'  # red: the palette's love, through the terminal
 )
 
 if [[ $# -eq 1 ]]; then
