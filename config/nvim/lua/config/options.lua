@@ -20,3 +20,7 @@ vim.o.winborder = "rounded"
 vim.o.updatetime = 50
 
 vim.o.fillchars = "eob: "
+
+-- the dotfiles keep home files without their dot (home/zprofile is linked as ~/.zprofile): Neovim knows
+-- `zshrc` with or without it, but not `zprofile`
+vim.filetype.add({ filename = { zprofile = "zsh" } })
