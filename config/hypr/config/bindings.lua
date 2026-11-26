@@ -63,6 +63,8 @@ hl.bind(mod .. " + U", hl.dsp.exec_cmd("qs ipc call updates toggle"), { descript
 hl.bind(mod .. " + N", hl.dsp.exec_cmd("qs ipc call notifs toggle"), { description = "Menu: Notifications" })
 hl.bind(mod .. " + D", hl.dsp.exec_cmd("qs ipc call dotfiles toggle"), { description = "Menu: Dotfiles" })
 hl.bind(mod .. " + Escape", hl.dsp.exec_cmd("qs ipc call power toggle"), { description = "Menu: PowerMenu" })
+-- SUPER + / : on the French layout / is SHIFT + :, so SHIFT is part of the bind
+hl.bind(mod .. " + " .. shift .. " + slash", hl.dsp.exec_cmd("qs ipc call keybinds toggle"), { description = "Menu: Keybinds" })
 
 hl.bind(mod .. " + " .. alt .. " + Space", hl.dsp.exec_cmd("qs ipc call hub toggle"), { description = "Menu: General" })
 
