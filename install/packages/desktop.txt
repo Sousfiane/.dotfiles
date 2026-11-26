@@ -49,6 +49,7 @@ ttf-jetbrains-mono-nerd      # the shell's font
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
-rose-pine-gtk-theme-full     # GTK theme (set by steps/system.sh)
+rose-pine-gtk-theme-full     # GTK themes and icons, all three variants (set by config/theme/apply.sh)
+libnotify                    # notify-send: theme/apply.sh's "restart Spotify" notification
 qt6ct
 nwg-look

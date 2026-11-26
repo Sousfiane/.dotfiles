@@ -3,7 +3,8 @@
 # ---------- shell and terminal ----------
 zsh                          # made the login shell by steps/system.sh
 tmux
-jq                           # config/tmux/theme.sh reads theme.json with it
+jq                           # the theme's scripts read theme.json with it (tmux, zsh, theme/apply.sh...)
+vivid                        # LS_COLORS, from the palette's vivid theme (config/zsh/theme.zsh)
 neovim
 btop
 fastfetch

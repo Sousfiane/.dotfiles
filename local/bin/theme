@@ -16,7 +16,7 @@ settings="$dir/theme.json"
 state="$HOME/.local/state/theme/palette"
 
 mapfile -t names < <(find "$dir/palettes/" -maxdepth 1 -name '*.json' -printf '%f\n' | sed 's/\.json$//' | sort)
-current=$(head -n 1 "$state" 2>/dev/null | tr -d '[:space:]')
+current=$(cat "$state" 2>/dev/null | head -n 1 | tr -d '[:space:]' || true)    # no state file yet: the default
 [[ -n $current ]] || current=$(jq -r '.palette' "$settings")
 
 if [[ $# -eq 0 ]]; then
