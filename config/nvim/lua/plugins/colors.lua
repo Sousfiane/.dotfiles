@@ -38,33 +38,61 @@ local function theme_palette()
 		}
 end
 
+-- the plugin's options, from the theme files as they are now
+local function make_opts()
+	local variant, colors = theme_palette()
+	return {
+		variant = variant or "main",
+		palette = variant and { [variant] = colors } or {},
+		styles = {
+			bold = false,
+			italic = true,
+			transparency = true,
+		},
+		highlight_groups = {
+			ColorColumn = { bg = "rose" },
+			CursorColumn = { bg = "highlight_med" },
+			CursorLine = { bg = "foam", blend = 10 },
+			-- no background, like the terminal's (kitty shows it see-through); part of the colour scheme so a
+			-- reload (kitty changing colours with the theme) keeps it
+			StatusLine = { fg = "love", bg = "NONE" },
+			Search = { bg = "gold" },
+		},
+	}
+end
+
+local function apply(opts)
+	vim.o.background = opts.variant == "dawn" and "light" or "dark"
+	require("rose-pine").setup(opts)
+	vim.cmd("colorscheme rose-pine")
+end
+
+-- Follows theme changes live: watches the folders theme.json and the palettes really live in (the repo,
+-- since `theme` and editors write through the links), and applies again shortly after a .json changes.
+local function follow_theme()
+	local timer = assert(vim.uv.new_timer())
+	local function changed(err, name)
+		if err or not (name and name:match("%.json$")) then return end
+		timer:stop()
+		timer:start(200, 0, vim.schedule_wrap(function()
+			apply(make_opts())
+		end))
+	end
+	local theme = vim.fn.expand("~/.config/theme")
+	local settings = vim.uv.fs_realpath(theme .. "/theme.json")
+	local palettes = vim.uv.fs_realpath(theme .. "/palettes")
+	for _, dir in ipairs({ settings and vim.fs.dirname(settings), palettes }) do
+		local watcher = vim.uv.new_fs_event()
+		if dir and watcher then watcher:start(dir, {}, changed) end
+	end
+end
+
 return {
 	"rose-pine/neovim",
 	name = "rose-pine",
-	opts = function()
-		local variant, colors = theme_palette()
-		return {
-			variant = variant or "main",
-			palette = variant and { [variant] = colors } or {},
-			styles = {
-				bold = false,
-				italic = true,
-				transparency = true,
-			},
-			highlight_groups = {
-				ColorColumn = { bg = "rose" },
-				CursorColumn = { bg = "highlight_med" },
-				CursorLine = { bg = "foam", blend = 10 },
-				-- no background, like the terminal's (kitty shows it see-through); part of the colour scheme so a
-				-- reload (kitty changing colours with the theme) keeps it
-				StatusLine = { fg = "love", bg = "NONE" },
-				Search = { bg = "gold" },
-			},
-		}
-	end,
+	opts = make_opts,
 	config = function(_, opts)
-		vim.o.background = opts.variant == "dawn" and "light" or "dark"
-		require("rose-pine").setup(opts)
-		vim.cmd("colorscheme rose-pine")
+		apply(opts)
+		follow_theme()
 	end,
 }

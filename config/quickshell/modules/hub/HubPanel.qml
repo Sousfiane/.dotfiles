@@ -112,6 +112,9 @@ DropdownPanel {
             case Qt.Key_W:
                 Hub.openPicker("wallpaper");
                 break;
+            case Qt.Key_E:
+                Hub.openPicker("theme");
+                break;
             case Qt.Key_C:
                 Hub.openPicker("clipboard");
                 break;
@@ -437,6 +440,12 @@ DropdownPanel {
                         target: "wallpaper"
                     },
                     {
+                        label: "Theme",
+                        key: "E",
+                        icon: Icons.palette,
+                        target: "theme"
+                    },
+                    {
                         label: "Clipboard",
                         key: "C",
                         icon: Icons.clipboard,
@@ -513,7 +522,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: Media.active ? "h l month • j k day • t today • p/b/n media • a w c s open • Esc" : "h l month • j k day • t today • a w c s open • Esc close"
+            text: Media.active ? "h l month • j k day • t today • p/b/n media • a w e c s open • Esc" : "h l month • j k day • t today • a w e c s open • Esc close"
         }
     }
 }

@@ -12,6 +12,7 @@ import qs.modules.updates
 import qs.modules.dotfiles
 import qs.modules.workspaces
 import qs.modules.wallpaper
+import qs.modules.theme
 import qs.modules.hub
 import qs.modules.network
 import qs.modules.screenshot
@@ -38,6 +39,7 @@ ShellRoot {
     DotfilesPanel {}
     WsPanel {}
     WallpaperPanel {}
+    ThemePanel {}
     HubPanel {}
     NetPanel {}
     ScreenshotPanel {}

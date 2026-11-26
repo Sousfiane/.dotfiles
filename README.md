@@ -72,13 +72,13 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 | Quickshell | `config/Theme.qml` | at once |
 | Hyprland | `config/theme.lua` (with `config/json.lua`) | on `hyprctl reload` |
 | kitty | `theme.py`, through `geninclude` | on ctrl+shift+F5, or in new windows |
-| Neovim | `lua/plugins/colors.lua`, as the rose-pine plugin's palette | on restart |
+| Neovim | `lua/plugins/colors.lua`, as the rose-pine plugin's palette | at once (it watches the files) |
 | tmux | `theme.sh` (with `jq`), which also lays out the status bar | on `tmux source-file ~/.config/tmux/tmux.conf` |
 
 The apps keep only what each colour is used for.
 
-`theme` lists the palettes and `theme moon` (or `theme next`) switches; it only changes `"palette"` in `theme.json`.
+`theme` lists the palettes and `theme moon` (or `theme next`) switches; it only changes `"palette"` in `theme.json`. The hub's Theme picker (`E` in the hub, or `qs ipc call theme toggle`) does the same, with a strip of each palette's colours.
 
-Saving `theme.json` or a palette updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK theme, its colour scheme, app font and icon theme. Spotify can't switch live: run `install.sh spicetify` after a switch. A save that doesn't parse changes nothing. Neovim picks it up on its next start.
+Saving `theme.json` or a palette updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK theme, its colour scheme, app font and icon theme. Spotify can't switch live: run `install.sh spicetify` after a switch. A save that doesn't parse changes nothing. Neovim watches the files itself.
 
 hyprtoolkit and qt6ct can only read their own format, so Hyprland writes `~/.config/hypr/hyprtoolkit.conf`, `~/.config/qt6ct/qt6ct.conf` and `~/.config/qt6ct/colors.conf` from `theme.json` every time it starts or reloads (`config/hypr/config/theme_files.lua`). They aren't in the repo: change `theme.json` or that file, not them (the qt6ct window's changes don't last).
