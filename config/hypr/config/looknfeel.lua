@@ -1,3 +1,5 @@
+local theme = require("config.theme")
+
 hl.config({
 	general = {
 
@@ -6,7 +8,7 @@ hl.config({
 
 		-- 1px border in the quickshell bar underline colour (Theme.line = muted); the hyprbars title bar shows focus
 		border_size = 1,
-		col = { active_border = "rgb(6e6a86)", inactive_border = "rgb(6e6a86)" },
+		col = { active_border = theme.rgb("muted"), inactive_border = theme.rgb("muted") },
 
 		layout = "scrolling",
 
@@ -14,7 +16,7 @@ hl.config({
 	},
 
 	decoration = {
-		rounding = 6, -- keep in sync with Theme.radius (quickshell/config/Theme.qml)
+		rounding = theme.radius.medium, -- same corners as quickshell's Theme.radius
 		rounding_power = 2,
 
 		active_opacity = 1.0,

@@ -62,3 +62,17 @@ Where a file sits in the repo is where it goes:
 | `local/<folder>/<entry>` | `~/.local/<folder>/<entry>` (`local/bin/popup` → `~/.local/bin/popup`) |
 
 Each entry at the top of an app folder is one link, so a file added inside a subfolder is live at once. A new app folder, or a new file at its top, needs `install.sh links`. Names starting with a dot (editor files) aren't linked.
+
+## Theme
+
+`config/theme/theme.json` (linked to `~/.config/theme/theme.json`) holds the colours, the terminal's colour mapping, fonts, corner radii and opacities. Each app reads it itself, with nothing generated:
+
+| App | Reads it | A change shows |
+|---|---|---|
+| Quickshell | `config/Theme.qml` | at once |
+| Hyprland | `config/theme.lua` (with `config/json.lua`) | on `hyprctl reload` |
+| kitty | `theme.py`, through `geninclude` | on ctrl+shift+F5, or in new windows |
+| Neovim | `lua/plugins/colors.lua`, as the rose-pine plugin's palette | on restart |
+| tmux | the rose-pine plugin (the `Sousfiane/tmux` fork), with `@rose_pine_theme_file` and `jq` | on `tmux source-file ~/.config/tmux/tmux.conf` |
+
+The apps keep only what each colour is used for.

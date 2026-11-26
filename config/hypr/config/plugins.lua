@@ -1,3 +1,5 @@
+local theme = require("config.theme")
+
 if hl.plugin.csgo_vulkan_fix ~= nil then
 	hl.plugin.csgo_vulkan_fix.vkfix_app({ app = "cs2", w = 1280, h = 960 })
 	hl.config({
@@ -15,11 +17,11 @@ if hl.plugin.hyprbars ~= nil then
 		plugin = {
 			hyprbars = {
 				bar_height = 28,
-				bar_color = "rgba(191724cc)", -- same as kitty: background #191724, background_opacity 0.8
+				bar_color = theme.rgba("base", theme.opacity.terminal), -- same as kitty's background
 				-- blur the bar ourselves: without it, the blurred background shows through as blocky garbage
 				bar_blur = true,
-				col = { text = "rgb(908caa)" }, -- rose pine subtle; the focused window gets Theme.text (rules.lua)
-				bar_text_font = "JetBrainsMonoNL NF", -- same as kitty
+				col = { text = theme.rgb("subtle") }, -- the focused window gets theme text (rules.lua)
+				bar_text_font = theme.font.mono, -- same as kitty
 				bar_text_size = 12,
 				bar_text_weight = "semibold",
 				bar_text_align = "center",
@@ -28,7 +30,7 @@ if hl.plugin.hyprbars ~= nil then
 				bar_buttons_alignment = "right",
 				bar_padding = 8,
 				bar_button_padding = 8,
-				inactive_button_color = "rgba(6e6a8680)", -- unfocused windows get grey dots, like macOS
+				inactive_button_color = theme.rgba("muted", 0.5), -- unfocused windows get grey dots, like macOS
 				-- fullscreen hides this bar: the way back is the button in the quickshell bar (top edge)
 				on_double_click = "hyprctl dispatch 'hl.dsp.window.fullscreen()'",
 			},
@@ -38,7 +40,7 @@ if hl.plugin.hyprbars ~= nil then
 	-- Buttons are placed from the edge inward: the first one added sits rightmost.
 	-- Plain dots, no icons: red closes, gold fullscreens, blue toggles floating.
 	local dsp = function(d) return "hyprctl dispatch '" .. d .. "'" end
-	hl.plugin.hyprbars.add_button({ bg_color = "rgb(eb6f92)", fg_color = "rgb(191724)", size = 12, icon = "", action = dsp("hl.dsp.window.close()") })
-	hl.plugin.hyprbars.add_button({ bg_color = "rgb(f6c177)", fg_color = "rgb(191724)", size = 12, icon = "", action = dsp("hl.dsp.window.fullscreen()") })
-	hl.plugin.hyprbars.add_button({ bg_color = "rgb(9ccfd8)", fg_color = "rgb(191724)", size = 12, icon = "", action = dsp("hl.dsp.window.float()") })
+	hl.plugin.hyprbars.add_button({ bg_color = theme.rgb("love"), fg_color = theme.rgb("base"), size = 12, icon = "", action = dsp("hl.dsp.window.close()") })
+	hl.plugin.hyprbars.add_button({ bg_color = theme.rgb("gold"), fg_color = theme.rgb("base"), size = 12, icon = "", action = dsp("hl.dsp.window.fullscreen()") })
+	hl.plugin.hyprbars.add_button({ bg_color = theme.rgb("foam"), fg_color = theme.rgb("base"), size = 12, icon = "", action = dsp("hl.dsp.window.float()") })
 end

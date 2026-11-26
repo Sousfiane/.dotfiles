@@ -1,26 +1,54 @@
 pragma Singleton
 import Quickshell
+import Quickshell.Io
 import QtQuick
 
 Singleton {
-    // Rosé Pine (main)
-    readonly property color base: "#191724"
-    readonly property color surfaceRp: "#1f1d2e"
-    readonly property color overlay: "#26233a"
-    readonly property color muted: "#6e6a86"
-    readonly property color subtle: "#908caa"
-    readonly property color text: "#e0def4"
-    readonly property color love: "#eb6f92"
-    readonly property color gold: "#f6c177"
-    readonly property color rose: "#ebbcba"
-    readonly property color pine: "#31748f"
-    readonly property color foam: "#9ccfd8"
-    readonly property color iris: "#c4a7e7"
-    readonly property color highlightMed: "#403d52"
+    id: root
 
-    // ---------- transparency: the one place to tune it ----------
-    readonly property real alpha: 0.95          // bar, dropdowns, toasts, OSD
-    readonly property real surfaceAlpha: 0.75   // rows, buttons and inputs drawn on top of those
+    // The system theme: colours, fonts, radii and opacities are read from ~/.config/theme/theme.json
+    // (config/theme/theme.json in the dotfiles), which Hyprland and kitty read too. Saving it updates the
+    // shell at once. This file only says what each colour is used for.
+    FileView {
+        id: themeFile
+
+        path: Quickshell.env("HOME") + "/.config/theme/theme.json"
+        blockLoading: true
+        watchChanges: true
+        onFileChanged: reload()
+    }
+
+    // the last version that parsed, so a typo while editing keeps the shell as it was
+    readonly property var cache: ({ theme: null })
+    readonly property var theme: {
+        const text = themeFile.text();
+        try {
+            cache.theme = JSON.parse(text);
+        } catch (e) {
+            console.warn("theme.json:", e);
+        }
+        return cache.theme;
+    }
+    readonly property var colors: theme.colors
+
+    // the palette, by name
+    readonly property color base: colors.base
+    readonly property color surfaceRp: colors.surface
+    readonly property color overlay: colors.overlay
+    readonly property color muted: colors.muted
+    readonly property color subtle: colors.subtle
+    readonly property color text: colors.text
+    readonly property color love: colors.love
+    readonly property color gold: colors.gold
+    readonly property color rose: colors.rose
+    readonly property color pine: colors.pine
+    readonly property color foam: colors.foam
+    readonly property color iris: colors.iris
+    readonly property color highlightMed: colors.highlightMed
+
+    // ---------- transparency ----------
+    readonly property real alpha: theme.opacity.panel             // bar, dropdowns, toasts, OSD
+    readonly property real surfaceAlpha: theme.opacity.control    // rows, buttons and inputs drawn on top of those
 
     // `c` with opacity `a` (0..1)
     function withAlpha(c, a) {
@@ -39,19 +67,17 @@ Singleton {
     readonly property color dim: subtle
     readonly property color accent: iris
     readonly property color urgent: love
-    readonly property color line: muted
+    readonly property color line: muted   // also Hyprland's window border
 
     // the same colours fully see-through: fade to these instead of "transparent", which is
     // transparent *black* and would dip through a dark tint on the way
     readonly property color surfaceClear: withAlpha(overlay, 0)
     readonly property color accentClear: withAlpha(iris, 0)
 
-    readonly property string font: "JetBrainsMono Nerd Font"
-    readonly property int fontSize: 13
-    // corner radii; keep radius in sync with decoration.rounding (hypr/config/looknfeel.lua)
-    // and radiusLarge/radius with rounding_large/rounding_small (hypr/hyprtoolkit.conf)
-    readonly property int radiusSmall: 3
-    readonly property int radius: 6
-    readonly property int radiusLarge: 12
+    readonly property string font: theme.font.ui
+    readonly property int fontSize: theme.font.uiPixelSize
+    readonly property int radiusSmall: theme.radius.small
+    readonly property int radius: theme.radius.medium
+    readonly property int radiusLarge: theme.radius.large
     readonly property int barHeight: 32
 }

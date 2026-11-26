@@ -1,0 +1,59 @@
+{
+  "name": "Rosé Pine",
+
+  "colors": {
+    "base": "#191724",
+    "surface": "#1f1d2e",
+    "overlay": "#26233a",
+    "muted": "#6e6a86",
+    "subtle": "#908caa",
+    "text": "#e0def4",
+    "love": "#eb6f92",
+    "gold": "#f6c177",
+    "rose": "#ebbcba",
+    "pine": "#31748f",
+    "foam": "#9ccfd8",
+    "iris": "#c4a7e7",
+    "highlightLow": "#21202e",
+    "highlightMed": "#403d52",
+    "highlightHigh": "#524f67"
+  },
+
+  "terminal": {
+    "black": "overlay",
+    "red": "love",
+    "green": "pine",
+    "yellow": "gold",
+    "blue": "foam",
+    "magenta": "iris",
+    "cyan": "rose",
+    "white": "text",
+    "brightBlack": "muted",
+    "brightRed": "love",
+    "brightGreen": "pine",
+    "brightYellow": "gold",
+    "brightBlue": "foam",
+    "brightMagenta": "iris",
+    "brightCyan": "rose",
+    "brightWhite": "text"
+  },
+
+  "font": {
+    "ui": "JetBrainsMono Nerd Font",
+    "uiPixelSize": 13,
+    "mono": "JetBrainsMonoNL Nerd Font",
+    "monoPointSize": 10
+  },
+
+  "radius": {
+    "small": 3,
+    "medium": 6,
+    "large": 12
+  },
+
+  "opacity": {
+    "panel": 0.95,
+    "control": 0.75,
+    "terminal": 0.8
+  }
+}

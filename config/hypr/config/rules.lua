@@ -1,3 +1,5 @@
+local theme = require("config.theme")
+
 hl.window_rule({
 	-- Ignore maximize requests from all apps. You'll probably like this.
 	name = "suppress-maximize-events",
@@ -105,5 +107,5 @@ hl.window_rule({
 	-- hyprbars has no inactive title color: titles are subtle (plugins.lua), the focused one gets Theme.text
 	name = "titlebar-focused-text",
 	match = { focus = true },
-	["hyprbars:title_color"] = "rgb(e0def4)",
+	["hyprbars:title_color"] = theme.rgb("text"),
 })

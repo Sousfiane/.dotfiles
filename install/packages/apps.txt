@@ -3,6 +3,7 @@
 # ---------- shell and terminal ----------
 zsh                          # made the login shell by steps/system.sh
 tmux
+jq                           # tmux reads theme.json with it (the rose-pine plugin's @rose_pine_theme_file)
 neovim
 btop
 fastfetch
