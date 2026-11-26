@@ -33,5 +33,6 @@ Singleton {
 
     property string dotfilesRepo: home + "/.dotfiles"
     property string wallpaperDir: home + "/.wallpapers"
+    property string wallpaperDefault: wallpaperDir + "/Mountain.jpg"     // until one is picked (a new machine)
     property string wallpaperState: Quickshell.statePath("wallpaper")    // the wallpaper picked, next to the dock pins
 }

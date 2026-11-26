@@ -32,8 +32,9 @@ Singleton {
     onOpenChanged: if (open)
         query = ""
 
-    // the wallpaper on screen, drawn by modules/background (crossfades on change)
-    property string current: stateFile.text().trim()
+    // the wallpaper on screen, drawn by modules/background (crossfades on change): the one picked, or
+    // Config.wallpaperDefault before any is
+    property string current: stateFile.text().trim() || Config.wallpaperDefault
     readonly property string currentUrl: current ? "file://" + current : ""     // for Image.source
 
     function isCurrent(path) {
