@@ -5,7 +5,6 @@ source_if_exists () {
 }
 
 export GIT_EDITOR=nvim
-export TERM=xterm-kitty
 
 # the prompt: directory, Git, and the last command's duration (config/zsh/prompt.zsh)
 source_if_exists $HOME/.config/zsh/prompt.zsh
