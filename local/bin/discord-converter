@@ -18,6 +18,10 @@ if [ ! -f "$INPUT" ]; then
     exit 1
 fi
 
+# the two passes' log, in a folder of its own: not in the current folder, and two runs at once don't share it
+PASSDIR=$(mktemp -d)
+trap 'rm -rf "$PASSDIR"' EXIT
+
 # two-pass x264 at $VIDEO_BITRATE, so the size lands close to the target
 encode() {
     ffmpeg -y -i "$INPUT" \
@@ -25,6 +29,7 @@ encode() {
         -preset medium \
         -b:v "$VIDEO_BITRATE" \
         -pass 1 \
+        -passlogfile "$PASSDIR/pass" \
         -an \
         -f mp4 /dev/null
 
@@ -33,12 +38,11 @@ encode() {
         -preset medium \
         -b:v "$VIDEO_BITRATE" \
         -pass 2 \
+        -passlogfile "$PASSDIR/pass" \
         -c:a aac \
         -b:a "$AUDIO_BITRATE" \
         -movflags +faststart \
         "$OUTPUT"
-
-    rm -f ffmpeg2pass-0.log ffmpeg2pass-0.log.mbtree
 }
 
 # Get duration
@@ -55,6 +59,9 @@ echo
 TARGET_BITS=$(awk "BEGIN {print $TARGET_MB * 1024 * 1024 * 8}")
 TOTAL_BITRATE=$(awk "BEGIN {printf \"%d\", $TARGET_BITS / $DURATION}")
 VIDEO_BITRATE=$((TOTAL_BITRATE - AUDIO_BITRATE))
+# a clip so short the size limit is no limit (the sum above would leave the video nothing, or less): a high
+# bitrate is plenty, and stays far under it
+(( VIDEO_BITRATE > 8000000 || VIDEO_BITRATE <= 0 )) && VIDEO_BITRATE=8000000
 
 echo "Target size: ${TARGET_MB} MB"
 echo "Video bitrate: ${VIDEO_BITRATE} bps"

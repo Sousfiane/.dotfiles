@@ -86,8 +86,17 @@ def main():
     bus = dbus.SystemBus()
     Agent(bus, AGENT_PATH)
 
-    # fires now if bluetoothd is up, and again whenever it restarts
-    bus.watch_name_owner(BUS, lambda owner: owner and register())
+    # fires now if bluetoothd is up, and again whenever it restarts. bluetoothd can own its name a moment
+    # before it takes agents: a failed registration is tried again, rather than lost until the next restart
+    def try_register():
+        try:
+            register()
+        except dbus.DBusException as e:
+            print(f"agent registration failed, retrying: {e}", flush=True)
+            GLib.timeout_add_seconds(2, try_register)
+        return False
+
+    bus.watch_name_owner(BUS, lambda owner: owner and try_register())
 
     GLib.MainLoop().run()
 
