@@ -73,6 +73,6 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 | Hyprland | `config/theme.lua` (with `config/json.lua`) | on `hyprctl reload` |
 | kitty | `theme.py`, through `geninclude` | on ctrl+shift+F5, or in new windows |
 | Neovim | `lua/plugins/colors.lua`, as the rose-pine plugin's palette | on restart |
-| tmux | the rose-pine plugin (the `Sousfiane/tmux` fork), with `@rose_pine_theme_file` and `jq` | on `tmux source-file ~/.config/tmux/tmux.conf` |
+| tmux | `theme.sh` (with `jq`), which also lays out the status bar | on `tmux source-file ~/.config/tmux/tmux.conf` |
 
 The apps keep only what each colour is used for.
