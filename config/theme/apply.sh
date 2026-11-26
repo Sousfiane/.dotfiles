@@ -2,7 +2,8 @@
 # Brings everything up to date with theme.json and its palette. Quickshell runs this whenever either changes
 # (it follows them itself), the `theme` command when Quickshell isn't running, and steps/system.sh on install.
 #
-#   Hyprland   reloads its config, which also rewrites hyprtoolkit's and qt6ct's files (theme_files.lua)
+#   files      hyprtoolkit's and qt6ct's own files, written again (files.sh)
+#   Hyprland   reloads its config, for its own colours
 #   kitty      reloads its config (SIGUSR1), in every window
 #   tmux       sources its config, if a server is running
 #   GTK        theme, colour scheme, app font and icon theme (gsettings), and GTK 4's gtk.css link
@@ -10,6 +11,8 @@
 
 theme="$HOME/.config/theme/theme.json"
 fonts="$HOME/.local/state/theme/fonts.json"    # the fonts picked in the theme picker, over theme.json's
+
+"$(dirname "${BASH_SOURCE[0]}")/files.sh"
 
 if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
     hyprctl reload >/dev/null
