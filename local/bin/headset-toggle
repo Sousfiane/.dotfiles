@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 MAC="A8:E6:E8:04:97:29"
 NAME="WH-CH720N"

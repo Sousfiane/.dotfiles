@@ -46,7 +46,6 @@ fzf_args=(
     --preview-window='right:50%'
     --bind='alt-d:preview-half-page-down,alt-u:preview-half-page-up'
     --bind='alt-k:preview-up,alt-j:preview-down'
-    --color='pointer:red,marker:red'
 )
 
 if [[ $PWD == "$HOME" ]]; then

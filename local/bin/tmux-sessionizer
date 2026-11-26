@@ -50,7 +50,6 @@ fzf_args=(
     --preview-window='right:50%:wrap'
     --bind='alt-j:preview-down,alt-k:preview-up'
     --bind='alt-d:preview-half-page-down,alt-u:preview-half-page-up'
-    --color='pointer:red,marker:red'  # red: the palette's love, through the terminal
 )
 
 if [[ $# -eq 1 ]]; then
