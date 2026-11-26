@@ -21,10 +21,12 @@ hl.config({
 		inactive_opacity = 1.0,
 
 		shadow = {
+			-- soft and diffuse so no dark ring hugs the border (keeps it the same colour as the bar underline)
 			enabled = true,
-			range = 2,
-			render_power = 3,
-			color = "rgba(1a1a1aee)",
+			range = 16,
+			render_power = 2,
+			color = "rgba(00000038)",
+			offset = "0 3",
 		},
 
 		blur = {
