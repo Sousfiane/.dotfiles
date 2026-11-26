@@ -12,6 +12,12 @@
 theme="$HOME/.config/theme/theme.json"
 fonts="$HOME/.local/state/theme/fonts.json"    # the fonts picked in the theme picker, over theme.json's
 
+# the current palette: the state file (written by `theme`), or theme.json's default. Every part below
+# that reads the palette checks for jq first
+name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
+[[ -n $name ]] || name=$(jq -r '.palette' "$theme" 2>/dev/null)
+palette="$HOME/.config/theme/palettes/$name.json"
+
 "$(dirname "${BASH_SOURCE[0]}")/files.sh"
 
 if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
@@ -25,10 +31,6 @@ if tmux info &>/dev/null; then
 fi
 
 if command -v jq >/dev/null && command -v gsettings >/dev/null; then
-    # the current palette: the state file (written by `theme`), or theme.json's default
-    name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
-    [[ -n $name ]] || name=$(jq -r '.palette' "$theme")
-    palette="$HOME/.config/theme/palettes/$name.json"
     GNOME=org.gnome.desktop.interface
     gsettings set $GNOME gtk-theme "$(jq -r '.gtk' "$palette")"
     # each palette says which: the rose-pine GTK themes look wrong with prefer-dark, since libadwaita apps
