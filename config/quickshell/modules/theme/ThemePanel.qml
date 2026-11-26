@@ -242,6 +242,8 @@ DropdownPanel {
                     Layout.fillWidth: true
                     implicitHeight: 44
                     selected: nav.index === menu.paletteCount + index
+                    // the card's own click (the size buttons sit above it and keep theirs)
+                    onSelectRequested: menu.openFonts(modelData.key)
 
                     RowLayout {
                         anchors {
@@ -269,7 +271,6 @@ DropdownPanel {
                         // its size, with − and + (or the - and + keys on this row)
                         Row {
                             spacing: 2
-                            z: 1    // above the row's own click
 
                             IconButton {
                                 icon: "−"
@@ -296,13 +297,14 @@ DropdownPanel {
                         }
                     }
 
+                    // hover only: under the card's click and the size buttons
                     MouseArea {
                         anchors.fill: parent
-                        z: -1   // under the size buttons
+                        z: -1
                         hoverEnabled: true
+                        acceptedButtons: Qt.NoButton
                         cursorShape: Qt.PointingHandCursor
                         onEntered: nav.select(menu.paletteCount + fontRow.index)
-                        onClicked: menu.openFonts(fontRow.modelData.key)
                     }
                 }
             }
