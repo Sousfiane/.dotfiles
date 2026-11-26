@@ -19,6 +19,7 @@ import qs.modules.screenshot
 import qs.modules.lock
 import qs.modules.tray
 import qs.modules.dock
+import qs.modules.packages
 import qs.services
 
 ShellRoot {
@@ -43,6 +44,8 @@ ShellRoot {
     HubPanel {}
     NetPanel {}
     ScreenshotPanel {}
+    InstallPanel {}
+    RemovePanel {}
     LockScreen {}
     TrayPanel {}
     AppDock {}

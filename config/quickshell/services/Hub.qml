@@ -12,7 +12,7 @@ Singleton {
     }
 
     // close the hub first, then open the picker once the hub has let go of the keyboard
-    function openPicker(target) {       // "launcher" | "wallpaper" | "theme" | "clipboard" | "screenshot"
+    function openPicker(target) {       // "launcher" | "wallpaper" | "theme" | "clipboard" | "screenshot" | "install" | "remove"
         Panels.closeThen(() => Panels.show(target));
     }
 }

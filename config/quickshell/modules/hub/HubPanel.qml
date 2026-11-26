@@ -121,6 +121,12 @@ DropdownPanel {
             case Qt.Key_S:
                 Hub.openPicker("screenshot");
                 break;
+            case Qt.Key_I:
+                Hub.openPicker("install");
+                break;
+            case Qt.Key_R:
+                Hub.openPicker("remove");
+                break;
             case Qt.Key_P:
             case Qt.Key_Space:
                 Media.toggle();
@@ -495,7 +501,7 @@ DropdownPanel {
 
                 Divider {}
 
-                // ---------- packages (not wired up yet) ----------
+                // ---------- packages ----------
                 Txt {
                     variant: "heading"
                     text: "Packages"
@@ -511,17 +517,15 @@ DropdownPanel {
                         model: [
                             {
                                 label: "Install",
-                                key: "",
+                                key: "I",
                                 icon: Icons.packageInstall,
-                                target: "install",
-                                soon: true
+                                target: "install"
                             },
                             {
                                 label: "Remove",
-                                key: "",
+                                key: "R",
                                 icon: Icons.packageRemove,
-                                target: "remove",
-                                soon: true
+                                target: "remove"
                             }
                         ]
 
@@ -534,7 +538,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: Media.active ? "h l month • j k day • t today • p/b/n media • a w e c s open • Esc" : "h l month • j k day • t today • a w e c s open • Esc close"
+            text: Media.active ? "h l month • j k day • t today • p/b/n media • a w e c s i r open • Esc" : "h l month • j k day • t today • a w e c s i r open • Esc close"
         }
     }
 }
