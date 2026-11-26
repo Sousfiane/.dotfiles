@@ -1,0 +1,36 @@
+# How the dotfiles are laid out, for editors and formatters (shfmt reads the shell part)
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Lua: tabs, as stylua writes them (config/hypr/stylua.toml)
+[*.lua]
+indent_style = tab
+
+# shell: 4 spaces, case bodies indented (shfmt -i 4 -ci)
+[{*.sh,*.zsh,local/bin/*,home/zshrc,home/zprofile}]
+indent_style = space
+indent_size = 4
+switch_case_indent = true
+
+# JSON: 2 spaces (theme.json, the palettes)
+[*.json]
+indent_size = 2
+
+# Markdown: trailing spaces can be line breaks
+[*.md]
+trim_trailing_whitespace = false
+
+[local/bin/nvcat]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+indent_style = unset
+indent_size = unset

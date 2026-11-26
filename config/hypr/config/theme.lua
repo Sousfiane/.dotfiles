@@ -22,7 +22,9 @@ end
 -- default
 local function current_palette(default)
 	local file = io.open(os.getenv("HOME") .. "/.local/state/theme/palette", "r")
-	if not file then return default end
+	if not file then
+		return default
+	end
 	local name = (file:read("*l") or ""):match("^%s*(.-)%s*$")
 	file:close()
 	return name ~= "" and name or default
@@ -53,7 +55,9 @@ end
 -- a palette colour's hex digits, without the "#"
 local function hex(name)
 	local value = theme.colors[name]
-	if not value then error("theme: no colour named '" .. tostring(name) .. "'", 3) end
+	if not value then
+		error("theme: no colour named '" .. tostring(name) .. "'", 3)
+	end
 	return value:sub(2)
 end
 

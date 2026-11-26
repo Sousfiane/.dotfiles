@@ -50,7 +50,9 @@ function json.decode(text)
 				local e = text:sub(pos + 1, pos + 1)
 				if e == "u" then
 					local hex = text:sub(pos + 2, pos + 5)
-					if not hex:match("^%x%x%x%x$") then fail("bad \\u escape") end
+					if not hex:match("^%x%x%x%x$") then
+						fail("bad \\u escape")
+					end
 					out[#out + 1] = utf8char(tonumber(hex, 16))
 					pos = pos + 6
 				elseif escapes[e] then
@@ -80,8 +82,12 @@ function json.decode(text)
 			skip()
 			local c = text:sub(pos, pos)
 			pos = pos + 1
-			if c == close then return out end
-			if c ~= "," then fail(("expected ',' or '%s'"):format(close)) end
+			if c == close then
+				return out
+			end
+			if c ~= "," then
+				fail(("expected ',' or '%s'"):format(close))
+			end
 			skip()
 		end
 	end
@@ -91,10 +97,14 @@ function json.decode(text)
 		local c = text:sub(pos, pos)
 		if c == "{" then
 			return list("{", "}", function(out)
-				if text:sub(pos, pos) ~= '"' then fail("expected a key") end
+				if text:sub(pos, pos) ~= '"' then
+					fail("expected a key")
+				end
 				local k = str()
 				skip()
-				if text:sub(pos, pos) ~= ":" then fail("expected ':'") end
+				if text:sub(pos, pos) ~= ":" then
+					fail("expected ':'")
+				end
 				pos = pos + 1
 				out[k] = value()
 			end)
@@ -121,11 +131,17 @@ function json.decode(text)
 
 	local result = value()
 	skip()
-	if pos <= #text then fail("text after the end") end
+	if pos <= #text then
+		fail("text after the end")
+	end
 	return result
 end
 
 -- stands for JSON null (a nil would vanish from tables)
-json.null = setmetatable({}, { __tostring = function() return "null" end })
+json.null = setmetatable({}, {
+	__tostring = function()
+		return "null"
+	end,
+})
 
 return json
