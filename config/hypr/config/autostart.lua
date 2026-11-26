@@ -6,7 +6,6 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm-app -s b -- wl-paste --watch clipvault store")
 	hl.exec_cmd("uwsm-app -s b -- bt-agent")
 	hl.exec_cmd("uwsm-app -s b -- easyeffects --service-mode -w")
-	--hl.exec_cmd("sleep 5 && bluetoothctl power on && bluetoothctl connect A8:E6:E8:04:97:29")
 
 	hl.exec_cmd("hyprpm reload")
 end)

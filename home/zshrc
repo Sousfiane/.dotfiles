@@ -20,10 +20,6 @@ add-zsh-hook precmd shell_theme_refresh
 add-zsh-hook preexec shell_theme_refresh
 shell_theme_widgets fzf-file-widget fzf-cd-widget fzf-history-widget fzf-completion
 
-precmd() {
-    source $HOME/.config/zsh/aliases.zsh
-}
-
 # Set the directory we want to store zinit and plugins
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
@@ -91,7 +87,7 @@ bindkey '^H' backward-kill-word                                 # delete previou
 bindkey '^[[Z' undo                                             # Shift+tab undo last action
 
 # Theming section  
-autoload -U compinit colors zcalc
+autoload -U compinit colors
 compinit -d
 colors
 

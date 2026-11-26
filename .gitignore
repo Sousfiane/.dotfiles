@@ -1,12 +1,4 @@
-polybar/scripts/arch/arch_updates.pid
-polybar/scripts/arch/aur-vcs.pkgs
-polybar/scripts/arch/aur.pkgs
-polybar/scripts/arch/polybar_updates.pid
-polybar/scripts/arch/repo.pkgs
-polybar/scripts/arch/status
-polybar/scripts/arch/status_vcs
-fonts/.uuid
-btop/btop.log
+# Python's bytecode cache (config/quickshell/scripts/calendar.py)
 __pycache__/
 
 # written by Quickshell for its language server: a link into /run, different on every start
