@@ -13,6 +13,7 @@ Singleton {
     // [{ id, name, dark, colors }]
     property var palettes: []
     readonly property string current: Theme.paletteName
+    readonly property string themeCmd: Config.home + "/.local/bin/theme"     // the `theme` command (local/bin)
 
     // the fonts that can be picked, and where each is used
     // `sizeKey` is the size's name in theme.json/fonts.json
@@ -32,7 +33,7 @@ Singleton {
 
     function set(id) {
         if (id !== current)
-            Quickshell.execDetached([Quickshell.env("HOME") + "/.local/bin/theme", id]);
+            Quickshell.execDetached([root.themeCmd, id]);
     }
 
     // sizes asked for but not in fonts.json yet, so quick presses add up instead of all starting from the
@@ -54,12 +55,12 @@ Singleton {
         if (size === fontSize(role))
             return;
         pendingSizes = Object.assign({}, pendingSizes, { [role.key]: size });
-        Quickshell.execDetached([Quickshell.env("HOME") + "/.local/bin/theme", "font", role.key, "size", String(size)]);
+        Quickshell.execDetached([root.themeCmd, "font", role.key, "size", String(size)]);
     }
 
     function setFont(key, family) {
         if (family !== Theme.fonts[key])
-            Quickshell.execDetached([Quickshell.env("HOME") + "/.local/bin/theme", "font", key, family]);
+            Quickshell.execDetached([root.themeCmd, "font", key, family]);
     }
 
     Process {

@@ -135,16 +135,12 @@ Singleton {
         return "0x" + String(w.address).replace(/^0x/, "");
     }
 
-    function lua(code) {
-        Quickshell.execDetached(["hyprctl", "eval", code]);
-    }
-
     function focusWindow(w) {
-        lua(`hl.dispatch(hl.dsp.focus({ window = "address:${addr(w)}" }))`);
+        Hyprland.dispatch(`hl.dsp.focus({ window = "address:${addr(w)}" })`);
     }
 
     function closeWindow(w) {
-        lua(`hl.dispatch(hl.dsp.window.close({ window = "address:${addr(w)}" }))`);
+        Hyprland.dispatch(`hl.dsp.window.close({ window = "address:${addr(w)}" })`);
     }
 
     // not running: start it. Running: focus its window, and on the next click the one after it

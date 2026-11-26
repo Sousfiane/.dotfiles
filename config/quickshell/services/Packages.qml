@@ -16,7 +16,7 @@ import qs.config
 Singleton {
     id: root
 
-    readonly property string listsDir: Quickshell.env("HOME") + "/.dotfiles/install/packages"
+    readonly property string listsDir: Config.dotfilesRepo + "/install/packages"
 
     // ---------- install: search ----------
 

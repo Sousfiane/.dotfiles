@@ -2,6 +2,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.config
 
 // The Hyprland shortcuts, for the Keybinds panel.
 //
@@ -14,7 +15,7 @@ import QtQuick
 Singleton {
     id: root
 
-    readonly property string bindingsFile: Quickshell.env("HOME") + "/.config/hypr/config/bindings.lua"
+    readonly property string bindingsFile: Config.home + "/.config/hypr/config/bindings.lua"
 
     // [{ section, description, keys: [[ "SUPER", "SHIFT", "F" ], ...] }], in the file's order
     property var binds: []

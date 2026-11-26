@@ -5,13 +5,15 @@ import QtQuick
 Singleton {
     readonly property string home: Quickshell.env("HOME")
 
-    property string terminal: "kitty"                  // change to foot, alacritty, ghostty...
-    // class that Hyprland's "tag-floating-windows" rule floats (foot uses --app-id instead)
+    // the terminal xdg-terminal-exec opens (its choice: ~/.config/xdg-terminals.list), used here only for the
+    // icon of its floating windows in the dock and the workspace cards
+    property string terminal: "kitty"
+    // app id that Hyprland's "tag-floating-windows" rule floats
     property string floatingClass: "FloatingTerm"
 
-    // command line that runs `cmd` in a floating terminal window
+    // command line that runs `cmd` in a floating terminal window: the same as SUPER + SHIFT + Return
     function floatingTerm(cmd) {
-        return [terminal, "--class", floatingClass, "-e", ...cmd];
+        return ["xdg-terminal-exec", "--app-id=" + floatingClass, "--", ...cmd];
     }
 
     // weather in the hub: a city ("Paris", "Lyon"...), or "" to locate by IP address
