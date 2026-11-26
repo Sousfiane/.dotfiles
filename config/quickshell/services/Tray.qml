@@ -5,7 +5,7 @@ import Quickshell.Io
 import QtQuick
 
 // The system tray: apps living in the background (Vesktop, EasyEffects...). The bar keeps them in a
-// drawer that opens on hover (modules/bar/TrayIcon); their menus open as a dropdown (modules/tray).
+// drawer that opens on hover (modules/bar/icons/TrayIcon); their menus open as a dropdown (modules/tray).
 Singleton {
     id: root
 

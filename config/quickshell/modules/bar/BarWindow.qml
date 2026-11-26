@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import qs.config
 import qs.services
 import qs.components.ui
+import qs.modules.bar.icons
 
 PanelWindow {
     id: win
