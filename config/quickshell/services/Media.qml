@@ -28,8 +28,12 @@ Singleton {
             length: 0
         })
     // (without mpris:length, Quickshell's length falls back to the position, so lengthSupported decides)
-    readonly property bool playerHasLength: (player?.lengthSupported ?? false) && player.length > 0
-    readonly property real length: playerHasLength ? player.length : (lastLength.key === trackKey ? lastLength.length : 0)
+    // A live stream (Twitch) has an infinite duration, which the browser sends as the largest 64-bit
+    // length: anything past 100 days is that, not a track. It has no length to show, only "live".
+    readonly property real liveLength: 100 * 24 * 3600
+    readonly property bool live: (player?.lengthSupported ?? false) && player.length >= liveLength
+    readonly property bool playerHasLength: (player?.lengthSupported ?? false) && player.length > 0 && !live
+    readonly property real length: live ? 0 : playerHasLength ? player.length : (lastLength.key === trackKey ? lastLength.length : 0)
 
     function rememberLength() {
         if (playerHasLength)

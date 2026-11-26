@@ -92,7 +92,8 @@ RowLayout {
             Txt {
                 Layout.fillWidth: true
                 variant: "small"
-                text: root.hasLength ? Media.fmt(root.player.position) + " / " + Media.fmt(Media.length) : ""
+                color: Media.live ? Theme.urgent : Theme.dim
+                text: Media.live ? "● live" : root.hasLength ? Media.fmt(root.player.position) + " / " + Media.fmt(Media.length) : ""
             }
 
             Repeater {
