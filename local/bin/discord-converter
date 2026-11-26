@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Re-encodes a video to fit Discord's upload limit (under 20 MB): discord-converter video.mp4 writes
+# video_discord.mp4 next to it, and tries again 15% smaller if the first pass is still too big.
 
 INPUT="$1"
 OUTPUT="${INPUT%.*}_discord.mp4"
@@ -15,6 +17,29 @@ if [ ! -f "$INPUT" ]; then
     echo "File not found: $INPUT"
     exit 1
 fi
+
+# two-pass x264 at $VIDEO_BITRATE, so the size lands close to the target
+encode() {
+    ffmpeg -y -i "$INPUT" \
+        -c:v libx264 \
+        -preset medium \
+        -b:v "$VIDEO_BITRATE" \
+        -pass 1 \
+        -an \
+        -f mp4 /dev/null
+
+    ffmpeg -y -i "$INPUT" \
+        -c:v libx264 \
+        -preset medium \
+        -b:v "$VIDEO_BITRATE" \
+        -pass 2 \
+        -c:a aac \
+        -b:a "$AUDIO_BITRATE" \
+        -movflags +faststart \
+        "$OUTPUT"
+
+    rm -f ffmpeg2pass-0.log ffmpeg2pass-0.log.mbtree
+}
 
 # Get duration
 DURATION=$(ffprobe -v error \
@@ -36,25 +61,7 @@ echo "Video bitrate: ${VIDEO_BITRATE} bps"
 echo
 
 # Encode
-ffmpeg -y -i "$INPUT" \
-    -c:v libx264 \
-    -preset medium \
-    -b:v "$VIDEO_BITRATE" \
-    -pass 1 \
-    -an \
-    -f mp4 /dev/null
-
-ffmpeg -y -i "$INPUT" \
-    -c:v libx264 \
-    -preset medium \
-    -b:v "$VIDEO_BITRATE" \
-    -pass 2 \
-    -c:a aac \
-    -b:a "$AUDIO_BITRATE" \
-    -movflags +faststart \
-    "$OUTPUT"
-
-rm -f ffmpeg2pass-0.log ffmpeg2pass-0.log.mbtree
+encode
 
 # Check actual size
 SIZE=$(stat -c%s "$OUTPUT")
@@ -70,25 +77,7 @@ if [ "$SIZE" -gt $((20 * 1024 * 1024)) ]; then
     # Reduce video bitrate by 15%
     VIDEO_BITRATE=$((VIDEO_BITRATE * 85 / 100))
 
-    ffmpeg -y -i "$INPUT" \
-        -c:v libx264 \
-        -preset medium \
-        -b:v "$VIDEO_BITRATE" \
-        -pass 1 \
-        -an \
-        -f mp4 /dev/null
-
-    ffmpeg -y -i "$INPUT" \
-        -c:v libx264 \
-        -preset medium \
-        -b:v "$VIDEO_BITRATE" \
-        -pass 2 \
-        -c:a aac \
-        -b:a "$AUDIO_BITRATE" \
-        -movflags +faststart \
-        "$OUTPUT"
-
-    rm -f ffmpeg2pass-0.log ffmpeg2pass-0.log.mbtree
+    encode
 
     SIZE=$(stat -c%s "$OUTPUT")
     SIZE_MB=$(awk "BEGIN {printf \"%.2f\", $SIZE / 1024 / 1024}")
