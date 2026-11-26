@@ -18,12 +18,17 @@ if [[ ! -d $SPOTIFY || ! -f $PREFS ]]; then
     exit 0
 fi
 
+# the Ziro colour scheme that goes with the current palette (theme.json); Spotify can't switch live, so
+# run this step again after `theme`
+SCHEME=$(jq -r '.spicetify' "$HOME/.config/theme/palettes/$(jq -r '.palette' "$HOME/.config/theme/theme.json").json" 2>/dev/null)
+[[ -n $SCHEME && $SCHEME != null ]] || SCHEME=rose-pine
+
 # fields left out keep spicetify's defaults
 spicetify -q config \
     spotify_path "$SPOTIFY" \
     prefs_path "$PREFS" \
     current_theme Ziro \
-    color_scheme rose-pine \
+    color_scheme "$SCHEME" \
     sidebar_config 0 \
     extensions adblock.js
 success "spicetify configured"

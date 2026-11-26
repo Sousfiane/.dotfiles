@@ -6,49 +6,79 @@ import QtQuick
 Singleton {
     id: root
 
-    // The system theme: colours, fonts, radii and opacities are read from ~/.config/theme/theme.json
-    // (config/theme/theme.json in the dotfiles), which Hyprland, kitty, Neovim and tmux read too. Saving it
-    // updates the shell at once, and runs theme/apply.sh so the others follow. This file only says what each
-    // colour is used for.
-    FileView {
-        id: themeFile
+    // The system theme: fonts, radii, opacities and which palette are read from ~/.config/theme/theme.json,
+    // the colours from the palette it names, ~/.config/theme/palettes/<palette>.json (config/theme in the
+    // dotfiles). Hyprland, kitty, Neovim and tmux read them too. Saving either updates the shell at once, and
+    // runs theme/apply.sh so the others follow. This file only says what each colour is used for.
+    readonly property string themeDir: Quickshell.env("HOME") + "/.config/theme"
 
-        path: Quickshell.env("HOME") + "/.config/theme/theme.json"
+    FileView {
+        id: settingsFile
+
+        path: root.themeDir + "/theme.json"
         blockLoading: true
         watchChanges: true
         onFileChanged: reload()
-        onLoaded: root.applyEverywhere(text())
+        onLoaded: {
+            paletteFile.reload(); // also picks up a palette file that didn't exist yet
+            applyTimer.restart();
+        }
     }
 
-    // the text the other apps were last brought up to date with
-    property string appliedText: ""
-    Component.onCompleted: appliedText = themeFile.text()
+    FileView {
+        id: paletteFile
 
-    // after a real change that parses (a typo mid-edit doesn't reload everything), the other apps follow
-    function applyEverywhere(text) {
+        path: root.themeDir + "/palettes/" + (root.settings.palette ?? "rose-pine") + ".json"
+        blockLoading: true
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: applyTimer.restart()
+    }
+
+    // the last version of each file that parsed, so a typo while editing keeps the shell as it was
+    readonly property var cache: ({ settings: null, palette: null })
+    function parse(key, text) {
+        try {
+            cache[key] = JSON.parse(text);
+        } catch (e) {
+            console.warn("theme:", key, e);
+        }
+        return cache[key];
+    }
+    readonly property var settings: parse("settings", settingsFile.text())
+    readonly property var palette: parse("palette", paletteFile.text())
+    readonly property var theme: settings
+    readonly property var colors: palette.colors
+    readonly property bool dark: palette.dark
+
+    // ---------- the other apps follow ----------
+
+    // what the other apps were last brought up to date with
+    property string appliedText: ""
+    Component.onCompleted: appliedText = settingsFile.text() + paletteFile.text()
+
+    // switching palettes changes both files in turn: wait for them to settle, then apply once
+    Timer {
+        id: applyTimer
+
+        interval: 300
+        onTriggered: root.applyEverywhere()
+    }
+
+    // after a real change that parses (a typo mid-edit doesn't reload everything)
+    function applyEverywhere() {
+        const text = settingsFile.text() + paletteFile.text();
         if (text === appliedText)
             return;
         try {
-            JSON.parse(text);
+            JSON.parse(settingsFile.text());
+            JSON.parse(paletteFile.text());
         } catch (e) {
             return;
         }
         appliedText = text;
-        Quickshell.execDetached([Quickshell.env("HOME") + "/.config/theme/apply.sh"]);
+        Quickshell.execDetached([root.themeDir + "/apply.sh"]);
     }
-
-    // the last version that parsed, so a typo while editing keeps the shell as it was
-    readonly property var cache: ({ theme: null })
-    readonly property var theme: {
-        const text = themeFile.text();
-        try {
-            cache.theme = JSON.parse(text);
-        } catch (e) {
-            console.warn("theme.json:", e);
-        }
-        return cache.theme;
-    }
-    readonly property var colors: theme.colors
 
     // the palette, by name
     readonly property color base: colors.base

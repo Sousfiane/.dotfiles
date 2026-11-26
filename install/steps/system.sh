@@ -16,18 +16,7 @@ fi
 
 # ---------- GTK theme ----------
 
-GNOME="org.gnome.desktop.interface"
-gsettings set $GNOME gtk-theme "rose-pine-gtk"
-gsettings set $GNOME color-scheme "light-dark"
-# the app font and icon theme come from theme.json (config/theme/apply.sh, also run when it changes)
+# the GTK theme (GTK 4 too), light or dark, app font and icons come from theme.json and its palette
+# (config/theme/apply.sh, also run whenever they change)
 "$DOTFILES/config/theme/apply.sh"
 success "GTK theme set"
-
-# GTK 4 apps (Nautilus) ignore the theme setting: they read this file
-if [[ -e "$HOME/.config/gtk-4.0/gtk.css" || -L "$HOME/.config/gtk-4.0/gtk.css" ]]; then
-    success "GTK 4 theme already linked"
-else
-    mkdir -p "$HOME/.config/gtk-4.0"
-    ln -s /usr/share/themes/rose-pine-gtk/gtk-4.0/gtk.css "$HOME/.config/gtk-4.0/gtk.css"
-    success "GTK 4 theme linked"
-fi

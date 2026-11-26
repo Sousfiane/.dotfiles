@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Switches the system palette.
+#
+#   theme            the palettes, the current one marked
+#   theme <name>     switch to it ("rose-pine-moon", or just "moon")
+#   theme next       the next one, round the list
+#
+# It only changes "palette" in ~/.config/theme/theme.json: Quickshell sees the change and brings every app up
+# to date (config/theme/apply.sh). When Quickshell isn't running, this runs apply.sh itself.
+
+set -euo pipefail
+
+dir="$HOME/.config/theme"
+settings="$dir/theme.json"
+
+mapfile -t names < <(find "$dir/palettes/" -maxdepth 1 -name '*.json' -printf '%f\n' | sed 's/\.json$//' | sort)
+current=$(jq -r '.palette' "$settings")
+
+if [[ $# -eq 0 ]]; then
+    for n in "${names[@]}"; do
+        title=$(jq -r '.name' "$dir/palettes/$n.json")
+        if [[ $n == "$current" ]]; then
+            printf '* %-18s %s\n' "$n" "$title"
+        else
+            printf '  %-18s %s\n' "$n" "$title"
+        fi
+    done
+    exit 0
+fi
+
+wanted=$1
+if [[ $wanted == next ]]; then
+    wanted=${names[0]}
+    for i in "${!names[@]}"; do
+        if [[ ${names[i]} == "$current" ]]; then
+            wanted=${names[(i + 1) % ${#names[@]}]}
+        fi
+    done
+elif [[ ! -f "$dir/palettes/$wanted.json" && -f "$dir/palettes/rose-pine-$wanted.json" ]]; then
+    wanted="rose-pine-$wanted"
+fi
+
+if [[ ! -f "$dir/palettes/$wanted.json" ]]; then
+    echo "theme: no palette named '$1' (theme lists them)" >&2
+    exit 1
+fi
+if [[ $wanted == "$current" ]]; then
+    echo "already $wanted"
+    exit 0
+fi
+
+# only the palette line changes, so the rest of the file stays as written. In place (sed -i would replace
+# the link with a copy), and in one write
+text=$(sed -E "s/(\"palette\"[[:space:]]*:[[:space:]]*)\"[^\"]*\"/\1\"$wanted\"/" "$settings")
+printf '%s\n' "$text" >"$settings"
+echo "$(jq -r '.name' "$dir/palettes/$wanted.json")"
+
+if ! pgrep -x qs >/dev/null && ! pgrep -x quickshell >/dev/null; then
+    "$dir/apply.sh"
+fi

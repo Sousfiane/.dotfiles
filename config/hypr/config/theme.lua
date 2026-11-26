@@ -1,5 +1,5 @@
--- The system theme, read from ~/.config/theme/theme.json (config/theme/theme.json in the dotfiles), which
--- quickshell and kitty read too. Hyprland reads it on start and on `hyprctl reload`.
+-- The system theme, read from ~/.config/theme/theme.json and the palette it names (config/theme in the
+-- dotfiles), which quickshell, kitty, Neovim and tmux read too. Hyprland reads it on start and on `hyprctl reload`.
 --
 --   local theme = require("config.theme")
 --   theme.colors.muted              "#6e6a86"
@@ -9,10 +9,20 @@
 
 local json = require("config.json")
 
-local path = os.getenv("HOME") .. "/.config/theme/theme.json"
-local file = assert(io.open(path, "r"), "theme: can't open " .. path)
-local theme = json.decode(file:read("*a"))
-file:close()
+local dir = os.getenv("HOME") .. "/.config/theme"
+
+local function read(path)
+	local file = assert(io.open(path, "r"), "theme: can't open " .. path)
+	local value = json.decode(file:read("*a"))
+	file:close()
+	return value
+end
+
+-- the settings, with the palette they name on top (its colors, name, dark, gtk...)
+local theme = read(dir .. "/theme.json")
+for key, value in pairs(read(dir .. "/palettes/" .. theme.palette .. ".json")) do
+	theme[key] = value
+end
 
 -- a palette colour's hex digits, without the "#"
 local function hex(name)

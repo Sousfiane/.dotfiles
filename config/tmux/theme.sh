@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
-# tmux's colours and status bar, from ~/.config/theme/theme.json (config/theme/theme.json in the dotfiles),
-# which quickshell, Hyprland, kitty and Neovim read too. tmux.conf runs this with run-shell, so it applies
-# on start and whenever the config is sourced again.
+# tmux's colours and status bar, from ~/.config/theme/theme.json and the palette it names (config/theme in
+# the dotfiles), which quickshell, Hyprland, kitty and Neovim read too. tmux.conf runs this with
+# run-shell, so it applies on start and whenever the config is sourced again.
 #
 #   left:   session name (love while the prefix is pressed)
 #   middle: windows, "number  name", iris, the current one gold
 #   right:  current folder
 
-file="$HOME/.config/theme/theme.json"
+dir="$HOME/.config/theme"
 
 if ! command -v jq >/dev/null; then
     tmux display-message "tmux theme: needs jq"
     exit 0
 fi
+
+# the colours come from the palette theme.json names
+file="$dir/palettes/$(jq -r '.palette' "$dir/theme.json" 2>/dev/null).json"
 
 declare -A c
 while IFS=$'\t' read -r name value; do

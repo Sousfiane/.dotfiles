@@ -117,13 +117,13 @@ local roles = {
 	"Window", "Shadow", "Highlight", "HighlightedText", "Link", "LinkVisited", "AlternateBase", "NoRole",
 	"ToolTipBase", "ToolTipText", "PlaceholderText",
 }
-local fixed = { AlternateBase = "#ff1a1c1e", NoRole = "#ff000000", PlaceholderText = "#809e9e9e" }
+local fixed = { NoRole = "#ff000000", PlaceholderText = "#809e9e9e" }
 local groups = {
 	active = {
 		WindowText = "text", Button = "overlay", Light = "highlightHigh", Midlight = "highlightMed",
 		Dark = "highlightLow", Mid = "overlay", Text = "muted", BrightText = "love", ButtonText = "rose",
 		Base = "overlay", Window = "base", Shadow = "overlay", Highlight = "highlightHigh",
-		HighlightedText = "gold", Link = "foam", LinkVisited = "iris", ToolTipBase = "highlightLow",
+		HighlightedText = "gold", Link = "foam", LinkVisited = "iris", AlternateBase = "surface", ToolTipBase = "highlightLow",
 		ToolTipText = "subtle",
 	},
 	disabled = {
@@ -131,13 +131,13 @@ local groups = {
 		Dark = "highlightLow", Mid = "overlay", Text = "muted", BrightText = "love", ButtonText = "rose",
 		Base = "overlay", Window = "base", Shadow = "overlay", Highlight = "highlightMed",
 		HighlightedText = "highlightHigh", Link = "subtle", LinkVisited = "highlightHigh",
-		ToolTipBase = "highlightLow", ToolTipText = "foam",
+		AlternateBase = "surface", ToolTipBase = "highlightLow", ToolTipText = "foam",
 	},
 	inactive = {
 		WindowText = "text", Button = "overlay", Light = "highlightHigh", Midlight = "highlightMed",
 		Dark = "highlightLow", Mid = "overlay", Text = "muted", BrightText = "love", ButtonText = "rose",
 		Base = "overlay", Window = "base", Shadow = "overlay", Highlight = "highlightMed",
-		HighlightedText = "rose", Link = "pine", LinkVisited = "muted", ToolTipBase = "highlightLow",
+		HighlightedText = "rose", Link = "pine", LinkVisited = "muted", AlternateBase = "surface", ToolTipBase = "highlightLow",
 		ToolTipText = "iris",
 	},
 }

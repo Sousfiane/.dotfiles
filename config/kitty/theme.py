@@ -1,12 +1,22 @@
-# kitty's colours, font and opacity, from ~/.config/theme/theme.json (config/theme/theme.json in the
-# dotfiles), which quickshell and Hyprland read too. kitty.conf runs this with `geninclude` on every config
-# load (ctrl+shift+f5 reloads) and reads what it prints as config: nothing is written to disk.
+# kitty's colours, font and opacity, from ~/.config/theme/theme.json and the palette it names (config/theme
+# in the dotfiles), which quickshell, Hyprland, Neovim and tmux read too. kitty.conf runs this with
+# `geninclude` on every config load (ctrl+shift+f5 reloads) and reads what it prints as config: nothing is
+# written to disk.
 
 import json
 import os
 
-with open(os.path.expanduser("~/.config/theme/theme.json"), encoding="utf-8") as f:
-    theme = json.load(f)
+theme_dir = os.path.expanduser("~/.config/theme")
+
+
+def read(path):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+# the settings, with the palette they name on top
+theme = read(f"{theme_dir}/theme.json")
+theme.update(read(f"{theme_dir}/palettes/{theme['palette']}.json"))
 
 c = theme["colors"]
 term = theme["terminal"]

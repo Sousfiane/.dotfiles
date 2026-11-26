@@ -65,7 +65,7 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 
 ## Theme
 
-`config/theme/theme.json` (linked to `~/.config/theme/theme.json`) holds the colours, the terminal's colour mapping, fonts, corner radii and opacities. Each app reads it itself, with nothing generated:
+`config/theme/theme.json` (linked to `~/.config/theme/theme.json`) holds the fonts, corner radii, opacities, icons, the terminal's colour mapping, and which palette to use. The colours are in that palette, `config/theme/palettes/<name>.json` (Rosé Pine, Moon and Dawn), which also says whether it's dark, and which GTK theme (and GTK colour scheme: `prefer-light` for all three, or libadwaita adds its own dark style on top) and spicetify scheme go with it. Each app reads both itself, with nothing generated:
 
 | App | Reads it | A change shows |
 |---|---|---|
@@ -77,6 +77,8 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 
 The apps keep only what each colour is used for.
 
-Saving `theme.json` updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK app font and icon theme (`font.ui` at `font.appPointSize`, `icons`). A save that doesn't parse changes nothing. Neovim picks it up on its next start.
+`theme` lists the palettes and `theme moon` (or `theme next`) switches; it only changes `"palette"` in `theme.json`.
+
+Saving `theme.json` or a palette updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK theme, its colour scheme, app font and icon theme. Spotify can't switch live: run `install.sh spicetify` after a switch. A save that doesn't parse changes nothing. Neovim picks it up on its next start.
 
 hyprtoolkit and qt6ct can only read their own format, so Hyprland writes `~/.config/hypr/hyprtoolkit.conf`, `~/.config/qt6ct/qt6ct.conf` and `~/.config/qt6ct/colors.conf` from `theme.json` every time it starts or reloads (`config/hypr/config/theme_files.lua`). They aren't in the repo: change `theme.json` or that file, not them (the qt6ct window's changes don't last).
