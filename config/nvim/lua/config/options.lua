@@ -23,8 +23,8 @@ vim.o.scrolloff = 8
 vim.o.signcolumn = "yes"
 vim.o.winborder = "rounded"
 
--- how long the cursor rests before CursorHold: the diagnostic float and LSP word highlights (autocmds.lua,
--- lsp.lua). 50 made the float flash up on every pause
+-- how long the cursor rests before CursorHold: the diagnostic float and LSP word highlights (autocmds.lua).
+-- 50 made the float flash up on every pause
 vim.o.updatetime = 250
 
 vim.o.fillchars = "eob: "

@@ -1,4 +1,4 @@
--- Autocommands that need no plugin. The LSP's are in lsp.lua.
+-- Autocommands that need no plugin. The LSP keymaps are in keymaps.lua.
 
 local group = vim.api.nvim_create_augroup("config", { clear = true })
 
@@ -22,5 +22,37 @@ vim.api.nvim_create_autocmd("CursorHold", {
 			end
 		end
 		vim.diagnostic.open_float({ scope = "cursor", focusable = false })
+	end,
+})
+
+-- once a server attaches: the other uses of the word under the cursor, while it rests there
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = group,
+	desc = "Highlight the word under the cursor where a server can",
+	callback = function(event)
+		local buf = event.buf
+		local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
+
+		if client:supports_method("textDocument/documentHighlight", buf) then
+			local highlight = vim.api.nvim_create_augroup("lsp-highlight-" .. buf, { clear = true })
+			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+				group = highlight,
+				buffer = buf,
+				callback = vim.lsp.buf.document_highlight,
+			})
+			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+				group = highlight,
+				buffer = buf,
+				callback = vim.lsp.buf.clear_references,
+			})
+			vim.api.nvim_create_autocmd("LspDetach", {
+				group = highlight,
+				buffer = buf,
+				callback = function()
+					vim.lsp.buf.clear_references()
+					vim.api.nvim_del_augroup_by_id(highlight)
+				end,
+			})
+		end
 	end,
 })
