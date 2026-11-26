@@ -59,7 +59,7 @@ Where a file sits in the repo is where it goes:
 |---|---|
 | `config/<app>/<entry>` | `~/.config/<app>/<entry>` |
 | `home/<name>` | `~/.<name>` (`home/zshrc` → `~/.zshrc`) |
-| `local/<folder>/<entry>` | `~/.local/<folder>/<entry>` (`local/bin/popup` → `~/.local/bin/popup`) |
+| `local/<folder>/<entry>` | `~/.local/<folder>/<entry>` (`local/bin/theme` → `~/.local/bin/theme`) |
 
 Each entry at the top of an app folder is one link, so a file added inside a subfolder is live at once. A new app folder, or a new file at its top, needs `install.sh links`. Names starting with a dot (editor files) aren't linked.
 

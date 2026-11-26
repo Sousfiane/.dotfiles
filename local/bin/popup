@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# Toggles the active window as a popout (small, floating, pinned on every workspace, on top): the same
-# toggle as SUPER + P and the iris dot on the title bar (hypr/config/popout.lua).
-
-exec hyprctl dispatch 'require("config.popout").toggle'
