@@ -477,26 +477,15 @@ DropdownPanel {
                         CAnim {}
                     }
 
-                    Column {
+                    // the icon only: the labels overflowed the buttons (each keeps its `label` for when they're back)
+                    Txt {
                         anchors.centerIn: parent
-                        spacing: 4
-
-                        Txt {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: btn.modelData.icon
-                            color: btnMouse.containsMouse ? Theme.accent : Theme.fg
-                            Behavior on color {
-                                CAnim {}
-                            }
-                            font.pixelSize: Theme.fontSize + 8
+                        text: btn.modelData.icon
+                        color: btnMouse.containsMouse ? Theme.accent : Theme.fg
+                        Behavior on color {
+                            CAnim {}
                         }
-
-                        Txt {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            variant: "dim"
-                            color: Theme.fg
-                            text: btn.modelData.label
-                        }
+                        font.pixelSize: Theme.fontSize + 8
                     }
 
                     // shortcut key, top right
