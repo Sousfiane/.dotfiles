@@ -7,5 +7,5 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm-app -s b -- bt-agent")
 	hl.exec_cmd("uwsm-app -s b -- easyeffects --service-mode -w")
 
-	hl.exec_cmd("hyprpm reload")
+	hl.exec_cmd("hyprpm reload -n") -- -n: a notification when a plugin fails to load
 end)
