@@ -46,6 +46,7 @@ Singleton {
     readonly property string packageInstall: glyph(0xF19D8)  // md-package_variant_plus
     readonly property string packageRemove: glyph(0xF19D7)   // md-package_variant_minus
     readonly property string check: glyph(0xF012C)
+    readonly property string keyboard: glyph(0xF030C)      // md-keyboard
 
     // media
     readonly property string music: glyph(0xF075A)

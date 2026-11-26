@@ -127,6 +127,9 @@ DropdownPanel {
             case Qt.Key_R:
                 Hub.openPicker("remove");
                 break;
+            case Qt.Key_Question:
+                Hub.openPicker("keybinds");
+                break;
             case Qt.Key_P:
             case Qt.Key_Space:
                 Media.toggle();
@@ -490,6 +493,12 @@ DropdownPanel {
                                 key: "S",
                                 icon: Icons.screenshot,
                                 target: "screenshot"
+                            },
+                            {
+                                label: "Keybinds",
+                                key: "?",
+                                icon: Icons.keyboard,
+                                target: "keybinds"
                             }
                         ]
 
@@ -538,7 +547,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: Media.active ? "h l month • j k day • t today • p/b/n media • a w e c s i r open • Esc" : "h l month • j k day • t today • a w e c s i r open • Esc close"
+            text: Media.active ? "h l month • j k day • t today • p/b/n media • a w e c s ? i r open • Esc" : "h l month • j k day • t today • a w e c s ? i r open • Esc close"
         }
     }
 }

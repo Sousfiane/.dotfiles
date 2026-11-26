@@ -20,6 +20,7 @@ import qs.modules.lock
 import qs.modules.tray
 import qs.modules.dock
 import qs.modules.packages
+import qs.modules.keybinds
 import qs.services
 
 ShellRoot {
@@ -46,6 +47,7 @@ ShellRoot {
     ScreenshotPanel {}
     InstallPanel {}
     RemovePanel {}
+    KeybindsPanel {}
     LockScreen {}
     TrayPanel {}
     AppDock {}

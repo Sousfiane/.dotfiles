@@ -254,9 +254,9 @@ hl.bind(
 
 hl.bind("Caps_Lock", hl.dsp.exec_cmd(qs .. "osd caps"), { release = true, description = "Caps Lock OSD toggle" })
 
--- ==========================================
--- OBS Studio Global Shortcuts Configuration
--- ==========================================
+--------------------------------------------------
+-- 🎬 OBS Studio (global shortcuts)
+--------------------------------------------------
 
 hl.bind(
 	"SUPER + ALT + C",
