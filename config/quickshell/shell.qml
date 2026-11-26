@@ -40,6 +40,7 @@ ShellRoot {
     UpdatesPanel {}
     DotfilesPanel {}
     WsPanel {}
+    WsDragChip {}
     WallpaperPanel {}
     ThemePanel {}
     HubPanel {}

@@ -21,6 +21,8 @@ Singleton {
     property string dragFrom: ""        // monitor it is on
     property string dragTo: ""          // another monitor whose bar is under the cursor, "" when none
     readonly property bool dragging: dragId >= 0
+    property real dragX: 0              // cursor, global (layout) coordinates
+    property real dragY: 0
 
     readonly property bool open: screenName !== "" && hovered && !dragging
 
@@ -65,15 +67,18 @@ Singleton {
     // gx, gy: the cursor in global (layout) coordinates. A bar counts a little below its own
     // height, so the drop doesn't need a pixel-exact aim.
     function moveDrag(gx, gy) {
+        dragX = gx;
+        dragY = gy;
         const s = Quickshell.screens.find(s => gx >= s.x && gx < s.x + s.width && gy >= s.y && gy < s.y + Theme.barHeight + 24);
         dragTo = s && s.name !== dragFrom ? s.name : "";
     }
 
-    // the workspace keeps its state: if it was shown on its monitor it is shown on the new one,
-    // otherwise it just joins that monitor's dots
+    // the dropped workspace moves to the new monitor and takes the focus there
     function endDrag() {
-        if (dragging && dragTo !== "")
+        if (dragging && dragTo !== "") {
             Hyprland.dispatch(`hl.dsp.workspace.move({ workspace = ${dragId}, monitor = "${dragTo}" })`);
+            Hyprland.dispatch(`hl.dsp.focus({ workspace = ${dragId} })`);
+        }
         dragId = -1;
         dragFrom = "";
         dragTo = "";

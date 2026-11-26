@@ -22,19 +22,14 @@ Item {
     readonly property var mine: Hyprland.workspaces.values.filter(w => w.id > 0 && w.monitor === monitor).sort((a, b) => a.id - b.id)
 
     // a dot dragged from another bar is over this one: a stand-in shows where it would land,
-    // as a pill if it is the workspace its monitor shows (it stays shown after the move)
+    // drawn as a pill since the drop focuses it there
     readonly property bool dropHere: Ws.dragging && Ws.dragTo === screen.name
-    readonly property var cells: {
-        if (!dropHere)
-            return mine;
-        const dragged = Hyprland.workspaces.values.find(w => w.id === Ws.dragId);
-        const ghost = {
-            id: Ws.dragId,
-            ghost: true,
-            shown: dragged?.monitor?.activeWorkspace?.id === Ws.dragId
-        };
-        return mine.concat([ghost]).sort((a, b) => a.id - b.id);
-    }
+    readonly property var cells: dropHere ? mine.concat([
+            {
+                id: Ws.dragId,
+                ghost: true
+            }
+        ]).sort((a, b) => a.id - b.id) : mine
 
     // the workspace shown on this monitor (focused or not)
     readonly property int activeId: monitor?.activeWorkspace?.id ?? -1
@@ -72,7 +67,7 @@ Item {
                 property bool born: !ghost
                 Component.onCompleted: born = true
 
-                readonly property bool shown: ghost ? modelData.shown : modelData.id === root.activeId
+                readonly property bool shown: ghost || modelData.id === root.activeId
                 readonly property bool cardOpen: Ws.open && Ws.screenName === root.screen.name && Ws.wsId === modelData.id
 
                 // the first cell extends to the screen edge (click area)
