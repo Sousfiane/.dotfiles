@@ -7,8 +7,9 @@ Singleton {
     id: root
 
     // The system theme: colours, fonts, radii and opacities are read from ~/.config/theme/theme.json
-    // (config/theme/theme.json in the dotfiles), which Hyprland and kitty read too. Saving it updates the
-    // shell at once. This file only says what each colour is used for.
+    // (config/theme/theme.json in the dotfiles), which Hyprland, kitty, Neovim and tmux read too. Saving it
+    // updates the shell at once, and runs theme/apply.sh so the others follow. This file only says what each
+    // colour is used for.
     FileView {
         id: themeFile
 
@@ -16,6 +17,24 @@ Singleton {
         blockLoading: true
         watchChanges: true
         onFileChanged: reload()
+        onLoaded: root.applyEverywhere(text())
+    }
+
+    // the text the other apps were last brought up to date with
+    property string appliedText: ""
+    Component.onCompleted: appliedText = themeFile.text()
+
+    // after a real change that parses (a typo mid-edit doesn't reload everything), the other apps follow
+    function applyEverywhere(text) {
+        if (text === appliedText)
+            return;
+        try {
+            JSON.parse(text);
+        } catch (e) {
+            return;
+        }
+        appliedText = text;
+        Quickshell.execDetached([Quickshell.env("HOME") + "/.config/theme/apply.sh"]);
     }
 
     // the last version that parsed, so a typo while editing keeps the shell as it was

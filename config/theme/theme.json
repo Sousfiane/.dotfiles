@@ -42,8 +42,11 @@
     "ui": "JetBrainsMono Nerd Font",
     "uiPixelSize": 13,
     "mono": "JetBrainsMonoNL Nerd Font",
-    "monoPointSize": 10
+    "monoPointSize": 10,
+    "appPointSize": 10
   },
+
+  "icons": "rose-pine-dawn-icons",
 
   "radius": {
     "small": 3,

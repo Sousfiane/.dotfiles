@@ -76,3 +76,5 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 | tmux | `theme.sh` (with `jq`), which also lays out the status bar | on `tmux source-file ~/.config/tmux/tmux.conf` |
 
 The apps keep only what each colour is used for.
+
+Saving `theme.json` updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK app font and icon theme (`font.ui` at `font.appPointSize`, `icons`). A save that doesn't parse changes nothing. Neovim picks it up on its next start. Qt's font and icons are in `config/qt6ct/qt6ct.conf`, and hyprtoolkit's in `config/hypr/hyprtoolkit.conf`: keep those in step by hand.

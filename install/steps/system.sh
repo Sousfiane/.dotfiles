@@ -18,9 +18,9 @@ fi
 
 GNOME="org.gnome.desktop.interface"
 gsettings set $GNOME gtk-theme "rose-pine-gtk"
-gsettings set $GNOME icon-theme "rose-pine-dawn-icons"
-gsettings set $GNOME font-name "Noto Sans 11"
 gsettings set $GNOME color-scheme "light-dark"
+# the app font and icon theme come from theme.json (config/theme/apply.sh, also run when it changes)
+"$DOTFILES/config/theme/apply.sh"
 success "GTK theme set"
 
 # GTK 4 apps (Nautilus) ignore the theme setting: they read this file
