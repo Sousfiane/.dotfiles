@@ -50,11 +50,18 @@ password=$(ask "App password (not shown)" secret)
 
 # ---------- check it against the server ----------
 
-# the credentials go to curl on its standard input, never on its command line (where any process could read them)
+# the credentials go to curl on its standard input, never on its command line (where any process could read
+# them). In curl's config syntax a quoted value takes \ as an escape, so \ and " are escaped, in that order
+quote() {
+    local s=${1//\\/\\\\}
+    printf '%s' "${s//\"/\\\"}"
+}
+# the user name in the address, %-encoded (a space, say)
+name_uri=$(jq -rn --arg s "$name" '$s | @uri')
 info "Checking with $url"
-status=$(printf 'user = "%s:%s"\n' "${name//\"/\\\"}" "${password//\"/\\\"}" |
+status=$(printf 'user = "%s:%s"\n' "$(quote "$name")" "$(quote "$password")" |
     curl -s -o /dev/null -w '%{http_code}' --max-time 15 -K - \
-        -X PROPFIND -H "Depth: 0" "$url/remote.php/dav/calendars/$name/") || status="000"
+        -X PROPFIND -H "Depth: 0" "$url/remote.php/dav/calendars/$name_uri/") || status="000"
 
 case $status in
     207) success "The server accepts them" ;;
