@@ -18,7 +18,8 @@ PanelWindow {
         right: true
     }
     // in fullscreen the window grows to hold the stand-in title bar under the underline
-    implicitHeight: Theme.barHeight + 1 + (fullscreen ? fsTitle.height : 0)
+    // plus room for the shadow under it: the surface is see-through and the mask keeps it out of input
+    implicitHeight: Theme.barHeight + 1 + (fullscreen ? fsTitle.height : 0) + shadowSize
 
     // the extra row only holds the underline, so tiled windows still start at the old position
     exclusionMode: ExclusionMode.Normal
@@ -26,6 +27,10 @@ PanelWindow {
     color: "transparent"
 
     // ---------- auto-hide ----------
+    // soft shadow under the underline, tuned to look like the window shadow (decoration.shadow in
+    // hypr/config/looknfeel.lua): a short black fade, not a dark ring
+    readonly property int shadowSize: 14
+
     readonly property bool fullscreen: Fullscreen.on(screen?.name ?? "")
 
     // a dropdown is open on this monitor (or just closed on it), so the bar must be visible
@@ -86,7 +91,7 @@ PanelWindow {
         y: 0
         width: win.width
         // shown in fullscreen: the title bar below is clickable too, but only while it is down
-        height: !win.shown ? 2 : win.titleShown ? win.height : Theme.barHeight + 1
+        height: !win.shown ? 2 : win.titleShown ? Theme.barHeight + 1 + fsTitle.height : Theme.barHeight + 1
     }
 
     HoverHandler {
@@ -109,7 +114,7 @@ PanelWindow {
         color: Theme.bg
 
         // in fullscreen it also takes the title bar hanging under it out of the screen: one block, like macOS
-        y: win.shown ? 0 : -(bar.height + 1 + (win.titleOut ? fsTitle.height : 0))
+        y: win.shown ? 0 : -(bar.height + 1 + win.shadowSize + (win.titleOut ? fsTitle.height : 0))
         // true only when the bar has fully finished sliding in
         readonly property bool fullyIn: win.shown && y === 0
 
@@ -158,6 +163,27 @@ PanelWindow {
             PowerIcon {
                 edge: "right"                         // last one: reaches the screen edge
                 edgeGap: rightItems.edgeGap
+            }
+        }
+        // the shadow follows the underline's segments, so it stays open over attached dropdowns too.
+        // Gone while the fullscreen title bar hangs under the bar: it would fall on the title bar.
+        Repeater {
+            model: win.segments.length
+
+            delegate: Rectangle {
+                required property int index
+                readonly property var seg: win.segments[index] ?? [0, 0]
+
+                x: seg[0]
+                y: parent.height + 1
+                width: seg[1] - seg[0]
+                height: win.shadowSize
+                visible: !win.titleOut
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: Qt.rgba(0, 0, 0, 0.16) }
+                    GradientStop { position: 0.35; color: Qt.rgba(0, 0, 0, 0.06) }
+                    GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0) }
+                }
             }
         }
         // 1px underline. The segments change every frame while a dropdown slides, so the model is only
