@@ -38,9 +38,11 @@ if hl.plugin.hyprbars ~= nil then
 	})
 
 	-- Buttons are placed from the edge inward: the first one added sits rightmost.
-	-- Plain dots, no icons: red closes, gold fullscreens, blue toggles floating.
+	-- Plain dots, no icons: red closes, gold fullscreens, blue toggles floating, iris toggles the popout.
 	local dsp = function(d) return "hyprctl dispatch '" .. d .. "'" end
 	hl.plugin.hyprbars.add_button({ bg_color = theme.rgb("love"), fg_color = theme.rgb("base"), size = 12, icon = "", action = dsp("hl.dsp.window.close()") })
 	hl.plugin.hyprbars.add_button({ bg_color = theme.rgb("gold"), fg_color = theme.rgb("base"), size = 12, icon = "", action = dsp("hl.dsp.window.fullscreen()") })
 	hl.plugin.hyprbars.add_button({ bg_color = theme.rgb("foam"), fg_color = theme.rgb("base"), size = 12, icon = "", action = dsp("hl.dsp.window.float()") })
+	-- a lua function is a valid dispatch: the same toggle as SUPER + P (popout.lua)
+	hl.plugin.hyprbars.add_button({ bg_color = theme.rgb("iris"), fg_color = theme.rgb("base"), size = 12, icon = "", action = dsp('require("config.popout").toggle') })
 end

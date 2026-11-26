@@ -26,21 +26,7 @@ hl.bind(mod .. " + " .. shift .. " + F", function()
 	end
 end, { description = "Toggle floating and resize window" })
 
-hl.bind(mod .. " + P", function()
-	local active = hl.get_active_window()
-	if active ~= nil and active.pinned then
-		hl.dispatch(hl.dsp.window.pin({ window = active }))
-		hl.dispatch(hl.dsp.window.float({ window = active }))
-		hl.dispatch(hl.dsp.window.clear_tags({ window = active }))
-	else
-		hl.dispatch(hl.dsp.window.float({ window = active }))
-		hl.dispatch(hl.dsp.window.resize({ x = 640, y = 360, window = active }))
-		hl.dispatch(hl.dsp.window.center({ window = active }))
-		hl.dispatch(hl.dsp.window.pin({ window = active }))
-		hl.dispatch(hl.dsp.window.alter_zorder({ mode = "top", window = active }))
-		hl.dispatch(hl.dsp.window.tag({ tag = "pop", window = active }))
-	end
-end, { description = "Toggle picture-in-picture / popup mode" })
+hl.bind(mod .. " + P", require("config.popout").toggle, { description = "Toggle picture-in-picture / popup mode" })
 
 hl.bind(mod .. " + T", function()
 	local tv = hl.get_monitor("HDMI-A-1")
