@@ -5,15 +5,65 @@
 #   theme <name>     switch to it ("rose-pine-moon", or just "moon")
 #   theme next       the next one, round the list
 #
+#   theme font                       the fonts: ui (Quickshell), mono (kitty, Hyprland), app (GTK and Qt apps)
+#   theme font <ui|mono|app> <name>  use that font family there ("Noto Sans")
+#   theme font <ui|mono|app> default back to theme.json's
+#
 # It writes the palette's name to ~/.local/state/theme/palette, out of the dotfiles so switching never shows up
 # in git (theme.json's "palette" is only the default, for a new machine). Quickshell sees the change and
 # brings every app up to date (config/theme/apply.sh). When Quickshell isn't running, this runs apply.sh.
+# Fonts work the same way: the ones picked are in ~/.local/state/theme/fonts.json, over theme.json's.
 
 set -euo pipefail
 
 dir="$HOME/.config/theme"
 settings="$dir/theme.json"
 state="$HOME/.local/state/theme/palette"
+
+fonts="$HOME/.local/state/theme/fonts.json"
+
+# the other apps follow by themselves when Quickshell is running (it watches the state files)
+apply_if_no_shell() {
+    if ! pgrep -x qs >/dev/null && ! pgrep -x quickshell >/dev/null; then
+        "$dir/apply.sh"
+    fi
+}
+
+if [[ ${1:-} == font ]]; then
+    picked=$(cat "$fonts" 2>/dev/null || true)
+    jq -e 'type == "object"' >/dev/null 2>&1 <<<"$picked" || picked='{}'
+
+    if [[ $# -eq 1 ]]; then
+        for key in ui mono app; do
+            default=$(jq -r --arg k "$key" '.font[$k] // .font.ui' "$settings")
+            mine=$(jq -r --arg k "$key" '.[$k] // empty' <<<"$picked")
+            printf '%-5s %s\n' "$key" "${mine:-$default (default)}"
+        done
+        exit 0
+    fi
+
+    key=${2:-}
+    family=${3:-}
+    if [[ ! $key =~ ^(ui|mono|app)$ || -z $family || $# -gt 3 ]]; then
+        echo "usage: theme font [<ui|mono|app> <family|default>]" >&2
+        exit 1
+    fi
+    if [[ $family == default ]]; then
+        picked=$(jq --arg k "$key" 'del(.[$k])' <<<"$picked")
+    elif grep -qxF -- "$family" <<<"$(fc-list : family | tr ',' '\n')"; then
+        picked=$(jq --arg k "$key" --arg f "$family" '.[$k] = $f' <<<"$picked")
+    else
+        echo "theme: no font family named '$family' (fc-list : family lists them)" >&2
+        exit 1
+    fi
+
+    # in one step, as for the palette
+    mkdir -p "$(dirname "$fonts")"
+    printf '%s\n' "$picked" >"$fonts.tmp"
+    mv "$fonts.tmp" "$fonts"
+    apply_if_no_shell
+    exit 0
+fi
 
 mapfile -t names < <(find "$dir/palettes/" -maxdepth 1 -name '*.json' -printf '%f\n' | sed 's/\.json$//' | sort)
 current=$(cat "$state" 2>/dev/null | head -n 1 | tr -d '[:space:]' || true)    # no state file yet: the default
@@ -57,7 +107,4 @@ mkdir -p "$(dirname "$state")"
 printf '%s\n' "$wanted" >"$state.tmp"
 mv "$state.tmp" "$state"
 echo "$(jq -r '.name' "$dir/palettes/$wanted.json")"
-
-if ! pgrep -x qs >/dev/null && ! pgrep -x quickshell >/dev/null; then
-    "$dir/apply.sh"
-fi
+apply_if_no_shell

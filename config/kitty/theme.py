@@ -24,8 +24,13 @@ def current_palette(default):
         return default
 
 
-# the settings, with the current palette on top
+# the settings, with the current palette on top, and the fonts picked in the theme picker over theirs
+# (~/.local/state/theme/fonts.json, written by `theme font`)
 theme = read(f"{theme_dir}/theme.json")
+try:
+    theme["font"].update(read(os.path.expanduser("~/.local/state/theme/fonts.json")))
+except (OSError, ValueError, AttributeError, TypeError):
+    pass
 theme.update(read(f"{theme_dir}/palettes/{current_palette(theme['palette'])}.json"))
 
 c = theme["colors"]

@@ -9,7 +9,8 @@ Singleton {
     // The system theme: fonts, radii and opacities are read from ~/.config/theme/theme.json, the colours from
     // the current palette, ~/.config/theme/palettes/<palette>.json (config/theme in the dotfiles). The current
     // palette is named in ~/.local/state/theme/palette, out of the repo so switching never changes it;
-    // theme.json's "palette" is only the default. Hyprland, kitty, Neovim, tmux and zsh read them too. A change
+    // theme.json's "palette" is only the default; the fonts picked in the theme picker are in fonts.json next
+    // to it, over theme.json's. Hyprland, kitty, Neovim, tmux and zsh read them too. A change
     // to any of them updates the shell at once, and runs theme/apply.sh so the others follow. This file only
     // says what each colour is used for.
     readonly property string themeDir: Quickshell.env("HOME") + "/.config/theme"
@@ -29,12 +30,28 @@ Singleton {
         onLoaded: applyTimer.restart()
     }
 
-    // a file that doesn't exist can't be watched: the state file is created with the default first
+    // the fonts picked in the theme picker (written by `theme font`): only those, over theme.json's
+    FileView {
+        id: fontsFile
+
+        path: root.stateDir + "/fonts.json"
+        blockLoading: true
+        printErrors: false
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: applyTimer.restart()
+    }
+
+    // a file that doesn't exist can't be watched: the state files are created first (the default palette,
+    // no fonts picked)
     Process {
         id: stateCreator
 
-        command: ["sh", "-c", 'mkdir -p "$1" && [ -s "$1/palette" ] || printf "%s\\n" "$2" > "$1/palette"', "sh", root.stateDir, root.settings.palette ?? "rose-pine"]
-        onExited: stateFile.reload()
+        command: ["sh", "-c", 'mkdir -p "$1" && { [ -s "$1/palette" ] || printf "%s\\n" "$2" > "$1/palette"; } && { [ -s "$1/fonts.json" ] || echo "{}" > "$1/fonts.json"; }', "sh", root.stateDir, root.settings.palette ?? "rose-pine"]
+        onExited: {
+            stateFile.reload();
+            fontsFile.reload();
+        }
     }
 
     FileView {
@@ -61,7 +78,7 @@ Singleton {
     }
 
     // the last version of each file that parsed, so a typo while editing keeps the shell as it was
-    readonly property var cache: ({ settings: null, palette: null })
+    readonly property var cache: ({ settings: null, palette: null, fonts: {} })
     function parse(key, text) {
         try {
             cache[key] = JSON.parse(text);
@@ -72,6 +89,8 @@ Singleton {
     }
     readonly property var settings: parse("settings", settingsFile.text())
     readonly property var palette: parse("palette", paletteFile.text())
+    // theme.json's fonts with the picked ones on top: { ui, uiPixelSize, mono, monoPointSize, app, appPointSize }
+    readonly property var fonts: Object.assign({}, settings.font, fontsFile.text().trim() ? parse("fonts", fontsFile.text()) : {})
     readonly property var theme: settings
     readonly property var colors: palette.colors
     readonly property bool dark: palette.dark
@@ -81,7 +100,7 @@ Singleton {
     // what the other apps were last brought up to date with
     property string appliedText: ""
     Component.onCompleted: {
-        appliedText = settingsFile.text() + stateFile.text() + paletteFile.text();
+        appliedText = settingsFile.text() + stateFile.text() + paletteFile.text() + fontsFile.text();
         stateCreator.running = true;
     }
 
@@ -95,7 +114,7 @@ Singleton {
 
     // after a real change that parses (a typo mid-edit doesn't reload everything)
     function applyEverywhere() {
-        const text = settingsFile.text() + stateFile.text() + paletteFile.text();
+        const text = settingsFile.text() + stateFile.text() + paletteFile.text() + fontsFile.text();
         if (text === appliedText)
             return;
         try {
@@ -151,8 +170,8 @@ Singleton {
     readonly property color surfaceClear: withAlpha(overlay, 0)
     readonly property color accentClear: withAlpha(iris, 0)
 
-    readonly property string font: theme.font.ui
-    readonly property int fontSize: theme.font.uiPixelSize
+    readonly property string font: fonts.ui
+    readonly property int fontSize: fonts.uiPixelSize
     readonly property int radiusSmall: theme.radius.small
     readonly property int radius: theme.radius.medium
     readonly property int radiusLarge: theme.radius.large

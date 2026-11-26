@@ -9,6 +9,7 @@
 #   Spotify    if it's open with another scheme, a notification offers to restart it (spotify-themed)
 
 theme="$HOME/.config/theme/theme.json"
+fonts="$HOME/.local/state/theme/fonts.json"    # the fonts picked in the theme picker, over theme.json's
 
 if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
     hyprctl reload >/dev/null
@@ -30,7 +31,8 @@ if command -v jq >/dev/null && command -v gsettings >/dev/null; then
     # each palette says which: the rose-pine GTK themes look wrong with prefer-dark, since libadwaita apps
     # then add their own dark style on top of the theme's colours
     gsettings set $GNOME color-scheme "$(jq -r '.gtkColorScheme // "default"' "$palette")"
-    gsettings set $GNOME font-name "$(jq -r '"\(.font.app // .font.ui) \(.font.appPointSize)"' "$theme")"
+    [[ -r $fonts ]] || fonts=/dev/null
+    gsettings set $GNOME font-name "$(jq -rs '(.[0].font + (.[1] // {})) | "\(.app // .ui) \(.appPointSize)"' "$theme" "$fonts")"
     gsettings set $GNOME icon-theme "$(jq -r '.icons' "$theme")"
 fi
 
