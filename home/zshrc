@@ -22,6 +22,11 @@ source_if_exists $HOME/.config/zsh/aliases.zsh
 source_if_exists $HOME/.config/zsh/history.zsh
 source_if_exists <(fzf --zsh)
 
+# fzf's colours follow the theme: checked again before every prompt
+source_if_exists $HOME/.config/zsh/fzf.zsh
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd fzf_theme_refresh
+
 precmd() {
     source $HOME/.config/zsh/aliases.zsh
 }
