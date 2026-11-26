@@ -14,9 +14,6 @@ alias s='source ~/.zshrc'
 
 alias wifi='qs ipc call network toggle'    # the network panel
 
-alias powersave='sudo cpupower frequency-set --governor powersave'
-alias balanced='sudo cpupower frequency-set --governor schedutil'
-
 alias aliases='nvim $DOTFILES/config/zsh/aliases.zsh'
 
 alias neofetch='fastfetch --config neofetch.jsonc'
