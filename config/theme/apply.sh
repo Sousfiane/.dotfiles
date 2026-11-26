@@ -6,7 +6,7 @@
 #   kitty      reloads its config (SIGUSR1), in every window
 #   tmux       sources its config, if a server is running
 #   GTK        theme, colour scheme, app font and icon theme (gsettings), and GTK 4's gtk.css link
-#   Spotify    if it's open with another scheme, a notification offers to restart it (spotify-themed)
+#   Spotify    if it's open with another scheme, it restarts with the new one (spotify-themed)
 
 theme="$HOME/.config/theme/theme.json"
 fonts="$HOME/.local/state/theme/fonts.json"    # the fonts picked in the theme picker, over theme.json's
@@ -46,20 +46,15 @@ if command -v jq >/dev/null; then
     fi
 fi
 
-# Spotify can't change theme while it runs: spotify-themed applies it the next time it opens. If it's open
-# now with another scheme, a notification offers to restart it (clicking it does), rather than closing it
-# out of the blue. In the background, so nothing here waits for the click
+# Spotify can't change theme while it runs: spotify-themed applies it as it opens. If it's open now with
+# another scheme, it's closed and opened again with the new one. In the background, so nothing here waits
 if pgrep -x spotify >/dev/null && command -v jq >/dev/null; then
     wanted=$(jq -r '.spicetify // ""' "$palette" 2>/dev/null)
     scheme=$(awk -F' *= *' '$1=="color_scheme"{print $2; exit}' "$HOME/.config/spicetify/config-xpui.ini" 2>/dev/null)
     if [[ -n $wanted && $scheme != "$wanted" ]]; then
         setsid -f bash -c '
-            action=$(notify-send --app-name=Spotify --icon=spotify-launcher --action=default=Restart \
-                "Spotify" "Click to restart it with the new theme")
-            if [[ $action == default ]]; then
-                pkill -x spotify
-                while pgrep -x spotify >/dev/null; do sleep 0.2; done
-                "$HOME/.local/bin/spotify-themed"
-            fi' >/dev/null 2>&1
+            pkill -x spotify
+            while pgrep -x spotify >/dev/null; do sleep 0.2; done
+            "$HOME/.local/bin/spotify-themed"' >/dev/null 2>&1
     fi
 fi
