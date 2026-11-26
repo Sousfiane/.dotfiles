@@ -104,6 +104,9 @@ DropdownPanel {
                 nav.move(-1);
             else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || ((event.key === Qt.Key_L || event.key === Qt.Key_Right) && nav.index >= menu.paletteCount))
                 menu.activate(nav.index);
+            // a font's size, on its row
+            else if (nav.index >= menu.paletteCount && (event.key === Qt.Key_Minus || event.key === Qt.Key_Plus || event.key === Qt.Key_Equal))
+                Themes.changeFontSize(Themes.fontRoles[nav.index - menu.paletteCount], event.key === Qt.Key_Minus ? -1 : 1);
             else {
                 // a number picks that palette directly
                 const i = parseInt(event.text) - 1;
@@ -263,6 +266,30 @@ DropdownPanel {
                             elide: Text.ElideRight
                         }
 
+                        // its size, with − and + (or the - and + keys on this row)
+                        Row {
+                            spacing: 2
+                            z: 1    // above the row's own click
+
+                            IconButton {
+                                icon: "−"
+                                size: Theme.fontSize
+                                onClicked: Themes.changeFontSize(fontRow.modelData, -1)
+                            }
+                            Txt {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 42
+                                horizontalAlignment: Text.AlignHCenter
+                                variant: "row"
+                                text: Themes.fontSize(fontRow.modelData) + " " + fontRow.modelData.unit
+                            }
+                            IconButton {
+                                icon: "+"
+                                size: Theme.fontSize
+                                onClicked: Themes.changeFontSize(fontRow.modelData, 1)
+                            }
+                        }
+
                         Txt {
                             text: Icons.chevronRight
                             color: fontRow.selected ? Theme.accent : Theme.dim
@@ -271,6 +298,7 @@ DropdownPanel {
 
                     MouseArea {
                         anchors.fill: parent
+                        z: -1   // under the size buttons
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onEntered: nav.select(menu.paletteCount + fontRow.index)
@@ -343,7 +371,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: panel.fontRole !== "" ? "j k select • Enter apply • h or Esc back" : "j k select • Enter apply • number palette • Esc close"
+            text: panel.fontRole !== "" ? "j k select • Enter apply • h or Esc back" : "j k select • Enter apply • - + font size • number palette • Esc close"
         }
     }
 }

@@ -15,10 +15,11 @@ Singleton {
     readonly property string current: Theme.paletteName
 
     // the fonts that can be picked, and where each is used
+    // `sizeKey` is the size's name in theme.json/fonts.json
     readonly property var fontRoles: [
-        { key: "ui", label: "Shell", what: "bar and panels" },
-        { key: "mono", label: "Terminal", what: "kitty and window titles" },
-        { key: "app", label: "Apps", what: "GTK and Qt apps" }
+        { key: "ui", label: "Shell", what: "bar and panels", sizeKey: "uiPixelSize", unit: "px" },
+        { key: "mono", label: "Terminal", what: "kitty and window titles", sizeKey: "monoPointSize", unit: "pt" },
+        { key: "app", label: "Apps", what: "GTK and Qt apps", sizeKey: "appPointSize", unit: "pt" }
     ]
     // installed families that can write Latin text (not each script's Noto), and the monospace ones among them
     property var fonts: []
@@ -32,6 +33,28 @@ Singleton {
     function set(id) {
         if (id !== current)
             Quickshell.execDetached([Quickshell.env("HOME") + "/.local/bin/theme", id]);
+    }
+
+    // sizes asked for but not in fonts.json yet, so quick presses add up instead of all starting from the
+    // same old size
+    property var pendingSizes: ({})
+    Connections {
+        target: Theme
+        function onFontsChanged() {
+            root.pendingSizes = {};
+        }
+    }
+
+    function fontSize(role) {
+        return pendingSizes[role.key] ?? Theme.fonts[role.sizeKey];
+    }
+
+    function changeFontSize(role, delta) {
+        const size = Math.max(6, Math.min(40, fontSize(role) + delta));
+        if (size === fontSize(role))
+            return;
+        pendingSizes = Object.assign({}, pendingSizes, { [role.key]: size });
+        Quickshell.execDetached([Quickshell.env("HOME") + "/.local/bin/theme", "font", role.key, "size", String(size)]);
     }
 
     function setFont(key, family) {

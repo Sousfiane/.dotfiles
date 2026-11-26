@@ -8,6 +8,7 @@
 #   theme font                       the fonts: ui (Quickshell), mono (kitty, Hyprland), app (GTK and Qt apps)
 #   theme font <ui|mono|app> <name>  use that font family there ("Noto Sans")
 #   theme font <ui|mono|app> default back to theme.json's
+#   theme font <ui|mono|app> size <n|default>   its size: pixels for ui, points for mono and app
 #
 # It writes the palette's name to ~/.local/state/theme/palette, out of the dotfiles so switching never shows up
 # in git (theme.json's "palette" is only the default, for a new machine). Quickshell sees the change and
@@ -33,19 +34,43 @@ if [[ ${1:-} == font ]]; then
     picked=$(cat "$fonts" 2>/dev/null || true)
     jq -e 'type == "object"' >/dev/null 2>&1 <<<"$picked" || picked='{}'
 
+    # each font's size, in theme.json's names
+    declare -A size_key=([ui]=uiPixelSize [mono]=monoPointSize [app]=appPointSize)
+    declare -A unit=([ui]=px [mono]=pt [app]=pt)
+
     if [[ $# -eq 1 ]]; then
         for key in ui mono app; do
             default=$(jq -r --arg k "$key" '.font[$k] // .font.ui' "$settings")
             mine=$(jq -r --arg k "$key" '.[$k] // empty' <<<"$picked")
-            printf '%-5s %s\n' "$key" "${mine:-$default (default)}"
+            size=$(jq -r --arg k "${size_key[$key]}" '.[$k] // empty' <<<"$picked")
+            [[ -n $size ]] || size="$(jq -r --arg k "${size_key[$key]}" '.font[$k]' "$settings") (default)"
+            printf '%-5s %-40s %s %s\n' "$key" "${mine:-$default (default)}" "${unit[$key]}" "$size"
         done
+        exit 0
+    fi
+
+    # theme font <key> size <n|default>
+    if [[ ${3:-} == size && $# -eq 4 && ${2:-} =~ ^(ui|mono|app)$ ]]; then
+        k=${size_key[$2]}
+        if [[ $4 == default ]]; then
+            picked=$(jq --arg k "$k" 'del(.[$k])' <<<"$picked")
+        elif [[ $4 =~ ^[0-9]+$ ]] && (( $4 >= 6 && $4 <= 40 )); then
+            picked=$(jq --arg k "$k" --argjson n "$4" '.[$k] = $n' <<<"$picked")
+        else
+            echo "theme: a size is a whole number from 6 to 40, or default" >&2
+            exit 1
+        fi
+        mkdir -p "$(dirname "$fonts")"
+        printf '%s\n' "$picked" >"$fonts.tmp"
+        mv "$fonts.tmp" "$fonts"
+        apply_if_no_shell
         exit 0
     fi
 
     key=${2:-}
     family=${3:-}
     if [[ ! $key =~ ^(ui|mono|app)$ || -z $family || $# -gt 3 ]]; then
-        echo "usage: theme font [<ui|mono|app> <family|default>]" >&2
+        echo "usage: theme font [<ui|mono|app> <family|default> | <ui|mono|app> size <n|default>]" >&2
         exit 1
     fi
     if [[ $family == default ]]; then
