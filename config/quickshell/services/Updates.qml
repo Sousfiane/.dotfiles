@@ -23,7 +23,7 @@ Singleton {
         Panels.toggle("updates");
     }
 
-    // in a floating terminal; `uwsm app` returns when the terminal closes, and the list is checked again then
+    // in a floating terminal; `uwsm-app` returns when the terminal closes, and the list is checked again then
     function runUpdate() {
         Panels.hide("updates");
         if (!updater.running)
@@ -32,7 +32,7 @@ Singleton {
 
     Process {
         id: updater
-        command: ["uwsm", "app", "--", ...Config.floatingTerm(["bash", "-c", "yay -Syu; echo; read -rp 'Press Enter to close...'"])]
+        command: ["uwsm-app", "--", ...Config.floatingTerm(["bash", "-c", "yay -Syu; echo; read -rp 'Press Enter to close...'"])]
         onExited: root.refresh()
     }
 

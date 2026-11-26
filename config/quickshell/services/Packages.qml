@@ -155,11 +155,11 @@ Singleton {
             return;
         Panels.hide(panel);
         // the command as arguments of bash, never in its script: a package name is only ever an argument
-        runner.command = ["uwsm", "app", "--", ...Config.floatingTerm(["bash", "-c", '"$@"; echo; read -rp "Press Enter to close..."', "bash", ...cmd])];
+        runner.command = ["uwsm-app", "--", ...Config.floatingTerm(["bash", "-c", '"$@"; echo; read -rp "Press Enter to close..."', "bash", ...cmd])];
         runner.running = true;
     }
 
-    // `uwsm app` returns when the terminal closes: what's installed (and the search's marks) changed
+    // `uwsm-app` returns when the terminal closes: what's installed (and the search's marks) changed
     Process {
         id: runner
         onExited: {

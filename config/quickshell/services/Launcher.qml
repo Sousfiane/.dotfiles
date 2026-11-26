@@ -147,7 +147,7 @@ Singleton {
         const cmd = entry.runInTerminal ? Config.floatingTerm(command) : command;
 
         Quickshell.execDetached({
-            command: ["uwsm", "app", "--", ...cmd],
+            command: ["uwsm-app", "--", ...cmd],
             workingDirectory: entry.workingDirectory
         });
     }

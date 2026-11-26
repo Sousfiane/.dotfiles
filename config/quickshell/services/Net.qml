@@ -184,7 +184,7 @@ Singleton {
     // NetworkManager's own editor, for what the panel doesn't do (static IP, DNS, MTU, VPN...)
     function editConnections() {
         Panels.hide("network");
-        Quickshell.execDetached(["uwsm", "app", "--", "nm-connection-editor"]);
+        Quickshell.execDetached(["uwsm-app", "--", "nm-connection-editor"]);
     }
 
     // a click on a detail copies it
