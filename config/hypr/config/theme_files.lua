@@ -54,7 +54,7 @@ local function hyprtoolkit()
 			"accent = " .. argb("iris"), --               Theme.accent / Theme.border
 			"accent_secondary = " .. argb("foam"),
 			"",
-			"font_family = " .. font.ui,
+			"font_family = " .. (font.app or font.ui),
 			"font_family_monospace = " .. font.mono,
 			"font_size = " .. size,
 			"small_font_size = " .. (size - 1),
@@ -87,7 +87,7 @@ local function qt6ct()
 			"",
 			"[Fonts]",
 			"fixed=" .. qfont(font.mono),
-			"general=" .. qfont(font.ui),
+			"general=" .. qfont(font.app or font.ui),
 			"",
 			"[Interface]",
 			"activate_item_on_single_click=1",

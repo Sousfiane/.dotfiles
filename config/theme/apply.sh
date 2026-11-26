@@ -30,7 +30,7 @@ if command -v jq >/dev/null && command -v gsettings >/dev/null; then
     # each palette says which: the rose-pine GTK themes look wrong with prefer-dark, since libadwaita apps
     # then add their own dark style on top of the theme's colours
     gsettings set $GNOME color-scheme "$(jq -r '.gtkColorScheme // "default"' "$palette")"
-    gsettings set $GNOME font-name "$(jq -r '"\(.font.ui) \(.font.appPointSize)"' "$theme")"
+    gsettings set $GNOME font-name "$(jq -r '"\(.font.app // .font.ui) \(.font.appPointSize)"' "$theme")"
     gsettings set $GNOME icon-theme "$(jq -r '.icons' "$theme")"
 fi
 
