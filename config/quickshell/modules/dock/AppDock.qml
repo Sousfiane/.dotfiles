@@ -78,9 +78,15 @@ Variants {
 
         // ---------- shown / hidden ----------
 
-        readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
+        // looked up in the live list, not with monitorFor(): when the screens wake, the outputs go
+        // away and come back, and the object monitorFor() handed out can be dropped while the dock
+        // still holds it. This follows the monitor that is tracked now.
+        readonly property HyprlandMonitor monitor: Hyprland.monitors.values.find(m => m.name === screen?.name) ?? null
         readonly property bool fullscreen: Fullscreen.on(screen?.name ?? "")
-        readonly property bool emptyWorkspace: (monitor?.activeWorkspace?.toplevels?.values?.length ?? 0) === 0
+        // not known yet (monitor or workspace still missing after a reconnect) counts as not empty:
+        // the dock stays hidden rather than stuck up
+        readonly property var workspace: monitor?.activeWorkspace ?? null
+        readonly property bool emptyWorkspace: workspace !== null && workspace.toplevels.values.length === 0
 
         property bool revealed: false
 

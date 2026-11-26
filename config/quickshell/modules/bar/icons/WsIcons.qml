@@ -14,12 +14,14 @@ Item {
     id: root
     required property ShellScreen screen
 
-    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
+    // looked up in the live list, not with monitorFor(): when the screens wake, the outputs go away
+    // and come back, and the object monitorFor() handed out can be dropped while the bar still holds it
+    readonly property HyprlandMonitor monitor: Hyprland.monitors.values.find(m => m.name === screen?.name) ?? null
 
     // distance from the screen edge: the first cell reaches out to it
     property real edgeGap: 0
 
-    readonly property var mine: Hyprland.workspaces.values.filter(w => w.id > 0 && w.monitor === monitor).sort((a, b) => a.id - b.id)
+    readonly property var mine: Hyprland.workspaces.values.filter(w => w.id > 0 && w.monitor?.name === screen?.name).sort((a, b) => a.id - b.id)
 
     // a dot dragged from another bar is over this one: a stand-in shows where it would land,
     // drawn as a pill since the drop focuses it there
@@ -33,7 +35,7 @@ Item {
 
     // the workspace shown on this monitor (focused or not)
     readonly property int activeId: monitor?.activeWorkspace?.id ?? -1
-    readonly property bool monitorFocused: Hyprland.focusedMonitor === monitor
+    readonly property bool monitorFocused: (Hyprland.focusedMonitor?.name ?? "") === screen?.name
 
     readonly property int dotSize: 6
     readonly property int pillWidth: 22
