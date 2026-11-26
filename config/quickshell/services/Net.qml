@@ -332,7 +332,7 @@ Singleton {
 
     // captive portals
     function signIn() {
-        Quickshell.execDetached(["xdg-open", "http://neverssl.com"]);
+        Quickshell.execDetached(["uwsm-app", "--", "xdg-open", "http://neverssl.com"]);
     }
 
     function recheck() {

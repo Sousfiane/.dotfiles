@@ -25,7 +25,7 @@ open_file() {
 
     case "$file" in
         *.png|*.jpg|*.jpeg|*.gif|*.webp|*.bmp|*.tiff|*.tif|*.avif|*.ico)
-            exec zen-browser "$file"
+            exec uwsm-app -- zen-browser "$file"
             ;;
         *)
             exec nvim -- "$file"

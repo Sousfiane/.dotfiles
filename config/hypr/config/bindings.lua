@@ -110,7 +110,7 @@ hl.bind(
 
 hl.bind(
 	mod .. " + " .. shift .. " + R",
-	hl.dsp.exec_cmd("pkill qs && uwsm-app -- qs"),
+	hl.dsp.exec_cmd("pkill -x qs; uwsm-app -s s -- qs"),
 	{ description = "Restart Quickshell" }
 )
 

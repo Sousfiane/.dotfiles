@@ -55,6 +55,6 @@ if pgrep -x spotify >/dev/null && command -v jq >/dev/null; then
         setsid -f bash -c '
             pkill -x spotify
             while pgrep -x spotify >/dev/null; do sleep 0.2; done
-            "$HOME/.local/bin/spotify-themed"' >/dev/null 2>&1
+            uwsm-app -- "$HOME/.local/bin/spotify-themed"' >/dev/null 2>&1
     fi
 fi
