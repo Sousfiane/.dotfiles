@@ -318,11 +318,9 @@ Singleton {
             n.connect();
     }
 
+    // through NetworkManager's D-Bus API, so the password never shows on a command line
     function connectWithPassword(net, psk) {
-        if (typeof net.connectWithPsk === "function")
-            net.connectWithPsk(psk);
-        else
-            Quickshell.execDetached(["nmcli", "device", "wifi", "connect", net.name, "password", psk, "ifname", wifiDevice.name]);
+        net.connectWithPsk(psk);
     }
 
     function forget(net) {

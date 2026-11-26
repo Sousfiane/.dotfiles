@@ -8,3 +8,6 @@ polybar/scripts/arch/status_vcs
 fonts/.uuid
 btop/btop.log
 __pycache__/
+
+# written by Quickshell for its language server: a link into /run, different on every start
+.qmlls.ini
