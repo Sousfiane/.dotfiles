@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# the system services the desktop relies on, enabled for the next boot (not started now: starting the
+# the services the desktop relies on, enabled for the next boot or login (not started now: starting the
 # login screen in the middle of the install would take over the screen)
 
 source "$(dirname "${BASH_SOURCE[0]}")/../lib.sh"
@@ -16,6 +16,21 @@ enable() {
 
 enable NetworkManager.service    # the network panel
 enable bluetooth.service         # the Bluetooth panel
+
+# the session's own daemons, as user services: uwsm starts them with the session (graphical-session.target),
+# systemd restarts them if they crash, and they stop when it ends
+enable_user() {
+    local unit=$1
+    if systemctl --user is-enabled -q "$unit" 2>/dev/null; then
+        success "$unit already enabled"
+    else
+        systemctl --user enable "$unit"
+        success "$unit enabled"
+    fi
+}
+
+enable_user hypridle.service           # screens off when idle
+enable_user hyprpolkitagent.service    # password prompts for system actions
 
 # the login screen: only if no other one is set up, since there can be a single display manager
 current=$(readlink /etc/systemd/system/display-manager.service 2>/dev/null || true)

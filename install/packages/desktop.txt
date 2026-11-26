@@ -5,7 +5,7 @@
 # ---------- Hyprland ----------
 hyprland
 hyprpm                       # plugins (autostart.lua: hyprpm reload)
-hypridle                     # screens off when idle
+hypridle                     # screens off when idle (a user service: steps/services.sh)
 uwsm                         # session manager: apps are started with `uwsm app`
 xdg-desktop-portal-hyprland  # screen sharing, file pickers
 qt5-wayland
@@ -39,7 +39,7 @@ bluez
 bluez-utils
 
 # ---------- session ----------
-polkit-gnome                 # password prompts for system actions (autostart.lua)
+hyprpolkitagent              # password prompts for system actions (a user service: steps/services.sh)
 gnome-keyring
 xdg-user-dirs
 xdg-utils
