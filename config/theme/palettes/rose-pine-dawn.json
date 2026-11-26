@@ -4,6 +4,7 @@
   "gtk": "rose-pine-dawn-gtk",
   "gtkColorScheme": "prefer-light",
   "spicetify": "rose-pine-dawn",
+  "vivid": "rose-pine-dawn",
   "colors": {
     "base": "#faf4ed",
     "surface": "#fffaf3",

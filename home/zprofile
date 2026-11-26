@@ -9,8 +9,8 @@ source_if_exists () {
 # the repo: always here (install/install.sh refuses to run from anywhere else)
 export DOTFILES="$HOME/.dotfiles"
 
-# fzf's colours, from the theme (zshrc keeps them up to date in open shells)
-if [[ -r "$HOME/.config/zsh/fzf.zsh" ]]; then
-    source "$HOME/.config/zsh/fzf.zsh"
-    fzf_theme
+# fzf's and ls's colours, from the theme (zshrc keeps them up to date in open shells)
+if [[ -r "$HOME/.config/zsh/theme.zsh" ]]; then
+    source "$HOME/.config/zsh/theme.zsh"
+    shell_theme
 fi

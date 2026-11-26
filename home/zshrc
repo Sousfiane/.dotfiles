@@ -16,16 +16,15 @@ source_if_exists () {
 
 export GIT_EDITOR=nvim
 export TERM=xterm-kitty
-export LS_COLORS="$(vivid generate rose-pine)"
 
 source_if_exists $HOME/.config/zsh/aliases.zsh
 source_if_exists $HOME/.config/zsh/history.zsh
 source_if_exists <(fzf --zsh)
 
-# fzf's colours follow the theme: checked again before every prompt
-source_if_exists $HOME/.config/zsh/fzf.zsh
+# fzf's and ls's colours follow the theme (LS_COLORS, set in zprofile): checked again before every prompt
+source_if_exists $HOME/.config/zsh/theme.zsh
 autoload -Uz add-zsh-hook
-add-zsh-hook precmd fzf_theme_refresh
+add-zsh-hook precmd shell_theme_refresh
 
 precmd() {
     source $HOME/.config/zsh/aliases.zsh
@@ -62,7 +61,7 @@ setopt nobeep                                                   # No beep
 setopt autocd                                                   # if only directory path is entered, cd there.
 
 zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' # Case insensitive tab completion
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"         # Colored completion (different colors for dirs/files/etc)
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"         # Colored completion (different colors for dirs/files/etc); theme.zsh sets it again on a theme switch
 zstyle ':completion:*' rehash true                              # automatically find new executables in path 
 zstyle ':completion:*' menu select                              # Highlight menu selection
 # Speed up completions

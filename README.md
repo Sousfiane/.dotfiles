@@ -74,7 +74,7 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 | kitty | `theme.py`, through `geninclude` | on ctrl+shift+F5, or in new windows |
 | Neovim | `lua/plugins/colors.lua`, as the rose-pine plugin's palette | at once (it watches the files) |
 | tmux | `theme.sh` (with `jq`), which also lays out the status bar | on `tmux source-file ~/.config/tmux/tmux.conf` |
-| fzf | `config/zsh/fzf.zsh`, as `FZF_DEFAULT_OPTS` (set in `zprofile`, checked again by `zshrc`) | at the next prompt |
+| fzf, ls | `config/zsh/theme.zsh`: `FZF_DEFAULT_OPTS`, and `LS_COLORS` from vivid's theme named by the palette (set in `zprofile`, checked again by `zshrc`) | at the next prompt |
 
 The apps keep only what each colour is used for.
 
