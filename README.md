@@ -77,4 +77,6 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 
 The apps keep only what each colour is used for.
 
-Saving `theme.json` updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK app font and icon theme (`font.ui` at `font.appPointSize`, `icons`). A save that doesn't parse changes nothing. Neovim picks it up on its next start. Qt's font and icons are in `config/qt6ct/qt6ct.conf`, and hyprtoolkit's in `config/hypr/hyprtoolkit.conf`: keep those in step by hand.
+Saving `theme.json` updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK app font and icon theme (`font.ui` at `font.appPointSize`, `icons`). A save that doesn't parse changes nothing. Neovim picks it up on its next start.
+
+hyprtoolkit and qt6ct can only read their own format, so Hyprland writes `~/.config/hypr/hyprtoolkit.conf`, `~/.config/qt6ct/qt6ct.conf` and `~/.config/qt6ct/colors.conf` from `theme.json` every time it starts or reloads (`config/hypr/config/theme_files.lua`). They aren't in the repo: change `theme.json` or that file, not them (the qt6ct window's changes don't last).

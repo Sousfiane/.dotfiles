@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Brings everything up to date with theme.json. Quickshell runs this whenever the file changes (it follows
-# the file itself), and steps/system.sh runs it on install. Writes no files: each app reads theme.json.
+# the file itself), and steps/system.sh runs it on install.
 #
-#   Hyprland   reloads its config
+#   Hyprland   reloads its config, which also rewrites hyprtoolkit's and qt6ct's files (theme_files.lua)
 #   kitty      reloads its config (SIGUSR1), in every window
 #   tmux       sources its config, if a server is running
-#   GTK        app font and icon theme (gsettings); Qt has them in qt6ct.conf
+#   GTK        app font and icon theme (gsettings)
 
 theme="$HOME/.config/theme/theme.json"
 
