@@ -5,6 +5,7 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The updates panel (SUPER + U): pending repo and AUR packages, and the full upgrade in a terminal.
 DropdownPanel {
     id: panel
     name: "updates"

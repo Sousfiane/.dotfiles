@@ -7,6 +7,8 @@ import qs.config
 import qs.services
 import qs.components.ui
 
+// The toasts: new notifications stacked in the top right corner, sliding out when they expire or are
+// swiped away.
 PanelWindow {
     id: win
 

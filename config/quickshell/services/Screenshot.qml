@@ -4,6 +4,8 @@ import Quickshell.Hyprland
 import QtQuick
 import qs.config
 
+// The screenshot modes (region, window, each monitor) and taking one with hyprshot once the menu has
+// closed.
 Singleton {
     id: root
 

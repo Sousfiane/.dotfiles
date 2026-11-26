@@ -3,16 +3,16 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
+// The system theme: fonts, radii and opacities are read from ~/.config/theme/theme.json, the colours from
+// the current palette, ~/.config/theme/palettes/<palette>.json (config/theme in the dotfiles). The current
+// palette is named in ~/.local/state/theme/palette, out of the repo so switching never changes it;
+// theme.json's "palette" is only the default; the fonts picked in the theme picker are in fonts.json next
+// to it, over theme.json's. Hyprland, kitty, Neovim, tmux and zsh read them too. A change to any of them
+// updates the shell at once, and runs theme/apply.sh so the others follow. This file only says what each
+// colour is used for.
 Singleton {
     id: root
 
-    // The system theme: fonts, radii and opacities are read from ~/.config/theme/theme.json, the colours from
-    // the current palette, ~/.config/theme/palettes/<palette>.json (config/theme in the dotfiles). The current
-    // palette is named in ~/.local/state/theme/palette, out of the repo so switching never changes it;
-    // theme.json's "palette" is only the default; the fonts picked in the theme picker are in fonts.json next
-    // to it, over theme.json's. Hyprland, kitty, Neovim, tmux and zsh read them too. A change
-    // to any of them updates the shell at once, and runs theme/apply.sh so the others follow. This file only
-    // says what each colour is used for.
     readonly property string themeDir: Quickshell.env("HOME") + "/.config/theme"
     readonly property string stateDir: Quickshell.env("HOME") + "/.local/state/theme"
 

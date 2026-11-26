@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 
+// A panel's search field: takes the keyboard when it appears, and reports the arrows and Enter to the
+// list or grid it drives.
 Rectangle {
     id: root
 

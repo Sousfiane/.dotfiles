@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import qs.config
 import qs.components.ui
 
+// A sound card on the mixer's Config tab: its name and active profile, and the list to pick another.
 SelectableCard {
     id: root
 

@@ -5,6 +5,7 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The power menu (SUPER + Escape): lock, suspend, log out, reboot, shut down, each with its letter.
 DropdownPanel {
     name: "power"
     edge: "right"

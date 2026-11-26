@@ -2,6 +2,7 @@ pragma Singleton
 import Quickshell
 import QtQuick
 
+// Every glyph the shell draws, by name, from the Nerd Font (the theme's ui font).
 Singleton {
     function glyph(cp) {
         return String.fromCodePoint(cp);

@@ -3,6 +3,7 @@ import QtQuick
 import qs.services
 import qs.components.ui
 
+// The clock in the middle of the bar: opens the hub.
 BarButton {
     SystemClock {
         id: clock

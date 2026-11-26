@@ -5,6 +5,8 @@ import QtQuick
 import Qt.labs.folderlistmodel
 import qs.config
 
+// The wallpapers in ~/.wallpapers, filtered for the picker, and the one chosen (kept in Quickshell's
+// state, drawn by modules/background).
 Singleton {
     id: root
 

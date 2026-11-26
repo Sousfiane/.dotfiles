@@ -3,6 +3,8 @@ import QtQuick
 import qs.config
 import qs.services
 
+// An item of the bar: a glyph and an optional label, coloured by one rule for all of them (alert > open >
+// off > normal). Click, right click and scroll are left to each item.
 Item {
     id: root
 

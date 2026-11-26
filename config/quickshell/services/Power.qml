@@ -3,6 +3,7 @@ import Quickshell
 import QtQuick
 import qs.config
 
+// The power menu's actions, each with its letter, icon and command.
 Singleton {
     id: root
 

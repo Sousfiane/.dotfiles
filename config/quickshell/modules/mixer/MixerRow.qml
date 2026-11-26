@@ -6,6 +6,8 @@ import qs.config
 import qs.services
 import qs.components.ui
 
+// A stream or device in the mixer: name, volume slider and mute, and for a stream the device it plays to
+// (which can be changed).
 SelectableCard {
     id: root
 

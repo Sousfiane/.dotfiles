@@ -1,6 +1,7 @@
 import QtQuick
 import qs.config
 
+// Text in the theme's font, in one of the shared styles: title, heading, body, row, dim, small.
 Text {
     // title | heading | body | row | dim | small
     property string variant: "body"

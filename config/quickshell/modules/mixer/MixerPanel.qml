@@ -6,6 +6,8 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The mixer (SUPER + M): playback and recording streams, outputs and inputs, and the cards' profiles, in
+// tabs, all driven from the keyboard too.
 DropdownPanel {
     id: panel
     name: "mixer"

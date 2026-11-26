@@ -8,6 +8,8 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The card that drops under a workspace dot while the pointer is on it: the workspace's name and its
+// windows, each with its app icon and title.
 Variants {
     model: Quickshell.screens
 

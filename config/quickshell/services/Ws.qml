@@ -4,6 +4,8 @@ import Quickshell.Hyprland
 import QtQuick
 import qs.config
 
+// The workspace dots' shared state: which card is shown (hovering a dot), and a dot being dragged to
+// another monitor's bar.
 Singleton {
     id: root
 

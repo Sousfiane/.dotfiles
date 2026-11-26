@@ -7,6 +7,9 @@ import qs.services
 import qs.components.ui
 import qs.modules.bar.icons
 
+// A monitor's bar: workspace dots on the left, the clock in the middle, the status icons on the right,
+// and a 1px underline. It hides when the monitor shows a fullscreen window and comes back at the top edge,
+// with a stand-in title bar for that window.
 PanelWindow {
     id: win
 

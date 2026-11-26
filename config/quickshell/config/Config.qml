@@ -2,6 +2,7 @@ pragma Singleton
 import Quickshell
 import QtQuick
 
+// The shell's settings that aren't the theme: terminal, weather place, calendar colours, dock pins, paths.
 Singleton {
     readonly property string home: Quickshell.env("HOME")
 

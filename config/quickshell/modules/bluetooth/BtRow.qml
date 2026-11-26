@@ -4,6 +4,7 @@ import qs.config
 import qs.services
 import qs.components.ui
 
+// A Bluetooth device in the panel: its icon, name, state and battery, and the action it takes next.
 DeviceRow {
     id: root
 

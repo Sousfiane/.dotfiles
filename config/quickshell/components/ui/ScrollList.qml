@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import qs.config
 
+// A list that grows with its rows up to `maxHeight`, then scrolls, with a gutter for the scrollbar.
 ListView {
     id: root
 

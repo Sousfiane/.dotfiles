@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 
+// The top of a panel: icon, title and subtitle on the left, its actions (pills, switches) on the right.
 RowLayout {
     id: root
 

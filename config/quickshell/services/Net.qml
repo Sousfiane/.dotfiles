@@ -5,6 +5,8 @@ import Quickshell.Networking
 import QtQuick
 import qs.config
 
+// The network for the bar and the panel (NetworkManager): devices, Wi-Fi networks, connectivity, the
+// active connection's details, and connecting or forgetting.
 Singleton {
     id: root
 

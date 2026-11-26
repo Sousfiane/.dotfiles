@@ -6,6 +6,8 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The hub (SUPER + ALT + Space, or the clock): date, weather and what's playing, the calendar with the
+// selected day's events, and shortcuts to the other pickers.
 DropdownPanel {
     id: panel
     name: "hub"

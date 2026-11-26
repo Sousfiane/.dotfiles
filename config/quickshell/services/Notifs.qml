@@ -5,6 +5,8 @@ import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 import QtQuick
 
+// The notification server: every notification as a Notif, the toasts and the center's history (kept
+// across restarts), unread count and do not disturb.
 Singleton {
     id: root
 

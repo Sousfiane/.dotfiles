@@ -4,6 +4,8 @@ import Quickshell.Io
 import Quickshell.Services.Pipewire
 import QtQuick
 
+// The mixer's data: PipeWire streams and devices for each tab, moving a stream to another device, and the
+// cards' profiles (through pactl).
 Singleton {
     id: root
 

@@ -1,6 +1,7 @@
 import QtQuick
 import qs.config
 
+// A rounded button: plain, filled with the accent when `active` (a toggle that is on) or `primary`.
 Rectangle {
     id: root
 

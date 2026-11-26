@@ -5,6 +5,7 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The wallpaper picker (SUPER + W): a searchable grid of the images in ~/.wallpapers.
 DropdownPanel {
     name: "wallpaper"
     edge: "center"

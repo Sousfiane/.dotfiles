@@ -3,6 +3,8 @@ import Quickshell
 import QtQuick
 import qs.config
 
+// The app launcher's search: the desktop entries and their actions, ranked by the query and by use, and
+// starting the one picked through uwsm-app.
 Singleton {
     id: root
 

@@ -3,6 +3,8 @@ import Quickshell
 import QtQuick
 import qs.config
 
+// Which dropdown is open: one at a time, on the monitor it was opened from, with the helpers to open,
+// close and chain them.
 Singleton {
     id: root
 

@@ -8,6 +8,7 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The app launcher (SUPER + Space): search the installed apps and their actions, Enter starts one.
 DropdownPanel {
     name: "launcher"
     edge: "center"

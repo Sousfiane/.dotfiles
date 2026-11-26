@@ -7,6 +7,7 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The notification center (SUPER + N, or the bell): the history, newest first, to open, dismiss or clear.
 DropdownPanel {
     id: panel
     name: "notifs"

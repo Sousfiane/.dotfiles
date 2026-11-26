@@ -4,6 +4,8 @@ import qs.config
 import qs.services
 import qs.components.ui
 
+// The clipped area under the bar a dropdown slides in and out of: it waits for the bar of its monitor to
+// be fully in, then lets the content emerge from under it.
 Item {
     id: root
 

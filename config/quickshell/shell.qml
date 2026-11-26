@@ -23,6 +23,8 @@ import qs.modules.packages
 import qs.modules.keybinds
 import qs.services
 
+// The shell: the bar, the wallpaper, the dock, the toasts and every panel, each on the monitors it
+// needs.
 ShellRoot {
     // singletons are created on first use: these hold IPC targets (media keys) that must exist from the start
     readonly property var ipcServices: [Media]

@@ -5,6 +5,7 @@ import qs.config
 import qs.services
 import qs.components.ui
 
+// A cable or Wi-Fi network in the panel, with the password field when connecting needs one.
 DeviceRow {
     id: root
 

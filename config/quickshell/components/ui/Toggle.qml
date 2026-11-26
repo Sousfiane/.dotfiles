@@ -1,6 +1,7 @@
 import QtQuick
 import qs.config
 
+// An on/off switch, accent when on.
 Rectangle {
     id: root
 

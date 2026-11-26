@@ -2,6 +2,7 @@ import qs.config
 import qs.services
 import qs.components.ui
 
+// The volume in the bar: click for the mixer, right click to mute, scroll to change it.
 BarButton {
     iconSize: Theme.fontSize + 1
     readonly property int pct: Math.round(Audio.volume * 100)

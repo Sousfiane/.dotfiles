@@ -4,6 +4,8 @@ import QtQuick.Shapes
 import qs.config
 import qs.services
 
+// A dropdown's card: one shape that flares out of the bar (concave corners where it meets it) and rounds
+// off at the bottom, with a 1px outline. Stuck to a screen edge, that side stays square.
 Item {
     id: root
 

@@ -5,6 +5,7 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The screenshot menu (SUPER + S): region, window or a whole monitor, each with its letter or number.
 DropdownPanel {
     name: "screenshot"
     edge: "center"

@@ -2,6 +2,8 @@ pragma Singleton
 import Quickshell
 import QtQuick
 
+// When a bar has to stay visible (a dropdown or a workspace card is open on its monitor), and whether each
+// bar is fully in, which the dropdowns wait for.
 Singleton {
     id: root
 

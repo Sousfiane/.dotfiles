@@ -5,6 +5,7 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The clipboard history (SUPER + V): a searchable grid of text and images, Enter copies one again.
 DropdownPanel {
     name: "clipboard"
     edge: "center"

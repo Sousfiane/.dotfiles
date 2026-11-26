@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 
+// A simple row of a list: content laid out in a row, highlighted when hovered or selected.
 Rectangle {
     id: root
 

@@ -6,6 +6,8 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The Bluetooth panel: connected, saved and newly found devices, to connect, pair or forget, with j/k
+// and Enter as well as the mouse.
 DropdownPanel {
     id: panel
     name: "bluetooth"

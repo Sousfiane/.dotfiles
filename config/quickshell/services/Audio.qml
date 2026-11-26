@@ -4,6 +4,7 @@ import Quickshell.Io
 import Quickshell.Services.Pipewire
 import QtQuick
 
+// The default output and input (PipeWire): their volume and mute, for the bar, the OSD and the volume keys.
 Singleton {
     id: root
 

@@ -5,6 +5,8 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
+// The network panel: cable and Wi-Fi networks to connect, with the details of the active connection and
+// what to do about a captive portal.
 DropdownPanel {
     id: panel
     name: "network"

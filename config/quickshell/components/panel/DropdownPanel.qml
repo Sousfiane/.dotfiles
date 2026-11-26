@@ -7,6 +7,9 @@ import qs.config
 import qs.services
 import qs.components.ui
 
+// The frame every dropdown panel is built on: a layer window on the right monitor, the card sliding out
+// from under the bar, keyboard focus, click-outside and Esc to close, and an IPC target (`qs ipc call
+// <name> toggle`). A panel only sets its name, edge and size, and gives its content.
 Scope {
     id: root
 

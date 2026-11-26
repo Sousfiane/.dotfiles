@@ -4,6 +4,8 @@ import Quickshell.Io
 import QtQuick
 import qs.config
 
+// The clipboard history from clipvault: listed, filtered and thumbnailed for the panel, an entry copied
+// again on Enter.
 Singleton {
     id: root
 

@@ -4,6 +4,8 @@ import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import QtQuick
 
+// Bluetooth for the bar and the panel: the adapter, the devices grouped and sorted, their state and
+// battery, and the actions on them.
 Singleton {
     id: root
 

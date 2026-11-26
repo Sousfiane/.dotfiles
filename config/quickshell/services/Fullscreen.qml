@@ -3,6 +3,8 @@ import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 
+// Which monitors show a fullscreen window, for the bar that hides over it, and the actions its stand-in
+// title bar runs on that window.
 Singleton {
     id: root
 

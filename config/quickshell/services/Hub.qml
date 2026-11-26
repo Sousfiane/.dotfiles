@@ -2,6 +2,7 @@ pragma Singleton
 import Quickshell
 import QtQuick
 
+// The hub's open state, and the pickers it opens once it has closed.
 Singleton {
     id: root
 
