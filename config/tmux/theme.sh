@@ -14,8 +14,11 @@ if ! command -v jq >/dev/null; then
     exit 0
 fi
 
-# the colours come from the palette theme.json names
-file="$dir/palettes/$(jq -r '.palette' "$dir/theme.json" 2>/dev/null).json"
+# the colours come from the current palette: ~/.local/state/theme/palette (written by `theme`), or
+# theme.json's default
+name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
+[[ -n $name ]] || name=$(jq -r '.palette' "$dir/theme.json" 2>/dev/null)
+file="$dir/palettes/$name.json"
 
 declare -A c
 while IFS=$'\t' read -r name value; do

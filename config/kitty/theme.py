@@ -1,4 +1,4 @@
-# kitty's colours, font and opacity, from ~/.config/theme/theme.json and the palette it names (config/theme
+# kitty's colours, font and opacity, from ~/.config/theme/theme.json and the current palette (config/theme
 # in the dotfiles), which quickshell, Hyprland, Neovim and tmux read too. kitty.conf runs this with
 # `geninclude` on every config load (ctrl+shift+f5 reloads) and reads what it prints as config: nothing is
 # written to disk.
@@ -14,9 +14,19 @@ def read(path):
         return json.load(f)
 
 
-# the settings, with the palette they name on top
+# the current palette: ~/.local/state/theme/palette (out of the repo, written by `theme`), or the settings'
+# default
+def current_palette(default):
+    try:
+        with open(os.path.expanduser("~/.local/state/theme/palette"), encoding="utf-8") as f:
+            return f.readline().strip() or default
+    except OSError:
+        return default
+
+
+# the settings, with the current palette on top
 theme = read(f"{theme_dir}/theme.json")
-theme.update(read(f"{theme_dir}/palettes/{theme['palette']}.json"))
+theme.update(read(f"{theme_dir}/palettes/{current_palette(theme['palette'])}.json"))
 
 c = theme["colors"]
 term = theme["terminal"]

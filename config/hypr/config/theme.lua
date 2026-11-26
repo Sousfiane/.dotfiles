@@ -1,5 +1,5 @@
--- The system theme, read from ~/.config/theme/theme.json and the palette it names (config/theme in the
--- dotfiles), which quickshell, kitty, Neovim and tmux read too. Hyprland reads it on start and on `hyprctl reload`.
+-- The system theme, read from ~/.config/theme/theme.json and the current palette (config/theme in the
+-- dotfiles; the current one is named in ~/.local/state/theme/palette), which quickshell, kitty, Neovim and tmux read too. Hyprland reads it on start and on `hyprctl reload`.
 --
 --   local theme = require("config.theme")
 --   theme.colors.muted              "#6e6a86"
@@ -18,8 +18,19 @@ local function read(path)
 	return value
 end
 
--- the settings, with the palette they name on top (its colors, name, dark, gtk...)
+-- the current palette: ~/.local/state/theme/palette (out of the repo, written by `theme`), or the settings'
+-- default
+local function current_palette(default)
+	local file = io.open(os.getenv("HOME") .. "/.local/state/theme/palette", "r")
+	if not file then return default end
+	local name = (file:read("*l") or ""):match("^%s*(.-)%s*$")
+	file:close()
+	return name ~= "" and name or default
+end
+
+-- the settings, with the current palette on top (its colors, name, dark, gtk...)
 local theme = read(dir .. "/theme.json")
+theme.palette = current_palette(theme.palette)
 for key, value in pairs(read(dir .. "/palettes/" .. theme.palette .. ".json")) do
 	theme[key] = value
 end

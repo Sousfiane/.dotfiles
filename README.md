@@ -43,13 +43,13 @@ Once in the desktop, from a terminal (the keyring isn't reachable from a console
 
 It checks them against the server, then stores them in the keyring, never in the repo. Run it again to replace them.
 
-After opening and closing Spotify once (and again after each Spotify update):
+After opening and closing Spotify once:
 
 ```sh
 ~/.dotfiles/install/install.sh spicetify        # the Spotify theme
 ```
 
-Only the choices are in the repo (`install/steps/spicetify.sh`, plus `Themes` and `Extensions`); spicetify keeps its own `config-xpui.ini` in `~/.config/spicetify`, since it writes version numbers into it.
+Only the choices are in the repo (`install/steps/spicetify.sh`, plus `Themes` and `Extensions`); spicetify keeps its own `config-xpui.ini` in `~/.config/spicetify`, since it writes version numbers into it. The step also makes Spotify's menu entry open it through `spotify-themed`, which applies the theme again by itself when Spotify was updated or the palette changed, so the step is only needed once.
 
 ## Layout
 
@@ -65,7 +65,7 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 
 ## Theme
 
-`config/theme/theme.json` (linked to `~/.config/theme/theme.json`) holds the fonts, corner radii, opacities, icons, the terminal's colour mapping, and which palette to use. The colours are in that palette, `config/theme/palettes/<name>.json` (Rosé Pine, Moon and Dawn), which also says whether it's dark, and which GTK theme (and GTK colour scheme: `prefer-light` for all three, or libadwaita adds its own dark style on top) and spicetify scheme go with it. Each app reads both itself, with nothing generated:
+`config/theme/theme.json` (linked to `~/.config/theme/theme.json`) holds the fonts, corner radii, opacities, icons, the terminal's colour mapping, and the default palette. The colours are in that palette, `config/theme/palettes/<name>.json` (Rosé Pine, Moon and Dawn), which also says whether it's dark, and which GTK theme (and GTK colour scheme: `prefer-light` for all three, or libadwaita adds its own dark style on top) and spicetify scheme go with it. Each app reads both itself, with nothing generated:
 
 | App | Reads it | A change shows |
 |---|---|---|
@@ -78,8 +78,8 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 
 The apps keep only what each colour is used for.
 
-`theme` lists the palettes and `theme moon` (or `theme next`) switches; it only changes `"palette"` in `theme.json`. The hub's Theme picker (`E` in the hub, or `qs ipc call theme toggle`) does the same, with a strip of each palette's colours.
+`theme` lists the palettes and `theme moon` (or `theme next`) switches. The current palette is kept in `~/.local/state/theme/palette`, out of the repo, so switching never shows up in git; `theme.json`'s `"palette"` is only what a new machine starts with. The hub's Theme picker (`E` in the hub, or `qs ipc call theme toggle`) does the same, with a strip of each palette's colours.
 
-Saving `theme.json` or a palette updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK theme, its colour scheme, app font and icon theme. Spotify can't switch live: run `install.sh spicetify` after a switch. A save that doesn't parse changes nothing. Neovim watches the files itself.
+Switching, or saving `theme.json` or a palette, updates everything: Quickshell follows the file and then runs `config/theme/apply.sh`, which reloads Hyprland, kitty and tmux and sets the GTK theme, its colour scheme, app font and icon theme. Spotify can't switch while it's open: a notification offers to restart it with the new theme, and otherwise it gets it the next time it opens. A save that doesn't parse changes nothing. Neovim watches the files itself.
 
 hyprtoolkit and qt6ct can only read their own format, so Hyprland writes `~/.config/hypr/hyprtoolkit.conf`, `~/.config/qt6ct/qt6ct.conf` and `~/.config/qt6ct/colors.conf` from `theme.json` every time it starts or reloads (`config/hypr/config/theme_files.lua`). They aren't in the repo: change `theme.json` or that file, not them (the qt6ct window's changes don't last).

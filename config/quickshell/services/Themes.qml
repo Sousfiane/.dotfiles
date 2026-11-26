@@ -5,13 +5,14 @@ import QtQuick
 import qs.config
 
 // The palettes in ~/.config/theme/palettes, for the theme picker. Switching runs the `theme` command, which
-// changes "palette" in theme.json; Theme follows the file and brings every app up to date.
+// writes the palette's name to ~/.local/state/theme/palette; Theme follows that file and brings every app up
+// to date.
 Singleton {
     id: root
 
     // [{ id, name, dark, colors }]
     property var palettes: []
-    readonly property string current: Theme.settings.palette ?? ""
+    readonly property string current: Theme.paletteName
 
     function refresh() {
         lister.running = true;

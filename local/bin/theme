@@ -5,16 +5,19 @@
 #   theme <name>     switch to it ("rose-pine-moon", or just "moon")
 #   theme next       the next one, round the list
 #
-# It only changes "palette" in ~/.config/theme/theme.json: Quickshell sees the change and brings every app up
-# to date (config/theme/apply.sh). When Quickshell isn't running, this runs apply.sh itself.
+# It writes the palette's name to ~/.local/state/theme/palette, out of the dotfiles so switching never shows up
+# in git (theme.json's "palette" is only the default, for a new machine). Quickshell sees the change and
+# brings every app up to date (config/theme/apply.sh). When Quickshell isn't running, this runs apply.sh.
 
 set -euo pipefail
 
 dir="$HOME/.config/theme"
 settings="$dir/theme.json"
+state="$HOME/.local/state/theme/palette"
 
 mapfile -t names < <(find "$dir/palettes/" -maxdepth 1 -name '*.json' -printf '%f\n' | sed 's/\.json$//' | sort)
-current=$(jq -r '.palette' "$settings")
+current=$(head -n 1 "$state" 2>/dev/null | tr -d '[:space:]')
+[[ -n $current ]] || current=$(jq -r '.palette' "$settings")
 
 if [[ $# -eq 0 ]]; then
     for n in "${names[@]}"; do
@@ -49,10 +52,10 @@ if [[ $wanted == "$current" ]]; then
     exit 0
 fi
 
-# only the palette line changes, so the rest of the file stays as written. In place (sed -i would replace
-# the link with a copy), and in one write
-text=$(sed -E "s/(\"palette\"[[:space:]]*:[[:space:]]*)\"[^\"]*\"/\1\"$wanted\"/" "$settings")
-printf '%s\n' "$text" >"$settings"
+# in one step (a new file renamed over the old), so nothing ever reads half a name
+mkdir -p "$(dirname "$state")"
+printf '%s\n' "$wanted" >"$state.tmp"
+mv "$state.tmp" "$state"
 echo "$(jq -r '.name' "$dir/palettes/$wanted.json")"
 
 if ! pgrep -x qs >/dev/null && ! pgrep -x quickshell >/dev/null; then

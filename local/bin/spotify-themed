@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Opens Spotify with the current theme. Spotify's menu entry runs this (install.sh spicetify sets that up).
+#
+# spotify-launcher updates Spotify first, which drops spicetify's theme; the theme is then applied again, but
+# only when it's needed: Spotify was updated since the last apply, or the palette's spicetify scheme changed
+# (`theme`). Otherwise Spotify starts as fast as before.
+
+ini="$HOME/.config/spicetify/config-xpui.ini"
+DOTFILES=${DOTFILES:-$HOME/.dotfiles}
+
+# the update, without starting Spotify (it only checks now and then by itself)
+spotify-launcher --no-exec >/dev/null 2>&1
+
+# what spicetify last themed: its [Backup] version and color_scheme
+backup_version=$(awk -F' *= *' '/^\[Backup\]/{b=1} b && $1=="version"{print $2; exit}' "$ini" 2>/dev/null)
+scheme=$(awk -F' *= *' '$1=="color_scheme"{print $2; exit}' "$ini" 2>/dev/null)
+
+# what it should be: the installed Spotify, and the current palette's scheme
+installed=$(jq -r '.version // ""' "$HOME/.local/share/spotify-launcher/state.json" 2>/dev/null)
+installed=${installed#*:}       # "1:1.3.8..." -> "1.3.8..."
+name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
+[[ -n $name ]] || name=$(jq -r '.palette' "$HOME/.config/theme/theme.json" 2>/dev/null)
+wanted=$(jq -r '.spicetify // ""' "$HOME/.config/theme/palettes/$name.json" 2>/dev/null)
+
+if [[ $backup_version != "$installed" || ( -n $wanted && $scheme != "$wanted" ) ]]; then
+    SPICETIFY_NO_RESTART=1 bash "$DOTFILES/install/steps/spicetify.sh" >/dev/null 2>&1
+fi
+
+exec spotify-launcher --skip-update "$@"

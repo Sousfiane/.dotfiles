@@ -12,8 +12,12 @@ zmodload -F zsh/stat b:zstat
 
 # sets them from the current palette; leaves each as it was when it can't be worked out
 shell_theme() {
-    local dir=$HOME/.config/theme value
-    local palette="$dir/palettes/$(jq -r '.palette' "$dir/theme.json" 2>/dev/null).json"
+    local dir=$HOME/.config/theme value name
+    # the current palette: the state file (written by `theme`), or theme.json's default
+    [[ -r $HOME/.local/state/theme/palette ]] && name=$(<$HOME/.local/state/theme/palette)
+    name=${${name%%$'\n'*}//[[:space:]]/}
+    [[ -n $name ]] || name=$(jq -r '.palette' "$dir/theme.json" 2>/dev/null)
+    local palette="$dir/palettes/$name.json"
 
     value=$(jq -r '.colors | [
         "--color=fg:\(.subtle),bg:\(.base),hl:\(.rose)",
@@ -38,7 +42,7 @@ typeset -g _shell_theme_stamp=""
 shell_theme_refresh() {
     local dir=$HOME/.config/theme
     local -a times
-    zstat -A times +mtime -- "$dir/theme.json" "$dir"/palettes/*.json 2>/dev/null
+    zstat -A times +mtime -- "$dir/theme.json" "$dir"/palettes/*.json "$HOME/.local/state/theme/palette" 2>/dev/null
     [[ ${times[*]} == "$_shell_theme_stamp" ]] && return
     _shell_theme_stamp=${times[*]}
     shell_theme

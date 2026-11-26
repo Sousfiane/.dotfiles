@@ -6,11 +6,36 @@ import QtQuick
 Singleton {
     id: root
 
-    // The system theme: fonts, radii, opacities and which palette are read from ~/.config/theme/theme.json,
-    // the colours from the palette it names, ~/.config/theme/palettes/<palette>.json (config/theme in the
-    // dotfiles). Hyprland, kitty, Neovim and tmux read them too. Saving either updates the shell at once, and
-    // runs theme/apply.sh so the others follow. This file only says what each colour is used for.
+    // The system theme: fonts, radii and opacities are read from ~/.config/theme/theme.json, the colours from
+    // the current palette, ~/.config/theme/palettes/<palette>.json (config/theme in the dotfiles). The current
+    // palette is named in ~/.local/state/theme/palette, out of the repo so switching never changes it;
+    // theme.json's "palette" is only the default. Hyprland, kitty, Neovim, tmux and zsh read them too. A change
+    // to any of them updates the shell at once, and runs theme/apply.sh so the others follow. This file only
+    // says what each colour is used for.
     readonly property string themeDir: Quickshell.env("HOME") + "/.config/theme"
+    readonly property string stateDir: Quickshell.env("HOME") + "/.local/state/theme"
+
+    // the current palette's name: the state file, or theme.json's default
+    readonly property string paletteName: stateFile.text().trim() || (settings.palette ?? "rose-pine")
+
+    FileView {
+        id: stateFile
+
+        path: root.stateDir + "/palette"
+        blockLoading: true
+        printErrors: false
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: applyTimer.restart()
+    }
+
+    // a file that doesn't exist can't be watched: the state file is created with the default first
+    Process {
+        id: stateCreator
+
+        command: ["sh", "-c", 'mkdir -p "$1" && [ -s "$1/palette" ] || printf "%s\\n" "$2" > "$1/palette"', "sh", root.stateDir, root.settings.palette ?? "rose-pine"]
+        onExited: stateFile.reload()
+    }
 
     FileView {
         id: settingsFile
@@ -28,7 +53,7 @@ Singleton {
     FileView {
         id: paletteFile
 
-        path: root.themeDir + "/palettes/" + (root.settings.palette ?? "rose-pine") + ".json"
+        path: root.themeDir + "/palettes/" + root.paletteName + ".json"
         blockLoading: true
         watchChanges: true
         onFileChanged: reload()
@@ -55,7 +80,10 @@ Singleton {
 
     // what the other apps were last brought up to date with
     property string appliedText: ""
-    Component.onCompleted: appliedText = settingsFile.text() + paletteFile.text()
+    Component.onCompleted: {
+        appliedText = settingsFile.text() + stateFile.text() + paletteFile.text();
+        stateCreator.running = true;
+    }
 
     // switching palettes changes both files in turn: wait for them to settle, then apply once
     Timer {
@@ -67,7 +95,7 @@ Singleton {
 
     // after a real change that parses (a typo mid-edit doesn't reload everything)
     function applyEverywhere() {
-        const text = settingsFile.text() + paletteFile.text();
+        const text = settingsFile.text() + stateFile.text() + paletteFile.text();
         if (text === appliedText)
             return;
         try {

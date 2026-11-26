@@ -6,6 +6,7 @@
 #   kitty      reloads its config (SIGUSR1), in every window
 #   tmux       sources its config, if a server is running
 #   GTK        theme, colour scheme, app font and icon theme (gsettings), and GTK 4's gtk.css link
+#   Spotify    if it's open with another scheme, a notification offers to restart it (spotify-themed)
 
 theme="$HOME/.config/theme/theme.json"
 
@@ -20,7 +21,10 @@ if tmux info &>/dev/null; then
 fi
 
 if command -v jq >/dev/null && command -v gsettings >/dev/null; then
-    palette="$HOME/.config/theme/palettes/$(jq -r '.palette' "$theme").json"
+    # the current palette: the state file (written by `theme`), or theme.json's default
+    name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
+    [[ -n $name ]] || name=$(jq -r '.palette' "$theme")
+    palette="$HOME/.config/theme/palettes/$name.json"
     GNOME=org.gnome.desktop.interface
     gsettings set $GNOME gtk-theme "$(jq -r '.gtk' "$palette")"
     # each palette says which: the rose-pine GTK themes look wrong with prefer-dark, since libadwaita apps
@@ -37,5 +41,23 @@ if command -v jq >/dev/null; then
     if [[ -f $css && ( -L $link || ! -e $link ) ]]; then
         mkdir -p "$(dirname "$link")"
         ln -sfn "$css" "$link"
+    fi
+fi
+
+# Spotify can't change theme while it runs: spotify-themed applies it the next time it opens. If it's open
+# now with another scheme, a notification offers to restart it (clicking it does), rather than closing it
+# out of the blue. In the background, so nothing here waits for the click
+if pgrep -x spotify >/dev/null && command -v jq >/dev/null; then
+    wanted=$(jq -r '.spicetify // ""' "$palette" 2>/dev/null)
+    scheme=$(awk -F' *= *' '$1=="color_scheme"{print $2; exit}' "$HOME/.config/spicetify/config-xpui.ini" 2>/dev/null)
+    if [[ -n $wanted && $scheme != "$wanted" ]]; then
+        setsid -f bash -c '
+            action=$(notify-send --app-name=Spotify --icon=spotify-launcher --action=default=Restart \
+                "Spotify" "Click to restart it with the new theme")
+            if [[ $action == default ]]; then
+                pkill -x spotify
+                while pgrep -x spotify >/dev/null; do sleep 0.2; done
+                "$HOME/.local/bin/spotify-themed"
+            fi' >/dev/null 2>&1
     fi
 fi

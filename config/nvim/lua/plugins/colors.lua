@@ -9,7 +9,10 @@ end
 local function theme_palette()
 	local ok, palette = pcall(function()
 		local theme = read("~/.config/theme/theme.json")
-		return read("~/.config/theme/palettes/" .. theme.palette .. ".json")
+		-- the current palette: the state file (out of the repo, written by `theme`), or the default
+		local state = vim.fn.expand("~/.local/state/theme/palette")
+		local name = vim.fn.filereadable(state) == 1 and vim.trim(vim.fn.readfile(state, "", 1)[1] or "") or ""
+		return read("~/.config/theme/palettes/" .. (name ~= "" and name or theme.palette) .. ".json")
 	end)
 	if not ok then
 		vim.notify("theme.json: " .. tostring(palette), vim.log.levels.WARN)
@@ -68,11 +71,12 @@ local function apply(opts)
 end
 
 -- Follows theme changes live: watches the folders theme.json and the palettes really live in (the repo,
--- since `theme` and editors write through the links), and applies again shortly after a .json changes.
+-- since editors write through the links) and the one with the current palette's name (written by
+-- `theme`), and applies again shortly after one of them changes.
 local function follow_theme()
 	local timer = assert(vim.uv.new_timer())
 	local function changed(err, name)
-		if err or not (name and name:match("%.json$")) then return end
+		if err or not (name and (name:match("%.json$") or name == "palette")) then return end
 		timer:stop()
 		timer:start(200, 0, vim.schedule_wrap(function()
 			apply(make_opts())
@@ -81,7 +85,9 @@ local function follow_theme()
 	local theme = vim.fn.expand("~/.config/theme")
 	local settings = vim.uv.fs_realpath(theme .. "/theme.json")
 	local palettes = vim.uv.fs_realpath(theme .. "/palettes")
-	for _, dir in ipairs({ settings and vim.fs.dirname(settings), palettes }) do
+	local state = vim.fn.expand("~/.local/state/theme")
+	vim.fn.mkdir(state, "p")
+	for _, dir in ipairs({ settings and vim.fs.dirname(settings), palettes, state }) do
 		local watcher = vim.uv.new_fs_event()
 		if dir and watcher then watcher:start(dir, {}, changed) end
 	end
