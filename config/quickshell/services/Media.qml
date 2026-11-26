@@ -17,6 +17,36 @@ Singleton {
     onPlayerChanged: {
         if (player?.isPlaying)
             lastActive = player;
+        rememberLength();
+    }
+
+    // The track's length in seconds, 0 if unknown. Firefox re-sends its metadata without mpris:length after
+    // a seek (until the next pause or play), so the last length seen for the same track stands in for it.
+    readonly property string trackKey: player ? [player.dbusName, player.trackTitle, player.trackArtist].join("\n") : ""
+    property var lastLength: ({
+            key: "",
+            length: 0
+        })
+    // (without mpris:length, Quickshell's length falls back to the position, so lengthSupported decides)
+    readonly property bool playerHasLength: (player?.lengthSupported ?? false) && player.length > 0
+    readonly property real length: playerHasLength ? player.length : (lastLength.key === trackKey ? lastLength.length : 0)
+
+    function rememberLength() {
+        if (playerHasLength)
+            lastLength = {
+                key: trackKey,
+                length: player.length
+            };
+    }
+    onTrackKeyChanged: rememberLength()
+    Connections {
+        target: root.player
+        function onLengthChanged() {
+            root.rememberLength();
+        }
+        function onLengthSupportedChanged() {
+            root.rememberLength();
+        }
     }
 
     function toggle() {

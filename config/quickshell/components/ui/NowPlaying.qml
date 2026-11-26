@@ -8,7 +8,7 @@ RowLayout {
     id: root
 
     readonly property var player: Media.player
-    readonly property bool hasLength: (player?.lengthSupported ?? false) && player.length > 0
+    readonly property bool hasLength: Media.length > 0
 
     property int coverSize: 64
 
@@ -71,7 +71,7 @@ RowLayout {
                 height: parent.height
                 radius: parent.radius
                 color: Theme.accent
-                width: root.hasLength ? parent.width * Math.min(1, root.player.position / root.player.length) : 0
+                width: root.hasLength ? parent.width * Math.min(1, root.player.position / Media.length) : 0
             }
 
             // click to seek
@@ -80,7 +80,7 @@ RowLayout {
                 anchors.margins: -4
                 enabled: root.player?.canSeek ?? false
                 cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: event => root.player.position = root.player.length * Math.max(0, Math.min(1, (event.x - 4) / parent.width))
+                onClicked: event => root.player.position = Media.length * Math.max(0, Math.min(1, (event.x - 4) / parent.width))
             }
         }
 
@@ -92,7 +92,7 @@ RowLayout {
             Txt {
                 Layout.fillWidth: true
                 variant: "small"
-                text: root.hasLength ? Media.fmt(root.player.position) + " / " + Media.fmt(root.player.length) : ""
+                text: root.hasLength ? Media.fmt(root.player.position) + " / " + Media.fmt(Media.length) : ""
             }
 
             Repeater {
