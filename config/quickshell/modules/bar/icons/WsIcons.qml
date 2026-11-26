@@ -104,5 +104,54 @@ Item {
                 }
             }
         }
+
+        // after the dots: a small plus that opens the first empty workspace, same as SUPER + SHIFT + N.
+        // Drawn like the dots (dim, grows a little on hover) so it reads as part of the strip.
+        Item {
+            id: add
+
+            readonly property int arm: root.dotSize + 2 + (addMouse.containsMouse ? 2 : 0)
+            readonly property int thickness: 2
+
+            implicitWidth: root.dotSize + 2 + root.cellPadding * 2
+            implicitHeight: Theme.barHeight
+
+            Repeater {
+                model: 2     // one horizontal bar, one vertical
+
+                delegate: Rectangle {
+                    required property int index
+
+                    anchors.centerIn: parent
+                    width: index === 0 ? add.arm : add.thickness
+                    height: index === 0 ? add.thickness : add.arm
+                    radius: add.thickness / 2
+                    color: addMouse.containsMouse ? Theme.accent : Theme.dim
+
+                    Behavior on width {
+                        Anim {
+                            duration: Motion.fast
+                        }
+                    }
+                    Behavior on height {
+                        Anim {
+                            duration: Motion.fast
+                        }
+                    }
+                    Behavior on color {
+                        CAnim {}
+                    }
+                }
+            }
+
+            MouseArea {
+                id: addMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = "empty" })`)
+            }
+        }
     }
 }
