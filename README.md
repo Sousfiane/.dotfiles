@@ -43,6 +43,14 @@ Once in the desktop, from a terminal (the keyring isn't reachable from a console
 
 It checks them against the server, then stores them in the keyring, never in the repo. Run it again to replace them.
 
+After opening and closing Spotify once (and again after each Spotify update):
+
+```sh
+~/.dotfiles/install/install.sh spicetify        # the Spotify theme
+```
+
+Only the choices are in the repo (`install/steps/spicetify.sh`, plus `Themes` and `Extensions`); spicetify keeps its own `config-xpui.ini` in `~/.config/spicetify`, since it writes version numbers into it.
+
 ## Layout
 
 Where a file sits in the repo is where it goes:
