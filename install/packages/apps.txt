@@ -11,6 +11,7 @@ btop
 fastfetch
 fd
 fzf
+tree                         # tmux-sessionizer's preview
 unzip
 nodejs
 npm
@@ -21,17 +22,20 @@ zen-browser-bin
 nautilus
 libreoffice-fresh
 vesktop-bin                  # Discord (SUPER+C)
+localsend                    # floated by rules.lua
 
 # ---------- media ----------
 spotify-launcher
 spicetify-cli
 easyeffects                  # started by autostart.lua
 obs-studio-liberty
+ffmpeg                       # discord-converter, to-mov and to-mp4 (aliases.zsh)
 
 # ---------- games ----------
 steam                        # from multilib (enabled by steps/pacman.sh)
 prismlauncher
 nvibrant-bin
+protonhax                    # the er-* aliases (aliases.zsh)
 
 # ---------- system ----------
 nvtop

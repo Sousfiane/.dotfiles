@@ -6,7 +6,7 @@
 hyprland
 hyprpm                       # plugins (autostart.lua: hyprpm reload)
 hypridle                     # screens off when idle (a user service: steps/services.sh)
-uwsm                         # session manager: apps are started with `uwsm app`
+uwsm                         # session manager: apps are started with uwsm-app
 xdg-desktop-portal-hyprland  # screen sharing, file pickers
 qt5-wayland
 qt6-wayland
@@ -14,7 +14,8 @@ sddm                         # login screen (enabled by steps/services.sh)
 
 # ---------- Quickshell and what it calls ----------
 quickshell
-kitty                        # Config.terminal: the floating terminal (updates, terminal apps)
+kitty                        # the terminal
+xdg-terminal-exec            # opens the terminal: SUPER + Return, and Quickshell's floating terminal
 clipvault-bin                # clipboard history: stored from autostart.lua, read by the panel
 wl-clipboard                 # wl-paste / wl-copy, for the clipboard history
 grim                         # the lock screen's capture of each screen
@@ -25,6 +26,8 @@ nm-connection-editor         # the network panel's "Edit"
 upower                       # device batteries the Bluetooth panel can't get from BlueZ
 libsecret                    # secret-tool: the calendar's password, from the keyring
 python                       # scripts/calendar.py
+python-dbus                  # bt-agent (started by autostart.lua)
+python-gobject               # bt-agent
 curl                         # weather
 
 # ---------- audio, network, Bluetooth (services: steps/services.sh) ----------
