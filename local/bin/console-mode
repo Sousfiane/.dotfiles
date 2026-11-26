@@ -20,13 +20,13 @@ if [[ "$MONITOR_ACTIVE" == "true" ]]; then
     pactl set-default-sink "$AUDIO_SINK_NORMAL"
 
     # Turn off TV
-    hyprctl keyword monitor "$MONITOR,disable"
+    hyprctl eval "hl.monitor({ output = \"$MONITOR\", disabled = true })"
     exit 0
 else
     echo "Enabling game mode on $MONITOR..."
 
     # Turn on the TV
-    hyprctl keyword monitor "$MONITOR,$RESOLUTION,$POSITION,1,vrr,1"
+    hyprctl eval "hl.monitor({ output = \"$MONITOR\", mode = \"$RESOLUTION\", position = \"$POSITION\", scale = 1, vrr = 1, disabled = false })"
     sleep 2
 
     # Set as primary for Xwayland
@@ -36,9 +36,11 @@ else
     echo "Switching audio to TV ($AUDIO_SINK_TV)..."
     pactl set-default-sink "$AUDIO_SINK_TV"
 
-    # Focus the TV monitor and move to game workspace
-    hyprctl dispatch focusmonitor "$MONITOR"
-    hyprctl dispatch workspace "$GAME_WORKSPACE"
+    # Game workspace on the TV, focused: shown (created if needed), moved to the TV, which it follows
+    # since it's shown, then focused there
+    hyprctl dispatch "hl.dsp.focus({ workspace = $GAME_WORKSPACE })"
+    hyprctl dispatch "hl.dsp.workspace.move({ workspace = $GAME_WORKSPACE, monitor = \"$MONITOR\" })"
+    hyprctl dispatch "hl.dsp.focus({ workspace = $GAME_WORKSPACE })"
 
   #  # Launch Steam Big Picture
   #  if pgrep -x "steam" > /dev/null; then

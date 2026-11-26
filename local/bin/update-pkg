@@ -1,9 +1,14 @@
-#!/bin/env bash
+#!/usr/bin/env bash
+# The pending updates in fzf (repo, then AUR, each "name old -> new"), and on enter a full upgrade.
+#
+# There's no picking single packages: on Arch that's a partial upgrade (new packages against old
+# libraries), which can break the system. checkupdates lists the repo updates from its own copy of the
+# databases, so nothing is synced here until yay -Syu does it all at once.
 
 fzf_args=(
-    --multi
-    --preview 'echo {} | grep -q "upgrade" && echo "This will upgrade all packages on your system. Be careful!" || yay -Si {1} || yay -Si --aur {1}'
-    --preview-label='alt-p: toggle preview | alt-j/k: scroll | tab: select'
+    --header 'enter: upgrade everything | esc: cancel'
+    --preview 'yay -Si {1} 2>/dev/null || yay -Qi {1}'
+    --preview-label='alt-p: toggle preview | alt-j/k: scroll'
     --preview-label-pos='bottom'
     --preview-window 'down:45%:wrap'
     --bind 'alt-p:toggle-preview'
@@ -12,28 +17,18 @@ fzf_args=(
     --color 'pointer:yellow,marker:yellow'
 )
 
-yay -Sy 
-pkg_list=$(yay -Qu 2>/dev/null | awk '{print $1}')
+echo "Checking for updates..."
+updates=$(
+    checkupdates
+    yay -Qua 2>/dev/null
+)
 
-if [[ -z "$pkg_list" ]]; then
+if [[ -z $updates ]]; then
     echo "System is already up to date."
     sleep 1
     exit 0
 fi
 
-pkg_list="Full system upgrade
-$pkg_list"
+fzf "${fzf_args[@]}" <<<"$updates" >/dev/null || exit 0
 
-selection=$(echo "$pkg_list" | fzf "${fzf_args[@]}")
-fzf_exit=$?
-
-if [[ $fzf_exit -ne 0 ]]; then
-    exit 0
-fi
-
-if [[ "$selection" == "Full system upgrade" ]]; then
-    yay -Syu --noconfirm
-else
-    echo "$selection" | tr '\n' ' ' | xargs yay -S --noconfirm
-fi
-
+yay -Syu --noconfirm
