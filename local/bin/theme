@@ -17,17 +17,26 @@
 
 set -euo pipefail
 
-dir="$HOME/.config/theme"
-settings="$dir/theme.json"
-state="$HOME/.local/state/theme/palette"
+source "$HOME/.config/theme/lib.sh"
 
-fonts="$HOME/.local/state/theme/fonts.json"
+dir=$THEME_DIR
+settings="$dir/theme.json"
+state="$THEME_STATE/palette"
+fonts="$THEME_STATE/fonts.json"
 
 # the other apps follow by themselves when Quickshell is running (it watches the state files)
 apply_if_no_shell() {
     if ! pgrep -x qs >/dev/null && ! pgrep -x quickshell >/dev/null; then
         "$dir/apply.sh"
     fi
+}
+
+# writes the picked fonts in one step (a new file renamed over the old), as for the palette, then applies
+save_fonts() {
+    mkdir -p "$(dirname "$fonts")"
+    printf '%s\n' "$1" >"$fonts.tmp"
+    mv "$fonts.tmp" "$fonts"
+    apply_if_no_shell
 }
 
 if [[ ${1:-} == font ]]; then
@@ -60,10 +69,7 @@ if [[ ${1:-} == font ]]; then
             echo "theme: a size is a whole number from 6 to 40, or default" >&2
             exit 1
         fi
-        mkdir -p "$(dirname "$fonts")"
-        printf '%s\n' "$picked" >"$fonts.tmp"
-        mv "$fonts.tmp" "$fonts"
-        apply_if_no_shell
+        save_fonts "$picked"
         exit 0
     fi
 
@@ -82,17 +88,12 @@ if [[ ${1:-} == font ]]; then
         exit 1
     fi
 
-    # in one step, as for the palette
-    mkdir -p "$(dirname "$fonts")"
-    printf '%s\n' "$picked" >"$fonts.tmp"
-    mv "$fonts.tmp" "$fonts"
-    apply_if_no_shell
+    save_fonts "$picked"
     exit 0
 fi
 
 mapfile -t names < <(find "$dir/palettes/" -maxdepth 1 -name '*.json' -printf '%f\n' | sed 's/\.json$//' | sort)
-current=$(cat "$state" 2>/dev/null | head -n 1 | tr -d '[:space:]' || true)    # no state file yet: the default
-[[ -n $current ]] || current=$(jq -r '.palette' "$settings")
+current=$(theme_palette_name)
 
 if [[ $# -eq 0 ]]; then
     for n in "${names[@]}"; do
@@ -131,5 +132,5 @@ fi
 mkdir -p "$(dirname "$state")"
 printf '%s\n' "$wanted" >"$state.tmp"
 mv "$state.tmp" "$state"
-echo "$(jq -r '.name' "$dir/palettes/$wanted.json")"
+jq -r '.name' "$dir/palettes/$wanted.json"
 apply_if_no_shell

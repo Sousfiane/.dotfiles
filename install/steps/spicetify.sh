@@ -20,9 +20,8 @@ fi
 
 # the Ziro colour scheme that goes with the current palette; spotify-themed runs this step again when the
 # palette changes
-PALETTE=$(cat "$HOME/.local/state/theme/palette" 2>/dev/null | head -n 1 | tr -d '[:space:]' || true)
-[[ -n $PALETTE ]] || PALETTE=$(jq -r '.palette' "$HOME/.config/theme/theme.json")
-SCHEME=$(jq -r '.spicetify' "$HOME/.config/theme/palettes/$PALETTE.json" 2>/dev/null)
+source "$DOTFILES/config/theme/lib.sh"
+SCHEME=$(jq -r '.spicetify' "$(theme_palette_file)" 2>/dev/null)
 [[ -n $SCHEME && $SCHEME != null ]] || SCHEME=rose-pine
 
 # fields left out keep spicetify's defaults

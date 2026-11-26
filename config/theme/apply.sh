@@ -9,14 +9,11 @@
 #   GTK        theme, colour scheme, app font and icon theme (gsettings), and GTK 4's gtk.css link
 #   Spotify    if it's open with another scheme, it restarts with the new one (spotify-themed)
 
-theme="$HOME/.config/theme/theme.json"
-fonts="$HOME/.local/state/theme/fonts.json"    # the fonts picked in the theme picker, over theme.json's
+source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-# the current palette: the state file (written by `theme`), or theme.json's default. Every part below
-# that reads the palette checks for jq first
-name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
-[[ -n $name ]] || name=$(jq -r '.palette' "$theme" 2>/dev/null)
-palette="$HOME/.config/theme/palettes/$name.json"
+theme="$THEME_DIR/theme.json"
+fonts="$THEME_STATE/fonts.json"    # the fonts picked in the theme picker, over theme.json's
+palette=$(theme_palette_file)      # every part below that reads it checks for jq first
 
 "$(dirname "${BASH_SOURCE[0]}")/files.sh"
 

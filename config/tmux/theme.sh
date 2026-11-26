@@ -7,18 +7,15 @@
 #   middle: windows, "number  name", iris, the current one gold
 #   right:  current folder
 
-dir="$HOME/.config/theme"
+source "$HOME/.config/theme/lib.sh"
 
 if ! command -v jq >/dev/null; then
     tmux display-message "tmux theme: needs jq"
     exit 0
 fi
 
-# the colours come from the current palette: ~/.local/state/theme/palette (written by `theme`), or
-# theme.json's default
-name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
-[[ -n $name ]] || name=$(jq -r '.palette' "$dir/theme.json" 2>/dev/null)
-file="$dir/palettes/$name.json"
+# the colours come from the current palette
+file=$(theme_palette_file)
 
 declare -A c
 while IFS=$'\t' read -r name value; do

@@ -9,18 +9,13 @@
 
 set -euo pipefail
 
-dir="$HOME/.config/theme"
-state="$HOME/.local/state/theme"
+source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-# the current palette: the state file (written by `theme`), or theme.json's default
-name=$(head -n 1 "$state/palette" 2>/dev/null | tr -d '[:space:]' || true)
-[[ -n $name ]] || name=$(jq -r '.palette' "$dir/theme.json")
-
-fonts="$state/fonts.json"
+fonts="$THEME_STATE/fonts.json"
 jq -e 'type == "object"' "$fonts" >/dev/null 2>&1 || fonts=<(echo '{}')   # one that doesn't parse is ignored
 
 # theme.json, the fonts picked over its own, then the palette on top (its colors, name, dark, gtk...)
-theme=$(jq -s '.[0] as $t | .[1] as $f | .[2] as $p | ($t | .font += $f) + $p' "$dir/theme.json" "$fonts" "$dir/palettes/$name.json")
+theme=$(jq -s '.[0] as $t | .[1] as $f | .[2] as $p | ($t | .font += $f) + $p' "$THEME_DIR/theme.json" "$fonts" "$(theme_palette_file)")
 
 # writes what `make` prints to `path`, in one step so an app never reads half a file. Only once it's all
 # there: when `make` fails, the old file stays

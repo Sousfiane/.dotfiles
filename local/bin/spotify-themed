@@ -18,9 +18,8 @@ scheme=$(awk -F' *= *' '$1=="color_scheme"{print $2; exit}' "$ini" 2>/dev/null)
 # what it should be: the installed Spotify, and the current palette's scheme
 installed=$(jq -r '.version // ""' "$HOME/.local/share/spotify-launcher/state.json" 2>/dev/null)
 installed=${installed#*:}       # "1:1.3.8..." -> "1.3.8..."
-name=$(head -n 1 "$HOME/.local/state/theme/palette" 2>/dev/null | tr -d '[:space:]')
-[[ -n $name ]] || name=$(jq -r '.palette' "$HOME/.config/theme/theme.json" 2>/dev/null)
-wanted=$(jq -r '.spicetify // ""' "$HOME/.config/theme/palettes/$name.json" 2>/dev/null)
+source "$HOME/.config/theme/lib.sh"
+wanted=$(jq -r '.spicetify // ""' "$(theme_palette_file)" 2>/dev/null)
 
 if [[ $backup_version != "$installed" || ( -n $wanted && $scheme != "$wanted" ) ]]; then
     SPICETIFY_NO_RESTART=1 bash "$DOTFILES/install/steps/spicetify.sh" >/dev/null 2>&1

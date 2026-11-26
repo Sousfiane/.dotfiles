@@ -85,7 +85,7 @@ sddm starts Hyprland through **uwsm**, which runs the session as systemd units:
 | fzf, ls | `config/zsh/theme.zsh`: `FZF_DEFAULT_OPTS`, and `LS_COLORS` from vivid's theme named by the palette (set in `zprofile`, checked again by `zshrc` before each command and fzf key binding) | with the next command |
 | zsh prompt | `config/zsh/prompt.zsh` uses only the terminal's 16 colours, so it follows kitty | with kitty |
 
-The apps keep only what each colour is used for.
+The apps keep only what each colour is used for. The shell scripts among them (`theme`, `apply.sh`, `files.sh`, tmux's `theme.sh`, the Spotify ones) find the current palette through `config/theme/lib.sh`.
 
 `theme` lists the palettes and `theme moon` (or `theme next`) switches. The current palette is kept in `~/.local/state/theme/palette`, out of the repo, so switching never shows up in git; `theme.json`'s `"palette"` is only what a new machine starts with. The hub's Theme picker (`E` in the hub, or `qs ipc call theme toggle`) does the same, with a strip of each palette's colours. Fonts work the same way: `theme font` lists the three (`ui` for Quickshell, `mono` for kitty and window titles, `app` for GTK and Qt apps), `theme font app "Noto Sans"` changes one, `theme font app size 11` sets its size (pixels for `ui`, points for the others) and `theme font app default` goes back to `theme.json`'s. The choices are kept in `~/.local/state/theme/fonts.json`, and the picker's Fonts rows open a list of the installed fonts, each drawn in itself, with − and + (or the `-` and `+` keys) for the size.
 
