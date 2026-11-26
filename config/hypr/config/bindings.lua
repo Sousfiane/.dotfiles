@@ -28,29 +28,6 @@ end, { description = "Toggle floating and resize window" })
 
 hl.bind(mod .. " + P", require("config.popout").toggle, { description = "Toggle picture-in-picture / popup mode" })
 
-hl.bind(mod .. " + T", function()
-	local tv = hl.get_monitor("HDMI-A-1")
-	if tv == nil then
-		hl.monitor({
-			output = "HDMI-A-1",
-			mode = "3840x2160@144",
-			position = "-3840x0,1",
-			scale = 1,
-			bitdepth = 10,
-			disabled = false,
-		})
-	else
-		hl.monitor({
-			output = "HDMI-A-1",
-			mode = "3840x2160@144",
-			position = "-3840x0,1",
-			scale = 1,
-			bitdepth = 10,
-			disabled = true,
-		})
-	end
-end, { description = "Toggle external TV monitor" })
-
 --------------------------------------------------
 -- 🚀 Menus
 --------------------------------------------------
@@ -212,17 +189,6 @@ hl.bind(
 	"XF86AudioMicMute",
 	hl.dsp.exec_cmd(qs .. "audio micMute"),
 	{ locked = true, description = "Toggle microphone mute" }
-)
-
-hl.bind(
-	"XF86KbdBrightnessUp",
-	hl.dsp.exec_cmd("kb-backlight +26"),
-	{ locked = true, repeating = true, description = "Raise keyboard backlight" }
-)
-hl.bind(
-	"XF86KbdBrightnessDown",
-	hl.dsp.exec_cmd("kb-backlight 26-"),
-	{ locked = true, repeating = true, description = "Lower keyboard backlight" }
 )
 
 --------------------------------------------------

@@ -41,15 +41,6 @@ hl.window_rule({
 	size = { 875, 600 },
 })
 
--- Workspace 9 (TV mode)
-hl.workspace_rule({
-	workspace = "9",
-	no_border = true,
-	gaps_in = 0,
-	gaps_out = 0,
-	no_rounding = true,
-})
-
 -- Programs on specific workspaces
 hl.window_rule({
 	name = "kitty-on-ws1",

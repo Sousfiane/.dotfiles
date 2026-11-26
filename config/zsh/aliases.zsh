@@ -37,11 +37,6 @@ note() {
     echo "" >> $HOME/drafts.txt
 }
 
-tv() {
-    [[ $1 == "on" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@60", position = "-3840x0,1", scale = 1, disabled = false })'
-    [[ $1 == "off" ]] && hyprctl eval 'hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@60", position = "-3840x0,1", scale = 1, disabled = true })'
-}
-
 to-mov(){
     ffmpeg -i $1 -c:v dnxhd -profile:v dnxhr_hq -pix_fmt yuv422p -c:a pcm_s16le "$(echo $1 | cut -d'.' -f1).mov"
 }
