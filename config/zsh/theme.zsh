@@ -14,10 +14,11 @@ zmodload -F zsh/stat b:zstat
 # sets them from the current palette; leaves each as it was when it can't be worked out
 shell_theme() {
     local dir=$HOME/.config/theme value name
-    # the current palette: the state file (written by `theme`), or theme.json's default
+    # the current palette: the state file (written by `theme`), or theme.json's default when it names none or
+    # one that's gone (renamed, deleted)
     [[ -r $HOME/.local/state/theme/palette ]] && name=$(<$HOME/.local/state/theme/palette)
     name=${${name%%$'\n'*}//[[:space:]]/}
-    [[ -n $name ]] || name=$(jq -r '.palette' "$dir/theme.json" 2>/dev/null)
+    [[ -n $name && -r $dir/palettes/$name.json ]] || name=$(jq -r '.palette' "$dir/theme.json" 2>/dev/null)
     local palette="$dir/palettes/$name.json"
 
     value=$(jq -r '.colors | [

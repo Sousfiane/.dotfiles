@@ -123,7 +123,10 @@ if [[ ! -f "$dir/palettes/$wanted.json" ]]; then
     echo "theme: no palette named '$1' (theme lists them)" >&2
     exit 1
 fi
-if [[ $wanted == "$current" ]]; then
+# "already" only when the state file says so too: it may name a palette that's gone, `current` then being
+# the default, and switching to the default must still write it
+saved=$(head -n 1 "$state" 2>/dev/null | tr -d '[:space:]' || true)
+if [[ $wanted == "$current" && $saved == "$wanted" ]]; then
     echo "already $wanted"
     exit 0
 fi

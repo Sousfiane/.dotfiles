@@ -15,13 +15,14 @@ def read(path):
 
 
 # the current palette: ~/.local/state/theme/palette (out of the repo, written by `theme`), or the settings'
-# default
+# default when it names none or one that's gone (renamed, deleted)
 def current_palette(default):
     try:
         with open(os.path.expanduser("~/.local/state/theme/palette"), encoding="utf-8") as f:
-            return f.readline().strip() or default
+            name = f.readline().strip()
     except OSError:
         return default
+    return name if name and os.path.isfile(f"{theme_dir}/palettes/{name}.json") else default
 
 
 # the settings, with the current palette on top, and the fonts picked in the theme picker over theirs

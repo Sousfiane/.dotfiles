@@ -16,8 +16,13 @@ Singleton {
     readonly property string themeDir: Quickshell.env("HOME") + "/.config/theme"
     readonly property string stateDir: Quickshell.env("HOME") + "/.local/state/theme"
 
-    // the current palette's name: the state file, or theme.json's default
-    readonly property string paletteName: stateFile.text().trim() || (settings.palette ?? "rose-pine")
+    // the current palette's name: the state file, or theme.json's default when it names none or one that's
+    // gone (renamed, deleted: its file fails to load)
+    readonly property string defaultPalette: settings.palette ?? "rose-pine"
+    readonly property string chosenPalette: stateFile.text().trim() || defaultPalette
+    property bool paletteMissing: false
+    onChosenPaletteChanged: paletteMissing = false
+    readonly property string paletteName: paletteMissing ? defaultPalette : chosenPalette
 
     FileView {
         id: stateFile
@@ -75,6 +80,8 @@ Singleton {
         watchChanges: true
         onFileChanged: reload()
         onLoaded: applyTimer.restart()
+        onLoadFailed: if (root.paletteName !== root.defaultPalette)
+            root.paletteMissing = true
     }
 
     // the last version of each file that parsed, so a typo while editing keeps the shell as it was
