@@ -1,46 +1,26 @@
-vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
-	callback = function(event)
-		local client = vim.lsp.get_client_by_id(event.data.client_id)
-		if client.server_capabilities.documentHighlightProvider then
-			local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
-			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-				buffer = event.buf,
-				group = highlight_augroup,
-				callback = vim.lsp.buf.document_highlight,
-			})
-			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-				buffer = event.buf,
-				group = highlight_augroup,
-				callback = vim.lsp.buf.clear_references,
-			})
-			vim.api.nvim_create_autocmd("LspDetach", {
-				group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
-				callback = function(event2)
-					vim.lsp.buf.clear_references()
-					vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event2.buf })
-				end,
-			})
-		end
-	end,
-})
+-- Autocommands that need no plugin. The LSP's are in lsp.lua.
+
+local group = vim.api.nvim_create_augroup("config", { clear = true })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
+	group = group,
+	desc = "Flash what was yanked",
 	callback = function()
-		vim.highlight.on_yank({ "Search", 200 })
+		vim.hl.on_yank({ higroup = "Search", timeout = 200 })
 	end,
 })
 
+-- the diagnostics under the cursor, when it rests. Not over another float (a hover, a signature), which it
+-- would cover
 vim.api.nvim_create_autocmd("CursorHold", {
+	group = group,
+	desc = "Show the diagnostics under the cursor",
 	callback = function()
-		vim.diagnostic.open_float(nil, { focusable = false })
-	end,
-})
-
-vim.api.nvim_create_autocmd("User", {
-	pattern = "GitSignsUpdate",
-	callback = function()
-		require("neo-tree.sources.git_status").refresh()
-		require("lualine").refresh()
+		for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+			if vim.api.nvim_win_get_config(win).relative ~= "" then
+				return
+			end
+		end
+		vim.diagnostic.open_float({ scope = "cursor", focusable = false })
 	end,
 })

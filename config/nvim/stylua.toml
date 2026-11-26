@@ -1,0 +1,8 @@
+# stylua's settings for the Neovim config: the defaults, written out so they're the same whether the file
+# is formatted from the repo or from ~/.config/nvim (Neovim formats Lua with stylua on save)
+column_width = 120
+line_endings = "Unix"
+indent_type = "Tabs"
+indent_width = 4
+quote_style = "AutoPreferDouble"
+call_parentheses = "Always"

@@ -76,11 +76,17 @@ end
 local function follow_theme()
 	local timer = assert(vim.uv.new_timer())
 	local function changed(err, name)
-		if err or not (name and (name:match("%.json$") or name == "palette")) then return end
+		if err or not (name and (name:match("%.json$") or name == "palette")) then
+			return
+		end
 		timer:stop()
-		timer:start(200, 0, vim.schedule_wrap(function()
-			apply(make_opts())
-		end))
+		timer:start(
+			200,
+			0,
+			vim.schedule_wrap(function()
+				apply(make_opts())
+			end)
+		)
 	end
 	local theme = vim.fn.expand("~/.config/theme")
 	local settings = vim.uv.fs_realpath(theme .. "/theme.json")
@@ -89,16 +95,13 @@ local function follow_theme()
 	vim.fn.mkdir(state, "p")
 	for _, dir in ipairs({ settings and vim.fs.dirname(settings), palettes, state }) do
 		local watcher = vim.uv.new_fs_event()
-		if dir and watcher then watcher:start(dir, {}, changed) end
+		if dir and watcher then
+			watcher:start(dir, {}, changed)
+		end
 	end
 end
 
-return {
-	"rose-pine/neovim",
-	name = "rose-pine",
-	opts = make_opts,
-	config = function(_, opts)
-		apply(opts)
-		follow_theme()
-	end,
-}
+vim.pack.add({ { src = "https://github.com/rose-pine/neovim", name = "rose-pine" } })
+
+apply(make_opts())
+follow_theme()

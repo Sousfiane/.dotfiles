@@ -1,16 +1,28 @@
-return {
-	"nvim-lualine/lualine.nvim",
-	dependencies = { "nvim-tree/nvim-web-devicons" },
-	event = "ColorScheme",
-	opts = {
-		options = {
-			theme = "rose-pine",
-			globalstatus = true,
-		},
-		extensions = { "mason", "lazy", "neo-tree", "quickfix", "nvim-dap-ui" },
+-- The status line. lualine sets itself up again on every colour scheme change, so it follows `theme` too.
+
+vim.pack.add({
+	"https://github.com/nvim-tree/nvim-web-devicons",
+	"https://github.com/nvim-lualine/lualine.nvim",
+})
+
+require("lualine").setup({
+	options = {
+		theme = "rose-pine",
+		globalstatus = true,
 	},
-	init = function()
-		vim.g.loaded_netrw = 1
-		vim.g.loaded_netrwPlugin = 1
-	end,
-}
+	sections = {
+		-- the diff from gitsigns, so it changes with it (staging a hunk, an edit) and not on lualine's own timer
+		lualine_b = {
+			"branch",
+			{
+				"diff",
+				source = function()
+					local s = vim.b.gitsigns_status_dict
+					return s and { added = s.added, modified = s.changed, removed = s.removed }
+				end,
+			},
+			"diagnostics",
+		},
+	},
+	extensions = { "mason", "neo-tree", "quickfix" },
+})
