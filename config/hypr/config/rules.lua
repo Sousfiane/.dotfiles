@@ -44,19 +44,19 @@ hl.window_rule({
 -- Programs on specific workspaces
 hl.window_rule({
 	name = "kitty-on-ws1",
-	match = { class = "^(kitty)" },
+	match = { class = "^(kitty)$" },
 	workspace = "1",
 })
 
 hl.window_rule({
 	name = "zen-on-ws2",
-	match = { class = "^(zen)" },
+	match = { class = "^(zen)$" },
 	workspace = "2",
 })
 
 hl.window_rule({
 	name = "discord-on-ws3",
-	match = { class = "^(vesktop)" },
+	match = { class = "^(vesktop)$" },
 	workspace = "3",
 })
 
@@ -68,12 +68,14 @@ hl.window_rule({
 
 -- OBS gets background rendering
 hl.window_rule({
-	match = { class = "^obs$" },
+	name = "obs-render-unfocused",
+	match = { class = "^(obs)$" },
 	render_unfocused = true,
 })
 
 hl.window_rule({
-	match = { class = "cs2" },
+	name = "cs2-tearing",
+	match = { class = "^(cs2)$" },
 	immediate = true,
 })
 
