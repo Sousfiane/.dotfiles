@@ -21,10 +21,13 @@ source_if_exists $HOME/.config/zsh/aliases.zsh
 source_if_exists $HOME/.config/zsh/history.zsh
 source_if_exists <(fzf --zsh)
 
-# fzf's and ls's colours follow the theme (LS_COLORS, set in zprofile): checked again before every prompt
+# fzf's and ls's colours follow the theme (set in zprofile): checked again before every prompt and command,
+# and before fzf's key bindings and tab completion
 source_if_exists $HOME/.config/zsh/theme.zsh
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd shell_theme_refresh
+add-zsh-hook preexec shell_theme_refresh
+shell_theme_widgets fzf-file-widget fzf-cd-widget fzf-history-widget fzf-completion
 
 precmd() {
     source $HOME/.config/zsh/aliases.zsh
