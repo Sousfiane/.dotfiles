@@ -21,6 +21,21 @@ Item {
 
     readonly property var mine: Hyprland.workspaces.values.filter(w => w.id > 0 && w.monitor === monitor).sort((a, b) => a.id - b.id)
 
+    // a dot dragged from another bar is over this one: a stand-in shows where it would land,
+    // as a pill if it is the workspace its monitor shows (it stays shown after the move)
+    readonly property bool dropHere: Ws.dragging && Ws.dragTo === screen.name
+    readonly property var cells: {
+        if (!dropHere)
+            return mine;
+        const dragged = Hyprland.workspaces.values.find(w => w.id === Ws.dragId);
+        const ghost = {
+            id: Ws.dragId,
+            ghost: true,
+            shown: dragged?.monitor?.activeWorkspace?.id === Ws.dragId
+        };
+        return mine.concat([ghost]).sort((a, b) => a.id - b.id);
+    }
+
     // the workspace shown on this monitor (focused or not)
     readonly property int activeId: monitor?.activeWorkspace?.id ?? -1
     readonly property bool monitorFocused: Hyprland.focusedMonitor === monitor
@@ -40,7 +55,7 @@ Item {
 
         Repeater {
             model: ScriptModel {
-                values: root.mine
+                values: root.cells
             }
 
             delegate: Item {
@@ -49,7 +64,15 @@ Item {
                 required property var modelData
                 required property int index
 
-                readonly property bool shown: modelData.id === root.activeId
+                readonly property bool ghost: modelData.ghost === true
+                // this dot is being dragged away from this bar
+                readonly property bool lifted: Ws.dragId === modelData.id && Ws.dragFrom === root.screen.name
+
+                // the stand-in grows in from nothing
+                property bool born: !ghost
+                Component.onCompleted: born = true
+
+                readonly property bool shown: ghost ? modelData.shown : modelData.id === root.activeId
                 readonly property bool cardOpen: Ws.open && Ws.screenName === root.screen.name && Ws.wsId === modelData.id
 
                 // the first cell extends to the screen edge (click area)
@@ -64,13 +87,14 @@ Item {
                     readonly property real grow: mouse.containsMouse && !workspace.shown ? 2 : 0
 
                     anchors.centerIn: parent
-                    width: (workspace.shown ? root.pillWidth : root.dotSize) + dot.grow
+                    width: workspace.born ? (workspace.shown ? root.pillWidth : root.dotSize) + dot.grow : 0
                     height: root.dotSize + dot.grow
                     radius: height / 2
 
-                    color: workspace.modelData.urgent ? Theme.urgent : workspace.cardOpen || workspace.shown ? Theme.accent : Theme.dim
-                    // the shown pill dims when another monitor has focus
-                    opacity: workspace.shown && !root.monitorFocused ? 0.5 : 1
+                    color: workspace.modelData.urgent ? Theme.urgent : workspace.cardOpen || workspace.shown || workspace.ghost ? Theme.accent : Theme.dim
+                    // the shown pill dims when another monitor has focus; a dragged dot fades while
+                    // it is over another bar, and the stand-in stays half see-through
+                    opacity: workspace.lifted ? (Ws.dragTo !== "" ? 0.25 : 0.6) : workspace.ghost ? 0.5 : workspace.shown && !root.monitorFocused ? 0.5 : 1
 
                     Behavior on width {
                         Anim {}
@@ -95,10 +119,46 @@ Item {
                     x: -workspace.reach
                     width: parent.width + workspace.reach
                     height: parent.height
+                    enabled: !workspace.ghost
                     hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
+                    preventStealing: true
+                    cursorShape: dragged ? Qt.ClosedHandCursor : Qt.PointingHandCursor
 
-                    onClicked: workspace.modelData.activate()
+                    // press and move a few px to drag the workspace to another monitor's bar.
+                    // The pointer stays with this bar until release, even over the other screen,
+                    // so this area tracks the whole drag and reports it to Ws.
+                    property point pressAt
+                    property bool dragged: false
+
+                    onPressed: m => {
+                        pressAt = Qt.point(m.x, m.y);
+                        dragged = false;
+                    }
+                    onPositionChanged: m => {
+                        if (!pressed)
+                            return;
+                        if (!dragged) {
+                            if (Math.hypot(m.x - pressAt.x, m.y - pressAt.y) < 6)
+                                return;
+                            dragged = true;
+                            Ws.startDrag(root.screen.name, workspace.modelData.id);
+                        }
+                        // the bar spans its screen from the top-left corner: window = screen coordinates
+                        const p = mapToItem(null, m.x, m.y);
+                        Ws.moveDrag(root.screen.x + p.x, root.screen.y + p.y);
+                    }
+                    onReleased: if (dragged)
+                        Ws.endDrag()
+                    onCanceled: {
+                        if (dragged) {
+                            Ws.dragTo = "";
+                            Ws.endDrag();
+                        }
+                        dragged = false;
+                    }
+
+                    onClicked: if (!dragged)
+                        workspace.modelData.activate()
                     onEntered: Ws.enterBar(root.screen.name, workspace.modelData.id)
                     onExited: Ws.leaveBar(root.screen.name, workspace.modelData.id)
                 }

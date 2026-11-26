@@ -2,6 +2,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
+import qs.config
 
 Singleton {
     id: root
@@ -13,7 +14,15 @@ Singleton {
     property bool hoverCard: false      // mouse over the card
     property bool hovered: false        // debounced version of the two above
 
-    readonly property bool open: screenName !== "" && hovered
+    // ---------- dragging a dot to another monitor's bar ----------
+    // the bar the drag started on keeps the pointer until release, so it reports the cursor here
+    // and the other bars read it to show where the workspace would land
+    property int dragId: -1             // workspace being dragged, -1 when none
+    property string dragFrom: ""        // monitor it is on
+    property string dragTo: ""          // another monitor whose bar is under the cursor, "" when none
+    readonly property bool dragging: dragId >= 0
+
+    readonly property bool open: screenName !== "" && hovered && !dragging
 
     readonly property bool hoverNow: hoverBar || hoverCard
     onHoverNowChanged: {
@@ -45,6 +54,29 @@ Singleton {
     function leaveBar(screen, id) {
         if (screen === screenName && id === wsId)
             hoverBar = false;
+    }
+
+    function startDrag(screen, id) {
+        dragFrom = screen;
+        dragTo = "";
+        dragId = id;
+    }
+
+    // gx, gy: the cursor in global (layout) coordinates. A bar counts a little below its own
+    // height, so the drop doesn't need a pixel-exact aim.
+    function moveDrag(gx, gy) {
+        const s = Quickshell.screens.find(s => gx >= s.x && gx < s.x + s.width && gy >= s.y && gy < s.y + Theme.barHeight + 24);
+        dragTo = s && s.name !== dragFrom ? s.name : "";
+    }
+
+    // the workspace keeps its state: if it was shown on its monitor it is shown on the new one,
+    // otherwise it just joins that monitor's dots
+    function endDrag() {
+        if (dragging && dragTo !== "")
+            Hyprland.dispatch(`hl.dsp.workspace.move({ workspace = ${dragId}, monitor = "${dragTo}" })`);
+        dragId = -1;
+        dragFrom = "";
+        dragTo = "";
     }
 
     Timer {

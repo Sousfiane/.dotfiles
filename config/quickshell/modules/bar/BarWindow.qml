@@ -40,7 +40,10 @@ PanelWindow {
     // set by the pointer touching the top edge
     property bool revealed: false
 
-    readonly property bool shown: !fullscreen || panelHere || revealed
+    // a workspace dot dragged from another bar is over this one: it comes down to take the drop
+    readonly property bool dropHere: Ws.dragTo !== "" && Ws.dragTo === screen?.name
+
+    readonly property bool shown: !fullscreen || panelHere || revealed || dropHere
 
     // the stand-in title bar only answers the pointer: a dropdown alone brings back just the bar
     readonly property bool titleShown: fullscreen && revealed
