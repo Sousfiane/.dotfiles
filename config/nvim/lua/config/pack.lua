@@ -1,6 +1,14 @@
 -- Commands around vim.pack. Plugins live in ~/.local/share/nvim/site/pack/core/opt, their versions in
 -- nvim-pack-lock.json (in the repo: commit it after an update).
 
+-- a missing plugin installs without asking first (a fresh machine would otherwise ask once per file in
+-- lua/plugins). Updates still show their review tab
+local add = vim.pack.add
+---@diagnostic disable-next-line: duplicate-set-field
+vim.pack.add = function(specs, opts)
+	add(specs, vim.tbl_extend("keep", opts or {}, { confirm = false }))
+end
+
 -- downloads what's new and shows it; :write in that tab applies it, :quit drops it
 vim.api.nvim_create_user_command("PackUpdate", function(args)
 	vim.pack.update(#args.fargs > 0 and args.fargs or nil)
