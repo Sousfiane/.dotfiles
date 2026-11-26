@@ -2,8 +2,8 @@
 
 vim.pack.add({ "https://github.com/folke/which-key.nvim" })
 
-local wk = require("which-key")
-wk.setup({
+-- the group names below label the prefixes set in lua/config/keymaps.lua
+require("which-key").setup({
 	win = { border = "rounded" },
 	icons = { mappings = false },
 	spec = {
@@ -14,7 +14,3 @@ wk.setup({
 		{ "<leader>p", group = "Project", mode = "n" },
 	},
 })
-
-vim.keymap.set("n", "<leader>?", function()
-	wk.show({ global = false })
-end, { desc = "Buffer local keymaps (which-key)" })

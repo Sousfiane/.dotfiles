@@ -1,5 +1,6 @@
 -- Language servers: Mason installs them, mason-lspconfig enables the installed ones, nvim-lspconfig has
--- their settings. Diagnostics, and the keymaps and word highlights a buffer gets once a server attaches.
+-- their settings. Diagnostics, and the word highlights a buffer gets once a server attaches. The keymaps it
+-- gets then are in lua/config/keymaps.lua.
 
 vim.pack.add({
 	"https://github.com/mason-org/mason.nvim",
@@ -48,19 +49,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)
 		local buf = event.buf
 		local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
-		local builtin = require("telescope.builtin")
-
-		local function map(lhs, rhs, desc)
-			vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
-		end
-		map("K", vim.lsp.buf.hover, "Hover documentation")
-		map("<leader>ca", vim.lsp.buf.code_action, "Code action")
-		map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
-		map("<leader>gd", builtin.lsp_definitions, "Go to definition")
-		map("<leader>gr", builtin.lsp_references, "References")
-		map("<leader>gi", builtin.lsp_implementations, "Implementations")
-		map("<leader>gs", builtin.lsp_document_symbols, "Document symbols")
-		map("<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace symbols")
 
 		-- the other uses of the word under the cursor, while it rests there
 		if client:supports_method("textDocument/documentHighlight", buf) then

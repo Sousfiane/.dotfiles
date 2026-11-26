@@ -3,7 +3,6 @@
 -- :PackUpdate updates them, :PackClean removes the ones no file adds any more (lua/config/pack.lua).
 
 require("config.options")
-require("config.keymaps")
 require("config.autocmds")
 require("config.pack")
 
@@ -25,3 +24,6 @@ for _, name in ipairs({
 }) do
 	require("plugins." .. name)
 end
+
+-- every keymap, last: the plugins it maps are set up by now
+require("config.keymaps")

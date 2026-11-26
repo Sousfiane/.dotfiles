@@ -1,4 +1,4 @@
--- The file tree, on the left. <leader>pv toggles it (and hides the undo tree, which takes the same place).
+-- The file tree, on the left. Its keymap (<leader>pv) is in lua/config/keymaps.lua.
 
 vim.pack.add({
 	"https://github.com/nvim-lua/plenary.nvim",
@@ -16,11 +16,6 @@ require("neo-tree").setup({
 		},
 	},
 })
-
-vim.keymap.set("n", "<leader>pv", function()
-	vim.cmd.UndotreeHide()
-	vim.cmd("Neotree filesystem reveal left toggle")
-end, { desc = "Toggle file tree" })
 
 -- git marks in the tree follow what gitsigns sees (a hunk staged, a file saved). neo-tree waits a little
 -- and runs one `git status` for a burst of these
