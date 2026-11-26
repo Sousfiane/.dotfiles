@@ -37,8 +37,9 @@
   # Zsh >= 5.1 is required.
   [[ $ZSH_VERSION == (5.<1->*|<6->.*) ]] || return
 
-  # Prompt colors.
-  local grey='242'
+  # Prompt colors: the terminal's 16 colours, which kitty sets from the theme (theme.json's "terminal"
+  # maps each to a palette colour), so a theme switch recolours the prompt with no reload here.
+  local grey='8'  # brightBlack: the palette's muted
   local red='1'
   local yellow='3'
   local blue='4'
