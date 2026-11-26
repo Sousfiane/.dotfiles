@@ -52,4 +52,3 @@ noto-fonts-emoji
 rose-pine-gtk-theme-full     # GTK themes and icons, all three variants (set by config/theme/apply.sh)
 libnotify                    # notify-send: theme/apply.sh's "restart Spotify" notification
 qt6ct
-nwg-look
