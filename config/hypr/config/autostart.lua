@@ -7,5 +7,14 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm-app -s b -- bt-agent")
 	hl.exec_cmd("uwsm-app -s b -- easyeffects --service-mode -w")
 
-	hl.exec_cmd("hyprpm reload -n") -- -n: a notification when a plugin fails to load
+	-- the plugins (plugins.lua), once hyprpm has them; at the first login it doesn't yet, since hyprpm builds
+	-- them for the running Hyprland: a terminal runs install.sh's plugins step (it asks for sudo)
+	local user = os.getenv("USER") or ""
+	local state = io.open("/var/cache/hyprpm/" .. user .. "/hyprland-plugins/state.toml")
+	if state then
+		state:close()
+		hl.exec_cmd("hyprpm reload -n") -- -n: a notification when a plugin fails to load
+	else
+		hl.exec_cmd("uwsm-app -- kitty --hold -e " .. os.getenv("HOME") .. "/.dotfiles/install/install.sh plugins")
+	end
 end)

@@ -13,8 +13,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 # the order steps run in; each is install/steps/<name>.sh
 STEPS=(pacman yay packages links services system)
 # steps a full install leaves out, run by name whenever: calendar needs the desktop session (the keyring),
-# spicetify needs Spotify opened once
-OPTIONAL=(calendar spicetify)
+# spicetify needs Spotify opened once, plugins needs Hyprland running (autostart.lua opens it at the first login)
+OPTIONAL=(calendar spicetify plugins)
 
 LOG="$HOME/.cache/dotfiles-install.log"
 

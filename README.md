@@ -43,6 +43,12 @@ Once in the desktop, from a terminal (the keyring isn't reachable from a console
 
 It checks them against the server, then stores them in the keyring, never in the repo. Run it again to replace them.
 
+At the first login, a terminal opens by itself to set up Hyprland's plugins (hyprbars, the CS2 fix): hyprpm builds them for the running Hyprland, so it can't happen during the install, and it asks for sudo. The same from a terminal, after a Hyprland upgrade say:
+
+```sh
+~/.dotfiles/install/install.sh plugins          # hyprpm: the plugins added, enabled, up to date
+```
+
 After opening and closing Spotify once:
 
 ```sh
