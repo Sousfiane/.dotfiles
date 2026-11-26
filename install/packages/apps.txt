@@ -6,6 +6,7 @@ tmux
 jq                           # the theme's scripts read theme.json with it (tmux, zsh, theme/apply.sh...)
 vivid                        # LS_COLORS, from the palette's vivid theme (config/zsh/theme.zsh)
 neovim
+tree-sitter-cli              # nvim-treesitter builds every parser with it (lua/plugins/treesitter.lua)
 btop
 fastfetch
 fd
