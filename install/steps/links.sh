@@ -88,7 +88,22 @@ conflict() {
 linked=0 kept=0 skipped=0
 
 link() {
-    local src=$1 dst=$2 current
+    local src=$1 dst=$2 current parent
+
+    # the folder it goes in is itself a link into the repo (an older layout linked whole app folders): `dst`
+    # is then the repo's own file, which must never be moved or deleted. The folder link goes, and a real
+    # folder takes its place
+    parent=$(dirname "$dst")
+    if [[ -L $parent && $(readlink -f "$parent") == "$DOTFILES"/* ]]; then
+        rm "$parent"
+        info "removed ${parent/#$HOME/\~} (a link to a whole folder of the dotfiles, from an older layout)"
+    fi
+    # any other way `dst` could still be a file of the repo: leave it alone
+    if [[ ! -L $dst && -e $dst && $(realpath "$dst") == "$DOTFILES"/* ]]; then
+        warn "skipped ${dst/#$HOME/\~}: it's a file of the dotfiles itself (a folder above it links into them)"
+        skipped=$((skipped + 1))
+        return 0
+    fi
 
     if [[ -L $dst ]]; then
         current=$(readlink "$dst")
