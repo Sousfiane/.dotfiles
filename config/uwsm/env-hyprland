@@ -1,0 +1,3 @@
+# Sourced after env, only when the session is Hyprland.
+
+export HYPRCURSOR_SIZE=24

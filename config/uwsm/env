@@ -1,0 +1,31 @@
+# The graphical session's environment. uwsm sources this (sh) before the compositor starts, so every app gets
+# it from the start: the ones Hyprland launches, `uwsm app` units and D-Bus-activated services alike. uwsm
+# also removes these when the session ends. Hyprland-only variables are in env-hyprland.
+#
+# uwsm sets XDG_CURRENT_DESKTOP, XDG_SESSION_DESKTOP and XDG_SESSION_TYPE itself, from Hyprland's desktop entry.
+
+# cursor size
+export XCURSOR_SIZE=24
+
+# Qt theme
+export QT_QPA_PLATFORMTHEME=qt6ct
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
+
+# Wayland where possible, X11 as a fallback
+export GDK_BACKEND="wayland,x11,*"
+export QT_QPA_PLATFORM="wayland;xcb"
+export SDL_VIDEODRIVER=wayland
+export MOZ_ENABLE_WAYLAND=1
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+export OZONE_PLATFORM=wayland
+export CLUTTER_BACKEND=wayland
+
+# NVIDIA, only when its driver is loaded: on another GPU (an Intel laptop) these would break video decoding
+# and OpenGL
+if [ -e /proc/driver/nvidia/version ]; then
+    export NVD_BACKEND=direct
+    export LIBVA_DRIVER_NAME=nvidia
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export MOZ_DISABLE_RDD_SANDBOX=1
+    export CUDA_DISABLE_PERF_BOOST=1
+fi
