@@ -64,6 +64,7 @@ Where a file sits in the repo is where it goes:
 | In the repo | Linked to |
 |---|---|
 | `config/<app>/<entry>` | `~/.config/<app>/<entry>` |
+| `config/<file>` | `~/.config/<file>` (`config/xdg-terminals.list`) |
 | `home/<name>` | `~/.<name>` (`home/zshrc` → `~/.zshrc`) |
 | `local/<folder>/<entry>` | `~/.local/<folder>/<entry>` (`local/bin/theme` → `~/.local/bin/theme`) |
 

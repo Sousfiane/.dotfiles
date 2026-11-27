@@ -1,0 +1,4 @@
+# The terminal xdg-terminal-exec opens: SUPER + Return, the floating terminal (SUPER + SHIFT + Return),
+# and Quickshell's (Config.terminal must name the same one). Pinned, so installing another terminal
+# doesn't change it.
+kitty.desktop

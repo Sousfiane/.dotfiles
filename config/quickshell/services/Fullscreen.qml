@@ -54,12 +54,10 @@ Singleton {
         act(name, "hl.dispatch(hl.dsp.window.close({ window = w }))");
     }
 
-    // out of fullscreen into a floating window, sized and centered like SUPER+SHIFT+F
+    // out of fullscreen into a floating window, sized and centered like SUPER+SHIFT+F (hypr's floating.lua)
     function float(name) {
         act(name, `hl.dispatch(hl.dsp.window.fullscreen({ window = w }))
-            hl.dispatch(hl.dsp.window.float({ window = w, action = "enable" }))
-            hl.dispatch(hl.dsp.window.resize({ x = 875, y = 600, window = w }))
-            hl.dispatch(hl.dsp.window.center({ window = w }))`);
+            require("config.floating").float(w)`);
     }
 
     // Quickshell keeps hasFullscreen and each monitor's activeWorkspace up to date from events, but

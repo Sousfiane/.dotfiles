@@ -2,6 +2,7 @@
 # The symlinks. Where a file goes is where it sits in the repo:
 #
 #   config/<app>/<entry>      → ~/.config/<app>/<entry>
+#   config/<file>             → ~/.config/<file> (a file read from ~/.config itself: xdg-terminals.list)
 #   home/<name>               → ~/.<name>
 #   local/<folder>/<entry>    → ~/.local/<folder>/<entry>
 #
@@ -23,6 +24,9 @@ tracked() {
 # every link the layout asks for, as "source<TAB>target" (bash's * skips dot entries)
 plan() {
     local app dir entry
+    for entry in "$DOTFILES"/config/*; do
+        [[ -f $entry ]] && tracked "$entry" && printf '%s\t%s\n' "$entry" "$HOME/.config/${entry##*/}"
+    done
     for app in "$DOTFILES"/config/*/; do
         app=${app%/}
         for entry in "$app"/*; do
@@ -142,6 +146,7 @@ clean() {
         info "removed broken link ${l/#$HOME/\~}"
     done < <(
         find "$HOME" -maxdepth 1 -xtype l -print0
+        find "$HOME/.config" -maxdepth 1 -xtype l -print0 2>/dev/null
         find "$HOME/.config" "$HOME/.local" -mindepth 2 -maxdepth 2 -xtype l -print0 2>/dev/null
     )
     return 0

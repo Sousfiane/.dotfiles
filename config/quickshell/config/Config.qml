@@ -6,7 +6,7 @@ import QtQuick
 Singleton {
     readonly property string home: Quickshell.env("HOME")
 
-    // the terminal xdg-terminal-exec opens (its choice: ~/.config/xdg-terminals.list), used here only for the
+    // the terminal xdg-terminal-exec opens (pinned in config/xdg-terminals.list), used here only for the
     // icon of its floating windows in the dock and the workspace cards
     property string terminal: "kitty"
     // app id that Hyprland's "tag-floating-windows" rule floats
