@@ -42,5 +42,4 @@ protonhax                    # the er-* aliases (aliases.zsh)
 # ---------- system ----------
 nvtop
 libva-utils
-networkmanager-openvpn
 os-prober                    # finds other systems for the boot menu
