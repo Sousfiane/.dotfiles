@@ -7,12 +7,18 @@
 #
 # One level deep: a subfolder is a single link, so files added inside it are live at once; a new entry at
 # the top of an app folder needs this step again. Entries starting with "." (editor files like .luarc.json)
-# aren't linked, and what an app writes into its own config folder stays out of the repo.
+# aren't linked, nor what git ignores (Python's __pycache__ next to a script in local/bin), and what an app
+# writes into its own config folder stays out of the repo.
 #
 # Safe to re-run: a correct link is left alone, a link into the repo that's outdated or broken is replaced,
 # and a real file is never touched without asking. Links left broken by files removed from the repo go.
 
 source "$(dirname "${BASH_SOURCE[0]}")/../lib.sh"
+
+# whether `entry` belongs in the links: not something git ignores (a cache written next to a script)
+tracked() {
+    [[ -e $1 ]] && ! git -C "$DOTFILES" check-ignore -q -- "$1"
+}
 
 # every link the layout asks for, as "source<TAB>target" (bash's * skips dot entries)
 plan() {
@@ -20,16 +26,16 @@ plan() {
     for app in "$DOTFILES"/config/*/; do
         app=${app%/}
         for entry in "$app"/*; do
-            [[ -e $entry ]] && printf '%s\t%s\n' "$entry" "$HOME/.config/${app##*/}/${entry##*/}"
+            tracked "$entry" && printf '%s\t%s\n' "$entry" "$HOME/.config/${app##*/}/${entry##*/}"
         done
     done
     for entry in "$DOTFILES"/home/*; do
-        [[ -e $entry ]] && printf '%s\t%s\n' "$entry" "$HOME/.${entry##*/}"
+        tracked "$entry" && printf '%s\t%s\n' "$entry" "$HOME/.${entry##*/}"
     done
     for dir in "$DOTFILES"/local/*/; do
         dir=${dir%/}
         for entry in "$dir"/*; do
-            [[ -e $entry ]] && printf '%s\t%s\n' "$entry" "$HOME/.local/${dir##*/}/${entry##*/}"
+            tracked "$entry" && printf '%s\t%s\n' "$entry" "$HOME/.local/${dir##*/}/${entry##*/}"
         done
     done
     return 0

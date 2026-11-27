@@ -24,8 +24,7 @@ alias er-death-counter='nohup protonhax run 1245620 "$HOME/Documents/ERDeathCoun
 alias er-tools='nohup protonhax run 1245620 "$HOME/Documents/EldenRingTool/EldenRingTool.exe" > /tmp/er-tools.log 2>&1 &'
 
 take() {
-    mkdir -p $1
-    cd $1
+    mkdir -p -- "$1" && cd -- "$1"
 }
 
 note() {
@@ -34,10 +33,11 @@ note() {
     echo "" >> $HOME/drafts.txt
 }
 
+# the output is next to the input, its extension replaced: ./clip.mp4 -> ./clip.mov, my.video.mp4 -> my.video.mov
 to-mov(){
-    ffmpeg -i $1 -c:v dnxhd -profile:v dnxhr_hq -pix_fmt yuv422p -c:a pcm_s16le "$(echo $1 | cut -d'.' -f1).mov"
+    ffmpeg -i "$1" -c:v dnxhd -profile:v dnxhr_hq -pix_fmt yuv422p -c:a pcm_s16le "${1%.*}.mov"
 }
 
 to-mp4(){
-    ffmpeg -i $1 -c:v libx264 -pix_fmt yuv420p -profile:v high -level 4.2 -preset slow -crf 23 -c:a aac -b:a 192k -ar 44100 "$(echo $1 | cut -d'.' -f1).mp4"
+    ffmpeg -i "$1" -c:v libx264 -pix_fmt yuv420p -profile:v high -level 4.2 -preset slow -crf 23 -c:a aac -b:a 192k -ar 44100 "${1%.*}.mp4"
 }
