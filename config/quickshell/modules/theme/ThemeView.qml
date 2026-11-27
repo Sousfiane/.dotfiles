@@ -124,85 +124,10 @@ ColumnLayout {
         Repeater {
             model: Themes.palettes
 
-            delegate: SelectableCard {
-                id: row
-
-                required property var modelData
-                required property int index
-
-                readonly property bool current: modelData.id === Themes.current
-
+            delegate: PaletteCard {
                 Layout.fillWidth: true
-                implicitHeight: 56
                 selected: nav.index === index
-
-                RowLayout {
-                    anchors {
-                        fill: parent
-                        leftMargin: 12
-                        rightMargin: 12
-                    }
-                    spacing: 12
-
-                    // the current one
-                    Txt {
-                        Layout.preferredWidth: 18
-                        horizontalAlignment: Text.AlignHCenter
-                        text: row.current ? Icons.check : ""
-                        color: Theme.accent
-                        font.pixelSize: Theme.fontSize + 4
-                    }
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 6
-
-                        Txt {
-                            text: row.modelData.name
-                            font.bold: row.selected || row.current
-                            elide: Text.ElideRight
-                        }
-
-                        // the palette at a glance: its background, then its accents
-                        Row {
-                            spacing: 4
-
-                            Repeater {
-                                model: ["base", "overlay", "text", "love", "gold", "rose", "pine", "foam", "iris"]
-
-                                delegate: Rectangle {
-                                    required property string modelData
-
-                                    width: 16
-                                    height: 10
-                                    radius: Theme.radiusSmall
-                                    color: row.modelData.colors[modelData] ?? "transparent"
-                                    border.width: 1
-                                    border.color: Theme.withAlpha(Theme.line, 0.6)
-                                }
-                            }
-                        }
-                    }
-
-                    Txt {
-                        text: row.modelData.dark ? "dark" : "light"
-                        color: Theme.dim
-                        variant: "small"
-                    }
-
-                    KeyBadge {
-                        text: row.index < 9 ? String(row.index + 1) : ""
-                        visible: row.index < 9
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onEntered: nav.select(row.index)
-                    onClicked: Themes.set(row.modelData.id)
-                }
+                onPointed: nav.select(index)
             }
         }
     }
@@ -220,81 +145,12 @@ ColumnLayout {
         Repeater {
             model: Themes.fontRoles
 
-            delegate: SelectableCard {
-                id: fontRow
-
-                required property var modelData
-                required property int index
-
-                readonly property string family: Theme.fonts[modelData.key] ?? ""
-
+            delegate: FontRoleCard {
                 Layout.fillWidth: true
-                implicitHeight: 44
                 selected: nav.index === menu.paletteCount + index
                 // the card's own click (the size buttons sit above it and keep theirs)
                 onSelectRequested: menu.openFonts(modelData.key)
-
-                RowLayout {
-                    anchors {
-                        fill: parent
-                        leftMargin: 12
-                        rightMargin: 12
-                    }
-                    spacing: 12
-
-                    Txt {
-                        Layout.preferredWidth: 70
-                        text: fontRow.modelData.label
-                        font.bold: fontRow.selected
-                    }
-
-                    // the font in use, drawn in itself
-                    Txt {
-                        Layout.fillWidth: true
-                        text: fontRow.family
-                        font.family: fontRow.family
-                        color: Theme.dim
-                        elide: Text.ElideRight
-                    }
-
-                    // its size, with − and + (or the - and + keys on this row)
-                    Row {
-                        spacing: 2
-
-                        IconButton {
-                            icon: "−"
-                            size: Theme.fontSize
-                            onClicked: Themes.changeFontSize(fontRow.modelData, -1)
-                        }
-                        Txt {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 42
-                            horizontalAlignment: Text.AlignHCenter
-                            variant: "row"
-                            text: Themes.fontSize(fontRow.modelData) + " " + fontRow.modelData.unit
-                        }
-                        IconButton {
-                            icon: "+"
-                            size: Theme.fontSize
-                            onClicked: Themes.changeFontSize(fontRow.modelData, 1)
-                        }
-                    }
-
-                    Txt {
-                        text: Icons.chevronRight
-                        color: fontRow.selected ? Theme.accent : Theme.dim
-                    }
-                }
-
-                // hover only: under the card's click and the size buttons
-                MouseArea {
-                    anchors.fill: parent
-                    z: -1
-                    hoverEnabled: true
-                    acceptedButtons: Qt.NoButton
-                    cursorShape: Qt.PointingHandCursor
-                    onEntered: nav.select(menu.paletteCount + fontRow.index)
-                }
+                onPointed: nav.select(menu.paletteCount + index)
             }
         }
     }
@@ -358,57 +214,11 @@ ColumnLayout {
         maxHeight: 360
         model: menu.fontChoices
 
-        delegate: SelectableCard {
-            id: choice
-
-            required property string modelData
-            required property int index
-
-            readonly property bool current: modelData === Theme.fonts[menu.fontRole]
-            readonly property bool isDefault: modelData === (Theme.settings.font[menu.fontRole] ?? Theme.settings.font.ui)
-
+        delegate: FontChoice {
             width: fontList.rowWidth
-            implicitHeight: 36
+            role: menu.fontRole
             selected: fontNav.index === index
-
-            RowLayout {
-                anchors {
-                    fill: parent
-                    leftMargin: 12
-                    rightMargin: 12
-                }
-                spacing: 12
-
-                Txt {
-                    Layout.preferredWidth: 18
-                    horizontalAlignment: Text.AlignHCenter
-                    text: choice.current ? Icons.check : ""
-                    color: Theme.accent
-                }
-
-                Txt {
-                    Layout.fillWidth: true
-                    text: choice.modelData
-                    font.family: choice.modelData
-                    font.bold: choice.selected || choice.current
-                    elide: Text.ElideRight
-                }
-
-                // theme.json's, which a new machine starts with
-                Txt {
-                    visible: choice.isDefault
-                    text: "default"
-                    variant: "small"
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onEntered: fontNav.select(choice.index)
-                onClicked: Themes.setFont(menu.fontRole, choice.modelData)
-            }
+            onPointed: fontNav.select(index)
         }
     }
 
