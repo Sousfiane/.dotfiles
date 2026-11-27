@@ -31,6 +31,7 @@ spicetify-cli
 easyeffects                  # started by autostart.lua
 obs-studio-liberty
 ffmpeg                       # discord-converter, to-mov and to-mp4 (aliases.zsh)
+imagemagick                  # the clipboard panel's image previews (services/ClipHistory.qml), else full-size copies
 
 # ---------- games ----------
 steam                        # from multilib (enabled by steps/pacman.sh)

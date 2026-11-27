@@ -16,6 +16,12 @@ vim.o.expandtab = true
 
 vim.o.hlsearch = false
 vim.o.incsearch = true
+-- case-insensitive, unless the search has a capital letter
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
+-- the undo history survives closing the file (in ~/.local/state/nvim/undo), so undotree shows all of it
+vim.o.undofile = true
 
 vim.o.termguicolors = true
 

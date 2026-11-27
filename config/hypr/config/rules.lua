@@ -1,4 +1,5 @@
 local theme = require("config.theme")
+local floating = require("config.floating")
 
 hl.window_rule({
 	-- Ignore maximize requests from all apps. You'll probably like this.
@@ -38,7 +39,7 @@ hl.window_rule({
 	},
 	float = true,
 	center = true,
-	size = { 875, 600 },
+	size = { floating.size.x, floating.size.y }, -- the same as SUPER + SHIFT + F
 })
 
 -- Programs on specific workspaces

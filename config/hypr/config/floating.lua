@@ -1,6 +1,7 @@
 -- Floating: toggles the active window between tiled and floating; a window that floats is sized 875x600 and centred.
 -- Toggled from SUPER + SHIFT + F (bindings.lua) and the foam dot on the title bar (plugins.lua); float() is also what
--- Quickshell's fullscreen title bar runs to take a window out of fullscreen into a floating one.
+-- Quickshell's fullscreen title bar runs to take a window out of fullscreen into a floating one. The size is also
+-- what the windows that always float open at (rules.lua).
 local M = {}
 
 M.size = { x = 875, y = 600 }
