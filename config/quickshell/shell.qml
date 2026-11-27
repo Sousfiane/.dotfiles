@@ -22,14 +22,15 @@ import qs.modules.tray
 import qs.modules.dock
 import qs.modules.packages
 import qs.modules.keybinds
+import qs.modules.polkit
 import qs.services
 
 // The shell: the bar, the wallpaper, the dock, the toasts and every panel, each on the monitors it
 // needs.
 ShellRoot {
-    // singletons are created on first use: these hold IPC targets that must exist from the start (media
-    // keys, the screen sharing picker an app's request opens)
-    readonly property var ipcServices: [Media, Share]
+    // singletons are created on first use: these must exist from the start (the media keys' and the
+    // screen sharing picker's IPC targets, the polkit agent)
+    readonly property var startServices: [Media, Share, Polkit]
 
     Background {}
     Bar {}
@@ -54,6 +55,7 @@ ShellRoot {
     InstallPanel {}
     RemovePanel {}
     KeybindsPanel {}
+    PolkitPanel {}
     LockScreen {}
     TrayPanel {}
     AppDock {}

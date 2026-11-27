@@ -3,7 +3,7 @@
 # (~/.local/state/theme/fonts.json) and the current palette. apply.sh runs this whenever any of them changes.
 # These files aren't in the dotfiles: edit theme.json, or this file.
 #
-#   ~/.config/hypr/hyprtoolkit.conf     hyprtoolkit apps (hyprland-dialog, the share picker, the polkit agent)
+#   ~/.config/hypr/hyprtoolkit.conf     hyprtoolkit apps (hyprland-dialog, the share picker)
 #   ~/.config/hypr/hyprqt6engine.conf          Qt apps: style, fonts, icons
 #   ~/.config/hypr/hyprqt6engine-colors.conf   Qt apps: colours
 #   ~/.config/kdeglobals                       Qt apps: KDE's colour groups ([Colors:*] only)

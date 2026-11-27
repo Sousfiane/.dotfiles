@@ -1,6 +1,6 @@
 -- Each in uwsm's slice for what it is: -s s (session) for the shell, which the session needs (bar, lock
 -- screen); -s b (background) for daemons. Apps opened later go to the default app slice.
--- hypridle and the polkit agent are user services (install/steps/services.sh).
+-- hypridle is a user service (install/steps/services.sh); Quickshell is also the polkit agent.
 -- On NVIDIA, Quickshell is shown only NVIDIA's EGL driver: otherwise it also loads Mesa's (and LLVM),
 -- unused (~10 MB)
 local function shell_cmd()

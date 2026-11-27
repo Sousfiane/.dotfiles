@@ -42,7 +42,6 @@ bluez
 bluez-utils
 
 # ---------- session ----------
-hyprpolkitagent              # password prompts for system actions (a user service: steps/services.sh)
 gnome-keyring
 xdg-user-dirs
 xdg-utils

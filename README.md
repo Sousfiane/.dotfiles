@@ -23,7 +23,7 @@ It clones this repo to `~/.dotfiles` and runs `install/install.sh`, which goes t
 | `yay` | builds the AUR helper |
 | `packages` | installs `packages/desktop.txt` and `packages/apps.txt`, removes `packages/remove.txt` (what archinstall adds that the desktop replaces) |
 | `links` | links the files where their folder says (see below) |
-| `services` | enables NetworkManager, Bluetooth and sddm, and the session's user services (hypridle, the polkit agent) |
+| `services` | enables NetworkManager, Bluetooth and sddm, and the session's user service (hypridle) |
 | `system` | zsh as the login shell, the GTK theme |
 
 **The repo must live at `~/.dotfiles`:** configs and scripts refer to it there (`$DOTFILES`, set in `home/zprofile`), and `install.sh` refuses to run from anywhere else.
@@ -75,7 +75,7 @@ Each entry at the top of an app folder is one link, so a file added inside a sub
 sddm starts Hyprland through **uwsm**, which runs the session as systemd units:
 
 - the environment (Wayland backends, NVIDIA variables...) is in `config/uwsm/env`, plus `env-hyprland` for Hyprland only, so every app gets it, D-Bus-activated ones included
-- `hypr/config/autostart.lua` starts Quickshell and the background daemons with `uwsm-app`, each in its slice; hypridle and the polkit agent are user services
+- `hypr/config/autostart.lua` starts Quickshell and the background daemons with `uwsm-app`, each in its slice; hypridle is a user service, and Quickshell is the polkit agent (its password prompt)
 - apps opened from the keybinds, the launcher and the dock go through `uwsm-app` too, and SUPER + SHIFT + Backspace (or the power menu) ends the session with `uwsm stop`
 
 ## Theme

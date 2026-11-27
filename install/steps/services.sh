@@ -30,7 +30,12 @@ enable_user() {
 }
 
 enable_user hypridle.service           # screens off when idle
-enable_user hyprpolkitagent.service    # password prompts for system actions
+
+# Quickshell is the polkit agent now, and only one can register: the old one goes
+if systemctl --user is-enabled -q hyprpolkitagent.service 2>/dev/null; then
+    systemctl --user disable --now hyprpolkitagent.service
+    success "hyprpolkitagent.service disabled (Quickshell asks for passwords now)"
+fi
 
 # the login screen: only if no other one is set up, since there can be a single display manager
 current=$(readlink /etc/systemd/system/display-manager.service 2>/dev/null || true)
