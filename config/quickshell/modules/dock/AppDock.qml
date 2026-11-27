@@ -7,8 +7,9 @@ import qs.services
 import qs.components.ui
 
 // A macOS-style dock at the bottom of every monitor: pinned apps, then the other running ones.
-// Hidden while windows are open: touching the bottom edge brings it up. Stays up on an empty
-// workspace. Over a fullscreen window it only comes up from the edge, after a slightly longer push.
+// Auto-hide (the default): hidden while windows are open, touching the bottom edge brings it up,
+// stays up on an empty workspace. Always (Dock.alwaysShow, set in the theme panel): stays up and
+// windows keep clear of it. Over a fullscreen window it only comes up from the edge, after a slightly longer push.
 //   left click   start the app, or focus its window (again: the next one)
 //   middle click a new window
 //   right click  pin / unpin, its windows, close
@@ -24,7 +25,9 @@ Variants {
 
         WlrLayershell.layer: WlrLayer.Overlay     // Top sits under fullscreen windows
         WlrLayershell.namespace: "qs-dock"
-        exclusionMode: ExclusionMode.Ignore
+        // always shown: windows tile above the plate, like macOS's dock
+        exclusionMode: Dock.alwaysShow && items.length > 0 ? ExclusionMode.Normal : ExclusionMode.Ignore
+        exclusiveZone: margin + dotRow + iconSize + pad * 2
         color: "transparent"
 
         anchors {
@@ -124,7 +127,7 @@ Variants {
         property var menuItem: null            // the icon whose right-click menu is open
         property real menuCenter: 0
 
-        readonly property bool shown: items.length > 0 && (revealed || menuItem !== null || (!fullscreen && emptyWorkspace) || Dock.forced || dragKey !== "")
+        readonly property bool shown: items.length > 0 && (revealed || menuItem !== null || (!fullscreen && (emptyWorkspace || Dock.alwaysShow)) || Dock.forced || dragKey !== "")
 
         onFullscreenChanged: if (fullscreen) {
             revealed = false;

@@ -166,6 +166,30 @@ Singleton {
             closeWindow(w);
     }
 
+    // always up like macOS's dock (windows keep clear of it), or hidden until the bottom edge is touched.
+    // Picked in the theme panel, saved next to the pins.
+    property bool alwaysShow: false
+
+    FileView {
+        id: settingsFile
+
+        path: Quickshell.statePath("dock-settings.json")
+        blockLoading: true
+        printErrors: false
+        onLoaded: {
+            try {
+                root.alwaysShow = JSON.parse(text()).alwaysShow === true;
+            } catch (e) {}
+        }
+    }
+
+    function setAlwaysShow(on: bool): void {
+        alwaysShow = on;
+        settingsFile.setText(JSON.stringify({
+            alwaysShow: on
+        }, null, 2));
+    }
+
     // held up from the keyboard (`qs ipc call dock toggle`), on every monitor
     property bool forced: false
 

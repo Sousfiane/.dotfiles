@@ -8,7 +8,7 @@ import qs.components.ui
 // The theme picker: the palettes in ~/.config/theme/palettes, each with a strip of its colours, then the fonts
 // (the shell's, the terminal's and the apps'). Picking a palette switches the whole desktop live; the panel
 // stays open, so you can watch it change and try the next. A font opens the list of installed ones, each
-// drawn in itself, and picking one applies it the same way.
+// drawn in itself, and picking one applies it the same way. Last, the dock: always shown or auto-hide.
 DropdownPanel {
     id: panel
 
@@ -33,11 +33,13 @@ DropdownPanel {
         spacing: 12
 
         readonly property int paletteCount: Themes.palettes.length
+        // the dock row, after the fonts
+        readonly property int dockIndex: paletteCount + Themes.fontRoles.length
 
-        // the main page: the palettes, then the fonts
+        // the main page: the palettes, the fonts, then the dock
         Selection {
             id: nav
-            count: menu.paletteCount + Themes.fontRoles.length
+            count: menu.dockIndex + 1
         }
         // a font's list
         Selection {
@@ -73,9 +75,11 @@ DropdownPanel {
             nav.select(menu.paletteCount + i);
         }
 
-        // Enter on the main page: a palette applies, a font opens its list
+        // Enter on the main page: a palette applies, a font opens its list, the dock switches mode
         function activate(i) {
-            if (i < menu.paletteCount)
+            if (i === menu.dockIndex)
+                Dock.setAlwaysShow(!Dock.alwaysShow);
+            else if (i < menu.paletteCount)
                 Themes.set(Themes.palettes[i]?.id ?? "");
             else
                 openFonts(Themes.fontRoles[i - menu.paletteCount].key);
@@ -105,7 +109,7 @@ DropdownPanel {
             else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || ((event.key === Qt.Key_L || event.key === Qt.Key_Right) && nav.index >= menu.paletteCount))
                 menu.activate(nav.index);
             // a font's size, on its row
-            else if (nav.index >= menu.paletteCount && (event.key === Qt.Key_Minus || event.key === Qt.Key_Plus || event.key === Qt.Key_Equal))
+            else if (nav.index >= menu.paletteCount && nav.index < menu.dockIndex && (event.key === Qt.Key_Minus || event.key === Qt.Key_Plus || event.key === Qt.Key_Equal))
                 Themes.changeFontSize(Themes.fontRoles[nav.index - menu.paletteCount], event.key === Qt.Key_Minus ? -1 : 1);
             else {
                 // a number picks that palette directly
@@ -310,6 +314,57 @@ DropdownPanel {
             }
         }
 
+        Divider {
+            visible: panel.fontRole === ""
+        }
+
+        // ---------- main page: the dock ----------
+        SelectableCard {
+            id: dockRow
+
+            visible: panel.fontRole === ""
+            Layout.fillWidth: true
+            implicitHeight: 44
+            selected: nav.index === menu.dockIndex
+            onSelectRequested: Dock.setAlwaysShow(!Dock.alwaysShow)
+
+            RowLayout {
+                anchors {
+                    fill: parent
+                    leftMargin: 12
+                    rightMargin: 12
+                }
+                spacing: 12
+
+                Txt {
+                    Layout.preferredWidth: 70
+                    text: "Dock"
+                    font.bold: dockRow.selected
+                }
+
+                Txt {
+                    Layout.fillWidth: true
+                    text: Dock.alwaysShow ? "Always shown" : "Hides, shows at the bottom edge"
+                    color: Theme.dim
+                    elide: Text.ElideRight
+                }
+
+                Toggle {
+                    checked: Dock.alwaysShow
+                    onToggled: Dock.setAlwaysShow(!Dock.alwaysShow)
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                z: -1
+                hoverEnabled: true
+                acceptedButtons: Qt.NoButton
+                cursorShape: Qt.PointingHandCursor
+                onEntered: nav.select(menu.dockIndex)
+            }
+        }
+
         // ---------- a font's list ----------
         ScrollList {
             id: fontList
@@ -373,7 +428,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: panel.fontRole !== "" ? "j k select • Enter apply • h or Esc back" : "j k select • Enter apply • - + font size • number palette • Esc close"
+            text: panel.fontRole !== "" ? "j k select • Enter apply • h or Esc back" : "j k select • Enter apply / toggle • - + font size • number palette • Esc close"
         }
     }
 }
