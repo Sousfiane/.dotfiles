@@ -27,7 +27,7 @@ hl.window_rule({
 hl.window_rule({
 	name = "tag-floating-windows",
 	match = {
-		class = "^(localsend|FloatingTerm|nm-connection-editor|org.gnome.NautilusPreviewer|hyprland-share-picker)$",
+		class = "^(org.localsend.localsend_app|FloatingTerm|nm-connection-editor|org.gnome.NautilusPreviewer|hyprland-share-picker)$",
 	},
 	tag = "+floating-window",
 })
