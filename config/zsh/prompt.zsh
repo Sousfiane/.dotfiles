@@ -26,6 +26,7 @@ typeset -g _prompt_git_root="" # the work tree it's for
 typeset -gi _prompt_git_fd=0   # the background status being waited for, if any
 typeset -g _prompt_right=""
 typeset -g _prompt_start=""    # when the running command started
+typeset -gi _prompt_shrunk=0   # whether the prompt is the shrunk one (see _prompt_transient)
 
 _prompt_left='%F{4}%~%f${_prompt_git:+ $_prompt_git} '
 
@@ -161,15 +162,19 @@ _prompt_precmd() {
     fi
 
     _prompt_right=${(j: :)right}
+    _prompt_shrunk=0
     PROMPT=$_prompt_left
     RPROMPT='$_prompt_right'
     _prompt_git_refresh
 }
 
-# once a command is entered, its prompt shrinks to the command alone
+# once a command is entered, its prompt shrinks to the command alone. What another hook put in front of it
+# stays: kitty's precmd adds its prompt mark there, and runs after a ctrl+c when ours doesn't, so the
+# state is a flag rather than PROMPT being exactly ' '
 _prompt_transient() {
-    [[ $PROMPT == ' ' ]] && return
-    PROMPT=' '
+    (( _prompt_shrunk )) && return
+    _prompt_shrunk=1
+    PROMPT="${PROMPT%"$_prompt_left"} "
     RPROMPT=''
     zle reset-prompt
 }
@@ -181,8 +186,9 @@ TRAPINT() {
     return $(( 128 + $1 ))
 }
 _prompt_restore() {
-    [[ $PROMPT == ' ' ]] || return
-    PROMPT=$_prompt_left
+    (( _prompt_shrunk )) || return
+    _prompt_shrunk=0
+    PROMPT="${PROMPT% }$_prompt_left"
     RPROMPT='$_prompt_right'
     zle reset-prompt
 }
