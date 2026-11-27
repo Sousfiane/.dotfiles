@@ -41,6 +41,7 @@ FocusScope {
         color: Theme.fg
         font.family: Theme.font
         font.pixelSize: Theme.fontSize - 1
+        font.letterSpacing: root.password ? 3 : 0     // room between the password dots
         clip: true
         selectByMouse: true
 
