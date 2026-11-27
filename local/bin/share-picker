@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# The screen sharing picker: xdg-desktop-portal-hyprland runs this (custom_picker_binary in
+# config/hypr/xdph.conf) when an app asks to share the screen, and waits for its answer. The choice is made
+# in Quickshell's share panel (services/Share.qml): this asks it to open, then waits for what was picked.
+#
+#   XDPH_WINDOW_SHARING_LIST        the windows that can be shared, as XDPH lists them
+#   XDPH_WORKSPACE_SHARING_LIST_V3  the workspaces, likewise
+#   --allow-token                   "remember this choice" starts on (allow_token_by_default in xdph.conf)
+#
+# Prints XDPH's answer: "[SELECTION]r/screen:DP-1", "…/window:<handle>", "…/workspace-id:<id>",
+# "…/region:DP-1@x,y,w,h" ("r" when the app may skip the picker next time), or nothing when cancelled.
+# Without Quickshell running (or if it doesn't answer the call), Hyprland's own picker takes over.
+
+allow=false
+[[ ${1:-} == --allow-token ]] && allow=true
+
+running() {
+    pgrep -x qs >/dev/null || pgrep -x quickshell >/dev/null
+}
+
+running || exec hyprland-share-picker "$@"
+
+# Quickshell writes the choice to this pipe. It's opened read-write, so opening never blocks and a reply
+# written before the read starts still waits in it
+dir=$(mktemp -d "${XDG_RUNTIME_DIR:-/tmp}/share-picker.XXXXXX") || exec hyprland-share-picker "$@"
+trap 'rm -rf "$dir"' EXIT
+mkfifo "$dir/reply"
+exec 3<>"$dir/reply"
+
+if ! qs ipc call share pick "$dir/reply" "${XDPH_WINDOW_SHARING_LIST:-}" "${XDPH_WORKSPACE_SHARING_LIST_V3:-}" "$allow" >/dev/null 2>&1; then
+    exec 3<&-
+    rm -rf "$dir"
+    exec hyprland-share-picker "$@"
+fi
+
+# XDPH waits for this, and every other share request with it: give up after 5 minutes, or at once if
+# Quickshell goes away meanwhile (the app then sees a cancelled share)
+for ((waited = 0; waited < 300; waited++)); do
+    if IFS= read -r -t 1 -u 3 choice; then
+        [[ -n $choice ]] && printf '[SELECTION]%s\n' "$choice"
+        exit 0
+    fi
+    running || exit 0
+done

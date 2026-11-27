@@ -50,6 +50,7 @@ Singleton {
     readonly property string wallpaper: glyph(0xF02E9)
     readonly property string clipboard: glyph(0xF0147)
     readonly property string screenshot: glyph(0xF0100)
+    readonly property string share: glyph(0xF1483)         // md-monitor_share, the screen sharing picker
     readonly property string palette: glyph(0xF03D8)
     readonly property string packageInstall: glyph(0xF19D8)  // md-package_variant_plus
     readonly property string packageRemove: glyph(0xF19D7)   // md-package_variant_minus
