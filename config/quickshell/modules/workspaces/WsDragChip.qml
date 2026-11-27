@@ -77,7 +77,7 @@ Variants {
                     Rectangle {
                         implicitWidth: 14
                         implicitHeight: 6
-                        radius: 3
+                        radius: height / 2
                         color: Theme.accent
                     }
 

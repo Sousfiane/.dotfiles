@@ -99,7 +99,7 @@ PanelWindow {
 
             width: ListView.view.width
             implicitHeight: content.implicitHeight + 24
-            radius: Theme.radius
+            radius: Theme.radiusLarge          // a surface, like the dropdowns and windows
             color: Theme.bg
             border.width: 2
             border.color: notif.critical ? Theme.urgent : Theme.border

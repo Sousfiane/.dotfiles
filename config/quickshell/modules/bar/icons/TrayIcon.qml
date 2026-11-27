@@ -158,7 +158,7 @@ Item {
             y: -1
             width: 5
             height: 5
-            radius: 2.5
+            radius: width / 2
             color: Theme.gold
         }
     }

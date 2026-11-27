@@ -127,7 +127,7 @@ printf 'Monitors\\t%s\\n' "$(hyprctl monitors -j 2>/dev/null | jq -r '[.[] | "\\
                         required property string modelData
                         width: 28
                         height: 16
-                        radius: 4
+                        radius: Theme.radiusSmall
                         color: Theme.colors[modelData] ?? "transparent"
                         border.width: 1
                         border.color: Theme.withAlpha(Theme.fg, 0.12)

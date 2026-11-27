@@ -169,7 +169,7 @@ Item {
                 Rectangle {
                     implicitWidth: 40
                     implicitHeight: 40
-                    radius: 20
+                    radius: width / 2
                     color: root.colors.iris
 
                     Text {
@@ -291,7 +291,7 @@ Item {
                                 delegate: Rectangle {
                                     width: 8
                                     height: 8
-                                    radius: 4
+                                    radius: width / 2
                                     color: root.colors.text
                                     opacity: 0
                                     Component.onCompleted: opacity = 1

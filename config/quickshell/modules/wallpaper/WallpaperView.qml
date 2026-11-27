@@ -86,7 +86,7 @@ GridPicker {
             visible: tile.current
             width: 22
             height: 22
-            radius: 11
+            radius: width / 2
             color: Theme.accent
 
             Txt {

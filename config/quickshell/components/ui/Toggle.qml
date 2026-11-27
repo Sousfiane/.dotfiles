@@ -11,7 +11,7 @@ Rectangle {
 
     implicitWidth: 40
     implicitHeight: 22
-    radius: 11
+    radius: height / 2
     color: checked ? Theme.accent : Theme.surface
     Behavior on color {
         CAnim {}
@@ -22,7 +22,7 @@ Rectangle {
         x: root.checked ? parent.width - width - 3 : 3
         width: 16
         height: 16
-        radius: 8
+        radius: width / 2
         color: root.checked ? Theme.bgSolid : Theme.dim
         Behavior on color {
             CAnim {}

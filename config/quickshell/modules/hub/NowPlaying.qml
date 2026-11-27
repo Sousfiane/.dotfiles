@@ -74,7 +74,7 @@ RowLayout {
             Layout.topMargin: 4
             visible: root.hasLength
             implicitHeight: 4
-            radius: 2
+            radius: height / 2
             color: Theme.surface
 
             Rectangle {

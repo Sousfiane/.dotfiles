@@ -61,7 +61,7 @@ ColumnLayout {
             Rectangle {
                 Layout.fillHeight: true
                 implicitWidth: 3
-                radius: 2
+                radius: width / 2
                 color: evRow.modelData.color
             }
 

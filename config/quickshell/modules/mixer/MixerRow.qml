@@ -143,13 +143,13 @@ SelectableCard {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width
                 height: 8
-                radius: 4
+                radius: height / 2
                 color: Theme.surface
 
                 Rectangle {
                     width: parent.width * Math.min(root.vol / Mixer.maxVolume, 1)
                     height: parent.height
-                    radius: 4
+                    radius: height / 2
                     color: root.muted ? Theme.dim : (root.vol > 1 ? Theme.urgent : Theme.accent)
                 }
 

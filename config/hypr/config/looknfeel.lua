@@ -20,7 +20,7 @@ hl.config({
 	},
 
 	decoration = {
-		rounding = theme.radius.medium, -- same corners as quickshell's Theme.radius
+		rounding = theme.radius.large, -- the corners of every surface, the shell's too (Theme.radiusLarge)
 		rounding_power = 2,
 
 		active_opacity = 1.0,

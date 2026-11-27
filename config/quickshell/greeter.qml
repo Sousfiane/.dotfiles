@@ -285,7 +285,7 @@ ShellRoot {
 
                             implicitWidth: row.implicitWidth + 28
                             implicitHeight: 40
-                            radius: 20
+                            radius: height / 2
                             // the bar's fill, and its rows' on hover
                             color: mouse.containsMouse ? root.alpha(root.colors.overlay, root.controlAlpha) : root.alpha(root.colors.base, root.panelAlpha)
                             border.width: 1

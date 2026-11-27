@@ -164,7 +164,7 @@ Item {
         y: cell.height + dock.pad + (dock.dotRow - height) / 2 + 1
         height: 4
         width: cell.focused ? 12 : 4
-        radius: 2
+        radius: height / 2
         opacity: cell.running ? 1 : 0
         color: cell.urgent ? Theme.urgent : cell.focused ? Theme.accent : Theme.dim
 

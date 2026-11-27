@@ -184,7 +184,7 @@ ColumnLayout {
                             required property var modelData
                             width: 4
                             height: 4
-                            radius: 2
+                            radius: width / 2
                             color: dayCell.isToday ? Theme.bgSolid : modelData.color
                         }
                     }

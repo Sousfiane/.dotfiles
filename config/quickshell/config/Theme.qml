@@ -179,8 +179,11 @@ Singleton {
 
     readonly property string font: fonts.ui
     readonly property int fontSize: fonts.uiPixelSize
-    readonly property int radiusSmall: theme.radius.small
-    readonly property int radius: theme.radius.medium
+    // corners, by what they round (theme.json): a surface floating over the desktop (a dropdown, the dock,
+    // a toast, the OSD; Hyprland's windows too), what sits on one (rows, buttons, inputs), small marks
+    // (swatches, boxes). Circles and pills are height / 2, whatever their size
     readonly property int radiusLarge: theme.radius.large
+    readonly property int radius: theme.radius.medium
+    readonly property int radiusSmall: theme.radius.small
     readonly property int barHeight: 32
 }

@@ -120,7 +120,7 @@ Scope {
 
             Rectangle {
                 anchors.fill: parent
-                radius: Theme.radius
+                radius: Theme.radiusLarge          // a surface, like the dropdowns and windows
                 color: Theme.bg
                 border.color: Theme.border
 
@@ -157,13 +157,13 @@ Scope {
                         visible: !root.isCaps
                         Layout.fillWidth: true
                         implicitHeight: 8
-                        radius: 4
+                        radius: height / 2
                         color: Theme.surface
 
                         Rectangle {
                             width: parent.width * Math.min(root.value, 1)
                             height: parent.height
-                            radius: 4
+                            radius: height / 2
                             color: root.off ? Theme.dim : Theme.accent
                         }
                     }
