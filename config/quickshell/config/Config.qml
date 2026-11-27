@@ -17,6 +17,9 @@ Singleton {
         return ["xdg-terminal-exec", "--app-id=" + floatingClass, "--", ...cmd];
     }
 
+    // the launcher's web search ("? query"): the query goes at the end, URL-encoded
+    property string searchUrl: "https://duckduckgo.com/?q="
+
     // weather in the hub: a city ("Paris", "Lyon"...), or "" to locate by IP address
     property string weatherLocation: "Lille"
 

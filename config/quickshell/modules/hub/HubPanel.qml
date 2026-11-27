@@ -153,6 +153,44 @@ DropdownPanel {
                     visible: Media.active
                 }
 
+                // ---------- quick toggles ----------
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 6
+
+                    QuickToggle {
+                        icon: Net.wifiOn ? Icons.wifi4 : Icons.wifiOff
+                        label: "Wi-Fi"
+                        active: Net.wifiOn && Net.wifiDevice !== null
+                        available: Net.wifiDevice !== null
+                        onClicked: Net.toggleWifi()
+                    }
+
+                    QuickToggle {
+                        icon: Bt.connected ? Icons.bluetoothConnected : Bt.powered ? Icons.bluetooth : Icons.bluetoothOff
+                        label: "Bluetooth"
+                        active: Bt.powered
+                        available: Bt.adapter !== null
+                        onClicked: Bt.togglePower()
+                    }
+
+                    QuickToggle {
+                        icon: Notifs.dnd ? Icons.bellOff : Icons.bell
+                        label: "Silent"
+                        active: Notifs.dnd
+                        onClicked: Notifs.dnd = !Notifs.dnd
+                    }
+
+                    QuickToggle {
+                        icon: Icons.keepAwake
+                        label: "Awake"
+                        active: Toggles.keepAwake
+                        onClicked: Toggles.keepAwake = !Toggles.keepAwake
+                    }
+                }
+
+                Divider {}
+
                 // ---------- shortcuts: the pickers, and the packages ----------
                 Txt {
                     variant: "heading"

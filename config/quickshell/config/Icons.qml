@@ -57,6 +57,24 @@ Singleton {
     readonly property string check: glyph(0xF012C)
     readonly property string keyboard: glyph(0xF030C)      // md-keyboard
 
+    // quick toggles (hub)
+    readonly property string keepAwake: glyph(0xF0176)     // md-coffee
+
+    // launcher modes
+    readonly property string calculator: glyph(0xF00EC)    // md-calculator
+    readonly property string emoji: glyph(0xF01F5)         // md-emoticon_outline
+    readonly property string terminal: glyph(0xF018D)      // md-console
+    readonly property string web: glyph(0xF059F)           // md-web
+
+    // files (the launcher's "/")
+    readonly property string folder: glyph(0xF024B)        // md-folder
+    readonly property string file: glyph(0xF0214)          // md-file
+    readonly property string fileImage: glyph(0xF021F)     // md-file_image
+    readonly property string fileVideo: glyph(0xF022B)     // md-file_video
+    readonly property string fileMusic: glyph(0xF0223)     // md-file_music
+    readonly property string filePdf: glyph(0xF0226)       // md-file_pdf_box
+    readonly property string fileDocument: glyph(0xF0219)  // md-file_document
+
     // media
     readonly property string music: glyph(0xF075A)
     readonly property string play: glyph(0xF040A)

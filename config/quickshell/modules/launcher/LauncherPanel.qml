@@ -9,6 +9,8 @@ import qs.components.panel
 import qs.components.ui
 
 // The app launcher (SUPER + Space): search the installed apps and their actions, Enter starts one.
+// = calculates, : finds an emoji, > runs a command, ? searches the web, / opens a file (the modes are
+// Launcher's).
 DropdownPanel {
     name: "launcher"
     edge: "center"
@@ -71,8 +73,15 @@ DropdownPanel {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onMoved: list.currentIndex = row.index
-                    // right click pins the app to the dock (or unpins it)
-                    onClicked: mouse => mouse.button === Qt.RightButton ? Dock.togglePin(row.modelData.entry.id) : Launcher.launch(row.modelData)
+                    // right click pins an app to the dock (or unpins it), or opens a file's folder
+                    onClicked: mouse => {
+                        if (mouse.button === Qt.LeftButton)
+                            Launcher.launch(row.modelData);
+                        else if (row.modelData.entry)
+                            Dock.togglePin(row.modelData.entry.id);
+                        else if (row.modelData.alt)
+                            Launcher.launchAlt(row.modelData);
+                    }
                 }
 
                 Behavior on color {
@@ -86,8 +95,19 @@ DropdownPanel {
                     spacing: 10
 
                     AppIcon {
+                        visible: !row.modelData.glyph
                         implicitSize: 24
-                        source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
+                        source: row.modelData.glyph ? "" : Quickshell.iconPath(row.modelData.icon, "application-x-executable")
+                    }
+
+                    // a mode's row: its glyph, or the emoji itself
+                    Txt {
+                        visible: !!row.modelData.glyph
+                        Layout.preferredWidth: 24
+                        horizontalAlignment: Text.AlignHCenter
+                        text: row.modelData.glyph ?? ""
+                        color: row.modelData.run ? Theme.accent : Theme.dim
+                        font.pixelSize: row.modelData.emoji ? Theme.fontSize + 6 : Theme.fontSize + 4
                     }
 
                     Txt {
@@ -98,7 +118,7 @@ DropdownPanel {
 
                     // pinned to the dock
                     Txt {
-                        visible: !row.modelData.action && Dock.isPinned(row.modelData.entry.id)
+                        visible: !!row.modelData.entry && !row.modelData.action && Dock.isPinned(row.modelData.entry.id)
                         variant: "dim"
                         text: Icons.glyph(0xF0403)
                     }
@@ -113,6 +133,10 @@ DropdownPanel {
                     }
                 }
             }
+        }
+
+        Hint {
+            text: Launcher.hint
         }
     }
 }
