@@ -38,21 +38,60 @@ QS_GREETER_HOME=$HOME Hyprland --verify-config -c "$hypr" 2>/dev/null | grep -q 
 
 # ---------- greetd's config ----------
 
+# What greetd runs as the login screen, as its `greeter` user. In /etc and owned by root rather than in the
+# home: the fallback must work when what's in the home doesn't (Quickshell broken by an update, the home
+# unreadable). The Quickshell greeter in its small Hyprland, with nothing of a desktop session for the
+# greeter user (no systemd session target, no portals); greeter.lua marks a login. After 3 starts in a row
+# without one, a text login (agreety) until the next boot, so a broken greeter never locks you out.
+sudo tee /etc/greetd/login-screen >/dev/null <<EOF
+#!/bin/sh
+# Written by ~/.dotfiles/install/steps/greeter.sh: greetd's login screen (/etc/greetd/config.toml).
+
+failures=/tmp/qs-greeter-failures
+ok=/tmp/qs-greeter-ok
+n=\$(cat "\$failures" 2>/dev/null || echo 0)
+
+if [ "\$n" -ge 3 ]; then
+    printf '\\nThe login screen failed to start %s times in a row: text login until the next boot.\\n' "\$n"
+    printf 'Once logged in: uwsm start hyprland.desktop (the desktop), or fix it and reboot.\\n\\n'
+    exec agreety --cmd /etc/greetd/text-session
+fi
+
+rm -f "\$ok"
+# output dropped: it would print on the console under the screen (Hyprland keeps its own log, in
+# /run/user/<greeter's uid>/hypr)
+QS_GREETER_HOME=$HOME HYPRLAND_NO_SD_TARGET=1 HYPRLAND_NO_SD_VARS=1 QT_NO_XDG_DESKTOP_PORTAL=1 \\
+    start-hyprland -- -c $hypr >/dev/null 2>&1
+
+if [ -e "\$ok" ]; then
+    rm -f "\$failures" "\$ok"
+else
+    echo \$((n + 1)) >"\$failures"
+fi
+EOF
+
+# the text login's session: the user's login shell
+sudo tee /etc/greetd/text-session >/dev/null <<'EOF'
+#!/bin/sh
+# Written by ~/.dotfiles/install/steps/greeter.sh: the session of the text login (agreety), when the
+# graphical one keeps failing. The user's login shell, so their profile runs.
+login=$(getent passwd "$(id -un)" | cut -d: -f7)
+exec "${login:-/bin/sh}" -l
+EOF
+sudo chmod 755 /etc/greetd/login-screen /etc/greetd/text-session
+
 sudo tee /etc/greetd/config.toml >/dev/null <<EOF
-# Written by ~/.dotfiles/install/steps/greeter.sh: the login screen is a small Hyprland run as the
-# \`greeter\` user ($hypr), which runs the Quickshell greeter.
+# Written by ~/.dotfiles/install/steps/greeter.sh: the login screen is /etc/greetd/login-screen (the
+# Quickshell greeter in a small Hyprland, or a text login when it keeps failing), run as the \`greeter\` user.
 
 [terminal]
 vt = 1
 
 [default_session]
-# QS_GREETER_HOME: the home it reads the greeter, the theme and the wallpaper from. Their output would print
-# on the console under it as the screen comes up: dropped (Hyprland keeps its own log, in
-# /run/user/<greeter's uid>/hypr)
-command = "sh -c 'QS_GREETER_HOME=$HOME exec start-hyprland -- -c $hypr >/dev/null 2>&1'"
+command = "/etc/greetd/login-screen"
 user = "greeter"
 EOF
-success "greetd's config written (/etc/greetd/config.toml)"
+success "greetd's config written (/etc/greetd: config.toml, login-screen, text-session)"
 
 # the copies an earlier version of this step made, read by nothing now
 if [[ -e /etc/greetd/hypr || -e /etc/greetd/quickshell || -e /var/lib/qs-greeter ]]; then

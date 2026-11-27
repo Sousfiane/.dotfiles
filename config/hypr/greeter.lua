@@ -29,9 +29,12 @@ if owner then
 	owner:close()
 end
 
+-- The greeter quits cleanly only once someone has logged in: that's marked for greetd's login-screen script
+-- (/etc/greetd/login-screen, written by install/steps/greeter.sh), which counts anything else as a failure and
+-- falls back to a text login after a few in a row
 hl.on("hyprland.start", function()
 	hl.exec_cmd(
 		"QS_GREETER_HOME='" .. home .. "' QS_GREETER_USER='" .. user .. "' qs -p '" .. home
-			.. "/.config/quickshell/greeter.qml'; hyprctl dispatch 'hl.dsp.exit()'"
+			.. "/.config/quickshell/greeter.qml' && touch /tmp/qs-greeter-ok; hyprctl dispatch 'hl.dsp.exit()'"
 	)
 end)

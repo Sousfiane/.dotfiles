@@ -13,7 +13,8 @@ After=graphical-session.target
 ConditionEnvironment=WAYLAND_DISPLAY
 
 [Service]
-Type=simple
+# exec: started once qs itself runs, so a qs that can't be run fails the start instead of looking started
+Type=exec
 # On NVIDIA, Quickshell is shown only NVIDIA's EGL driver: otherwise it also loads Mesa's (and LLVM), unused
 # (~10 MB). Only when the NVIDIA driver is loaded, so another machine starts it the plain way
 # ($$ is a $ for the shell: systemd expands $ itself)
