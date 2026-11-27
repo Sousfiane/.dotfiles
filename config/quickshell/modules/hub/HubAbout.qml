@@ -130,7 +130,7 @@ printf 'Monitors\\t%s\\n' "$(hyprctl monitors -j 2>/dev/null | jq -r '[.[] | "\\
                         radius: 4
                         color: Theme.colors[modelData] ?? "transparent"
                         border.width: 1
-                        border.color: Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.12)
+                        border.color: Theme.withAlpha(Theme.fg, 0.12)
                     }
                 }
             }

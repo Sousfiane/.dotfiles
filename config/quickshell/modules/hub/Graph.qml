@@ -38,7 +38,7 @@ Canvas {
             ctx.lineTo(width, height);
             ctx.lineTo(x0, height);
             ctx.closePath();
-            ctx.fillStyle = Qt.rgba(color.r, color.g, color.b, 0.18);
+            ctx.fillStyle = Theme.withAlpha(color, 0.18);
             ctx.fill();
         }
     }
@@ -47,7 +47,7 @@ Canvas {
         const ctx = getContext("2d");
         ctx.reset();
         // a faint middle line, for scale
-        ctx.strokeStyle = Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.08);
+        ctx.strokeStyle = Theme.withAlpha(Theme.fg, 0.08);
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(0, Math.round(height / 2) + 0.5);
