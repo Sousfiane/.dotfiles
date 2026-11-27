@@ -32,9 +32,8 @@ ListView {
     // rows size to this instead of `width`, leaving a gutter for the scrollbar while it shows
     readonly property real rowWidth: width - (vbar.size < 1 ? vbar.width + 6 : 0)
 
-    // same scrollbar as the wallpaper picker; only shows when the list overflows maxHeight
-    ScrollBar.vertical: ScrollBar {
+    // only shows when the list overflows maxHeight
+    ScrollBar.vertical: Scroller {
         id: vbar
-        policy: ScrollBar.AsNeeded
     }
 }

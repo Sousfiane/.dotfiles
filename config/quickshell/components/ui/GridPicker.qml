@@ -70,9 +70,7 @@ ColumnLayout {
         // reset the selection whenever the results change
         onCountChanged: currentIndex = count > 0 ? 0 : -1
 
-        ScrollBar.vertical: ScrollBar {
-            policy: ScrollBar.AsNeeded
-        }
+        ScrollBar.vertical: Scroller {}
     }
 
     EmptyState {

@@ -69,9 +69,8 @@ ColumnLayout {
 
         readonly property real rowWidth: width - (vbar.size < 1 ? vbar.width + 6 : 0)
 
-        ScrollBar.vertical: ScrollBar {
+        ScrollBar.vertical: Scroller {
             id: vbar
-            policy: ScrollBar.AsNeeded
         }
 
         delegate: PackageRow {

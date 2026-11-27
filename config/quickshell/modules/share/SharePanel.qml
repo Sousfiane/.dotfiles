@@ -173,9 +173,7 @@ DropdownPanel {
             boundsBehavior: Flickable.StopAtBounds
             onModelChanged: currentIndex = 0
 
-            ScrollBar.vertical: ScrollBar {
-                policy: ScrollBar.AsNeeded
-            }
+            ScrollBar.vertical: Scroller {}
 
             delegate: GridTile {
                 id: tile

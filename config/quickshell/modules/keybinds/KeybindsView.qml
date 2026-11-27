@@ -72,9 +72,8 @@ ColumnLayout {
 
         readonly property real rowWidth: width - (vbar.size < 1 ? vbar.width + 6 : 0)
 
-        ScrollBar.vertical: ScrollBar {
+        ScrollBar.vertical: Scroller {
             id: vbar
-            policy: ScrollBar.AsNeeded
         }
 
         // each row, with its section's name above it when it's the first of the section
