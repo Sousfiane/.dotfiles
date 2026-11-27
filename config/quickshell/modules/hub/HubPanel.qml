@@ -5,8 +5,8 @@ import qs.services
 import qs.components.panel
 import qs.components.ui
 
-// The hub (SUPER + ALT + Space, or the clock): date, weather and what's playing, the calendar with the
-// selected day's events, and shortcuts to the other pickers.
+// The hub (SUPER + ALT + Space, or the clock): date and weather, the calendar with the selected day's
+// events on the left; what's playing and shortcuts to the other pickers on the right.
 DropdownPanel {
     id: panel
     name: "hub"
@@ -81,7 +81,7 @@ DropdownPanel {
             event.accepted = true;
         }
 
-        // the calendar's side on the left, the shortcuts on the right
+        // the calendar's side on the left, the player and shortcuts on the right
         RowLayout {
             Layout.fillWidth: true
             spacing: 20
@@ -117,15 +117,6 @@ DropdownPanel {
 
                 Divider {}
 
-                // ---------- now playing (only while a player has a track) ----------
-                NowPlaying {
-                    Layout.fillWidth: true
-                }
-
-                Divider {
-                    visible: Media.active
-                }
-
                 // ---------- calendar ----------
                 HubCalendar {
                     id: calendar
@@ -153,7 +144,16 @@ DropdownPanel {
                 Layout.alignment: Qt.AlignTop
                 spacing: 12
 
-                // ---------- pickers ----------
+                // ---------- now playing (only while a player has a track) ----------
+                NowPlaying {
+                    Layout.fillWidth: true
+                }
+
+                Divider {
+                    visible: Media.active
+                }
+
+                // ---------- shortcuts: the pickers, and the packages ----------
                 Txt {
                     variant: "heading"
                     text: "Open"
@@ -202,31 +202,7 @@ DropdownPanel {
                                 key: "?",
                                 icon: Icons.keyboard,
                                 target: "keybinds"
-                            }
-                        ]
-
-                        delegate: ShortcutTile {
-                            onActivated: target => Hub.openPicker(target)
-                        }
-                    }
-                }
-
-                Divider {}
-
-                // ---------- packages ----------
-                Txt {
-                    variant: "heading"
-                    text: "Packages"
-                }
-
-                GridLayout {
-                    Layout.fillWidth: true
-                    columns: 2
-                    columnSpacing: 8
-                    rowSpacing: 8
-
-                    Repeater {
-                        model: [
+                            },
                             {
                                 label: "Install",
                                 key: "I",
