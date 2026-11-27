@@ -25,9 +25,12 @@ Variants {
 
         WlrLayershell.layer: WlrLayer.Overlay     // Top sits under fullscreen windows
         WlrLayershell.namespace: "qs-dock"
-        // always shown: windows tile above the plate, like macOS's dock
-        exclusionMode: Dock.alwaysShow && items.length > 0 ? ExclusionMode.Normal : ExclusionMode.Ignore
-        exclusiveZone: margin + dotRow + iconSize + pad * 2
+        // always shown: windows tile above the plate, like macOS's dock; else no space is kept. The mode
+        // stays Normal and only the zone changes: setting exclusiveZone also sets exclusionMode to Normal,
+        // so a mode that varied (Ignore when hidden) lost to it depending on load order and the space
+        // stayed after a reload; left at its default the mode is Auto, which keeps the window's height
+        exclusionMode: ExclusionMode.Normal
+        exclusiveZone: Dock.alwaysShow && items.length > 0 ? margin + dotRow + iconSize + pad * 2 : 0
         color: "transparent"
 
         anchors {
