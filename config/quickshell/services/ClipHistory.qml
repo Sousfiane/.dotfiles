@@ -9,7 +9,7 @@ import qs.config
 Singleton {
     id: root
 
-    readonly property bool open: Panels.isOpen("clipboard")
+    readonly property bool open: Panels.isShown("clipboard")      // its panel, or the hub's tab
     property string query: ""
     property var items: []                       // everything parsed from clipvault
 

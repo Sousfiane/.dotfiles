@@ -57,6 +57,11 @@ Singleton {
     readonly property string check: glyph(0xF012C)
     readonly property string keyboard: glyph(0xF030C)      // md-keyboard
 
+    // the hub's own tabs
+    readonly property string home: glyph(0xF02DC)          // md-home
+    readonly property string system: glyph(0xF029A)        // md-gauge
+    readonly property string about: glyph(0xF02FD)         // md-information_outline
+
     // quick toggles (hub)
     readonly property string keepAwake: glyph(0xF0176)     // md-coffee
 

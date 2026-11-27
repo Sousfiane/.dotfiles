@@ -16,7 +16,7 @@ Singleton {
 
     property string query: ""
 
-    readonly property bool open: Panels.isOpen("launcher")
+    readonly property bool open: Panels.isShown("launcher")      // its panel, or the hub's tab
 
     function toggle() {
         Panels.toggle("launcher");

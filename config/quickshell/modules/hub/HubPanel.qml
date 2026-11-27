@@ -4,43 +4,144 @@ import qs.config
 import qs.services
 import qs.components.panel
 import qs.components.ui
+import qs.modules.launcher
+import qs.modules.wallpaper
+import qs.modules.theme
+import qs.modules.clipboard
+import qs.modules.screenshot
+import qs.modules.keybinds
+import qs.modules.packages
 
-// The hub (SUPER + ALT + Space, or the clock), in three tabs:
-//   Home    date and weather, the calendar with the selected day's events on the left; what's playing,
-//           quick toggles, CPU/RAM/GPU and shortcuts to the other pickers on the right
+// The hub (SUPER + ALT + Space, or the clock), in tabs:
+//   Home    one column: date and weather, what's playing, the quick toggles, the calendar and the selected
+//           day's events
 //   System  btop-like: graphs, each core, memory, GPU, network, disks, the busiest processes
 //   About   neofetch-like, for fun
-// System and About exist only while showing, so they read nothing otherwise. It always opens on Home.
+//   then the pickers, each its own view as in its panel: apps, wallpapers, theme, clipboard, screenshot,
+//   keybinds, install, remove
+// A tab other than Home exists only while showing, so it reads nothing otherwise. It always opens on
+// Home. Panels.hubTab says which tab shows, so a picker's service knows it is on screen (Panels.isShown).
+// The hub takes each picker's own size (Panels.pickerSizes), growing or shrinking to it as tabs change,
+// so a picker looks the same here as in its panel.
 DropdownPanel {
     id: panel
     name: "hub"
     edge: "center"
-    cardWidth: 720
+    cardWidth: (Panels.pickerSizes[Panels.hubTab] ?? [Panels.hubTab === "home" ? 420 : 720])[0]
 
     ColumnLayout {
         id: hub
         spacing: 12
 
-        property int tab: 0
-        readonly property var tabs: ["Home", "System", "About"]
+        readonly property var tabs: [
+            {
+                id: "home",
+                label: "Home",
+                icon: Icons.home
+            },
+            {
+                id: "system",
+                label: "System",
+                icon: Icons.system
+            },
+            {
+                id: "about",
+                label: "About",
+                icon: Icons.about
+            },
+            {
+                id: "launcher",
+                label: "Apps",
+                icon: Icons.apps,
+                key: "a"
+            },
+            {
+                id: "wallpaper",
+                label: "Wallpapers",
+                icon: Icons.wallpaper,
+                key: "w"
+            },
+            {
+                id: "theme",
+                label: "Theme",
+                icon: Icons.palette,
+                key: "e",
+                takesKeys: true            // no search box: the view itself takes the keyboard
+            },
+            {
+                id: "clipboard",
+                label: "Clipboard",
+                icon: Icons.clipboard,
+                key: "c"
+            },
+            {
+                id: "screenshot",
+                label: "Screenshot",
+                icon: Icons.screenshot,
+                key: "s",
+                takesKeys: true
+            },
+            {
+                id: "keybinds",
+                label: "Keybinds",
+                icon: Icons.keyboard,
+                key: "?"
+            },
+            {
+                id: "install",
+                label: "Install",
+                icon: Icons.packageInstall,
+                key: "i"
+            },
+            {
+                id: "remove",
+                label: "Remove",
+                icon: Icons.packageRemove,
+                key: "r"
+            }
+        ]
+        readonly property int tab: Math.max(0, tabs.findIndex(t => t.id === Panels.hubTab))
+        readonly property var current: tabs[tab]
+
+        function show(i) {
+            Panels.hubTab = tabs[(i + tabs.length) % tabs.length].id;
+        }
+
+        // a new hub starts on Home, and a closed one leaves no picker "shown"
+        Component.onCompleted: Panels.hubTab = "home"
+        Component.onDestruction: Panels.hubTab = "home"
+
+        // back on a tab without its own keyboard handling: the hub takes the keys again
+        onTabChanged: if (!current.takesKeys)
+            Qt.callLater(() => {
+                if (hub)               // gone already when the change came from closing
+                    hub.forceActiveFocus();
+            })
 
         Keys.onPressed: event => {
-            // the tabs: Tab / Shift+Tab, or the number row's 1 2 3 (by keycode, so AZERTY needs no Shift)
+            // the tabs, everywhere: Tab / Shift+Tab, or the number row's 1 2 3 (by keycode, so AZERTY needs
+            // no Shift). A tab's own keys come first (a search box, the screenshot menu's numbers)
             if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
-                hub.tab = (hub.tab + (event.key === Qt.Key_Tab ? 1 : hub.tabs.length - 1)) % hub.tabs.length;
+                hub.show(hub.tab + (event.key === Qt.Key_Tab ? 1 : -1));
                 event.accepted = true;
                 return;
             }
             const numberRow = [10, 11, 12].indexOf(event.nativeScanCode);
             if (numberRow >= 0) {
-                hub.tab = numberRow;
+                hub.show(numberRow);
                 event.accepted = true;
                 return;
             }
-            // the calendar's keys only mean something on Home
-            const calendarKeys = [Qt.Key_Left, Qt.Key_H, Qt.Key_Right, Qt.Key_L, Qt.Key_J, Qt.Key_Down, Qt.Key_K, Qt.Key_Up, Qt.Key_T];
-            if (hub.tab !== 0 && calendarKeys.includes(event.key))
+            // the rest only on Home
+            if (hub.tab !== 0)
                 return;
+
+            const picker = hub.tabs.findIndex(t => t.key && t.key === event.text.toLowerCase());
+            if (picker >= 0) {
+                hub.show(picker);
+                event.accepted = true;
+                return;
+            }
 
             switch (event.key) {
             case Qt.Key_Left:
@@ -62,30 +163,6 @@ DropdownPanel {
             case Qt.Key_T:
                 calendar.goToday();
                 break;
-            case Qt.Key_A:
-                Hub.openPicker("launcher");
-                break;
-            case Qt.Key_W:
-                Hub.openPicker("wallpaper");
-                break;
-            case Qt.Key_E:
-                Hub.openPicker("theme");
-                break;
-            case Qt.Key_C:
-                Hub.openPicker("clipboard");
-                break;
-            case Qt.Key_S:
-                Hub.openPicker("screenshot");
-                break;
-            case Qt.Key_I:
-                Hub.openPicker("install");
-                break;
-            case Qt.Key_R:
-                Hub.openPicker("remove");
-                break;
-            case Qt.Key_Question:
-                Hub.openPicker("keybinds");
-                break;
             case Qt.Key_P:
             case Qt.Key_Space:
                 Media.toggle();
@@ -105,247 +182,205 @@ DropdownPanel {
             event.accepted = true;
         }
 
-        // ---------- the tabs ----------
+        // ---------- the tabs, by icon (the narrowest picker is 420 wide); the name is in the hint ----------
         RowLayout {
-            Layout.fillWidth: true
-            spacing: 6
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 4
 
             Repeater {
                 model: hub.tabs
 
-                delegate: Pill {
-                    required property string modelData
+                delegate: IconPill {
+                    required property var modelData
                     required property int index
 
-                    text: modelData
+                    // a gap between the hub's own tabs and the pickers
+                    Layout.leftMargin: index === 3 ? 8 : 0
+                    icon: modelData.icon
                     active: hub.tab === index
-                    minWidth: 80
-                    onClicked: hub.tab = index
+                    onClicked: hub.show(index)
                 }
-            }
-
-            Item {
-                Layout.fillWidth: true
             }
         }
 
-        // the three tabs share one height: Home's, with room enough for System
+        // the tab's own height: Home's and a picker's are their content's, a fixed-size picker's its card's
+        // inside (as in its panel), System's and About's room enough for them
         Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.max(home.implicitHeight, 520)
+            readonly property var size: Panels.pickerSizes[hub.current.id] ?? null
 
-            // the calendar's side on the left, the player and shortcuts on the right
-            RowLayout {
+            Layout.fillWidth: true
+            Layout.preferredHeight: hub.tab === 0 ? home.implicitHeight : !size ? 560 : size[1] > 0 ? size[1] - 2 * panel.padding : (picker.item?.implicitHeight ?? 0)
+            clip: true
+
+            // one column: the day, what's playing, the toggles, the calendar and its events
+            ColumnLayout {
                 id: home
                 anchors {
-                    left: parent.left
-                    right: parent.right
-                    top: parent.top
+                left: parent.left
+                right: parent.right
+                top: parent.top
                 }
-                // hidden, not removed, while another tab shows: its height stays the tabs' height
+                // hidden, not removed, while another tab shows: the calendar keeps its month and day
                 opacity: hub.tab === 0 ? 1 : 0
                 enabled: hub.tab === 0
-                spacing: 20
+                spacing: 12
 
-                ColumnLayout {
-                    Layout.preferredWidth: 318        // the calendar grid's width
-                    Layout.maximumWidth: 318
-                    Layout.alignment: Qt.AlignTop
-                    spacing: 12
-
-                    // ---------- time and date, weather next to them ----------
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 12
-
-                        // fresh weather whenever the hub opens (the service also refreshes every 30 minutes)
-                        Component.onCompleted: Weather.refreshIfStale()
-
-                        DateTimeBlock {
-                            Layout.fillWidth: true
-                        }
-
-                        // the columns hold only fixed-size text, so this is what lets the row span the card
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        WeatherBlock {
-                            Layout.fillWidth: false             // nested layouts fill by default: stay against the right edge
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        }
-                    }
-
-                    Divider {}
-
-                    // ---------- calendar ----------
-                    HubCalendar {
-                        id: calendar
-                        Layout.fillWidth: true
-                    }
-
-                    Divider {}
-
-                    // ---------- events of the selected day ----------
-                    HubEvents {
-                        Layout.fillWidth: true
-                        day: calendar.selected
-                        today: calendar.today
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillHeight: true
-                    implicitWidth: 1
-                    color: Theme.border
-                }
-
-                ColumnLayout {
+                // ---------- time and date, weather next to them ----------
+                RowLayout {
                     Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignTop
                     spacing: 12
 
-                    // ---------- now playing (only while a player has a track) ----------
-                    NowPlaying {
+                    // fresh weather whenever the hub opens (the service also refreshes every 30 minutes)
+                    Component.onCompleted: Weather.refreshIfStale()
+
+                    DateTimeBlock {
                         Layout.fillWidth: true
                     }
 
-                    Divider {
-                        visible: Media.active
-                    }
-
-                    // ---------- quick toggles ----------
-                    RowLayout {
+                    // the columns hold only fixed-size text, so this is what lets the row span the card
+                    Item {
                         Layout.fillWidth: true
-                        spacing: 6
-
-                        QuickToggle {
-                            icon: Net.wifiOn ? Icons.wifi4 : Icons.wifiOff
-                            label: "Wi-Fi"
-                            active: Net.wifiOn && Net.wifiDevice !== null
-                            available: Net.wifiDevice !== null
-                            onClicked: Net.toggleWifi()
-                        }
-
-                        QuickToggle {
-                            icon: Bt.connected ? Icons.bluetoothConnected : Bt.powered ? Icons.bluetooth : Icons.bluetoothOff
-                            label: "Bluetooth"
-                            active: Bt.powered
-                            available: Bt.adapter !== null
-                            onClicked: Bt.togglePower()
-                        }
-
-                        QuickToggle {
-                            icon: Notifs.dnd ? Icons.bellOff : Icons.bell
-                            label: "Silent"
-                            active: Notifs.dnd
-                            onClicked: Notifs.dnd = !Notifs.dnd
-                        }
-
-                        QuickToggle {
-                            icon: Icons.keepAwake
-                            label: "Awake"
-                            active: Toggles.keepAwake
-                            onClicked: Toggles.keepAwake = !Toggles.keepAwake
-                        }
                     }
 
-                    // ---------- CPU, RAM and GPU (read only while the hub is open) ----------
-                    HubStats {
-                        Layout.fillWidth: true
-                        active: hub.tab === 0
+                    WeatherBlock {
+                        Layout.fillWidth: false             // nested layouts fill by default: stay against the right edge
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                    }
+                }
+
+                Divider {}
+
+                // ---------- now playing (only while a player has a track) ----------
+                NowPlaying {
+                    Layout.fillWidth: true
+                }
+
+                Divider {
+                    visible: Media.active
+                }
+
+                // ---------- quick toggles ----------
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 6
+
+                    QuickToggle {
+                        icon: Net.wifiOn ? Icons.wifi4 : Icons.wifiOff
+                        label: "Wi-Fi"
+                        active: Net.wifiOn && Net.wifiDevice !== null
+                        available: Net.wifiDevice !== null
+                        onClicked: Net.toggleWifi()
                     }
 
-                    Divider {}
-
-                    // ---------- shortcuts: the pickers, and the packages ----------
-                    Txt {
-                        variant: "heading"
-                        text: "Open"
+                    QuickToggle {
+                        icon: Bt.connected ? Icons.bluetoothConnected : Bt.powered ? Icons.bluetooth : Icons.bluetoothOff
+                        label: "Bluetooth"
+                        active: Bt.powered
+                        available: Bt.adapter !== null
+                        onClicked: Bt.togglePower()
                     }
 
-                    GridLayout {
-                        Layout.fillWidth: true
-                        columns: 2
-                        columnSpacing: 8
-                        rowSpacing: 8
-
-                        Repeater {
-                            model: [
-                                {
-                                    label: "Apps",
-                                    key: "A",
-                                    icon: Icons.apps,
-                                    target: "launcher"
-                                },
-                                {
-                                    label: "Wallpapers",
-                                    key: "W",
-                                    icon: Icons.wallpaper,
-                                    target: "wallpaper"
-                                },
-                                {
-                                    label: "Theme",
-                                    key: "E",
-                                    icon: Icons.palette,
-                                    target: "theme"
-                                },
-                                {
-                                    label: "Clipboard",
-                                    key: "C",
-                                    icon: Icons.clipboard,
-                                    target: "clipboard"
-                                },
-                                {
-                                    label: "Screenshot",
-                                    key: "S",
-                                    icon: Icons.screenshot,
-                                    target: "screenshot"
-                                },
-                                {
-                                    label: "Keybinds",
-                                    key: "?",
-                                    icon: Icons.keyboard,
-                                    target: "keybinds"
-                                },
-                                {
-                                    label: "Install",
-                                    key: "I",
-                                    icon: Icons.packageInstall,
-                                    target: "install"
-                                },
-                                {
-                                    label: "Remove",
-                                    key: "R",
-                                    icon: Icons.packageRemove,
-                                    target: "remove"
-                                }
-                            ]
-
-                            delegate: ShortcutTile {
-                                onActivated: target => Hub.openPicker(target)
-                            }
-                        }
+                    QuickToggle {
+                        icon: Notifs.dnd ? Icons.bellOff : Icons.bell
+                        label: "Silent"
+                        active: Notifs.dnd
+                        onClicked: Notifs.dnd = !Notifs.dnd
                     }
+
+                    QuickToggle {
+                        icon: Icons.keepAwake
+                        label: "Awake"
+                        active: Toggles.keepAwake
+                        onClicked: Toggles.keepAwake = !Toggles.keepAwake
+                    }
+                }
+
+                Divider {}
+
+                // ---------- calendar ----------
+                HubCalendar {
+                    id: calendar
+                    Layout.fillWidth: true
+                }
+
+                Divider {}
+
+                // ---------- events of the selected day ----------
+                HubEvents {
+                    Layout.fillWidth: true
+                    day: calendar.selected
+                    today: calendar.today
                 }
             }
 
             Loader {
                 anchors.fill: parent
-                active: hub.tab === 1
+                active: hub.current.id === "system"
                 sourceComponent: HubSystem {}
             }
 
             Loader {
                 anchors.fill: parent
-                active: hub.tab === 2
+                active: hub.current.id === "about"
                 sourceComponent: HubAbout {}
+            }
+
+            // ---------- the picker on show: the same view as in its own panel ----------
+            Component {
+                id: launcherView
+                LauncherView {}
+            }
+            Component {
+                id: wallpaperView
+                WallpaperView {}
+            }
+            Component {
+                id: themeView
+                ThemeView {}
+            }
+            Component {
+                id: clipboardView
+                ClipboardView {}
+            }
+            Component {
+                id: screenshotView
+                ScreenshotView {}
+            }
+            Component {
+                id: keybindsView
+                KeybindsView {}
+            }
+            Component {
+                id: installView
+                InstallView {}
+            }
+            Component {
+                id: removeView
+                RemoveView {}
+            }
+
+            Loader {
+                id: picker
+                anchors.fill: parent
+                active: hub.tab >= 3
+                sourceComponent: ({
+                        launcher: launcherView,
+                        wallpaper: wallpaperView,
+                        theme: themeView,
+                        clipboard: clipboardView,
+                        screenshot: screenshotView,
+                        keybinds: keybindsView,
+                        install: installView,
+                        remove: removeView
+                    })[hub.current.id] ?? null
+                onLoaded: if (hub.current.takesKeys)
+                    item.forceActiveFocus()
             }
         }
 
         Hint {
             readonly property string media: Media.active ? " • p/b/n media" : ""
-            text: hub.tab === 0 ? "Tab or 1 2 3 tabs • h l month • j k day • t today" + media + " • a w e c s ? i r open • Esc" : "Tab or 1 2 3 tabs" + media + " • a w e c s ? i r open • Esc close"
+            text: hub.tab === 0 ? "Home • Tab or 1 2 3 tabs • h l month • j k day • t today" + media + " • a w e c s ? i r pickers • Esc" : hub.current.label + " • Tab / Shift+Tab or 1 2 3 tabs • Esc close"
         }
     }
 }

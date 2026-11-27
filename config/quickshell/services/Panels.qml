@@ -18,6 +18,30 @@ Singleton {
         return current === name;
     }
 
+    // ---------- pickers shown inside the hub ----------
+
+    // each picker's card, [width, height] (0 = as tall as its content), the same in its own panel and as
+    // the hub's tab (the hub grows or shrinks to it)
+    readonly property var pickerSizes: ({
+            launcher: [560, 440],
+            wallpaper: [1000, 760],
+            theme: [420, 0],
+            clipboard: [1000, 760],
+            screenshot: [420, 0],
+            keybinds: [640, 620],
+            install: [640, 520],
+            remove: [640, 520]
+        })
+
+    // the hub's tab: "home", "system", "about", or a picker's name ("launcher", "wallpaper"...), whose
+    // content the hub then shows as that tab
+    property string hubTab: "home"
+
+    // a picker is on screen: in its own panel, or as the hub's tab. What services go by
+    function isShown(name) {
+        return current === name || (current === "hub" && hubTab === name);
+    }
+
     function show(name) {
         current = name;
     }
@@ -27,9 +51,9 @@ Singleton {
     }
 
     // closes `name`, but only if it is the open one: a panel that is still sliding out
-    // must not be able to close the panel that replaced it
+    // must not be able to close the panel that replaced it. A picker shown as the hub's tab closes the hub
     function hide(name) {
-        if (current === name)
+        if (isShown(name))
             current = "";
     }
 

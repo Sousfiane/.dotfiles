@@ -22,7 +22,7 @@ Singleton {
         return extensions.map(e => "*" + q + "*." + e);
     }
 
-    readonly property bool open: Panels.isOpen("wallpaper")
+    readonly property bool open: Panels.isShown("wallpaper")      // its panel, or the hub's tab
 
     function toggle() {
         Panels.toggle("wallpaper");

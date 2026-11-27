@@ -2,7 +2,7 @@ pragma Singleton
 import Quickshell
 import QtQuick
 
-// The hub's open state, and the pickers it opens once it has closed.
+// The hub's open state (its tab is Panels.hubTab).
 Singleton {
     id: root
 
@@ -10,10 +10,5 @@ Singleton {
 
     function toggle() {
         Panels.toggle("hub");
-    }
-
-    // close the hub first, then open the picker once the hub has let go of the keyboard
-    function openPicker(target) {       // "launcher" | "wallpaper" | "theme" | "clipboard" | "screenshot" | "install" | "remove" | "keybinds"
-        Panels.closeThen(() => Panels.show(target));
     }
 }

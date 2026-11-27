@@ -9,7 +9,7 @@ import qs.config
 Singleton {
     id: root
 
-    readonly property bool open: Panels.isOpen("screenshot")
+    readonly property bool open: Panels.isShown("screenshot")      // its panel, or the hub's tab
 
     function toggle() {
         Panels.toggle("screenshot");

@@ -262,15 +262,20 @@ Scope {
                         }
 
                         // compact windows size themselves from the card, so the card must not size itself from the window
-                        width: root.compact ? root.cardWidth : Math.min(root.cardWidth, parent.width - 64)
+                        readonly property real targetWidth: root.compact ? root.cardWidth : Math.min(root.cardWidth, parent.width - 64)
                         readonly property real targetHeight: {
                             const natural = root.cardHeight > 0 ? root.cardHeight : loader.implicitHeight + 2 * root.padding;
                             return root.compact ? natural : Math.min(natural, parent.height - 16);
                         }
 
-                        // content that changes size (a prompt, a diff, a list growing) resizes the card
-                        // smoothly; not while it slides in or out, where it just takes its size
+                        // content that changes size (a prompt, a diff, a list growing, the hub's tabs) resizes
+                        // the card smoothly; not while it slides in or out, where it just takes its size
+                        width: targetWidth
                         height: targetHeight
+                        Behavior on width {
+                            enabled: area.settled && root.animateHeight
+                            Anim {}
+                        }
                         Behavior on height {
                             enabled: area.settled && root.animateHeight
                             Anim {}
@@ -296,19 +301,20 @@ Scope {
                             anchors.fill: parent
                         }
 
-                        // the content takes its new size at once; the card reveals or trims it as it resizes
+                        // the content takes its new size at once; the card reveals or trims it as it resizes,
+                        // the content staying where it will be once the card has grown or shrunk around it
                         Item {
                             anchors.fill: parent
-                            clip: card.height !== card.targetHeight
+                            clip: card.height !== card.targetHeight || card.width !== card.targetWidth
 
                             Loader {
                                 id: loader
                                 anchors {
                                     top: parent.top
-                                    left: parent.left
-                                    right: parent.right
-                                    margins: root.padding
+                                    topMargin: root.padding
                                 }
+                                x: (root.edge === "right" ? card.width - card.targetWidth : root.edge === "center" ? (card.width - card.targetWidth) / 2 : 0) + root.padding
+                                width: card.targetWidth - 2 * root.padding
                                 height: card.targetHeight - 2 * root.padding
                                 sourceComponent: root.content
                             }
