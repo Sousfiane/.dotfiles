@@ -77,9 +77,11 @@ hl.bind(mod .. " + C", hl.dsp.exec_cmd("uwsm-app -- vesktop"), { description = "
 -- 🔧 Utilities
 --------------------------------------------------
 
+-- Quickshell is a user service (install/units/quickshell.service): restarted through it, so it stays one that
+-- comes back after a crash (a `qs` killed and started by hand would run outside it)
 hl.bind(
 	mod .. " + " .. shift .. " + R",
-	hl.dsp.exec_cmd("pkill -x qs; uwsm-app -s s -- qs"),
+	hl.dsp.exec_cmd("systemctl --user restart quickshell"),
 	{ description = "Restart Quickshell" }
 )
 
