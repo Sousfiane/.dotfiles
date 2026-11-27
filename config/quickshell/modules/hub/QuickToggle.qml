@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.config
+import qs.components.ui
 
 // A quick toggle in the hub: its icon over its name, filled with the accent while it is on.
 Rectangle {

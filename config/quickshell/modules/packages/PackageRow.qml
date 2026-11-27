@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.config
+import qs.components.ui
 
 // A package in the Install or Remove list: its name and version, its description under them, and small
 // tags on the right (its repository, "installed", the dotfiles list it's in...).

@@ -1,5 +1,6 @@
 import QtQuick
 import qs.config
+import qs.components.ui
 
 // A thin bar filled to `fraction` (0..1): the accent, the urgent colour past `warnAt`.
 Rectangle {

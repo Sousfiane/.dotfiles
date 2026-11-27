@@ -1,5 +1,6 @@
 import QtQuick
 import qs.config
+import qs.components.ui
 
 // A history graph (the hub's System tab): `values` as a line with a soft fill under it, the newest on the
 // right, the graph filling up from the right as readings come. A second series (`values2`) is drawn as a

@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 import QtQuick.Layouts
 import qs.config
+import qs.components.ui
 
 // big time with the date under it (hub header, lockscreen)
 ColumnLayout {

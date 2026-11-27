@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.config
+import qs.components.ui
 import qs.services
 
 // cover, title / artist, progress and controls of the current MPRIS player (hub)

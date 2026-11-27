@@ -1,5 +1,6 @@
 import QtQuick
 import qs.config
+import qs.components.ui
 
 // A round button holding one glyph (the hub's tabs), filled with the accent when `active`. The glyph is
 // centred by its ink, not its text box: Nerd Font icons sit off-centre in their box, each differently.
