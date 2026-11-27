@@ -24,6 +24,7 @@ import qs.modules.packages
 import qs.modules.keybinds
 import qs.modules.polkit
 import qs.services
+import qs.components.panel
 
 // The shell: the bar, the wallpaper, the dock, the toasts and every panel, each on the monitors it
 // needs.
@@ -59,4 +60,7 @@ ShellRoot {
     LockScreen {}
     TrayPanel {}
     AppDock {}
+
+    // the window the right edge's dropdowns share: one card, growing or shrinking from one to another
+    SharedDropdown {}
 }

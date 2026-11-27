@@ -124,4 +124,18 @@ Singleton {
 
     // the open dropdown's edge ("" when none): the clock lights up for any center panel
     readonly property string activeEdge: current !== "" ? (edges[current] ?? "") : ""
+
+    // the dropdowns shown in the window the right edge's share (SharedDropdown), by name
+    property var panels: ({})
+
+    function setPanel(name, panel) {
+        if ((panels[name] ?? null) === panel)
+            return;
+        const next = Object.assign({}, panels);
+        if (panel)
+            next[name] = panel;
+        else
+            delete next[name];
+        panels = next;
+    }
 }
