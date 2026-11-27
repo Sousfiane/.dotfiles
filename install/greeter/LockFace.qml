@@ -1,1 +1,0 @@
-../../config/quickshell/modules/lock/LockFace.qml

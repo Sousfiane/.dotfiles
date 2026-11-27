@@ -63,7 +63,7 @@ For a login screen in the theme (greetd with a Quickshell greeter, instead of sd
 ~/.dotfiles/install/install.sh greeter          # installs it in /etc/greetd, then asks before switching
 ```
 
-It looks like the lock screen and logs in to the same uwsm session. It runs as greetd's `greeter` user, which can't read the home, so it reads the theme from `/var/lib/qs-greeter`: `files.sh` writes the palette, font and user name there on every theme change, and Quickshell copies the wallpaper there when it changes. Its files are in `install/greeter`, with copies of `monitors.lua` and `input.lua`: run the step again after changing those. If it ever fails to come up, Ctrl+Alt+F2 gives a console, and `sudo systemctl disable greetd && sudo systemctl enable sddm` goes back.
+It shows the lock screen itself (the same `LockFace.qml`) and logs in to the same uwsm session. Its files are in the home like the rest, `config/hypr/greeter.lua` and `config/quickshell/greeter.qml`: greetd runs them as its `greeter` user, which the step lets cross the home with an ACL (`setfacl -m u:greeter:x ~`: it can't list the home, only reach paths it knows). So it reads the theme, the wallpaper, the monitors and the keyboard as they are, and changes to them need nothing more. If it ever fails to come up, Ctrl+Alt+F2 gives a console, and `sudo systemctl disable greetd && sudo systemctl enable sddm` goes back.
 
 ## Layout
 

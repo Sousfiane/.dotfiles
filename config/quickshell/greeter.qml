@@ -3,41 +3,64 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Greetd
 import QtQuick
+import qs.modules.lock
 
-// The login screen: greetd runs it as the `greeter` user, in a small Hyprland (/etc/greetd/hypr). What it
-// shows is LockFace.qml, the lock screen's own file (a link to config/quickshell/modules/lock, copied next to
-// this one when installed), so the two always match; restart and shut down are added in the corner. Enter
-// logs in to the same session as before, uwsm's Hyprland.
+// The login screen: greetd runs it as the `greeter` user, in a small Hyprland (config/hypr/greeter.lua). What
+// it shows is the lock screen's own LockFace, so the two always match; restart and shut down are added in the
+// corner. Enter logs in to the same session as before, uwsm's Hyprland.
 //
-// It can't read the user's home (private), so the theme comes from /var/lib/qs-greeter, a folder the user
-// owns: theme.json (palette, fonts, user name), written by ~/.config/theme/files.sh on every theme change,
-// and the wallpaper, copied by Quickshell's wallpaper service. Without them, Rosé Pine Moon and no picture.
+// It reads everything where it is, in the user's home: the greeter user may cross the home (an ACL that
+// install/steps/greeter.sh sets: `x` only, it can't list it), and what's under it is readable. The theme is
+// ~/.config/theme's (theme.json, the current palette, the fonts picked), the wallpaper the shell's current
+// one. The home is QS_GREETER_HOME (greeter.lua passes it), the user its owner, QS_GREETER_USER.
 //
-// Outside greetd (QS_GREETER_DIR points at another folder to test with) it runs in test mode: any password
+// Outside greetd (as the user: `qs -p ~/.config/quickshell/greeter.qml`) it runs in test mode: any password
 // works, Esc quits, and it quits by itself after QS_GREETER_TEST_SECONDS (20 by default).
 ShellRoot {
     id: root
 
-    // ---------- the theme, from the user's last export ----------
+    // ---------- the theme, as config/Theme.qml reads it ----------
 
-    readonly property string dir: Quickshell.env("QS_GREETER_DIR") || "/var/lib/qs-greeter"
+    readonly property string home: Quickshell.env("QS_GREETER_HOME") || Quickshell.env("HOME")
 
-    FileView {
-        id: themeFile
-        path: root.dir + "/theme.json"
-        blockLoading: true
-        printErrors: false
-    }
-
-    readonly property var theme: {
+    function parse(file) {
         try {
-            return JSON.parse(themeFile.text());
+            return JSON.parse(file.text());
         } catch (e) {
             return {};
         }
     }
 
-    // Rosé Pine Moon, for a missing or broken export
+    FileView {
+        id: settingsFile
+        path: root.home + "/.config/theme/theme.json"
+        blockLoading: true
+        printErrors: false
+    }
+    FileView {
+        id: fontsFile
+        path: root.home + "/.local/state/theme/fonts.json"
+        blockLoading: true
+        printErrors: false
+    }
+    FileView {
+        id: paletteName
+        path: root.home + "/.local/state/theme/palette"
+        blockLoading: true
+        printErrors: false
+    }
+    FileView {
+        id: paletteFile
+        path: root.home + "/.config/theme/palettes/" + (paletteName.text().trim() || root.settings.palette || "rose-pine") + ".json"
+        blockLoading: true
+        printErrors: false
+    }
+
+    readonly property var settings: parse(settingsFile)
+    readonly property var fonts: Object.assign({}, settings.font ?? {}, parse(fontsFile))
+    readonly property var palette: parse(paletteFile)
+
+    // Rosé Pine Moon, for a missing or broken palette
     readonly property var colors: Object.assign({
         base: "#232136",
         surface: "#2a273f",
@@ -54,15 +77,31 @@ ShellRoot {
         highlightLow: "#2a283e",
         highlightMed: "#44415a",
         highlightHigh: "#56526e"
-    }, theme.colors ?? {})
-    readonly property string font: theme.font ?? "JetBrainsMono Nerd Font"
-    readonly property int fontSize: theme.fontSize ?? 13
-    readonly property int radius: theme.radius ?? 12
-    readonly property real panelAlpha: theme.panelAlpha ?? 0.95
-    readonly property string wallpaper: "file://" + dir + "/wallpaper"
+    }, palette.colors ?? {})
+    readonly property string font: fonts.ui ?? "JetBrainsMono Nerd Font"
+    readonly property int fontSize: fonts.uiPixelSize ?? 13
+    readonly property int radius: settings.radius?.large ?? 12
+    readonly property real panelAlpha: settings.opacity?.panel ?? 0.95
+    readonly property real controlAlpha: settings.opacity?.control ?? 0.75
 
+    // the shell's current wallpaper: its state file (services/Wallpapers.qml), the newest if there are several
+    property string wallpaper: ""
+    Process {
+        running: true
+        command: ["sh", "-c", 'f=$(ls -t "$1"/.local/state/quickshell/by-shell/*/wallpaper 2>/dev/null | head -n 1) && head -n 1 "$f"', "sh", root.home]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const path = text.trim();
+                if (path !== "")
+                    root.wallpaper = "file://" + path;
+            }
+        }
+    }
+
+    // the palette's colours are hex strings: made a colour first (a string has no r, g, b: black)
     function alpha(c, a) {
-        return Qt.rgba(c.r, c.g, c.b, a);
+        const k = Qt.tint(c, "transparent");
+        return Qt.rgba(k.r, k.g, k.b, a);
     }
 
     // ---------- logging in ----------
@@ -70,7 +109,7 @@ ShellRoot {
     readonly property bool testing: !Greetd.available
     readonly property var session: ["uwsm", "start", "-e", "-D", "Hyprland", "hyprland.desktop"]
 
-    property string user: theme.user ?? ""
+    property string user: (testing ? Quickshell.env("USER") : Quickshell.env("QS_GREETER_USER")) ?? ""
     property string password: ""
     property string message: ""
     property bool busy: false
@@ -81,7 +120,7 @@ ShellRoot {
         if (busy || leaving || password === "")
             return;
         if (user === "") {
-            // no export yet: what was typed is the user name, the password comes next
+            // no user known: what was typed is the user name, the password comes next
             user = password.trim();
             password = "";
             return;
@@ -195,7 +234,7 @@ ShellRoot {
                 message: root.message
                 note: root.testing ? "Test mode: any password works, Esc quits" : ""
                 hint: "Enter log in • Esc clear"
-                reveal: root.user === ""                   // no export yet: the user name is typed first
+                reveal: root.user === ""                   // no user known: the user name is typed first
                 placeholder: root.busy ? "Checking…" : root.user === "" ? "User name" : "Password"
                 leaving: root.leaving
 
@@ -245,7 +284,8 @@ ShellRoot {
                             implicitWidth: row.implicitWidth + 28
                             implicitHeight: 40
                             radius: 20
-                            color: mouse.containsMouse ? root.alpha(root.colors.overlay, 0.95) : root.alpha(root.colors.base, 0.7)
+                            // the bar's fill, and its rows' on hover
+                            color: mouse.containsMouse ? root.alpha(root.colors.overlay, root.controlAlpha) : root.alpha(root.colors.base, root.panelAlpha)
                             border.width: 1
                             border.color: mouse.containsMouse ? root.colors.iris : root.alpha(root.colors.text, 0.12)
 

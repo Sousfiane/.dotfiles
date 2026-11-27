@@ -8,7 +8,6 @@
 #   ~/.config/hypr/hyprqt6engine-colors.conf   Qt apps: colours
 #   ~/.config/kdeglobals                       Qt apps: KDE's colour groups ([Colors:*] only)
 #   ~/.config/vesktop/themes/palette.theme.css   Discord: the palette, over rin's Rosé Pine theme
-#   /var/lib/qs-greeter/theme.json             the login screen: palette, font, user (if the folder exists)
 
 set -euo pipefail
 
@@ -201,23 +200,6 @@ discord() {
         | ":root:root {", ($names[] as $n | "    --\($n): \(.colors[$n]);"), "}"' <<<"$theme"
 }
 
-# ---------- the login screen ----------
-
-# The greeter runs as another user and can't read the home (it's private), so it reads this copy in
-# /var/lib/qs-greeter, a folder the user owns (install/steps/greeter.sh makes it). The wallpaper is copied
-# there by Quickshell's wallpaper service
-GREETER_DIR=${QS_GREETER_DIR:-/var/lib/qs-greeter}
-greeter() {
-    jq --arg user "$USER" '{
-        user: $user,
-        colors: .colors,
-        font: (.font.ui),
-        fontSize: (.font.uiPixelSize),
-        radius: (.radius.large),
-        panelAlpha: (.opacity.panel)
-    }' <<<"$theme"
-}
-
 # ---------- write them ----------
 
 status=0
@@ -226,7 +208,4 @@ write "$HOME/.config/hypr/hyprqt6engine.conf" hyprqt6engine || status=1
 write "$HOME/.config/hypr/hyprqt6engine-colors.conf" qt_colors || status=1
 write "$HOME/.config/kdeglobals" kdeglobals || status=1
 write "$HOME/.config/vesktop/themes/palette.theme.css" discord || status=1
-if [[ -w $GREETER_DIR ]]; then
-    write "$GREETER_DIR/theme.json" greeter || status=1
-fi
 exit $status

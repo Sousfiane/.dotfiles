@@ -5,9 +5,9 @@ import QtQuick.Layouts
 
 // What the lock screen and the login screen both show: the wallpaper blurred and darkened, the clock, the
 // user, the password field and the line under it. The same file is used by both, so they always match: the
-// lock screen (LockScreen.qml) and the greeter (install/greeter/shell.qml, which gets a copy of this file in
-// /etc/greetd/quickshell). That's why it imports nothing from the shell: the theme comes in as properties,
-// and typing goes out as signals, the host owns the password.
+// lock screen (LockScreen.qml) and the greeter (greeter.qml, run as another user before logging in). That's
+// why it imports nothing from the shell (Theme reads the running user's home): the theme comes in as
+// properties, and typing goes out as signals, the host owns the password.
 //
 // Whatever is declared inside a LockFace { } goes over it and fades with it (the weather, the power buttons).
 Item {
@@ -51,8 +51,10 @@ Item {
     readonly property int fastMs: 120
     readonly property var enterCurve: [0.16, 1, 0.3, 1, 1, 1]
 
+    // the palette's colours are hex strings: made a colour first (a string has no r, g, b: black)
     function alpha(c, a) {
-        return Qt.rgba(c.r, c.g, c.b, a);
+        const k = Qt.tint(c, "transparent");
+        return Qt.rgba(k.r, k.g, k.b, a);
     }
 
     opacity: shown ? 1 : 0

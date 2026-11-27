@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# The login screen: greetd with the Quickshell greeter (install/greeter), in place of sddm. Installs its files
-# into /etc/greetd, makes /var/lib/qs-greeter (the theme and wallpaper it reads: the home is private), and
-# then, asking first, switches the login screen from sddm to greetd.
+# The login screen: greetd with the Quickshell greeter, in place of sddm. The greeter's files are in the home
+# like the rest (config/hypr/greeter.lua, config/quickshell/greeter.qml, linked by the links step); greetd
+# runs them as its `greeter` user, which this lets cross the home with an ACL (`x` only: it can't list the
+# home, only reach paths it knows, and what's under them that others can read). Then it writes
+# /etc/greetd/config.toml and, asking first, switches the login screen from sddm to greetd.
 #
-# Optional, run by name: `install/install.sh greeter`. Run it again after changing install/greeter, the lock
-# screen (LockFace.qml), or the monitors or keyboard in config/hypr (the greeter has its own copies). To go
-# back to sddm:
+# Optional, run by name: `install/install.sh greeter`. Changes to the greeter, the lock screen, the theme,
+# the wallpaper, the monitors or the keyboard reach it by themselves: no need to run this again. To go back
+# to sddm:
 #   sudo systemctl disable greetd && sudo systemctl enable sddm
 #
 # If the login screen ever fails to come up, another console still works (Ctrl+Alt+F2) to log in there and
@@ -15,37 +17,48 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib.sh"
 
 command -v greetd &>/dev/null || fail "greetd is missing (in packages/desktop.txt: run the packages step)"
 command -v qs &>/dev/null || fail "Quickshell is missing (in packages/desktop.txt: run the packages step)"
+command -v setfacl &>/dev/null || fail "setfacl is missing (the acl package)"
 id greeter &>/dev/null || fail "The greeter user is missing (greetd's package makes it: reinstall greetd)"
 
-src="$DOTFILES/install/greeter"
-hypr="$DOTFILES/config/hypr/config"
+hypr="$HOME/.config/hypr/greeter.lua"
+shell="$HOME/.config/quickshell/greeter.qml"
+[[ -e $hypr && -e $shell ]] || fail "The greeter's files aren't linked in ~/.config: run the links step"
 
-# ---------- the files ----------
+# ---------- the greeter may read the home ----------
 
-sudo install -d -m 755 /etc/greetd/hypr /etc/greetd/quickshell
-sudo install -m 644 "$src/shell.qml" /etc/greetd/quickshell/shell.qml
-sudo install -m 644 "$src/LockFace.qml" /etc/greetd/quickshell/LockFace.qml   # the lock screen's, through the link
-sudo install -m 644 "$src/hyprland.lua" /etc/greetd/hypr/hyprland.lua
-sudo install -m 644 "$hypr/monitors.lua" /etc/greetd/hypr/monitors.lua
-sudo install -m 644 "$hypr/input.lua" /etc/greetd/hypr/input.lua
-sudo install -m 644 "$src/config.toml" /etc/greetd/config.toml
-success "Greeter installed in /etc/greetd"
-
-# the theme it reads: a folder the user owns and the greeter can read
-sudo install -d -o "$USER" -g "$(id -gn)" -m 755 /var/lib/qs-greeter
-"$HOME/.config/theme/files.sh" || warn "The theme couldn't be written for the greeter (files.sh)"
-state=$(find "$HOME/.local/state/quickshell" -name wallpaper -type f 2>/dev/null | head -n 1)
-wall=$(head -n 1 "$state" 2>/dev/null || true)
-if [[ -f $wall ]]; then
-    cp -f -- "$wall" /var/lib/qs-greeter/wallpaper
-    success "Theme and wallpaper copied for the greeter"
-else
-    warn "No wallpaper picked yet: the greeter shows a plain background until one is"
-fi
+sudo setfacl -m u:greeter:x "$HOME"
+for f in "$hypr" "$shell" "$HOME/.config/theme/theme.json"; do
+    sudo -u greeter test -r "$f" || fail "The greeter user still can't read ${f/#$HOME/\~}: login screen left as it is"
+done
+success "The greeter user may cross ~ (an ACL: it can't list it)"
 
 # the config greetd will run, checked before it's the only way in
-Hyprland --verify-config -c /etc/greetd/hypr/hyprland.lua 2>/dev/null | grep -q "config ok" \
+QS_GREETER_HOME=$HOME Hyprland --verify-config -c "$hypr" 2>/dev/null | grep -q "config ok" \
     || fail "The greeter's Hyprland config doesn't parse: login screen left as it is"
+
+# ---------- greetd's config ----------
+
+sudo tee /etc/greetd/config.toml >/dev/null <<EOF
+# Written by ~/.dotfiles/install/steps/greeter.sh: the login screen is a small Hyprland run as the
+# \`greeter\` user ($hypr), which runs the Quickshell greeter.
+
+[terminal]
+vt = 1
+
+[default_session]
+# QS_GREETER_HOME: the home it reads the greeter, the theme and the wallpaper from. Their output would print
+# on the console under it as the screen comes up: dropped (Hyprland keeps its own log, in
+# /run/user/<greeter's uid>/hypr)
+command = "sh -c 'QS_GREETER_HOME=$HOME exec start-hyprland -- -c $hypr >/dev/null 2>&1'"
+user = "greeter"
+EOF
+success "greetd's config written (/etc/greetd/config.toml)"
+
+# the copies an earlier version of this step made, read by nothing now
+if [[ -e /etc/greetd/hypr || -e /etc/greetd/quickshell || -e /var/lib/qs-greeter ]]; then
+    sudo rm -rf /etc/greetd/hypr /etc/greetd/quickshell /var/lib/qs-greeter
+    success "The old copies removed (/etc/greetd/hypr, /etc/greetd/quickshell, /var/lib/qs-greeter)"
+fi
 
 # ---------- the switch ----------
 
