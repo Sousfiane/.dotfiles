@@ -2,7 +2,7 @@
 # Brings everything up to date with theme.json and its palette. Quickshell runs this whenever either changes
 # (it follows them itself), the `theme` command when Quickshell isn't running, and steps/system.sh on install.
 #
-#   files      hyprtoolkit's and qt6ct's own files, written again (files.sh)
+#   files      hyprtoolkit's and hyprqt6engine's own files, written again (files.sh)
 #   Hyprland   reloads its config, for its own colours
 #   kitty      reloads its config (SIGUSR1), in every window
 #   tmux       sources its config, if a server is running

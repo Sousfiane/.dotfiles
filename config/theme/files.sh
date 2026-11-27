@@ -4,8 +4,9 @@
 # These files aren't in the dotfiles: edit theme.json, or this file.
 #
 #   ~/.config/hypr/hyprtoolkit.conf     hyprtoolkit apps (hyprland-dialog, the share picker, the polkit agent)
-#   ~/.config/qt6ct/qt6ct.conf          Qt apps: style, fonts, icons
-#   ~/.config/qt6ct/colors.conf         Qt apps: colours
+#   ~/.config/hypr/hyprqt6engine.conf          Qt apps: style, fonts, icons
+#   ~/.config/hypr/hyprqt6engine-colors.conf   Qt apps: colours
+#   ~/.config/kdeglobals                       Qt apps: KDE's colour groups ([Colors:*] only)
 #   ~/.config/vesktop/themes/palette.theme.css   Discord: the palette, over rin's Rosé Pine theme
 
 set -euo pipefail
@@ -69,51 +70,38 @@ hyprtoolkit() {
         ] | join("\n")' <<<"$theme"
 }
 
-# ---------- qt6ct ----------
+# ---------- hyprqt6engine ----------
 
-qt6ct() {
-    header ";"
-    jq -r --arg home "$HOME" '
-        # a Qt font: family, point size, then Qt'"'"'s defaults for the rest
+# Qt apps' platform theme (QT_QPA_PLATFORMTHEME=hyprqt6engine, in uwsm/env): hyprlang, like hyprtoolkit's.
+# The style is Darkly (rounded, from the AUR), which takes its colours from the palette below; without it
+# Qt falls back to Fusion
+hyprqt6engine() {
+    header "#"
+    jq -r --arg colors "$HOME/.config/hypr/hyprqt6engine-colors.conf" '
         .font.appPointSize as $size
-        | def qfont(family): "\"" + family + ",\($size),-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular\"";
-        [
-            "[Appearance]",
-            "color_scheme_path=" + $home + "/.config/qt6ct/colors.conf",
-            "custom_palette=true",
-            "icon_theme=" + .icons,
-            "standard_dialogs=default",
-            "style=Fusion",
+        | [
+            "theme {",
+            "    style = Darkly",
+            "    color_scheme = " + $colors,
+            "    icon_theme = " + .icons,
+            "    font = " + (.font.app // .font.ui),
+            "    font_size = \($size)",
+            "    font_fixed = " + .font.mono,
+            "    font_fixed_size = \($size)",
+            "}",
             "",
-            "[Fonts]",
-            "fixed=" + qfont(.font.mono),
-            "general=" + qfont(.font.app // .font.ui),
-            "",
-            "[Interface]",
-            "activate_item_on_single_click=1",
-            "buttonbox_layout=0",
-            "cursor_flash_time=1000",
-            "dialog_buttons_have_icons=1",
-            "double_click_interval=400",
-            "gui_effects=@Invalid()",
-            "keyboard_scheme=2",
-            "menus_have_icons=true",
-            "show_shortcuts_in_context_menus=true",
-            "stylesheets=@Invalid()",
-            "toolbutton_style=4",
-            "underline_shortcut=1",
-            "wheel_scroll_lines=3",
-            "",
-            "[Troubleshooting]",
-            "force_raster_widgets=1",
-            "ignored_applications=@Invalid()"
+            "misc {",
+            "    single_click_activate = true",
+            "    menus_have_icons = true",
+            "    shortcuts_for_context_menus = true",
+            "}"
         ] | join("\n")' <<<"$theme"
 }
 
 # ---------- Qt colours ----------
 
-# Qt's palette roles, in the order qt6ct lists them: a palette colour's name for each group, or a fixed
-# #AARRGGBB. Columns: active, disabled, inactive
+# Qt's palette roles, in qt6ct's colour scheme format (hyprqt6engine reads it too): a palette colour's name
+# for each group, or a fixed #AARRGGBB. Columns: active, disabled, inactive
 qt_colors() {
     header ";"
     echo "[ColorScheme]"
@@ -148,6 +136,53 @@ qt_colors() {
     ' <<<"$theme"
 }
 
+# ---------- KDE colours ----------
+
+# Darkly (and KDE apps) take some colours from KDE's colour groups in kdeglobals rather than from the Qt
+# palette: the menu bar from Header, text fields from View... Without them they fall back to KDE's light
+# defaults (dark menu bar text, white fields). The same palette names as qt_colors, for each group.
+# kdeglobals also holds the KDE apps' own settings (the file dialog's): those stay, only [Colors:*] is replaced
+kdeglobals() {
+    local file="$HOME/.config/kdeglobals"
+    # the file as the apps left it, without its colour groups or the blank lines they leave at the end
+    if [[ -f $file ]]; then
+        awk '/^\[/ { skip = /^\[Colors:/ }
+             skip { next }
+             /^[[:space:]]*$/ { blanks++; next }
+             { while (blanks) { print ""; blanks-- } print }' "$file"
+        echo
+    fi
+    jq -r '
+        # "#rrggbb" to KDE'"'"'s "r,g,b"
+        def hex: ascii_downcase | explode | reduce .[] as $d (0; . * 16 + (if $d >= 97 then $d - 87 else $d - 48 end));
+        def rgb(name): .colors[name] | [.[1:3], .[3:5], .[5:7]] | map(hex | tostring) | join(",");
+        . as $t
+        | def group(name; bg; alt; fg; inactive):
+            "[Colors:" + name + "]",
+            "BackgroundNormal=" + ($t | rgb(bg)),
+            "BackgroundAlternate=" + ($t | rgb(alt)),
+            "ForegroundNormal=" + ($t | rgb(fg)),
+            "ForegroundInactive=" + ($t | rgb(inactive)),
+            "ForegroundActive=" + ($t | rgb("rose")),
+            "ForegroundLink=" + ($t | rgb("foam")),
+            "ForegroundVisited=" + ($t | rgb("iris")),
+            "ForegroundNegative=" + ($t | rgb("love")),
+            "ForegroundNeutral=" + ($t | rgb("gold")),
+            "ForegroundPositive=" + ($t | rgb("pine")),
+            "DecorationFocus=" + ($t | rgb("iris")),
+            "DecorationHover=" + ($t | rgb("highlightHigh")),
+            "";
+        group("Window";          "base";          "surface";      "text";   "subtle"),
+        group("View";            "overlay";       "surface";      "text";   "subtle"),
+        group("Button";          "overlay";       "surface";      "rose";   "subtle"),
+        group("Selection";       "highlightHigh"; "highlightMed"; "gold";   "subtle"),
+        group("Tooltip";         "highlightLow";  "surface";      "subtle"; "muted"),
+        group("Complementary";   "base";          "surface";      "text";   "subtle"),
+        group("Header";          "base";          "surface";      "text";   "subtle"),
+        group("Header][Inactive"; "base";         "surface";      "text";   "subtle")
+    ' <<<"$theme"
+}
+
 # ---------- Discord (Vesktop) ----------
 
 # The theme itself is rin's Rosé Pine, an online theme in Vesktop (its link in Settings > Themes, so it
@@ -169,7 +204,8 @@ discord() {
 
 status=0
 write "$HOME/.config/hypr/hyprtoolkit.conf" hyprtoolkit || status=1
-write "$HOME/.config/qt6ct/qt6ct.conf" qt6ct || status=1
-write "$HOME/.config/qt6ct/colors.conf" qt_colors || status=1
+write "$HOME/.config/hypr/hyprqt6engine.conf" hyprqt6engine || status=1
+write "$HOME/.config/hypr/hyprqt6engine-colors.conf" qt_colors || status=1
+write "$HOME/.config/kdeglobals" kdeglobals || status=1
 write "$HOME/.config/vesktop/themes/palette.theme.css" discord || status=1
 exit $status
