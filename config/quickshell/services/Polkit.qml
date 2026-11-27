@@ -9,9 +9,10 @@ import QtQuick
 Singleton {
     id: root
 
-    readonly property var flow: agent.flow                       // the request on screen, or null
-    readonly property bool active: agent.isActive
-    readonly property bool registered: agent.isRegistered
+    readonly property var agent: agentLoader.item
+    readonly property var flow: agent?.flow ?? null              // the request on screen, or null
+    readonly property bool active: agent?.isActive ?? false
+    readonly property bool registered: agent?.isRegistered ?? false
     readonly property bool open: Panels.isOpen("polkit")
 
     // a wrong password: polkit asks again, with this to show
@@ -28,8 +29,27 @@ Singleton {
         Panels.hide("polkit");
     }
 
-    PolkitAgent {
-        id: agent
+    // Registering can fail: right after a crash (Quickshell restarts itself) polkit still holds the old
+    // agent for a moment, and Quickshell never tries again. So while it isn't registered, the agent is made
+    // again every few seconds, on a new object path (the old one stays taken within this process)
+    property int attempt: 0
+
+    Loader {
+        id: agentLoader
+        sourceComponent: PolkitAgent {
+            path: "/org/quickshell/PolkitAgent" + (root.attempt > 0 ? root.attempt : "")
+        }
+    }
+
+    Timer {
+        running: !root.registered
+        interval: 3000
+        repeat: true
+        onTriggered: {
+            agentLoader.active = false;
+            root.attempt++;
+            agentLoader.active = true;
+        }
     }
 
     // a request opens the panel; its end (allowed, cancelled or given up) closes it
