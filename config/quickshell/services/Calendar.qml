@@ -57,6 +57,10 @@ Singleton {
         return byDay[key(y, m, d)] ?? [];
     }
 
+    function sameDay(a, b) {
+        return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    }
+
     // make sure the month on screen (and the days of its neighbours shown in the grid) is loaded
     function show(y, m) {
         const first = new Date(y, m, 1);

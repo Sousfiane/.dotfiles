@@ -73,8 +73,7 @@ Singleton {
     }
 
     function desktopEntryFor(n) {
-        const id = n.desktopEntry.replace(/\.desktop$/, "");
-        return (id !== "" ? DesktopEntries.byId(id) : null) ?? (n.appName !== "" ? DesktopEntries.heuristicLookup(n.appName) : null);
+        return Apps.entryFor(n.desktopEntry.replace(/\.desktop$/, "")) ?? Apps.entryFor(n.appName);
     }
 
     // every name the app's windows could go by, lowercased

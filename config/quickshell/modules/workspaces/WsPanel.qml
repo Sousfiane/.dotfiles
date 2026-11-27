@@ -72,7 +72,7 @@ Variants {
 
                     // gives the icon and the readable name ("Files" rather than org.gnome.Nautilus): the same
                     // entry the dock picks, so a game from Heroic is found by its title
-                    readonly property var entry: Dock.entryForWindow(modelData)
+                    readonly property var entry: Apps.entryForWindow(modelData)
                     // no entry: a game of Steam or Heroic gives its cover and its name
                     readonly property var game: entry ? null : Games.gameFor(cls, modelData.title ?? "")
 

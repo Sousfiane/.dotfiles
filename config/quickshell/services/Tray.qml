@@ -62,9 +62,7 @@ Singleton {
     function entry(item) {
         const id = item.id ?? "";
         const base = id.replace(/[_-]status[_-]?icon.*$/i, "").replace(/[_-]client$/i, "");
-        return DesktopEntries.byId(id) ?? DesktopEntries.byId(base)
-            ?? (base !== "" ? DesktopEntries.heuristicLookup(base) : null)
-            ?? (item.title ? DesktopEntries.heuristicLookup(item.title) : null);
+        return Apps.entryFor(base) ?? Apps.entryFor(item.title);
     }
 
     // ---------- apps with nothing to activate ----------

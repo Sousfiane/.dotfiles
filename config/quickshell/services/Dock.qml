@@ -54,44 +54,12 @@ Singleton {
 
     // ---------- windows -> apps ----------
 
-    // the desktop entry a window class belongs to, cached (heuristicLookup walks every entry)
-    property var entryCache: ({})
-    readonly property var allApps: DesktopEntries.applications.values
-    onAllAppsChanged: {
-        entryCache = ({});
-        itemCache = ({});           // entries are new objects after an app is installed or removed
-    }
-
-    function entryFor(cls) {
-        const key = cls.toLowerCase();
-        if (key in entryCache)
-            return entryCache[key];
-        const exact = allApps.find(a => a.id.toLowerCase() === key || (a.startupClass ?? "").toLowerCase() === key);
-        return entryCache[key] = exact ?? DesktopEntries.heuristicLookup(cls) ?? null;
-    }
-
-    // the desktop entry whose name starts a window's title: a game from Heroic runs with a shared class
-    // (steam_app_default) that no entry claims, but its title begins with the game's name, the name of
-    // the shortcut Heroic writes for it. The longest name wins
-    function entryForTitle(title) {
-        if (title === "")
-            return null;
-        const key = "title:" + title;
-        if (key in entryCache)
-            return entryCache[key];
-        let best = null;
-        for (const a of allApps)
-            if (!a.noDisplay && Games.titleStartsWith(title, a.name) && (!best || a.name.length > best.name.length))
-                best = a;
-        return entryCache[key] = best;
-    }
-
-    // the desktop entry of a window: by its class, else by its title
-    function entryForWindow(w) {
-        const cls = Windows.appClass(w);
-        if (cls === "")
-            return null;
-        return entryFor(cls) ?? entryForTitle(w.title ?? "");
+    // item objects hold their entry: rebuilt when the entries change (an app installed or removed)
+    Connections {
+        target: Apps
+        function onAllChanged() {
+            root.itemCache = ({});
+        }
     }
 
     // a window with no desktop entry: a game of Steam or Heroic is keyed by "game:<name>" (its own icon
@@ -100,7 +68,7 @@ Singleton {
         const cls = Windows.appClass(w);
         if (cls === "")
             return "";
-        const e = entryForWindow(w);
+        const e = Apps.entryForWindow(w);
         if (e)
             return e.id;
         const g = Games.gameFor(cls, w.title ?? "");
@@ -153,7 +121,7 @@ Singleton {
     }
 
     // re-read once the desktop entries are scanned: right after startup byId() still finds nothing
-    readonly property var pinnedItems: allApps.length >= 0 ? pins.filter(id => DesktopEntries.byId(id) !== null).map(id => itemFor(id, true)) : []
+    readonly property var pinnedItems: Apps.all.length >= 0 ? pins.filter(id => DesktopEntries.byId(id) !== null).map(id => itemFor(id, true)) : []
     readonly property var runningItems: Object.keys(windowsByApp).filter(k => !pins.includes(k)).sort().map(k => itemFor(k, false))
 
     // what an icon is called: its desktop entry's or game's name, else its first window's title (a
