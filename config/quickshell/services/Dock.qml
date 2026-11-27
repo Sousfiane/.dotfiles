@@ -84,30 +84,19 @@ Singleton {
         return entryCache[key] = exact ?? DesktopEntries.heuristicLookup(cls) ?? null;
     }
 
-    // a letter (accented ones too) or a digit: "" past the end of a string is not
-    function isWordChar(c) {
-        return c !== "" && (c.toLowerCase() !== c.toUpperCase() || (c >= "0" && c <= "9"));
-    }
-
     // the desktop entry whose name starts a window's title: a game from Heroic runs with a shared class
-    // (steam_app_default) that no entry claims, but its title begins with the game's name
-    // ("Cyberpunk 2077 (C) 2020 by CD Projekt RED"), which is the name of the entry Heroic writes for it.
-    // The name must end at a word boundary, and the longest one wins
+    // (steam_app_default) that no entry claims, but its title begins with the game's name, the name of
+    // the shortcut Heroic writes for it. The longest name wins
     function entryForTitle(title) {
         if (title === "")
             return null;
-        const t = title.toLowerCase();
-        const key = "title:" + t;
+        const key = "title:" + title;
         if (key in entryCache)
             return entryCache[key];
         let best = null;
-        for (const a of allApps) {
-            const n = (a.name ?? "").toLowerCase();
-            if (a.noDisplay || n === "" || !t.startsWith(n) || isWordChar(t.charAt(n.length)))
-                continue;
-            if (!best || n.length > best.name.length)
+        for (const a of allApps)
+            if (!a.noDisplay && Games.titleStartsWith(title, a.name) && (!best || a.name.length > best.name.length))
                 best = a;
-        }
         return entryCache[key] = best;
     }
 
@@ -119,13 +108,17 @@ Singleton {
         return entryFor(cls) ?? entryForTitle(w.title ?? "");
     }
 
-    // window classes that have no desktop entry still get an icon: keyed by "class:<name>"
+    // a window with no desktop entry: a game of Steam or Heroic is keyed by "game:<name>" (its own icon
+    // even when games share a class), anything else by "class:<name>"
     function keyFor(w) {
         const cls = windowClass(w);
         if (cls === "")
             return "";
         const e = entryForWindow(w);
-        return e ? e.id : "class:" + cls;
+        if (e)
+            return e.id;
+        const g = Games.gameFor(cls, w.title ?? "");
+        return g ? "game:" + g.name : "class:" + cls;
     }
 
     // app key -> its windows, oldest first
@@ -143,17 +136,30 @@ Singleton {
     readonly property string activeKey: Hyprland.activeToplevel ? keyFor(Hyprland.activeToplevel) : ""
 
     // One object per dock icon, reused across updates so the dock's model diffs by identity:
-    //   { key, entry (null for a bare class), pinned }
+    //   { key, entry (null for a game or a bare class), game (its cover art for an icon), pinned }
     property var itemCache: ({})
+
+    Connections {
+        target: Games
+        function onGamesChanged() {
+            root.itemCache = ({});
+        }
+    }
 
     function itemFor(key, pinned) {
         const id = key + (pinned ? "#p" : "");
         if (itemCache[id])
             return itemCache[id];
+        if (key.startsWith("game:")) {
+            const name = key.slice(5);
+            const game = Games.games.find(g => g.name === name);
+            return itemCache[id] = { key, entry: null, game: true, pinned, name, icon: game?.art ?? "" };
+        }
         const entry = key.startsWith("class:") ? null : DesktopEntries.byId(key);
         return itemCache[id] = {
             key,
             entry,
+            game: false,
             pinned,
             name: entry?.name ?? key.slice(6),
             icon: entry?.icon ?? key.slice(6).toLowerCase()
@@ -164,13 +170,12 @@ Singleton {
     readonly property var pinnedItems: allApps.length >= 0 ? pins.filter(id => DesktopEntries.byId(id) !== null).map(id => itemFor(id, true)) : []
     readonly property var runningItems: Object.keys(windowsByApp).filter(k => !pins.includes(k)).sort().map(k => itemFor(k, false))
 
-    // what an icon is called: its desktop entry's name, else its first window's title (a game started
-    // from Heroic or a cracked exe has no entry and a class like steam_app_default; its title is the
-    // game's name), else the class
+    // what an icon is called: its desktop entry's or game's name, else its first window's title (a
+    // cracked exe has no entry and a class like steam_app_default; its title is its name), else the class
     function nameFor(item) {
         if (!item)
             return "";
-        if (item.entry)
+        if (item.entry || item.game)
             return item.name ?? "";
         return (windowsByApp[item.key] ?? [])[0]?.title || item.name || "";
     }

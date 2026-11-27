@@ -75,13 +75,15 @@ Variants {
                     // gives the icon and the readable name ("Files" rather than org.gnome.Nautilus): the same
                     // entry the dock picks, so a game from Heroic is found by its title
                     readonly property var entry: Dock.entryForWindow(modelData)
+                    // no entry: a game of Steam or Heroic gives its cover and its name
+                    readonly property var game: entry ? null : Games.gameFor(cls, modelData.title ?? "")
 
                     Layout.fillWidth: true
                     spacing: 10
 
                     AppIcon {
                         implicitSize: 22
-                        source: Quickshell.iconPath(line.entry?.icon ?? line.cls.toLowerCase(), "application-x-executable")
+                        source: Games.iconSource(line.entry?.icon ?? line.game?.art ?? line.cls.toLowerCase(), "application-x-executable")
                     }
 
                     ColumnLayout {
@@ -92,8 +94,8 @@ Variants {
                             Layout.fillWidth: true
                             variant: "row"
                             font.bold: true
-                            // no entry (a game from Heroic, a cracked exe): the window's title, which is its name
-                            text: line.entry?.name || line.modelData.title || line.cls || "Unknown"
+                            // no entry or game (a cracked exe): the window's title, which is its name
+                            text: line.entry?.name || line.game?.name || line.modelData.title || line.cls || "Unknown"
                             elide: Text.ElideRight
                         }
 

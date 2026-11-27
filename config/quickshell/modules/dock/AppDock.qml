@@ -301,7 +301,7 @@ Variants {
                                 anchors.bottomMargin: -tile.hop
                                 anchors.topMargin: tile.hop
                                 implicitSize: win.iconSize
-                                source: cell.isSep ? "" : Quickshell.iconPath(cell.modelData.icon, "application-x-executable")
+                                source: cell.isSep ? "" : Games.iconSource(cell.modelData.icon, "application-x-executable")
                                 opacity: area.pressed ? 0.7 : 1
                             }
 
