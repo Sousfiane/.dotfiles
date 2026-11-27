@@ -42,9 +42,22 @@ fi
 if command -v jq >/dev/null; then
     css="/usr/share/themes/$(jq -r '.gtk' "$palette")/gtk-4.0/gtk.css"
     link="$HOME/.config/gtk-4.0/gtk.css"
-    if [[ -f $css && ( -L $link || ! -e $link ) ]]; then
+    if [[ -f $css && ( -L $link || ! -e $link ) && $(readlink "$link") != "$css" ]]; then
         mkdir -p "$(dirname "$link")"
         ln -sfn "$css" "$link"
+        # an open Nautilus read gtk.css when it started and never again: it's closed and its windows opened
+        # again, each on its folder (tabs come back as their window's first folder). In the background
+        if pgrep -x nautilus >/dev/null && command -v busctl >/dev/null; then
+            setsid -f bash -c '
+                locations=$(busctl --user --json=short get-property org.freedesktop.FileManager1 \
+                    /org/freedesktop/FileManager1 org.freedesktop.FileManager1 OpenWindowsWithLocations |
+                    jq -r ".data[][0] // empty")
+                nautilus -q
+                while pgrep -x nautilus >/dev/null; do sleep 0.2; done
+                while IFS= read -r uri; do
+                    [[ -n $uri ]] && uwsm-app -- nautilus --new-window "$uri"
+                done <<<"$locations"' >/dev/null 2>&1
+        fi
     fi
 fi
 
