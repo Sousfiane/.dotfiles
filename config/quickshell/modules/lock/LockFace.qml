@@ -320,7 +320,7 @@ Item {
                         if (event.key === Qt.Key_Escape && root.password === "") {
                             root.escaped();
                         } else if (root.busy || root.leaving) {
-                        // no keys while checking or leaving
+                            // no keys while checking or leaving
                         } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                             root.submitted();
                         } else if (event.key === Qt.Key_Escape || (ctrl && event.key === Qt.Key_U)) {

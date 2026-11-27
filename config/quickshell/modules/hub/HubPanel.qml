@@ -216,9 +216,9 @@ DropdownPanel {
             ColumnLayout {
                 id: home
                 anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
                 }
                 // hidden, not removed, while another tab shows: the calendar keeps its month and day
                 opacity: hub.tab === 0 ? 1 : 0
