@@ -60,9 +60,13 @@ hl.window_rule({
 	workspace = "3",
 })
 
+-- Gaming on 4: the launchers and the games. Steam, its web helper and every Proton game (steam_app_*,
+-- also what Heroic's umu runs give, steam_app_default); Heroic; gamescope. Games that pick their own
+-- class (native ones, a game run in plain Wine: its .exe) are listed by name, so other Wine programs
+-- stay where they open
 hl.window_rule({
-	name = "steam-on-ws4",
-	match = { class = "^(steam)" },
+	name = "gaming-on-ws4",
+	match = { class = "(?i)^(steam.*|heroic|gamescope|cs2)$" },
 	workspace = "4",
 })
 
