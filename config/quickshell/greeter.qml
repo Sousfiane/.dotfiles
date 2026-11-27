@@ -107,7 +107,9 @@ ShellRoot {
     // ---------- logging in ----------
 
     readonly property bool testing: !Greetd.available
-    readonly property var session: ["uwsm", "start", "-e", "-D", "Hyprland", "hyprland.desktop"]
+    // its output would print on the console while Hyprland comes up (a few seconds): the console is cleared,
+    // its cursor hidden, and the output dropped (uwsm and Hyprland log to the journal anyway)
+    readonly property var session: ["sh", "-c", "printf '\\033[2J\\033[3J\\033[H\\033[?25l'; exec uwsm start -e -D Hyprland hyprland.desktop >/dev/null 2>&1"]
 
     property string user: (testing ? Quickshell.env("USER") : Quickshell.env("QS_GREETER_USER")) ?? ""
     property string password: ""
