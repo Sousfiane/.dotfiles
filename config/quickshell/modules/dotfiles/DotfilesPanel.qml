@@ -63,27 +63,9 @@ DropdownPanel {
             }
         }
 
-        function submitPass() {
-            const pass = passInput.text;
-            passInput.text = "";
-            Dotfiles.submitPass(pass);
-            menu.forceActiveFocus();
-        }
-
         function submitCommit() {
             Dotfiles.commit(commitInput.text);
             menu.forceActiveFocus();
-        }
-
-        // what the status letters mean, for the diff header
-        function stateOf(f) {
-            if (!f)
-                return "";
-            if (f.untracked)
-                return "untracked";
-            if (f.staged && f.unstaged)
-                return "partly staged";
-            return f.staged ? "staged" : "not staged";
         }
 
         Keys.onPressed: event => {
@@ -99,32 +81,32 @@ DropdownPanel {
                     if (shift)
                         nav.move(1);
                     else
-                        diffList.scrollBy(40);
+                        diff.scrollBy(40);
                     break;
                 case Qt.Key_K:
                 case Qt.Key_Up:
                     if (shift)
                         nav.move(-1);
                     else
-                        diffList.scrollBy(-40);
+                        diff.scrollBy(-40);
                     break;
                 case Qt.Key_D:
                 case Qt.Key_PageDown:
                     if (event.key === Qt.Key_D && !ctrl)
                         return;
-                    diffList.scrollBy(diffList.height / 2);
+                    diff.scrollPage(1);
                     break;
                 case Qt.Key_U:
                 case Qt.Key_PageUp:
                     if (event.key === Qt.Key_U && !ctrl)
                         return;
-                    diffList.scrollBy(-diffList.height / 2);
+                    diff.scrollPage(-1);
                     break;
                 case Qt.Key_G:
                     if (shift)
-                        diffList.positionViewAtEnd();
+                        diff.toEnd();
                     else
-                        diffList.positionViewAtBeginning();
+                        diff.toStart();
                     break;
                 case Qt.Key_Space:
                 case Qt.Key_S:
@@ -236,84 +218,16 @@ DropdownPanel {
                 values: Dotfiles.files.map(f => f.path)
             }
 
-            delegate: ListRow {
-                id: row
-                required property string modelData
-                required property int index
-
-                readonly property var file: Dotfiles.files[index] ?? null
-                readonly property bool armed: menu.armed !== "" && menu.armed === modelData
-
+            delegate: DotfilesRow {
+                armed: menu.armed !== "" && menu.armed === modelData
                 selected: index === nav.index
-
-                // staged box: full when all of the file is staged, half when part of it is
-                Rectangle {
-                    Layout.preferredWidth: 14
-                    Layout.preferredHeight: 14
-                    radius: Theme.radiusSmall
-                    color: "transparent"
-                    border.width: 1
-                    border.color: row.file?.staged ? Theme.foam : Theme.line
-
-                    Rectangle {
-                        visible: !!row.file?.staged
-                        anchors.centerIn: parent
-                        width: row.file?.unstaged ? 6 : 8
-                        height: row.file?.unstaged ? 2 : 8
-                        radius: 1
-                        color: Theme.foam
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        anchors.margins: -6
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            nav.select(row.index);
-                            Dotfiles.toggleStage(row.file);
-                        }
-                    }
+                onStageClicked: {
+                    nav.select(index);
+                    Dotfiles.toggleStage(file);
                 }
-
-                // git's two letters: the index (staged) in foam, the work tree in gold
-                Row {
-                    Layout.preferredWidth: 20
-                    spacing: 0
-
-                    Txt {
-                        width: 10
-                        text: row.file?.untracked ? "?" : row.file?.x ?? ""
-                        color: row.file?.untracked ? Theme.dim : row.file?.x === "D" ? Theme.urgent : Theme.foam
-                        font.pixelSize: Theme.fontSize - 2
-                        font.bold: true
-                    }
-
-                    Txt {
-                        width: 10
-                        text: row.file?.untracked ? "?" : row.file?.y ?? ""
-                        color: row.file?.untracked ? Theme.dim : row.file?.y === "D" ? Theme.urgent : Theme.gold
-                        font.pixelSize: Theme.fontSize - 2
-                        font.bold: true
-                    }
-                }
-
-                Txt {
-                    Layout.fillWidth: true
-                    variant: "row"
-                    textFormat: Text.PlainText
-                    text: row.armed ? "discard " + row.modelData + "?  d again" : row.file?.orig ? row.file.orig + " → " + row.modelData : row.modelData
-                    color: row.armed ? Theme.urgent : Theme.fg
-                    elide: Text.ElideMiddle
-
-                    // click the name: its diff
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            nav.select(row.index);
-                            menu.openDiff();
-                        }
-                    }
+                onNameClicked: {
+                    nav.select(index);
+                    menu.openDiff();
                 }
             }
         }
@@ -324,76 +238,12 @@ DropdownPanel {
         }
 
         // ---------- one file's diff ----------
-        RowLayout {
+        DotfilesDiff {
+            id: diff
             visible: menu.diffOpen
             Layout.fillWidth: true
-            spacing: 10
-
-            IconButton {
-                flat: true
-                icon: "‹"
-                color: Theme.dim
-                onClicked: menu.closeDiff()
-            }
-
-            Txt {
-                Layout.fillWidth: true
-                textFormat: Text.PlainText
-                text: menu.selPath
-                font.bold: true
-                elide: Text.ElideMiddle
-            }
-
-            Txt {
-                variant: "dim"
-                text: menu.stateOf(menu.selFile)
-            }
-
-            Pill {
-                text: menu.selFile?.staged && !menu.selFile?.unstaged ? "Unstage" : "Stage"
-                minWidth: 64
-                onClicked: Dotfiles.toggleStage(menu.selFile)
-            }
-        }
-
-        ScrollList {
-            id: diffList
-            visible: menu.diffOpen && Dotfiles.diffLines.length > 0
-            maxHeight: 480
-            spacing: 0
-            model: Dotfiles.diffLines
-
-            delegate: Rectangle {
-                id: line
-                required property string modelData
-
-                readonly property string kind: modelData.startsWith("+") ? "add" : modelData.startsWith("-") ? "del" : modelData.startsWith("@@") ? "hunk" : "ctx"
-
-                width: ListView.view.rowWidth
-                height: lineText.implicitHeight + (kind === "hunk" ? 8 : 0)
-                color: kind === "add" ? Theme.withAlpha(Theme.foam, 0.10) : kind === "del" ? Theme.withAlpha(Theme.love, 0.10) : "transparent"
-
-                Txt {
-                    id: lineText
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        leftMargin: 6
-                        rightMargin: 6
-                    }
-                    textFormat: Text.PlainText
-                    text: line.modelData === "" ? " " : line.modelData
-                    wrapMode: Text.WrapAnywhere
-                    font.pixelSize: Theme.fontSize - 2
-                    color: line.kind === "add" ? Theme.foam : line.kind === "del" ? Theme.love : line.kind === "hunk" ? Theme.iris : Theme.subtle
-                }
-            }
-        }
-
-        EmptyState {
-            visible: menu.diffOpen && Dotfiles.diffLines.length === 0
-            text: Dotfiles.diffLoading ? "Loading…" : "No changes against HEAD"
+            file: menu.selFile
+            onBack: menu.closeDiff()
         }
 
         // ---------- commit, once something is staged ----------
@@ -428,35 +278,10 @@ DropdownPanel {
         }
 
         // ---------- SSH passphrase, when a pull or push needs it ----------
-        RowLayout {
-            visible: Dotfiles.askingPass
+        DotfilesPass {
+            id: pass
             Layout.fillWidth: true
-            spacing: 8
-
-            onVisibleChanged: {
-                passInput.text = "";
-                if (visible)
-                    passInput.forceActiveFocus();
-            }
-
-            InputField {
-                id: passInput
-                password: true
-                placeholder: "SSH passphrase to " + (Dotfiles.authJob?.label ?? "").toLowerCase()
-
-                onAccepted: menu.submitPass()
-                onCancelled: {
-                    Dotfiles.cancelPass();
-                    menu.forceActiveFocus();
-                }
-            }
-
-            Pill {
-                text: Dotfiles.authJob?.label ?? "Send"
-                primary: true
-                minWidth: 64
-                onClicked: menu.submitPass()
-            }
+            onFinished: menu.forceActiveFocus()
         }
 
         // what the last action said
@@ -471,7 +296,7 @@ DropdownPanel {
         }
 
         Hint {
-            text: menu.diffOpen ? "j k scroll • J K next / prev file • Space stage • h back • q close" : passInput.activeFocus ? "Enter send • Esc cancel" : commitInput.activeFocus ? "Enter commit • Esc back to the list" : "j k select • Space stage • a all • Enter diff • d discard • " + (Dotfiles.stagedCount > 0 ? "c commit • " : "") + "p pull • P push • Esc close"
+            text: menu.diffOpen ? "j k scroll • J K next / prev file • Space stage • h back • q close" : pass.typing ? "Enter send • Esc cancel" : commitInput.activeFocus ? "Enter commit • Esc back to the list" : "j k select • Space stage • a all • Enter diff • d discard • " + (Dotfiles.stagedCount > 0 ? "c commit • " : "") + "p pull • P push • Esc close"
         }
     }
 }
