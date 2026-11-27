@@ -49,7 +49,7 @@ Variants {
         readonly property int pad: 9                // pill padding around the icons
         readonly property int dotRow: 10            // under the pill: the running dots
         readonly property int spacing: 6
-        readonly property int margin: 8             // from the screen edge: Hyprland's gaps_out
+        readonly property int margin: 3             // from the screen edge
         readonly property int sepWidth: 1 + spacing * 2
 
         // ---------- what it shows ----------
