@@ -4,6 +4,7 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 import QtQuick
+import qs.services.util
 
 // The notification server: every notification as a Notif, the toasts and the center's history (kept
 // across restarts), unread count and do not disturb.

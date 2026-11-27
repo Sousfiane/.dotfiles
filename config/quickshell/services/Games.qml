@@ -4,6 +4,7 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
 import qs.config
+import qs.services.util
 
 // The installed games of Steam and Heroic and their cover art (scripts/games.py), so a game's window
 // shows its cover in the dock and the workspace panel without a desktop entry. A window is matched by

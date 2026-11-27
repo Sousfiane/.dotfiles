@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import qs.config
+import qs.services.util
 
 // events from the Nextcloud calendar (CalDAV, read-only), fetched by scripts/calendar.py.
 // The hub calls show() with the month on screen; a window of a few months around it is loaded.

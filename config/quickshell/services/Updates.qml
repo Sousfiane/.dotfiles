@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import qs.config
+import qs.services.util
 
 // pending updates: the official repos (checkupdates) and the AUR (yay), which `yay -Syu` both installs
 Singleton {

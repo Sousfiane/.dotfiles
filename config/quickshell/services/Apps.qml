@@ -1,6 +1,7 @@
 pragma Singleton
 import Quickshell
 import QtQuick
+import qs.services.util
 
 // Finding the desktop entry an app goes by (its icon and readable name, and how to launch it) from what
 // the dock, the workspace cards, the tray and the notifications know of it: a window class, a tray id,

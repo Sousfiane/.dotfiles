@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import qs.config
+import qs.services.util
 
 // The dotfiles repository: its status, and the few git actions the panel needs to replace lazygit
 // (stage, discard, diff, commit, pull, push).

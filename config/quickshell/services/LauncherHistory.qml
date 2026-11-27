@@ -1,6 +1,7 @@
 pragma Singleton
 import Quickshell
 import QtQuick
+import qs.services.util
 
 // how often and how recently each app was launched, for the launcher's ranking.
 // Saved as { id: { count, last } }; older files hold plain counts, read as launched long ago.

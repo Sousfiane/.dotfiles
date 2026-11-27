@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import qs.config
+import qs.services.util
 
 // current weather from Open-Meteo (no API key). The place comes from Config.weatherLocation (a city name,
 // looked up once with Open-Meteo's geocoding), or from the IP address when that is empty.

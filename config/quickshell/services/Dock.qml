@@ -4,6 +4,7 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
 import qs.config
+import qs.services.util
 
 // The dock's apps: the pinned ones in their order, then whatever else has a window open.
 // Pins are desktop entry ids, saved in the state dir; Config.dockPins is the list before the first change.
