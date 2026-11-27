@@ -6,6 +6,7 @@
 #   ~/.config/hypr/hyprtoolkit.conf     hyprtoolkit apps (hyprland-dialog, the share picker, the polkit agent)
 #   ~/.config/qt6ct/qt6ct.conf          Qt apps: style, fonts, icons
 #   ~/.config/qt6ct/colors.conf         Qt apps: colours
+#   ~/.config/vesktop/themes/palette.theme.css   Discord: the palette, over rin's Rosé Pine theme
 
 set -euo pipefail
 
@@ -147,10 +148,28 @@ qt_colors() {
     ' <<<"$theme"
 }
 
+# ---------- Discord (Vesktop) ----------
+
+# The theme itself is rin's Rosé Pine, an online theme in Vesktop (its link in Settings > Themes, so it
+# stays up to date; Discord's own theme set to Ash, as it asks). It reads its colours from the 15 Rosé Pine
+# variables, all set in one :root block: this file sets them again from the palette. :root:root wins
+# whichever of the two Vesktop loads first. Vesktop watches its themes folder, so a palette switch shows at
+# once; apply.sh makes sure this one is enabled
+discord() {
+    # Vesktop names the theme from this first comment
+    printf '/**\n * @name System palette\n * @description The current palette from ~/.config/theme, over rin'"'"'s Rosé Pine.\n */\n\n'
+    header "/*" | sed 's|.\+|& */|'
+    jq -r '
+        ["base", "surface", "overlay", "muted", "subtle", "text", "love", "gold", "rose", "pine", "foam",
+         "iris", "highlightLow", "highlightMed", "highlightHigh"] as $names
+        | ":root:root {", ($names[] as $n | "    --\($n): \(.colors[$n]);"), "}"' <<<"$theme"
+}
+
 # ---------- write them ----------
 
 status=0
 write "$HOME/.config/hypr/hyprtoolkit.conf" hyprtoolkit || status=1
 write "$HOME/.config/qt6ct/qt6ct.conf" qt6ct || status=1
 write "$HOME/.config/qt6ct/colors.conf" qt_colors || status=1
+write "$HOME/.config/vesktop/themes/palette.theme.css" discord || status=1
 exit $status

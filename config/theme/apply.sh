@@ -8,6 +8,7 @@
 #   tmux       sources its config, if a server is running
 #   GTK        theme, colour scheme, app font and icon theme (gsettings), and GTK 4's gtk.css link
 #   Spotify    if it's open with another scheme, it restarts with the new one (spotify-themed)
+#   Discord    follows by itself (files.sh writes its palette); this only makes sure the palette is enabled
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
@@ -72,4 +73,18 @@ if pgrep -x spotify >/dev/null && command -v jq >/dev/null; then
             while pgrep -x spotify >/dev/null; do sleep 0.2; done
             uwsm-app -- "$HOME/.local/bin/spotify-themed"' >/dev/null 2>&1
     fi
+fi
+
+# Discord: rin's Rosé Pine as an online theme (its link, so it stays up to date), with files.sh's
+# palette.theme.css over it, which Vesktop reloads by itself. Both are put in Vesktop's settings when
+# missing, only while it's closed: it keeps its settings in memory and would save over the change
+vesktop="$HOME/.config/vesktop/settings/settings.json"
+rin=https://raw.githubusercontent.com/baconeko/rose-pine-discord/refs/heads/main/dist/rin-rose-pine.theme.css
+if [[ -f $vesktop ]] && command -v jq >/dev/null && ! pgrep -x vesktop >/dev/null &&
+    ! jq -e --arg rin "$rin" '(.themeLinks // [] | index($rin)) and (.enabledThemes // [] | index("palette.theme.css"))' \
+        "$vesktop" >/dev/null 2>&1; then
+    jq --arg rin "$rin" '
+        .themeLinks = ((.themeLinks // []) - [$rin] + [$rin])
+        | .enabledThemes = ((.enabledThemes // []) - ["palette.theme.css"] + ["palette.theme.css"])' \
+        "$vesktop" >"$vesktop.tmp" && mv -f "$vesktop.tmp" "$vesktop" || rm -f "$vesktop.tmp"
 fi
