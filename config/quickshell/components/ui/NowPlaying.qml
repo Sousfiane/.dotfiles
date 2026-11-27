@@ -15,6 +15,15 @@ RowLayout {
     visible: Media.active
     spacing: 12
 
+    // MPRIS does not push position updates: ask for them while this is on screen and something plays
+    // (only the hub shows the position, and it is loaded only while open)
+    Timer {
+        running: root.visible && (root.player?.isPlaying ?? false)
+        interval: 1000
+        repeat: true
+        onTriggered: root.player.positionChanged()
+    }
+
     // ---------- cover ----------
     Rectangle {
         implicitWidth: root.coverSize
