@@ -1,0 +1,26 @@
+# The shell (config/quickshell): bar, wallpaper, dock, notifications, panels, lock screen and polkit agent,
+# all in this one process. A user service so that a crash brings it straight back: with Hyprland's
+# misc.allow_session_lock_restore (looknfeel.lua), even a lock screen that crashed while locked comes back
+# locked. steps/services.sh enables it from here (systemctl --user enable <this file>); uwsm starts it with
+# the session and stops it at the end.
+#
+#   systemctl --user restart quickshell     restart it by hand (`qs kill` stops it: a clean exit isn't restarted)
+
+[Unit]
+Description=Quickshell, the desktop shell
+PartOf=graphical-session.target
+After=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+
+[Service]
+Type=simple
+# On NVIDIA, Quickshell is shown only NVIDIA's EGL driver: otherwise it also loads Mesa's (and LLVM), unused
+# (~10 MB). Only when the NVIDIA driver is loaded, so another machine starts it the plain way
+# ($$ is a $ for the shell: systemd expands $ itself)
+ExecStart=/bin/sh -c 'v=/usr/share/glvnd/egl_vendor.d/10_nvidia.json; if [ -e /proc/driver/nvidia/version ] && [ -e "$$v" ]; then export __EGL_VENDOR_LIBRARY_FILENAMES="$$v"; fi; exec qs'
+Restart=on-failure
+RestartSec=1
+Slice=session-graphical.slice
+
+[Install]
+WantedBy=graphical-session.target

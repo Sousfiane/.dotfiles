@@ -31,6 +31,15 @@ enable_user() {
 
 enable_user hypridle.service           # screens off when idle
 
+# Quickshell, from its unit in the repo (install/units): `enable` with a path links it in, then enables it
+shell_unit="$DOTFILES/install/units/quickshell.service"
+if systemctl --user is-enabled -q quickshell.service 2>/dev/null; then
+    success "quickshell.service already enabled"
+else
+    systemctl --user enable "$shell_unit"
+    success "quickshell.service enabled (restarted if it crashes)"
+fi
+
 # Quickshell is the polkit agent now, and only one can register: the old one goes
 if systemctl --user is-enabled -q hyprpolkitagent.service 2>/dev/null; then
     systemctl --user disable --now hyprpolkitagent.service

@@ -49,6 +49,9 @@ hl.config({
 	},
 
 	misc = {
+		-- the lock screen is Quickshell's: if it crashes while locked, the restarted one (its user service
+		-- restarts it) takes the lock back, instead of Hyprland's "lock screen crashed" screen
+		allow_session_lock_restore = true,
 		force_default_wallpaper = 0,
 		disable_hyprland_logo = true,
 		render_unfocused_fps = 60,
