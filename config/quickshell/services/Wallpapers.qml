@@ -41,6 +41,16 @@ Singleton {
         return current === path;
     }
 
+    // the login screen's copy, in /var/lib/qs-greeter (it can't read the home), when that folder exists:
+    // at every start and every change, and only if it differs
+    onCurrentChanged: copyForGreeter()
+    Component.onCompleted: copyForGreeter()
+
+    function copyForGreeter() {
+        if (current)
+            Quickshell.execDetached(["sh", "-c", 'd=/var/lib/qs-greeter; [ -w "$d" ] && [ -f "$1" ] || exit 0; cmp -s -- "$1" "$d/wallpaper" || { cp -f -- "$1" "$d/.wallpaper.tmp" && mv -f -- "$d/.wallpaper.tmp" "$d/wallpaper"; }', "sh", current]);
+    }
+
     function apply(path) {
         current = path;
         stateFile.setText(path + "\n");

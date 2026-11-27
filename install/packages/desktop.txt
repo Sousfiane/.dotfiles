@@ -56,3 +56,4 @@ libnotify                    # notify-send: theme/apply.sh's "restart Spotify" n
 hyprqt6engine
 darkly                       # Qt apps' widget style: rounded, modern (set by config/theme/files.sh)
 unicode-emoji                # the emoji list the launcher searches (":")
+greetd                       # the login screen, with the Quickshell greeter (install.sh greeter)

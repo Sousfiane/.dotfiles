@@ -1,0 +1,11 @@
+# greetd (install/steps/greeter.sh installs this as /etc/greetd/config.toml): the login screen is a small
+# Hyprland run as the `greeter` user (/etc/greetd/hypr/hyprland.lua), which runs the Quickshell greeter.
+
+[terminal]
+vt = 1
+
+[default_session]
+# its output and Quickshell's would print on the console under it, as the screen comes up: dropped (Hyprland
+# keeps its own log, in /run/user/<greeter's uid>/hypr)
+command = "sh -c 'exec start-hyprland -- -c /etc/greetd/hypr/hyprland.lua >/dev/null 2>&1'"
+user = "greeter"

@@ -57,6 +57,14 @@ After opening and closing Spotify once:
 
 Only the choices are in the repo (`install/steps/spicetify.sh`, plus `Themes` and `Extensions`); spicetify keeps its own `config-xpui.ini` in `~/.config/spicetify`, since it writes version numbers into it. The step also makes Spotify's menu entry open it through `spotify-themed`, which applies the theme again by itself when Spotify was updated or the palette changed, so the step is only needed once.
 
+For a login screen in the theme (greetd with a Quickshell greeter, instead of sddm):
+
+```sh
+~/.dotfiles/install/install.sh greeter          # installs it in /etc/greetd, then asks before switching
+```
+
+It looks like the lock screen and logs in to the same uwsm session. It runs as greetd's `greeter` user, which can't read the home, so it reads the theme from `/var/lib/qs-greeter`: `files.sh` writes the palette, font and user name there on every theme change, and Quickshell copies the wallpaper there when it changes. Its files are in `install/greeter`, with copies of `monitors.lua` and `input.lua`: run the step again after changing those. If it ever fails to come up, Ctrl+Alt+F2 gives a console, and `sudo systemctl disable greetd && sudo systemctl enable sddm` goes back.
+
 ## Layout
 
 Where a file sits in the repo is where it goes:
