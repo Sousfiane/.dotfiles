@@ -11,18 +11,20 @@ Singleton {
     readonly property var all: DesktopEntries.applications.values
 
     // emptied when entries change (an app installed or removed): they are new objects then
-    property var cache: ({})
-    onAllChanged: cache = ({})
+    LookupCache {
+        id: cache
+    }
+    onAllChanged: cache.clear()
 
     // the entry whose id or StartupWMClass is `name` (any case), else Quickshell's best guess, else null
     function entryFor(name) {
         if (!name)
             return null;
         const key = name.toLowerCase();
-        if (key in cache)
-            return cache[key];
+        if (cache.has(key))
+            return cache.get(key);
         const exact = all.find(a => a.id.toLowerCase() === key || (a.startupClass ?? "").toLowerCase() === key);
-        return cache[key] = exact ?? DesktopEntries.heuristicLookup(name) ?? null;
+        return cache.put(key, exact ?? DesktopEntries.heuristicLookup(name) ?? null);
     }
 
     // the entry whose name starts a window's title: a game from Heroic runs with a shared class
@@ -32,13 +34,13 @@ Singleton {
         if (!title)
             return null;
         const key = "title:" + title;
-        if (key in cache)
-            return cache[key];
+        if (cache.has(key))
+            return cache.get(key);
         let best = null;
         for (const a of all)
             if (!a.noDisplay && Games.titleStartsWith(title, a.name) && (!best || a.name.length > best.name.length))
                 best = a;
-        return cache[key] = best;
+        return cache.put(key, best);
     }
 
     // the entry of a Hyprland window: by its class, else by its title

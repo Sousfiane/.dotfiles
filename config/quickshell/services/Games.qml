@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
+import qs.config
 
 // The installed games of Steam and Heroic and their cover art (scripts/games.py), so a game's window
 // shows its cover in the dock and the workspace panel without a desktop entry. A window is matched by
@@ -33,13 +34,15 @@ Singleton {
     }
 
     // the game a window is, or null; cached by class and title
-    property var cache: ({})
-    onGamesChanged: cache = ({})
+    LookupCache {
+        id: cache
+    }
+    onGamesChanged: cache.clear()
 
     function gameFor(cls, title) {
         const key = cls + "\n" + title;
-        if (key in cache)
-            return cache[key];
+        if (cache.has(key))
+            return cache.get(key);
         const id = (cls.match(/^steam_app_(\d+)$/) ?? [])[1];
         let game = id ? games.find(g => g.steam === id) ?? null : null;
         if (!game) {
@@ -48,7 +51,7 @@ Singleton {
                 if (g.key !== "" && (t === g.key || t.startsWith(g.key + " ")) && (!game || g.key.length > game.key.length))
                     game = g;
         }
-        return cache[key] = game;
+        return cache.put(key, game);
     }
 
     // the last output: a rescan that finds the same games changes nothing
@@ -74,7 +77,12 @@ Singleton {
         }
     }
 
-    // a game installed since the last scan is found once its window opens
+    // a game installed since the last scan is found once its window opens: a window that no desktop
+    // entry and no known game claims (most open as an app with an entry, and cost nothing)
+    function maybeNew(cls, title) {
+        return cls !== "" && cls !== Config.floatingClass && !Apps.entryFor(cls) && !gameFor(cls, title);
+    }
+
     Timer {
         id: rescan
         interval: 1500
@@ -83,8 +91,12 @@ Singleton {
 
     Connections {
         target: Hyprland
+        // openwindow>>address,workspace,class,title (the title may hold commas)
         function onRawEvent(ev) {
-            if (ev.name === "openwindow" && !scan.running)
+            if (ev.name !== "openwindow" || scan.running)
+                return;
+            const f = ev.data.split(",");
+            if (root.maybeNew(f[2] ?? "", f.slice(3).join(",")))
                 rescan.restart();
         }
     }

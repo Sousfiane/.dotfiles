@@ -20,6 +20,16 @@ Singleton {
         return states[name] === true;
     }
 
+    // workspace id -> true once it has shown a fullscreen window: only there can a focus change drop or
+    // bring back the fullscreen without an event, so only there does one need a refresh (focus follows
+    // the mouse: elsewhere that would be two requests to Hyprland every time the pointer crosses a window)
+    property var hadFullscreen: ({})
+    onStatesChanged: {
+        for (const m of Hyprland.monitors.values)
+            if (m.activeWorkspace?.hasFullscreen)
+                hadFullscreen[m.activeWorkspace.id] = true;
+    }
+
     // the fullscreen window on monitor `name` (a HyprlandToplevel), null when there is none
     function window(name) {
         const ws = Hyprland.monitors.values.find(m => m.name === name)?.activeWorkspace;
@@ -79,6 +89,9 @@ Singleton {
             // with misc:on_focus_under_fullscreen, focusing another window drops the fullscreen and
             // refocusing restores it, and neither sends a "fullscreen" event: only the focus change shows it
             case "activewindowv2":
+                if (root.hadFullscreen[Hyprland.focusedWorkspace?.id])
+                    root.refresh();
+                break;
             case "fullscreen":
             case "workspace":
             case "workspacev2":

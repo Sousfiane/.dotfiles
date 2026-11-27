@@ -13,7 +13,11 @@ Singleton {
     property string query: ""
     property var items: []                       // everything parsed from clipvault
 
-    readonly property ListModel entries: ListModel {}   // what the grid shows
+    // what the grid shows: the same objects, filtered, so its ScriptModel keeps the tiles still listed
+    readonly property var entries: {
+        const needle = query.toLowerCase().trim();
+        return needle === "" ? items : items.filter(item => item.searchText.indexOf(needle) !== -1);
+    }
     readonly property string cacheDir: (Quickshell.env("XDG_CACHE_HOME") || (Config.home + "/.cache")) + "/clipvault/thumbs"
 
     function toggle() {
@@ -33,19 +37,9 @@ Singleton {
     Component.onCompleted: if (open)
         reset()
 
-    onQueryChanged: applyFilter()
-
     function refresh() {
         historyProcess.running = false;
         historyProcess.running = true;
-    }
-
-    function applyFilter() {
-        entries.clear();
-        const needle = query.toLowerCase().trim();
-        for (const item of items)
-            if (needle.length === 0 || item.searchText.indexOf(needle) !== -1)
-                entries.append(item);
     }
 
     function copy(id) {
@@ -91,7 +85,6 @@ Singleton {
             });
         }
         items = parsed;
-        applyFilter();
     }
 
     Process {

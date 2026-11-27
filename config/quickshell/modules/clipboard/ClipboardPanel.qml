@@ -1,3 +1,4 @@
+import Quickshell
 import Quickshell.Widgets
 import QtQuick
 import qs.config
@@ -17,15 +18,19 @@ DropdownPanel {
     GridPicker {
         icon: Icons.clipboard
         title: "Clipboard"
-        subtitle: ClipHistory.entries.count + " entries"
+        subtitle: ClipHistory.entries.length + " entries"
         placeholder: "Search clipboard..."
         emptyText: ClipHistory.items.length === 0 ? "No clipboard history found" : "No matching entries"
         hint: "Enter to copy • arrows to navigate • Ctrl+R refresh • Esc to close"
-        model: ClipHistory.entries
+        // diffed by clip id: a search keeps the tiles that still match, thumbnails and all
+        model: ScriptModel {
+            values: ClipHistory.entries
+            objectProp: "clipId"
+        }
 
         onSearched: text => ClipHistory.query = text
         onAccepted: index => {
-            const item = ClipHistory.entries.get(index);
+            const item = ClipHistory.entries[index];
             if (item)
                 ClipHistory.copy(item.clipId);
         }
@@ -40,10 +45,11 @@ DropdownPanel {
         delegate: GridTile {
             id: tile
 
-            required property string clipId
-            required property string kind
-            required property string imageExt
-            required property string preview
+            required property var modelData
+            readonly property string clipId: modelData.clipId
+            readonly property string kind: modelData.kind
+            readonly property string imageExt: modelData.imageExt
+            readonly property string preview: modelData.preview
 
             readonly property string thumb: ClipHistory.thumbs[clipId] ?? ""
             readonly property bool imageReady: thumb === "ready"
