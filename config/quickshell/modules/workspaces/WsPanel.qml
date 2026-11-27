@@ -91,12 +91,15 @@ Variants {
                             Layout.fillWidth: true
                             variant: "row"
                             font.bold: true
-                            text: line.entry?.name || line.cls || "Unknown"
+                            // no entry (a game from Heroic, a cracked exe): the window's title, which is its name
+                            text: line.entry?.name || line.modelData.title || line.cls || "Unknown"
                             elide: Text.ElideRight
                         }
 
+                        // the title under the name, unless it already is the name
                         Txt {
                             Layout.fillWidth: true
+                            visible: line.entry !== null
                             variant: "small"
                             text: line.modelData.title || ""
                             elide: Text.ElideRight

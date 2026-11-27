@@ -129,6 +129,17 @@ Singleton {
     readonly property var pinnedItems: allApps.length >= 0 ? pins.filter(id => DesktopEntries.byId(id) !== null).map(id => itemFor(id, true)) : []
     readonly property var runningItems: Object.keys(windowsByApp).filter(k => !pins.includes(k)).sort().map(k => itemFor(k, false))
 
+    // what an icon is called: its desktop entry's name, else its first window's title (a game started
+    // from Heroic or a cracked exe has no entry and a class like steam_app_default; its title is the
+    // game's name), else the class
+    function nameFor(item) {
+        if (!item)
+            return "";
+        if (item.entry)
+            return item.name ?? "";
+        return (windowsByApp[item.key] ?? [])[0]?.title || item.name || "";
+    }
+
     // ---------- actions ----------
 
     function addr(w) {

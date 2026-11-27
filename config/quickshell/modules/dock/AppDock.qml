@@ -443,8 +443,11 @@ Variants {
                             Txt {
                                 id: label
                                 anchors.centerIn: parent
+                                // a window title can be long
+                                width: Math.min(implicitWidth, 320)
+                                elide: Text.ElideRight
                                 variant: "row"
-                                text: cell.modelData.name ?? ""
+                                text: Dock.nameFor(cell.modelData)
                             }
                         }
                     }
@@ -498,7 +501,7 @@ Variants {
                     height: 26
                     verticalAlignment: Text.AlignVCenter
                     variant: "dim"
-                    text: menu.shownItem?.name ?? ""
+                    text: Dock.nameFor(menu.shownItem)
                     elide: Text.ElideRight
                 }
 
