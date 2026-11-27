@@ -10,6 +10,10 @@ hl.config({
 		border_size = 1,
 		col = { active_border = theme.rgb("muted"), inactive_border = theme.rgb("muted") },
 
+		-- drag a window's edge to resize it; the grab zone reaches 15px past the 1px border
+		resize_on_border = true,
+		extend_border_grab_area = 15,
+
 		layout = "scrolling",
 
 		allow_tearing = true,

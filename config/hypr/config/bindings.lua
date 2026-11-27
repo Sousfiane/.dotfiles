@@ -165,8 +165,6 @@ hl.bind(
 
 hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Drag window" })
 
-hl.bind(mod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window with mouse" })
-
 --------------------------------------------------
 -- 🔊 Volume (Quickshell shows the OSD)
 --------------------------------------------------
