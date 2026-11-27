@@ -143,42 +143,10 @@ DropdownPanel {
                 return;
             }
 
-            switch (event.key) {
-            case Qt.Key_Left:
-            case Qt.Key_H:
-                calendar.shiftMonth(-1);
-                break;
-            case Qt.Key_Right:
-            case Qt.Key_L:
-                calendar.shiftMonth(1);
-                break;
-            case Qt.Key_J:
-            case Qt.Key_Down:
-                calendar.moveDay(1);
-                break;
-            case Qt.Key_K:
-            case Qt.Key_Up:
-                calendar.moveDay(-1);
-                break;
-            case Qt.Key_T:
-                calendar.goToday();
-                break;
-            case Qt.Key_P:
-            case Qt.Key_Space:
-                Media.toggle();
-                break;
-            case Qt.Key_N:
-                Media.next();
-                break;
-            case Qt.Key_B:
-                Media.previous();
-                break;
-            case Qt.Key_Q:
+            if (event.key === Qt.Key_Q)
                 panel.close();
-                break;
-            default:
+            else if (!home.handleKey(event.key))
                 return;
-            }
             event.accepted = true;
         }
 
@@ -212,8 +180,7 @@ DropdownPanel {
             Layout.preferredHeight: hub.tab === 0 ? home.implicitHeight : !size ? 560 : size[1] > 0 ? size[1] - 2 * panel.padding : (picker.item?.implicitHeight ?? 0)
             clip: true
 
-            // one column: the day, what's playing, the toggles, the calendar and its events
-            ColumnLayout {
+            HubHome {
                 id: home
                 anchors {
                     left: parent.left
@@ -223,94 +190,6 @@ DropdownPanel {
                 // hidden, not removed, while another tab shows: the calendar keeps its month and day
                 opacity: hub.tab === 0 ? 1 : 0
                 enabled: hub.tab === 0
-                spacing: 12
-
-                // ---------- time and date, weather next to them ----------
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 12
-
-                    // fresh weather whenever the hub opens (the service also refreshes every 30 minutes)
-                    Component.onCompleted: Weather.refreshIfStale()
-
-                    DateTimeBlock {
-                        Layout.fillWidth: true
-                    }
-
-                    // the columns hold only fixed-size text, so this is what lets the row span the card
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    WeatherBlock {
-                        Layout.fillWidth: false             // nested layouts fill by default: stay against the right edge
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    }
-                }
-
-                Divider {}
-
-                // ---------- now playing (only while a player has a track) ----------
-                NowPlaying {
-                    Layout.fillWidth: true
-                }
-
-                Divider {
-                    visible: Media.active
-                }
-
-                // ---------- quick toggles ----------
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 6
-
-                    QuickToggle {
-                        icon: Net.wifiOn ? Icons.wifi4 : Icons.wifiOff
-                        label: "Wi-Fi"
-                        active: Net.wifiOn && Net.wifiDevice !== null
-                        available: Net.wifiDevice !== null
-                        onClicked: Net.toggleWifi()
-                    }
-
-                    QuickToggle {
-                        icon: Bt.connected ? Icons.bluetoothConnected : Bt.powered ? Icons.bluetooth : Icons.bluetoothOff
-                        label: "Bluetooth"
-                        active: Bt.powered
-                        available: Bt.adapter !== null
-                        onClicked: Bt.togglePower()
-                    }
-
-                    QuickToggle {
-                        icon: Notifs.dnd ? Icons.bellOff : Icons.bell
-                        label: "Silent"
-                        active: Notifs.dnd
-                        onClicked: Notifs.dnd = !Notifs.dnd
-                    }
-
-                    QuickToggle {
-                        icon: Icons.keepAwake
-                        label: "Awake"
-                        active: Toggles.keepAwake
-                        onClicked: Toggles.keepAwake = !Toggles.keepAwake
-                    }
-                }
-
-                Divider {}
-
-                // ---------- calendar ----------
-                HubCalendar {
-                    id: calendar
-                    Layout.fillWidth: true
-                }
-
-                Divider {}
-
-                // ---------- events of the selected day ----------
-                HubEvents {
-                    Layout.fillWidth: true
-                    day: calendar.selected
-                    today: calendar.today
-                }
             }
 
             Loader {
