@@ -8,6 +8,13 @@ Singleton {
         return String.fromCodePoint(cp);
     }
 
+    // an Image source for an app icon, by theme name or path (a desktop entry, a notification, a
+    // game's cover). A path is loaded as is: Qt reads the format from the file, so Heroic's covers,
+    // cached without an extension, load too. `fallback` as Quickshell.iconPath takes it
+    function source(icon, fallback) {
+        return (icon ?? "").startsWith("/") ? "file://" + icon : Quickshell.iconPath(icon ?? "", fallback);
+    }
+
     // system
     readonly property string power: glyph(0xF0425)
     readonly property string lock: glyph(0xF033E)

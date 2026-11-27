@@ -147,15 +147,9 @@ DropdownPanel {
                     return;
                 }
             } else {
+                if (nav.navigate(event))
+                    return;
                 switch (event.key) {
-                case Qt.Key_J:
-                case Qt.Key_Down:
-                    nav.move(1);
-                    break;
-                case Qt.Key_K:
-                case Qt.Key_Up:
-                    nav.move(-1);
-                    break;
                 case Qt.Key_G:
                     nav.select(shift ? count - 1 : 0);
                     break;

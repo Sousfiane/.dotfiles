@@ -12,27 +12,19 @@ Singleton {
 
     property var pins: []
 
-    FileView {
+    JsonFile {
         id: pinsFile
-
         path: Quickshell.statePath("dock-pins.json")
-        blockLoading: true
-        printErrors: false
     }
 
     Component.onCompleted: {
-        try {
-            const data = pinsFile.text();
-            pins = data.length > 0 ? JSON.parse(data) : Config.dockPins.slice();
-        } catch (e) {
-            console.warn("Could not load dock pins:", e);
-            pins = Config.dockPins.slice();
-        }
+        pins = pinsFile.load(Config.dockPins.slice());
+        alwaysShow = settingsFile.load({}).alwaysShow === true;
     }
 
     function save(next) {
         pins = next;
-        pinsFile.setText(JSON.stringify(next, null, 2));
+        pinsFile.save(next);
     }
 
     function isPinned(id: string): bool {
@@ -61,12 +53,6 @@ Singleton {
     }
 
     // ---------- windows -> apps ----------
-
-    // the class a window is matched on: floating terminals carry a custom class, they are the terminal
-    function windowClass(w) {
-        const c = Ws.windowClass(w);
-        return c === Config.floatingClass ? Config.terminal : c;
-    }
 
     // the desktop entry a window class belongs to, cached (heuristicLookup walks every entry)
     property var entryCache: ({})
@@ -102,7 +88,7 @@ Singleton {
 
     // the desktop entry of a window: by its class, else by its title
     function entryForWindow(w) {
-        const cls = windowClass(w);
+        const cls = Windows.appClass(w);
         if (cls === "")
             return null;
         return entryFor(cls) ?? entryForTitle(w.title ?? "");
@@ -111,7 +97,7 @@ Singleton {
     // a window with no desktop entry: a game of Steam or Heroic is keyed by "game:<name>" (its own icon
     // even when games share a class), anything else by "class:<name>"
     function keyFor(w) {
-        const cls = windowClass(w);
+        const cls = Windows.appClass(w);
         if (cls === "")
             return "";
         const e = entryForWindow(w);
@@ -182,18 +168,6 @@ Singleton {
 
     // ---------- actions ----------
 
-    function addr(w) {
-        return "0x" + String(w.address).replace(/^0x/, "");
-    }
-
-    function focusWindow(w) {
-        Hyprland.dispatch(`hl.dsp.focus({ window = "address:${addr(w)}" })`);
-    }
-
-    function closeWindow(w) {
-        Hyprland.dispatch(`hl.dsp.window.close({ window = "address:${addr(w)}" })`);
-    }
-
     // not running: start it. Running: focus its window, and on the next click the one after it
     function activate(item) {
         const wins = windowsByApp[item.key] ?? [];
@@ -202,7 +176,7 @@ Singleton {
             return;
         }
         const cur = wins.indexOf(Hyprland.activeToplevel);
-        focusWindow(wins[(cur + 1) % wins.length]);
+        Windows.focus(wins[(cur + 1) % wins.length]);
     }
 
     function launch(item) {
@@ -214,31 +188,23 @@ Singleton {
 
     function closeAll(item) {
         for (const w of windowsByApp[item.key] ?? [])
-            closeWindow(w);
+            Windows.close(w);
     }
 
     // always up like macOS's dock (windows keep clear of it), or hidden until the bottom edge is touched.
     // Picked in the theme panel, saved next to the pins.
     property bool alwaysShow: false
 
-    FileView {
+    JsonFile {
         id: settingsFile
-
         path: Quickshell.statePath("dock-settings.json")
-        blockLoading: true
-        printErrors: false
-        onLoaded: {
-            try {
-                root.alwaysShow = JSON.parse(text()).alwaysShow === true;
-            } catch (e) {}
-        }
     }
 
     function setAlwaysShow(on: bool): void {
         alwaysShow = on;
-        settingsFile.setText(JSON.stringify({
+        settingsFile.save({
             alwaysShow: on
-        }, null, 2));
+        });
     }
 
     // held up from the keyboard (`qs ipc call dock toggle`), on every monitor

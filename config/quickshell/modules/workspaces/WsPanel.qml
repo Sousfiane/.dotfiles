@@ -67,10 +67,8 @@ Variants {
 
                     required property var modelData
 
-                    // Wayland app id first, Hyprland's class as fallback
-                    readonly property string rawCls: Ws.windowClass(modelData)
-                    // floating terminals carry a custom class so Hyprland floats them: show them as the terminal
-                    readonly property string cls: rawCls === Config.floatingClass ? Config.terminal : rawCls
+                    // a floating terminal shows as the terminal
+                    readonly property string cls: Windows.appClass(modelData)
 
                     // gives the icon and the readable name ("Files" rather than org.gnome.Nautilus): the same
                     // entry the dock picks, so a game from Heroic is found by its title
@@ -83,7 +81,7 @@ Variants {
 
                     AppIcon {
                         implicitSize: 22
-                        source: Games.iconSource(line.entry?.icon ?? line.game?.art ?? line.cls.toLowerCase(), "application-x-executable")
+                        source: Icons.source(line.entry?.icon ?? line.game?.art ?? line.cls.toLowerCase(), "application-x-executable")
                     }
 
                     ColumnLayout {

@@ -21,11 +21,9 @@ DropdownPanel {
         }
 
         Keys.onPressed: event => {
-            if (event.key === Qt.Key_Down || event.key === Qt.Key_J)
-                nav.move(1);
-            else if (event.key === Qt.Key_Up || event.key === Qt.Key_K)
-                nav.move(-1);
-            else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
+            if (nav.navigate(event))
+                return;
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
                 Power.run(Power.actions[nav.index]);
             else {
                 // a single letter runs the matching action directly

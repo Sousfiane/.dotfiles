@@ -26,15 +26,9 @@ DropdownPanel {
         readonly property var selDev: Bt.list[nav.index] ?? null
 
         Keys.onPressed: event => {
+            if (nav.navigate(event))
+                return;
             switch (event.key) {
-            case Qt.Key_J:
-            case Qt.Key_Down:
-                nav.move(1);
-                break;
-            case Qt.Key_K:
-            case Qt.Key_Up:
-                nav.move(-1);
-                break;
             case Qt.Key_Return:
             case Qt.Key_Enter:
             case Qt.Key_Space:

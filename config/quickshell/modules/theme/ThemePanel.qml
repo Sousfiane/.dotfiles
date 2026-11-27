@@ -87,11 +87,9 @@ DropdownPanel {
 
         Keys.onPressed: event => {
             if (panel.fontRole !== "") {
-                if (event.key === Qt.Key_Down || event.key === Qt.Key_J)
-                    fontNav.move(1);
-                else if (event.key === Qt.Key_Up || event.key === Qt.Key_K)
-                    fontNav.move(-1);
-                else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
+                if (fontNav.navigate(event))
+                    return;
+                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
                     Themes.setFont(panel.fontRole, panel.fontChoices[fontNav.index]);
                 // back to the main page (Escape too: it only closes the panel from there)
                 else if (event.key === Qt.Key_Escape || event.key === Qt.Key_H || event.key === Qt.Key_Left || event.key === Qt.Key_Backspace)
@@ -102,11 +100,9 @@ DropdownPanel {
                 return;
             }
 
-            if (event.key === Qt.Key_Down || event.key === Qt.Key_J)
-                nav.move(1);
-            else if (event.key === Qt.Key_Up || event.key === Qt.Key_K)
-                nav.move(-1);
-            else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || ((event.key === Qt.Key_L || event.key === Qt.Key_Right) && nav.index >= menu.paletteCount))
+            if (nav.navigate(event))
+                return;
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || ((event.key === Qt.Key_L || event.key === Qt.Key_Right) && nav.index >= menu.paletteCount))
                 menu.activate(nav.index);
             // a font's size, on its row
             else if (nav.index >= menu.paletteCount && nav.index < menu.dockIndex && (event.key === Qt.Key_Minus || event.key === Qt.Key_Plus || event.key === Qt.Key_Equal))

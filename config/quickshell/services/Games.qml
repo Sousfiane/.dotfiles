@@ -32,12 +32,6 @@ Singleton {
         return n !== "" && (t === n || t.startsWith(n + " "));
     }
 
-    // an Image source for an icon name or a path: a path is loaded as is, since Heroic caches its
-    // covers without an extension and Qt reads the format from the file (as Notif does)
-    function iconSource(icon, fallback) {
-        return (icon ?? "").startsWith("/") ? "file://" + icon : Quickshell.iconPath(icon ?? "", fallback);
-    }
-
     // the game a window is, or null; cached by class and title
     property var cache: ({})
     onGamesChanged: cache = ({})

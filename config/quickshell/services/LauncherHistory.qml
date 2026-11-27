@@ -1,6 +1,5 @@
 pragma Singleton
 import Quickshell
-import Quickshell.Io
 import QtQuick
 
 // how often and how recently each app was launched, for the launcher's ranking.
@@ -10,23 +9,12 @@ Singleton {
 
     property var usage: ({})
 
-    FileView {
+    JsonFile {
         id: usageFile
-
         path: Quickshell.cachePath("launcher-usage.json")
-        blockLoading: true
-        printErrors: false
     }
 
-    Component.onCompleted: {
-        try {
-            const data = usageFile.text();
-            usage = data.length > 0 ? JSON.parse(data) : {};
-        } catch (e) {
-            console.warn("Could not load launcher history:", e);
-            usage = {};
-        }
-    }
+    Component.onCompleted: usage = usageFile.load({})
 
     function count(id: string): int {
         const u = usage[id];
@@ -54,6 +42,6 @@ Singleton {
         };
 
         usage = updated;
-        usageFile.setText(JSON.stringify(updated, null, 2));
+        usageFile.save(updated);
     }
 }

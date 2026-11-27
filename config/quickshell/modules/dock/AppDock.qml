@@ -304,7 +304,7 @@ Variants {
                                 anchors.bottomMargin: -tile.hop
                                 anchors.topMargin: tile.hop
                                 implicitSize: win.iconSize
-                                source: cell.isSep ? "" : Games.iconSource(cell.modelData.icon, "application-x-executable")
+                                source: cell.isSep ? "" : Icons.source(cell.modelData.icon, "application-x-executable")
                                 opacity: area.pressed ? 0.7 : 1
                             }
 
@@ -518,7 +518,7 @@ Variants {
                         text: modelData.title || modelData.lastIpcObject?.title || "Window"
                         active: modelData === Hyprland.activeToplevel
                         onClicked: {
-                            Dock.focusWindow(modelData);
+                            Windows.focus(modelData);
                             win.menuItem = null;
                         }
                     }

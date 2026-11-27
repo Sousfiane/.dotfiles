@@ -86,16 +86,11 @@ Singleton {
     // the app's most recently focused window, or null
     function windowFor(names) {
         const matches = Hyprland.toplevels.values.filter(w => {
-            const cls = Ws.windowClass(w).toLowerCase();
+            const cls = Windows.windowClass(w).toLowerCase();
             return cls !== "" && names.some(n => cls === n || cls.endsWith("." + n) || n.endsWith("." + cls));
         });
         matches.sort((a, b) => (a.lastIpcObject?.focusHistoryID ?? 1e9) - (b.lastIpcObject?.focusHistoryID ?? 1e9));
         return matches[0] ?? null;
-    }
-
-    function focusWindow(w) {
-        const addr = "0x" + String(w.address).replace(/^0x/, "");
-        Hyprland.dispatch(`hl.dsp.focus({ window = "address:${addr}" })`);
     }
 
     // a click on a toast or a history entry
@@ -107,7 +102,7 @@ Singleton {
         Panels.hide("notifs");
 
         if (win)
-            focusWindow(win);              // also when the action ran: Wayland apps can't always raise themselves
+            Windows.focus(win);              // also when the action ran: Wayland apps can't always raise themselves
         else if (!invoked && desktop)
             Launcher.run(desktop);         // not running: start it
 
@@ -128,11 +123,10 @@ Singleton {
 
     // so a restart or a config reload doesn't lose it. Live notifications aren't carried over
     // (keepOnReload is off): what comes back is the copy, still readable and clickable to go to the app.
-    FileView {
+    JsonFile {
         id: store
         path: Quickshell.statePath("notifs.json")
-        blockLoading: true
-        printErrors: false
+        pretty: false
     }
 
     readonly property var savedFields: ["id", "appName", "appIcon", "desktopEntry", "summary", "body", "image", "savedImage", "urgency", "time"]
@@ -147,11 +141,11 @@ Singleton {
                 e.image = "";
             return e;
         });
-        store.setText(JSON.stringify({
+        store.save({
             nextId,
             seenUpTo,
             history: entries
-        }));
+        });
     }
 
     // written once per event loop turn, whatever changed in it
@@ -184,7 +178,7 @@ Singleton {
     Component.onCompleted: {
         Quickshell.execDetached(["mkdir", "-p", imageDir]);
         try {
-            const data = JSON.parse(store.text() || "{}");
+            const data = store.load({});
             const restored = (data.history ?? []).map(e => notifComp.createObject(root, e));
             history = restored.slice(0, maxHistory);
             nextId = Math.max(data.nextId ?? 0, ...restored.map(n => n.id + 1));

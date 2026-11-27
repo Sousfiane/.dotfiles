@@ -38,15 +38,9 @@ DropdownPanel {
         }
 
         Keys.onPressed: event => {
+            if (nav.navigate(event))
+                return;
             switch (event.key) {
-            case Qt.Key_J:
-            case Qt.Key_Down:
-                nav.move(1);
-                break;
-            case Qt.Key_K:
-            case Qt.Key_Up:
-                nav.move(-1);
-                break;
             case Qt.Key_G:
                 nav.select(event.modifiers & Qt.ShiftModifier ? nav.count - 1 : 0);
                 break;

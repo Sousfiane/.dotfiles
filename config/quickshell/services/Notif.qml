@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
 import QtQuick
+import qs.config
 
 // One notification, as the toasts and the center show it. Created by Notifs, either from a live
 // Notification (kept in sync with it while the app has it open) or from the saved history.
@@ -41,11 +42,7 @@ QtObject {
 
     // ---------- what the cards show ----------
 
-    readonly property string iconSource: {
-        if (appIcon === "")
-            return "";
-        return appIcon.startsWith("/") ? "file://" + appIcon : Quickshell.iconPath(appIcon, true);
-    }
+    readonly property string iconSource: appIcon === "" ? "" : Icons.source(appIcon, true)
 
     readonly property string timeText: {
         const d = new Date(time);
