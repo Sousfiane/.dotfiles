@@ -80,7 +80,7 @@ ShellRoot {
     }, palette.colors ?? {})
     readonly property string font: fonts.ui ?? "JetBrainsMono Nerd Font"
     readonly property int fontSize: fonts.uiPixelSize ?? 13
-    readonly property int radius: settings.radius?.large ?? 12
+    readonly property int radius: settings.radius?.large ?? 6
     readonly property real panelAlpha: settings.opacity?.panel ?? 0.95
     readonly property real controlAlpha: settings.opacity?.control ?? 0.75
 

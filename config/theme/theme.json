@@ -34,7 +34,7 @@
   "radius": {
     "small": 3,
     "medium": 6,
-    "large": 12
+    "large": 6
   },
 
   "opacity": {
