@@ -72,8 +72,9 @@ Variants {
                     // floating terminals carry a custom class so Hyprland floats them: show them as the terminal
                     readonly property string cls: rawCls === Config.floatingClass ? Config.terminal : rawCls
 
-                    // gives the icon and the readable name ("Files" rather than org.gnome.Nautilus)
-                    readonly property var entry: cls !== "" ? DesktopEntries.heuristicLookup(cls) : null
+                    // gives the icon and the readable name ("Files" rather than org.gnome.Nautilus): the same
+                    // entry the dock picks, so a game from Heroic is found by its title
+                    readonly property var entry: Dock.entryForWindow(modelData)
 
                     Layout.fillWidth: true
                     spacing: 10

@@ -84,12 +84,47 @@ Singleton {
         return entryCache[key] = exact ?? DesktopEntries.heuristicLookup(cls) ?? null;
     }
 
+    // a letter (accented ones too) or a digit: "" past the end of a string is not
+    function isWordChar(c) {
+        return c !== "" && (c.toLowerCase() !== c.toUpperCase() || (c >= "0" && c <= "9"));
+    }
+
+    // the desktop entry whose name starts a window's title: a game from Heroic runs with a shared class
+    // (steam_app_default) that no entry claims, but its title begins with the game's name
+    // ("Cyberpunk 2077 (C) 2020 by CD Projekt RED"), which is the name of the entry Heroic writes for it.
+    // The name must end at a word boundary, and the longest one wins
+    function entryForTitle(title) {
+        if (title === "")
+            return null;
+        const t = title.toLowerCase();
+        const key = "title:" + t;
+        if (key in entryCache)
+            return entryCache[key];
+        let best = null;
+        for (const a of allApps) {
+            const n = (a.name ?? "").toLowerCase();
+            if (a.noDisplay || n === "" || !t.startsWith(n) || isWordChar(t.charAt(n.length)))
+                continue;
+            if (!best || n.length > best.name.length)
+                best = a;
+        }
+        return entryCache[key] = best;
+    }
+
+    // the desktop entry of a window: by its class, else by its title
+    function entryForWindow(w) {
+        const cls = windowClass(w);
+        if (cls === "")
+            return null;
+        return entryFor(cls) ?? entryForTitle(w.title ?? "");
+    }
+
     // window classes that have no desktop entry still get an icon: keyed by "class:<name>"
     function keyFor(w) {
         const cls = windowClass(w);
         if (cls === "")
             return "";
-        const e = entryFor(cls);
+        const e = entryForWindow(w);
         return e ? e.id : "class:" + cls;
     }
 
