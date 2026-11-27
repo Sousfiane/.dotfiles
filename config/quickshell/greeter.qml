@@ -107,9 +107,11 @@ ShellRoot {
     // ---------- logging in ----------
 
     readonly property bool testing: !Greetd.available
-    // its output would print on the console while Hyprland comes up (a few seconds): the console is cleared,
+    // Started through the user's login shell, as a display manager does: its profile (~/.zprofile: ~/.local/bin
+    // in PATH, DOTFILES, the theme's colours) runs first, and uwsm hands that environment to the whole session.
+    // Its output would print on the console while Hyprland comes up (a few seconds): the console is cleared,
     // its cursor hidden, and the output dropped (uwsm and Hyprland log to the journal anyway)
-    readonly property var session: ["sh", "-c", "printf '\\033[2J\\033[3J\\033[H\\033[?25l'; exec uwsm start -e -D Hyprland hyprland.desktop >/dev/null 2>&1"]
+    readonly property var session: ["sh", "-c", "printf '\\033[2J\\033[3J\\033[H\\033[?25l'; login=$(getent passwd \"$(id -un)\" | cut -d: -f7); exec \"${login:-/bin/sh}\" -l -c 'exec uwsm start -e -D Hyprland hyprland.desktop' >/dev/null 2>&1"]
 
     property string user: (testing ? Quickshell.env("USER") : Quickshell.env("QS_GREETER_USER")) ?? ""
     property string password: ""
