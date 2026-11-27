@@ -56,12 +56,13 @@ if hl.plugin.hyprbars ~= nil then
 		icon = "",
 		action = dsp("hl.dsp.window.fullscreen()"),
 	})
+	-- the same toggle as SUPER + SHIFT + F (floating.lua)
 	hl.plugin.hyprbars.add_button({
 		bg_color = theme.rgb("foam"),
 		fg_color = theme.rgb("base"),
 		size = 12,
 		icon = "",
-		action = dsp("hl.dsp.window.float()"),
+		action = dsp('require("config.floating").toggle'),
 	})
 	-- a lua function is a valid dispatch: the same toggle as SUPER + P (popout.lua)
 	hl.plugin.hyprbars.add_button({

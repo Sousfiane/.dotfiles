@@ -15,16 +15,7 @@ hl.bind(mod .. " + Q", hl.dsp.window.close(), { description = "Close active wind
 
 hl.bind(mod .. " + F", hl.dsp.window.fullscreen(), { description = "Toggle fullscreen" })
 
-hl.bind(mod .. " + " .. shift .. " + F", function()
-	local active = hl.get_active_window()
-	if active ~= nil then
-		hl.dispatch(hl.dsp.window.float({ window = active }))
-		if active.floating then
-			hl.dispatch(hl.dsp.window.resize({ x = 875, y = 600, window = active }))
-			hl.dispatch(hl.dsp.window.center({ window = active }))
-		end
-	end
-end, { description = "Toggle floating and resize window" })
+hl.bind(mod .. " + " .. shift .. " + F", require("config.floating").toggle, { description = "Toggle floating and resize window" })
 
 hl.bind(mod .. " + P", require("config.popout").toggle, { description = "Toggle picture-in-picture / popup mode" })
 
