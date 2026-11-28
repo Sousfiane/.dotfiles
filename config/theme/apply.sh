@@ -15,10 +15,14 @@
 #   Zen        files.sh writes its userChrome.css, userContent.css and user.js, which it reads only as it
 #              starts: if it's open and its colours changed, it restarts (its tabs come back). Dark Reader's
 #              colours too (darkreader.py), while it's closed
+#
+# An app restarted here (Nautilus, Spotify, Zen) opens again where it was, silently: its windows on their
+# own workspaces, the workspace shown and the focus left as they are (reopen.sh)
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 "$(dirname "${BASH_SOURCE[0]}")/merge.sh" || exit 1
+reopen="$(dirname "${BASH_SOURCE[0]}")/reopen.sh"
 theme=$THEME_CURRENT               # every part below that reads it checks for jq first
 
 # Zen's colours as they were, to tell after files.sh whether they changed
@@ -57,17 +61,19 @@ if command -v jq >/dev/null; then
         mkdir -p "$(dirname "$link")"
         ln -sfn "$css" "$link"
         # an open Nautilus read gtk.css when it started and never again: it's closed and its windows opened
-        # again, each on its folder (tabs come back as their window's first folder). In the background
+        # again, each on its folder (tabs come back as their window's first folder), where it was. In the
+        # background
         if pgrep -x nautilus >/dev/null && command -v busctl >/dev/null; then
             setsid -f bash -c '
-                locations=$(busctl --user --json=short get-property org.freedesktop.FileManager1 \
+                export locations=$(busctl --user --json=short get-property org.freedesktop.FileManager1 \
                     /org/freedesktop/FileManager1 org.freedesktop.FileManager1 OpenWindowsWithLocations |
                     jq -r ".data[][0] // empty")
+                "$1" save org.gnome.Nautilus
                 nautilus -q
                 while pgrep -x nautilus >/dev/null; do sleep 0.2; done
-                while IFS= read -r uri; do
-                    [[ -n $uri ]] && uwsm-app -- nautilus --new-window "$uri"
-                done <<<"$locations"' >/dev/null 2>&1
+                exec "$1" start org.gnome.Nautilus "while IFS= read -r uri; do
+                    [[ -n \$uri ]] && uwsm-app -- nautilus --new-window \"\$uri\"
+                done <<<\"\$locations\""' _ "$reopen" >/dev/null 2>&1
         fi
     fi
 fi
@@ -79,9 +85,10 @@ if pgrep -x spotify >/dev/null && command -v jq >/dev/null; then
     scheme=$(awk -F' *= *' '$1=="color_scheme"{print $2; exit}' "$HOME/.config/spicetify/config-xpui.ini" 2>/dev/null)
     if [[ -n $wanted && $scheme != "$wanted" ]]; then
         setsid -f bash -c '
+            "$1" save spotify
             pkill -x spotify
             while pgrep -x spotify >/dev/null; do sleep 0.2; done
-            uwsm-app -- "$HOME/.local/bin/spotify-themed"' >/dev/null 2>&1
+            exec "$1" start spotify "uwsm-app -- $HOME/.local/bin/spotify-themed"' _ "$reopen" >/dev/null 2>&1
     fi
 fi
 
@@ -107,14 +114,15 @@ darkreader=(python3 -I "$(dirname "${BASH_SOURCE[0]}")/darkreader.py" "$theme")
 if main=$(pgrep -o -x zen-bin); then
     if [[ $(zen_colors) != "$zen_before" ]]; then
         setsid -f bash -c '
+            "$2" save zen
             kill -TERM "$1"
             for _ in $(seq 75); do
                 if ! kill -0 "$1" 2>/dev/null; then
-                    "${@:2}"
-                    exec uwsm-app -- zen.desktop
+                    "${@:3}"
+                    exec "$2" start zen "uwsm-app -- zen.desktop"
                 fi
                 sleep 0.2
-            done' _ "$main" "${darkreader[@]}" >/dev/null 2>&1
+            done' _ "$main" "$reopen" "${darkreader[@]}" >/dev/null 2>&1
     fi
 elif command -v python3 >/dev/null; then
     "${darkreader[@]}"
