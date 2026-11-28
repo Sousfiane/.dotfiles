@@ -2,7 +2,8 @@
 # The symlinks. Where a file goes is where it sits in the repo:
 #
 #   config/<app>/<entry>      → ~/.config/<app>/<entry>
-#   config/<file>             → ~/.config/<file> (a file read from ~/.config itself: xdg-terminals.list)
+#   config/<file>             → ~/.config/<file> (a file read from ~/.config itself: xdg-terminals.list,
+#                               mimeapps.list)
 #   home/<name>               → ~/.<name>
 #   local/<folder>/<entry>    → ~/.local/<folder>/<entry>
 #
