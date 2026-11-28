@@ -2,7 +2,7 @@
 -- on: a cable moved to another port keeps its settings. The greeter uses this file too (greeter.lua).
 --
 -- The TV is off unless turned on: SUPER + T (bindings.lua) or the hub's TV toggle, both toggle_tv() below.
--- On, it's left of the ASUS, which moves right to make room. Whether it's on is kept in
+-- On, it's left of the ASUS, in the room kept for it. Whether it's on is kept in
 -- ~/.local/state/hypr/tv ("on" or "off"), so a reload (a theme change runs one) leaves it as it was; the
 -- hub's toggle reads the same file. The greeter's home has none: at the login screen the TV is off.
 
@@ -36,33 +36,16 @@ local function save(on)
 	end
 end
 
--- the TV's fastest 4K mode, up to 120 Hz, among those it offers. Asked for a mode it doesn't offer, Hyprland
--- would force it and the TV would stay black: 4K at 120 Hz is only offered once the TV's HDMI input is in
--- its HDMI 2.1 mode (60 Hz before). Its preferred mode when it isn't plugged in, or not seen yet.
-local function tv_mode()
-	local best
-	for _, m in ipairs(hl.get_monitors({ all = true })) do
-		if "desc:" .. m.description == TV then
-			for _, mode in ipairs(m.available_modes) do
-				if mode.width == 3840 and mode.height == 2160 and mode.refresh_rate <= 120.5 then
-					if best == nil or mode.refresh_rate > best then
-						best = mode.refresh_rate
-					end
-				end
-			end
-		end
-	end
-	return best and ("3840x2160@%.2f"):format(best) or "preferred"
-end
-
--- every screen's rule, with the TV on or off. The TV at scale 2 takes the room of a 1080p screen
-local function apply(tv)
-	local x = tv and 1920 or 0
-	hl.monitor({ output = ASUS, mode = "1920x1080@165", position = x .. "x0", scale = 1 })
-	hl.monitor({ output = IIYAMA, mode = "1920x1080@60", position = (x + 1920) .. "x0", scale = 1 })
+-- The TV's rule, on or off. Only the TV's: the other screens keep their place either way (the TV's room on
+-- the left is left empty while it's off), since a screen whose rule changes is set up again, and blinks.
+-- The TV at scale 2 takes the room of a 1080p screen.
+local function apply_tv(tv)
 	if tv then
-		-- disabled = false said outright: a rule leaves out what it doesn't set, and the TV's off rule set it
-		hl.monitor({ output = TV, mode = tv_mode(), position = "0x0", scale = 2, disabled = false })
+		-- disabled = false said outright: a rule leaves out what it doesn't set, and the TV's off rule set it.
+		-- Its preferred mode is 4K at 60 Hz. It lists 4K at 120 Hz too, but its EDID's range limits (75 Hz,
+		-- 600 MHz) contradict it, so the NVIDIA driver leaves that mode out; a mode not offered is forced by
+		-- Hyprland, and the TV stays black. "3840x2160@120" here once the driver offers it.
+		hl.monitor({ output = TV, mode = "preferred", position = "0x0", scale = 2, disabled = false })
 	else
 		-- without this, Hyprland would turn it on like any other screen plugged in
 		hl.monitor({ output = TV, disabled = true })
@@ -72,7 +55,7 @@ end
 function M.toggle_tv()
 	local on = not tv_wanted()
 	save(on)
-	apply(on)
+	apply_tv(on)
 	hl.dispatch(hl.dsp.exec_cmd(on and "notify-send -a Display 'TV on'" or "notify-send -a Display 'TV off'"))
 end
 
@@ -80,6 +63,8 @@ end
 -- Hyprland, as in Hyprland's own default config
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
 
-apply(tv_wanted())
+hl.monitor({ output = ASUS, mode = "1920x1080@165", position = "1920x0", scale = 1 })
+hl.monitor({ output = IIYAMA, mode = "1920x1080@60", position = "3840x0", scale = 1 })
+apply_tv(tv_wanted())
 
 return M
