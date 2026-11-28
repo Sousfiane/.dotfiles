@@ -31,14 +31,10 @@ end
 
 -- The greeter quits cleanly only once someone has logged in: that's marked for greetd's login-screen script
 -- (/etc/greetd/login-screen, written by install/steps/greeter.sh), which counts anything else as a failure and
--- falls back to a text login after a few in a row.
--- After a login the screens are switched off before this Hyprland exits: handing lit screens straight to the
--- session's Hyprland makes the NVIDIA driver stall ~3 s ("Flip event timeout"); the session lights them again.
+-- falls back to a text login after a few in a row
 hl.on("hyprland.start", function()
 	hl.exec_cmd(
 		"QS_GREETER_HOME='" .. home .. "' QS_GREETER_USER='" .. user .. "' qs -p '" .. home
-			.. "/.config/quickshell/greeter.qml' && { touch /tmp/qs-greeter-ok;"
-			.. " hyprctl dispatch 'hl.dsp.dpms({action = \"off\"})'; sleep 0.1; };"
-			.. " hyprctl dispatch 'hl.dsp.exit()'"
+			.. "/.config/quickshell/greeter.qml' && touch /tmp/qs-greeter-ok; hyprctl dispatch 'hl.dsp.exit()'"
 	)
 end)
