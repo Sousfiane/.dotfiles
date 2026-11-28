@@ -14,6 +14,7 @@ Scope {
 
     property string password: ""
     property string message: ""                 // error shown under the field
+    property string pamError: ""                // what else PAM said during this attempt (faillock: "account locked...")
     property bool unlocking: false              // fading out, the lock is released right after
     readonly property bool busy: pam.active
 
@@ -23,6 +24,7 @@ Scope {
         if (busy || password === "")
             return;
         message = "";
+        pamError = "";
         pam.start();
     }
 
@@ -44,9 +46,14 @@ Scope {
         configDirectory: Quickshell.shellDir + "/config/pam"
         config: "password.conf"
 
+        // the password prompt is answered; what PAM says besides replaces "Wrong password". faillock, while
+        // the account is locked (the right password fails too), says it in two lines: "The account is locked
+        // due to 3 failed logins." and "(9 minutes left to unlock)"
         onPamMessage: {
             if (responseRequired)
                 respond(root.password);
+            else
+                root.pamError = (root.pamError + " " + message).trim();
         }
 
         onCompleted: result => {
@@ -56,7 +63,7 @@ Scope {
                 release.restart();
                 return;
             }
-            root.message = result === PamResult.MaxTries ? "Too many attempts" : "Wrong password";
+            root.message = root.pamError || (result === PamResult.MaxTries ? "Too many attempts" : "Wrong password");
             root.failed();
         }
 
