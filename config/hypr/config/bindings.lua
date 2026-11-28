@@ -77,6 +77,9 @@ hl.bind(
 -- 🖥️ Applications
 --------------------------------------------------
 
+-- the terminal always opens a new one, here; the others go to the app when it's open (apps.lua)
+local apps = require("config.apps")
+
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("uwsm-app -- xdg-terminal-exec"), { description = "Open terminal" })
 
 hl.bind(
@@ -85,11 +88,23 @@ hl.bind(
 	{ description = "Open floating terminal" }
 )
 
-hl.bind(mod .. " + E", hl.dsp.exec_cmd("uwsm-app -- nautilus"), { description = "Open file manager (Nautilus)" })
+hl.bind(
+	mod .. " + E",
+	apps.focus_or_open("org.gnome.Nautilus", "uwsm-app -- nautilus"),
+	{ description = "Go to or open file manager (Nautilus)" }
+)
 
-hl.bind(mod .. " + B", hl.dsp.exec_cmd("uwsm-app -- zen-browser"), { description = "Open browser (Zen)" })
+hl.bind(
+	mod .. " + B",
+	apps.focus_or_open("zen", "uwsm-app -- zen-browser"),
+	{ description = "Go to or open browser (Zen)" }
+)
 
-hl.bind(mod .. " + C", hl.dsp.exec_cmd("uwsm-app -- vesktop"), { description = "Open chat (Vesktop)" })
+hl.bind(
+	mod .. " + C",
+	apps.focus_or_open("vesktop", "uwsm-app -- vesktop"),
+	{ description = "Go to or open chat (Vesktop)" }
+)
 
 --------------------------------------------------
 -- 🔧 Utilities

@@ -42,24 +42,9 @@ hl.window_rule({
 	size = { floating.size.x, floating.size.y }, -- the same as SUPER + SHIFT + F
 })
 
--- Programs on specific workspaces
-hl.window_rule({
-	name = "kitty-on-ws1",
-	match = { class = "^(kitty)$" },
-	workspace = "1",
-})
-
-hl.window_rule({
-	name = "zen-on-ws2",
-	match = { class = "^(zen)$" },
-	workspace = "2",
-})
-
-hl.window_rule({
-	name = "discord-on-ws3",
-	match = { class = "^(vesktop)$" },
-	workspace = "3",
-})
+-- Apps open where you are, next to the focused window in the strip, as macOS opens them on the current
+-- Space: SUPER + B, C, E go to the app if it's open (bindings.lua), and ALT + Tab / Mission Control find the
+-- rest; where an app lives is up to you (drag it in Mission Control). One exception: games, below.
 
 -- Gaming on 4: the launchers and the games. Steam, its web helper and every Proton game (steam_app_*,
 -- also what Heroic's umu runs give, steam_app_default); Heroic; gamescope. Games that pick their own
