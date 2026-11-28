@@ -104,6 +104,36 @@ hl.bind(mod .. " + " .. shift .. " + H", hl.dsp.layout("swapcol l"), { descripti
 hl.bind(mod .. " + " .. shift .. " + L", hl.dsp.layout("swapcol r"), { description = "Swap column right" })
 
 --------------------------------------------------
+-- 🖱️ The strip (scrolling layout), as on a trackpad
+--------------------------------------------------
+
+-- the wheel goes along the strip, column by column (down is right); with SHIFT, workspace by workspace
+hl.bind(mod .. " + mouse_down", hl.dsp.layout("focus r"), { description = "Focus column right (wheel)" })
+hl.bind(mod .. " + mouse_up", hl.dsp.layout("focus l"), { description = "Focus column left (wheel)" })
+hl.bind(
+	mod .. " + " .. shift .. " + mouse_down",
+	hl.dsp.focus({ workspace = "m+1" }),
+	{ description = "Next workspace (wheel)" }
+)
+hl.bind(
+	mod .. " + " .. shift .. " + mouse_up",
+	hl.dsp.focus({ workspace = "m-1" }),
+	{ description = "Previous workspace (wheel)" }
+)
+
+-- the column's width, through the layout's widths (⅓, ½, ⅔, full: scrolling:explicit_column_widths), as
+-- macOS tiles a window to halves and thirds
+-- (CTRL: SUPER + ALT + a letter is OBS's)
+hl.bind(mod .. " + R", hl.dsp.layout("colresize +conf"), { description = "Column wider (⅓ ½ ⅔ full)" })
+hl.bind(mod .. " + " .. ctrl .. " + R", hl.dsp.layout("colresize -conf"), { description = "Column narrower" })
+hl.bind(mod .. " + " .. ctrl .. " + mouse_up", hl.dsp.layout("colresize +conf"), { description = "Column wider (wheel)" })
+hl.bind(
+	mod .. " + " .. ctrl .. " + mouse_down",
+	hl.dsp.layout("colresize -conf"),
+	{ description = "Column narrower (wheel)" }
+)
+
+--------------------------------------------------
 -- 🔀 Move workspace between monitors
 --------------------------------------------------
 

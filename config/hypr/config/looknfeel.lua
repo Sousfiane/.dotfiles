@@ -71,12 +71,17 @@ hl.config({
 --   move  (easeInOutQuart) A -> B, both on screen   2   = 200 ms
 --   enter (easeOutExpo)    arriving                  2   = 200 ms
 --   exit  (easeInQuart)    leaving                   1.5 = 150 ms
+--   spring (easeOutBack, soft) a window arriving or moving along the strip: past the mark by a few
+--                          percent and back, as macOS's windows settle  3 = 300 ms
 hl.curve("move", { type = "bezier", points = { { 0.77, 0 }, { 0.175, 1 } } })
 hl.curve("enter", { type = "bezier", points = { { 0.16, 1 }, { 0.3, 1 } } })
 hl.curve("exit", { type = "bezier", points = { { 0.7, 0 }, { 0.84, 0 } } })
+hl.curve("spring", { type = "bezier", points = { { 0.32, 1.2 }, { 0.5, 1 } } })
 
-hl.animation({ leaf = "windows", enabled = true, speed = 2, bezier = "move", style = "slide" })
-hl.animation({ leaf = "windowsIn", enabled = true, speed = 2, bezier = "enter", style = "slide" })
+-- windows: the strip glides and settles (columns resizing, swapping, scrolling into view), a new one grows
+-- in from 90 % of its size
+hl.animation({ leaf = "windows", enabled = true, speed = 3, bezier = "spring", style = "slide" })
+hl.animation({ leaf = "windowsIn", enabled = true, speed = 3, bezier = "spring", style = "popin 90%" })
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.5, bezier = "exit", style = "slide" })
 hl.animation({ leaf = "layersIn", enabled = true, speed = 2, bezier = "enter", style = "popin" })
 hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "exit", style = "popin" })

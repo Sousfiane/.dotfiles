@@ -21,6 +21,7 @@ xdotool
 # ---------- desktop apps ----------
 zen-browser-bin
 nautilus
+sushi                        # Quick Look in Nautilus: Space previews the selected file
 libreoffice-fresh
 vesktop-bin                  # Discord (SUPER+C)
 localsend                    # floated by rules.lua
