@@ -1,129 +1,33 @@
 #!/usr/bin/env bash
-# Brings everything up to date with theme.json, the fonts picked and the current palette. Quickshell runs
-# this whenever one of them changes, the `theme` command when Quickshell isn't running, and steps/system.sh
-# on install.
+# Brings every app up to date with the theme: theme.json, the fonts picked and the current palette.
+# Quickshell runs this whenever one of them changes, the `theme` command when Quickshell isn't running, and
+# steps/system.sh on install.
 #
-#   current    ~/.local/state/theme/current.json, the merged theme every app reads (merge.sh): first, and
-#              nothing else happens when it can't be made (a file that doesn't parse)
-#   files      hyprtoolkit's and hyprqt6engine's own files, written again (files.sh)
-#   Hyprland   reloads its config, for its own colours
-#   kitty      reloads its config (SIGUSR1), in every window
-#   tmux       sources its config, if a server is running
-#   GTK        theme, colour scheme, app font and icon theme (gsettings), and GTK 4's gtk.css link
-#   Spotify    if it's open with another scheme, it restarts with the new one (spotify-themed)
-#   Discord    follows by itself (files.sh writes its palette); this only makes sure the palette is enabled
-#   Zen        files.sh writes its userChrome.css, userContent.css and user.js, which it reads only as it
-#              starts: if it's open and its colours changed, it restarts (its tabs come back). Dark Reader's
-#              colours too (darkreader.py), while it's closed
+# First the merged theme every app reads, ~/.local/state/theme/current.json (merge.sh): when it can't be
+# made (a file that doesn't parse), nothing else happens. Then each app's own script in apps/, which does
+# all that app needs and nothing else: writes the files it can only read in its own format, then reloads
+# it, or restarts it where it was when it only reads them as it starts (reopen.sh):
 #
-# An app restarted here (Nautilus, Spotify, Zen) opens again where it was, silently: its windows on their
-# own workspaces, the workspace shown and the focus left as they are (reopen.sh)
+#   discord    its palette over rin's Rosé Pine theme; Vesktop reloads it by itself
+#   gtk        theme, colour scheme, font and icons (gsettings), GTK 4's gtk.css; Nautilus restarts
+#   hyprland   hyprtoolkit's file; Hyprland reloads
+#   kitty      reloads (it reads the theme itself)
+#   qt         hyprqt6engine's files and kdeglobals
+#   spotify    restarts with the new spicetify scheme
+#   tmux       sources its config (it reads the theme itself)
+#   zen        its userChrome.css, userContent.css, user.js and Dark Reader's colours; restarts
+#
+# Quickshell, Neovim and zsh follow current.json by themselves. A new app is a new script in apps/.
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+dir="$(dirname "${BASH_SOURCE[0]}")"
 
-"$(dirname "${BASH_SOURCE[0]}")/merge.sh" || exit 1
-reopen="$(dirname "${BASH_SOURCE[0]}")/reopen.sh"
-theme=$THEME_CURRENT               # every part below that reads it checks for jq first
+"$dir/merge.sh" || exit 1
 
-# Zen's colours as they were, to tell after files.sh whether they changed
-zen_colors() {
-    cat "$HOME"/.config/zen/*/chrome/userChrome.css "$HOME"/.zen/*/chrome/userChrome.css 2>/dev/null | md5sum
-}
-zen_before=$(zen_colors)
-
-"$(dirname "${BASH_SOURCE[0]}")/files.sh"
-
-if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
-    hyprctl reload >/dev/null
-fi
-
-pkill -USR1 -x kitty 2>/dev/null
-
-if tmux info &>/dev/null; then
-    tmux source-file "$HOME/.config/tmux/tmux.conf"
-fi
-
-if command -v jq >/dev/null && command -v gsettings >/dev/null; then
-    GNOME=org.gnome.desktop.interface
-    gsettings set $GNOME gtk-theme "$(jq -r '.gtk' "$theme")"
-    # each palette says which: the rose-pine GTK themes look wrong with prefer-dark, since libadwaita apps
-    # then add their own dark style on top of the theme's colours
-    gsettings set $GNOME color-scheme "$(jq -r '.gtkColorScheme // "default"' "$theme")"
-    gsettings set $GNOME font-name "$(jq -r '.font | "\(.app // .ui) \(.appPointSize)"' "$theme")"
-    gsettings set $GNOME icon-theme "$(jq -r '.icons' "$theme")"
-fi
-
-# GTK 4 apps (Nautilus) ignore the theme setting: they read gtk-4.0/gtk.css, a link to the theme's own
-if command -v jq >/dev/null; then
-    css="/usr/share/themes/$(jq -r '.gtk' "$theme")/gtk-4.0/gtk.css"
-    link="$HOME/.config/gtk-4.0/gtk.css"
-    if [[ -f $css && ( -L $link || ! -e $link ) && $(readlink "$link") != "$css" ]]; then
-        mkdir -p "$(dirname "$link")"
-        ln -sfn "$css" "$link"
-        # an open Nautilus read gtk.css when it started and never again: it's closed and its windows opened
-        # again, each on its folder (tabs come back as their window's first folder), where it was. In the
-        # background
-        if pgrep -x nautilus >/dev/null && command -v busctl >/dev/null; then
-            setsid -f bash -c '
-                export locations=$(busctl --user --json=short get-property org.freedesktop.FileManager1 \
-                    /org/freedesktop/FileManager1 org.freedesktop.FileManager1 OpenWindowsWithLocations |
-                    jq -r ".data[][0] // empty")
-                "$1" save org.gnome.Nautilus
-                nautilus -q
-                while pgrep -x nautilus >/dev/null; do sleep 0.2; done
-                exec "$1" start org.gnome.Nautilus "while IFS= read -r uri; do
-                    [[ -n \$uri ]] && uwsm-app -- nautilus --new-window \"\$uri\"
-                done <<<\"\$locations\""' _ "$reopen" >/dev/null 2>&1
-        fi
+status=0
+for app in "$dir"/apps/*.sh; do
+    if ! "$app"; then
+        echo "apply.sh: ${app##*/} failed" >&2
+        status=1
     fi
-fi
-
-# Spotify can't change theme while it runs: spotify-themed applies it as it opens. If it's open now with
-# another scheme, it's closed and opened again with the new one. In the background, so nothing here waits
-if pgrep -x spotify >/dev/null && command -v jq >/dev/null; then
-    wanted=$(jq -r '.spicetify // ""' "$theme" 2>/dev/null)
-    scheme=$(awk -F' *= *' '$1=="color_scheme"{print $2; exit}' "$HOME/.config/spicetify/config-xpui.ini" 2>/dev/null)
-    if [[ -n $wanted && $scheme != "$wanted" ]]; then
-        setsid -f bash -c '
-            "$1" save spotify
-            pkill -x spotify
-            while pgrep -x spotify >/dev/null; do sleep 0.2; done
-            exec "$1" start spotify "uwsm-app -- $HOME/.local/bin/spotify-themed"' _ "$reopen" >/dev/null 2>&1
-    fi
-fi
-
-# Discord: rin's Rosé Pine as an online theme (its link, so it stays up to date), with files.sh's
-# palette.theme.css over it, which Vesktop reloads by itself. Both are put in Vesktop's settings when
-# missing, only while it's closed: it keeps its settings in memory and would save over the change
-vesktop="$HOME/.config/vesktop/settings/settings.json"
-rin=https://raw.githubusercontent.com/baconeko/rose-pine-discord/refs/heads/main/dist/rin-rose-pine.theme.css
-if [[ -f $vesktop ]] && command -v jq >/dev/null && ! pgrep -x vesktop >/dev/null &&
-    ! jq -e --arg rin "$rin" '(.themeLinks // [] | index($rin)) and (.enabledThemes // [] | index("palette.theme.css"))' \
-        "$vesktop" >/dev/null 2>&1; then
-    jq --arg rin "$rin" '
-        .themeLinks = ((.themeLinks // []) - [$rin] + [$rin])
-        | .enabledThemes = ((.enabledThemes // []) - ["palette.theme.css"] + ["palette.theme.css"])' \
-        "$vesktop" >"$vesktop.tmp" && mv -f "$vesktop.tmp" "$vesktop" || rm -f "$vesktop.tmp"
-fi
-
-# Zen reads its theme only as it starts: if it's open and its colours changed, it's closed (TERM to its
-# main process: a normal quit, the session saved) and opened again, its tabs restored as on every start.
-# Dark Reader's colours are written in between, as it saves over them while Zen runs; when Zen is closed,
-# at once. In the background; if Zen doesn't close within 15 s (a "close tabs?" prompt), it's left as it is
-darkreader=(python3 -I "$(dirname "${BASH_SOURCE[0]}")/darkreader.py" "$theme")
-if main=$(pgrep -o -x zen-bin); then
-    if [[ $(zen_colors) != "$zen_before" ]]; then
-        setsid -f bash -c '
-            "$2" save zen
-            kill -TERM "$1"
-            for _ in $(seq 75); do
-                if ! kill -0 "$1" 2>/dev/null; then
-                    "${@:3}"
-                    exec "$2" start zen "uwsm-app -- zen.desktop"
-                fi
-                sleep 0.2
-            done' _ "$main" "$reopen" "${darkreader[@]}" >/dev/null 2>&1
-    fi
-elif command -v python3 >/dev/null; then
-    "${darkreader[@]}"
-fi
+done
+exit $status
