@@ -35,11 +35,14 @@ Singleton {
     readonly property bool playerHasLength: (player?.lengthSupported ?? false) && player.length > 0 && !live
     readonly property real length: live ? 0 : playerHasLength ? player.length : (lastLength.key === trackKey ? lastLength.length : 0)
 
+    // checks the player itself, not playerHasLength: called as the player changes (one closing: null), when
+    // that binding may not have caught up yet
     function rememberLength() {
-        if (playerHasLength)
+        const p = player;
+        if (p && p.lengthSupported && p.length > 0 && p.length < liveLength)
             lastLength = {
                 key: trackKey,
-                length: player.length
+                length: p.length
             };
     }
     onTrackKeyChanged: rememberLength()
