@@ -85,6 +85,8 @@ bindkey '^[[1;5D' backward-word                                 #
 bindkey '^[[1;5C' forward-word                                  #
 bindkey '^H' backward-kill-word                                 # delete previous word with ctrl+backspace
 bindkey '^[[Z' undo                                             # Shift+tab undo last action
+zmodload zsh/complist
+bindkey -M menuselect '^[[Z' reverse-menu-complete              # Shift+tab in the completion menu: previous entry
 
 # Theming section
 autoload -U compinit colors
