@@ -211,8 +211,10 @@ Singleton {
                     glyph: f.glyph,
                     name: f.name,
                     detail: f.folder,
-                    run: () => Quickshell.execDetached(["uwsm-app", "--", "xdg-open", f.path]),
-                    alt: () => Quickshell.execDetached(["uwsm-app", "--", "xdg-open", f.dir])
+                    // with its default app, as Nautilus opens it (gio: the defaults set in its "Open With",
+                    // and a terminal app such as Neovim started in a terminal, which xdg-open can't do)
+                    run: () => Quickshell.execDetached(["uwsm-app", "--", "gio", "open", f.path]),
+                    alt: () => Quickshell.execDetached(["uwsm-app", "--", "gio", "open", f.dir])
                 }));
     }
 
