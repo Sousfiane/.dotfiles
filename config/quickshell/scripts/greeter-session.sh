@@ -9,7 +9,10 @@
 # PATH, DOTFILES, the theme's colours) runs first, and uwsm hands that environment to the whole session.
 # Output would print on the console while Hyprland comes up (a few seconds): the console is cleared, its
 # cursor hidden, and the output dropped (uwsm and Hyprland log to the journal anyway).
+#
+# -g -1: no check that the system reached graphical.target. When it hasn't (a boot to multi-user.target, greetd
+# started by hand) uwsm waits 5 s for nothing: greetd is what logged us in, so this is the graphical session.
 
 printf '\033[2J\033[3J\033[H\033[?25l'
 login=$(getent passwd "$(id -un)" | cut -d: -f7)
-exec "${login:-/bin/sh}" -l -c 'exec uwsm start -e -D Hyprland hyprland.desktop' >/dev/null 2>&1
+exec "${login:-/bin/sh}" -l -c 'exec uwsm start -g -1 -e -D Hyprland hyprland.desktop' >/dev/null 2>&1
