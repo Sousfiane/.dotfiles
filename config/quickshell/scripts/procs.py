@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-# The processes for the hub's System tab (services/SysMon.qml), in place of top: one JSON line per frame,
-#   {"ghz": the cores' average clock, "procs": [{"pid", "name", "user", "cpu", "rss"}, ...]}
+# The processes for the hub's System tab (services/Processes.qml), in place of top: one JSON line per frame,
+#   {"procs": [{"pid", "name", "user", "cpu", "rss"}, ...]}
 # busiest first. "cpu" is 0..1 of the whole CPU (all cores) since the last frame, "rss" bytes in RAM.
 # Kernel threads are left out (nothing to kill there). The first frame comes after a short first sample
 # so the list shows at once, then one every `interval` seconds (the first argument).
 
-import glob
 import json
 import os
 import pwd
@@ -17,7 +16,6 @@ LIMIT = 300
 TICK = os.sysconf("SC_CLK_TCK")
 PAGE = os.sysconf("SC_PAGE_SIZE")
 NCPU = os.cpu_count() or 1
-FREQS = glob.glob("/sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_cur_freq")
 
 users = {}
 names = {}          # pid -> name, as a process keeps its own
@@ -67,18 +65,6 @@ def sample():
     return out, time.monotonic()
 
 
-def ghz():
-    total = n = 0
-    for path in FREQS:
-        try:
-            with open(path) as f:
-                total += int(f.read())
-                n += 1
-        except (OSError, ValueError):
-            pass
-    return round(total / n / 1e6, 2) if n else 0
-
-
 def main():
     last, then = sample()
     delay = 0.25
@@ -98,7 +84,7 @@ def main():
                 del names[pid]
         last, then = now, at
         try:
-            sys.stdout.write(json.dumps({"ghz": ghz(), "procs": procs[:LIMIT]}, separators=(",", ":")) + "\n")
+            sys.stdout.write(json.dumps({"procs": procs[:LIMIT]}, separators=(",", ":")) + "\n")
             sys.stdout.flush()
         except BrokenPipeError:
             return
