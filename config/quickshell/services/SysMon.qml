@@ -4,7 +4,7 @@ import Quickshell.Io
 import QtQuick
 
 // System figures for the hub: CPU, memory and GPU (its Home row), plus per core, frequency, load,
-// network, disks and the top processes (its System tab). Nothing is read unless something on screen
+// network, disks and the processes, which can be ended (its System tab). Nothing is read unless something on screen
 // uses it: a view calls use() when it appears and release() when it goes, and detail views
 // useDetail()/releaseDetail() for the costlier parts (network, disks, the process list).
 Singleton {
@@ -36,6 +36,7 @@ Singleton {
     // a graph's history starts empty every time the figures start being read again, so it never joins two
     // moments with a line across the time nothing was read
     onActiveChanged: if (active) {
+        ticks = 0;
         cpuHistory = [];
         memHistory = [];
         gpuHistory = [];
@@ -83,11 +84,6 @@ Singleton {
             cpuHistory = pushed(cpuHistory, cpu);
         }
         lastCpu = now;
-    }
-
-    function readCpuinfo(text) {
-        const mhz = (text.match(/^cpu MHz\s*:\s*([\d.]+)/gm) ?? []).map(l => Number(l.split(":")[1]));
-        cpuGhz = mhz.length ? mhz.reduce((a, b) => a + b, 0) / mhz.length / 1000 : 0;
     }
 
     // ---------- memory ----------
@@ -151,7 +147,94 @@ Singleton {
     // ---------- disks and processes ----------
 
     property var disks: []               // [{ mount, size, used }] in bytes
-    property var processes: []           // [{ pid, name, cpu (0..1 of the whole CPU), mem (0..1) }]
+
+    // { pid, name, user, cpu (0..1 of the whole CPU), rss (bytes) }, busiest first. A ListModel updated in
+    // place, so a view scrolled down stays where it is and its rows are reused, not rebuilt
+    property alias processes: procModel
+    property bool procsRead: false
+    // while held (the pointer on the list), the rows keep their order: only their figures change, gone
+    // ones leave and new ones come last, so a row doesn't slide away just as it is clicked
+    property bool procsHeld: false
+
+    ListModel {
+        id: procModel
+    }
+
+    function applyProcs(list) {
+        if (procsHeld && procModel.count) {
+            const byPid = {};
+            for (const p of list)
+                byPid[p.pid] = p;
+            for (let i = procModel.count - 1; i >= 0; i--) {
+                const pid = procModel.get(i).pid;
+                if (byPid[pid]) {
+                    procModel.set(i, byPid[pid]);
+                    delete byPid[pid];
+                } else {
+                    procModel.remove(i);
+                }
+            }
+            for (const p of list)
+                if (byPid[p.pid])
+                    procModel.append(p);
+        } else {
+            for (let i = 0; i < list.length; i++) {
+                if (i < procModel.count)
+                    procModel.set(i, list[i]);
+                else
+                    procModel.append(list[i]);
+            }
+            if (procModel.count > list.length)
+                procModel.remove(list.length, procModel.count - list.length);
+        }
+        procsRead = true;
+    }
+
+    // ---------- ending a process: TERM asks it to quit, KILL (force) ends it at once ----------
+
+    property string killMessage: ""
+    property bool killFailed: false
+
+    function kill(pid, name, force) {
+        if (killer.running)
+            return;
+        killer.name = name;
+        killer.what = (force ? "Killed " : "Asked to quit: ") + name + " (" + pid + ")";
+        killer.force = force;
+        killer.pid = pid;
+        killer.command = ["kill", "-s", force ? "KILL" : "TERM", String(pid)];
+        killer.running = true;
+    }
+
+    Process {
+        id: killer
+
+        property string name
+        property string what
+        property bool force
+        property int pid
+
+        stderr: StdioCollector {
+            id: killErr
+        }
+        onExited: code => {
+            root.killFailed = code !== 0;
+            root.killMessage = code === 0 ? what : "Couldn't end " + name + ": " + (killErr.text.trim().split(": ").pop() || "kill failed");
+            killMessageTimer.restart();
+            // a killed process is gone: off the list now rather than at the next frame
+            if (code === 0 && force)
+                for (let i = 0; i < procModel.count; i++)
+                    if (procModel.get(i).pid === pid) {
+                        procModel.remove(i);
+                        break;
+                    }
+        }
+    }
+    Timer {
+        id: killMessageTimer
+        interval: 4000
+        onTriggered: root.killMessage = ""
+    }
 
     // ---------- reading ----------
 
@@ -164,11 +247,6 @@ Singleton {
         id: meminfo
         path: "/proc/meminfo"
         onLoaded: root.readMeminfo(text())
-    }
-    FileView {
-        id: cpuinfo
-        path: "/proc/cpuinfo"
-        onLoaded: root.readCpuinfo(text())
     }
     FileView {
         id: loadavg
@@ -200,18 +278,20 @@ done; echo none`]
         }
     }
 
+    // the first two readings close together, so the figures (a difference between two) show at once
+    property int ticks: 0
     Timer {
         running: root.active
-        interval: root.interval
+        interval: root.ticks < 2 ? 250 : root.interval
         repeat: true
         triggeredOnStart: true
         onTriggered: {
+            root.ticks++;
             stat.reload();
             meminfo.reload();
             if (root.tempPath.startsWith("/"))
                 temp.reload();
             if (root.detailed) {
-                cpuinfo.reload();
                 loadavg.reload();
                 netdev.reload();
             }
@@ -262,38 +342,21 @@ done; echo none`]
         onTriggered: df.running = true
     }
 
-    // one top in batch mode, its own loop: each frame's rows, the first frame skipped (it counts since
-    // boot). %CPU is per core in top, so it is divided by the core count to match the CPU graph
-    property var frame: []
-    property int frames: 0
+    // the process list and the cores' clock (scripts/procs.py): one JSON line per frame
     Process {
         running: root.detailed
-        command: ["top", "-b", "-d", String(root.interval / 1000), "-o", "%CPU", "-w", "512"]
-        environment: ({
-                LC_ALL: "C"
-            })
-        onRunningChanged: root.frames = 0
+        command: ["python3", "-I", Quickshell.shellDir + "/scripts/procs.py", String(root.interval / 1000)]
         stdout: SplitParser {
             onRead: line => {
-                // a frame starts with its header (after the first, the separating newline comes with it).
-                // A frame is shown once the next one starts: frame 1 (since boot) never is
-                if (line.trim().startsWith("top -")) {
-                    if (root.frames >= 2 && root.frame.length)
-                        root.processes = root.frame.slice(0, 10);
-                    root.frames++;
-                    root.frame = [];
+                let frame;
+                try {
+                    frame = JSON.parse(line);
+                } catch (e) {
+                    console.warn("SysMon: bad output from procs.py:", e);
                     return;
                 }
-                const f = line.trim().split(/\s+/);
-                if (f.length < 12 || !/^\d+$/.test(f[0]))
-                    return;
-                if (root.frame.length < 10)
-                    root.frame.push({
-                        pid: Number(f[0]),
-                        name: f.slice(11).join(" "),
-                        cpu: Number(f[8]) / 100 / Math.max(1, root.cores.length),
-                        mem: Number(f[9]) / 100
-                    });
+                root.cpuGhz = frame.ghz;
+                root.applyProcs(frame.procs);
             }
         }
     }

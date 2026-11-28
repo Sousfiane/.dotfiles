@@ -132,6 +132,12 @@ DropdownPanel {
                 event.accepted = true;
                 return;
             }
+            // System: its process list (select, end)
+            if (hub.current.id === "system") {
+                if (system.item?.handleKey(event))
+                    event.accepted = true;
+                return;
+            }
             // the rest only on Home
             if (hub.tab !== 0)
                 return;
@@ -192,8 +198,11 @@ DropdownPanel {
                 enabled: hub.tab === 0
             }
 
+            // built off the main thread: the tab switches at once and fills in a frame later
             Loader {
+                id: system
                 anchors.fill: parent
+                asynchronous: true
                 active: hub.current.id === "system"
                 sourceComponent: HubSystem {}
             }
@@ -259,7 +268,7 @@ DropdownPanel {
 
         Hint {
             readonly property string media: Media.active ? " • p/b/n media" : ""
-            text: hub.tab === 0 ? "Home • Tab or 1 2 3 tabs • h l month • j k day • t today" + media + " • a w e c s ? i r pickers • Esc" : hub.current.label + " • Tab / Shift+Tab or 1 2 3 tabs • Esc close"
+            text: hub.tab === 0 ? "Home • Tab or 1 2 3 tabs • h l month • j k day • t today" + media + " • a w e c s ? i r pickers • Esc" : hub.current.label + (hub.current.id === "system" ? " • j k process • x quit • Shift+X kill" : "") + " • Tab / Shift+Tab or 1 2 3 tabs • Esc close"
         }
     }
 }
