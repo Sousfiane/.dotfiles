@@ -63,7 +63,7 @@ ShellRoot {
     TrayPanel {}
     AppDock {}
     Overview {}
-    Switcher {}
+    SwitcherPanel {}
 
     // the window the right edge's dropdowns share: one card, growing or shrinking from one to another
     SharedDropdown {}

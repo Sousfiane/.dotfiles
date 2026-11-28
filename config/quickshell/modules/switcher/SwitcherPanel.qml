@@ -1,146 +1,14 @@
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
-import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
 import qs.config
 import qs.services
 import qs.components.ui
 
-// The app switcher, as macOS's Cmd + Tab, with ALT (SUPER + Tab switches workspaces):
-//
-//   ALT + Tab        the apps, most recently used first, the previous one chosen; Tab again goes on,
-//                    SHIFT + Tab back. Letting go of ALT goes to the app's last window (the strip
-//                    scrolls to it); a quick ALT + Tab goes straight back to the previous app
-//   ALT + ²          the same for the windows of the app in front, shown as live previews (macOS's Cmd + `)
-//   while it shows   h l / arrows choose, Enter goes, Esc cancels, Q quits the chosen app; a click goes
-//
-// Hyprland binds the keys (bindings.lua) and calls this through IPC: `qs ipc call switcher next apps`,
-// `prev`, and `commit` when ALT is let go. It shows on the focused monitor, after a short moment so a quick
-// tap doesn't flash it.
+// The app switcher on screen (services/Switcher.qml: what it lists and does): a card on the focused monitor,
+// the apps' icons or the front app's windows as live previews, the chosen one's name under them.
 Scope {
-    id: root
-
-    property bool open: false
-    property string mode: "apps"          // "apps" or "windows"
-    property int index: 0
-    property string screenName: ""
-    property bool uiShown: false          // drawn: a moment after opening
-
-    // ---------- what it lists ----------
-
-    // the windows, most recently focused first
-    readonly property var recent: {
-        if (!open)
-            return [];
-        return Hyprland.toplevels.values.filter(t => {
-            const o = t.lastIpcObject;
-            return o && o.mapped && !o.hidden && o.workspace?.id > 0;
-        }).sort((a, b) => (a.lastIpcObject.focusHistoryID ?? 99) - (b.lastIpcObject.focusHistoryID ?? 99));
-    }
-
-    // the apps, in the order their last window was used: { cls, name, icon, windows }
-    readonly property var apps: {
-        const byClass = {}, out = [];
-        for (const t of recent) {
-            const cls = Windows.appClass(t);
-            if (!byClass[cls]) {
-                const entry = Apps.entryForWindow(t);
-                byClass[cls] = {
-                    cls: cls,
-                    name: entry?.name ?? cls,
-                    icon: Icons.source(entry?.icon ?? cls.toLowerCase(), "application-x-executable"),
-                    windows: []
-                };
-                out.push(byClass[cls]);
-            }
-            byClass[cls].windows.push(t);
-        }
-        return out;
-    }
-
-    // the windows of the app in front
-    readonly property var appWindows: {
-        const front = recent[0];
-        return front ? recent.filter(t => Windows.appClass(t) === Windows.appClass(front)) : [];
-    }
-
-    readonly property int count: mode === "apps" ? apps.length : appWindows.length
-
-    // ---------- moving through it ----------
-
-    function start(m, dir) {
-        if (open && mode === m) {
-            if (count > 0)
-                index = (index + dir + count) % count;
-            return;
-        }
-        Panels.closeAll();
-        Hyprland.refreshToplevels();
-        mode = m;
-        screenName = Hyprland.focusedMonitor?.name ?? "";
-        index = -1;                       // set once the list is read (below)
-        pendingDir = dir;
-        open = true;
-        showTimer.restart();
-    }
-
-    // the first choice waits for the fresh list: the previous one going forward, the last one going back
-    property int pendingDir: 1
-    onCountChanged: if (open && index < 0 && count > 0)
-        index = count === 1 ? 0 : (pendingDir > 0 ? 1 : count - 1)
-    onOpenChanged: if (open && count > 0 && index < 0)
-        index = count === 1 ? 0 : (pendingDir > 0 ? 1 : count - 1)
-
-    function commit() {
-        if (!open)
-            return;
-        const i = index < 0 ? (count > 1 ? 1 : 0) : index;
-        const target = mode === "apps" ? apps[i]?.windows[0] : appWindows[i];
-        close();
-        if (target)
-            Windows.focus(target);
-    }
-
-    function close() {
-        open = false;
-        uiShown = false;
-        showTimer.stop();
-    }
-
-    // quits the chosen app: every window of it closed, the list stays open
-    function quitChosen() {
-        if (mode !== "apps" || !apps[index])
-            return;
-        for (const t of apps[index].windows)
-            Windows.close(t);
-        Qt.callLater(Hyprland.refreshToplevels);
-    }
-
-    Timer {
-        id: showTimer
-        interval: 110
-        onTriggered: root.uiShown = root.open
-    }
-
-    IpcHandler {
-        target: "switcher"
-
-        function next(mode: string): void {
-            root.start(mode === "windows" ? "windows" : "apps", 1);
-        }
-        function prev(mode: string): void {
-            root.start(mode === "windows" ? "windows" : "apps", -1);
-        }
-        function commit(): void {
-            root.commit();
-        }
-        function cancel(): void {
-            root.close();
-        }
-    }
-
     // ---------- drawing, on the focused monitor ----------
 
     Variants {
@@ -150,7 +18,7 @@ Scope {
             id: win
 
             required property ShellScreen modelData
-            readonly property bool here: root.open && root.screenName === modelData.name
+            readonly property bool here: Switcher.open && Switcher.screenName === modelData.name
 
             screen: modelData
             visible: here
@@ -171,15 +39,15 @@ Scope {
                 Keys.onPressed: event => {
                     const k = event.key;
                     if (k === Qt.Key_Escape)
-                        root.close();
+                        Switcher.close();
                     else if (k === Qt.Key_Return || k === Qt.Key_Enter)
-                        root.commit();
+                        Switcher.commit();
                     else if (k === Qt.Key_L || k === Qt.Key_Right)
-                        root.index = (root.index + 1) % Math.max(1, root.count);
+                        Switcher.step(1);
                     else if (k === Qt.Key_H || k === Qt.Key_Left)
-                        root.index = (root.index - 1 + root.count) % Math.max(1, root.count);
+                        Switcher.step(-1);
                     else if (k === Qt.Key_Q)
-                        root.quitChosen();
+                        Switcher.quitChosen();
                     else
                         return;
                     event.accepted = true;
@@ -187,7 +55,7 @@ Scope {
                 // ALT let go while the keyboard is here (Hyprland's release bind does it too)
                 Keys.onReleased: event => {
                     if (event.key === Qt.Key_Alt || event.key === Qt.Key_AltGr)
-                        root.commit();
+                        Switcher.commit();
                 }
             }
 
@@ -197,14 +65,14 @@ Scope {
                 readonly property int pad: 14
 
                 anchors.centerIn: parent
-                implicitWidth: (root.mode === "apps" ? appRow.implicitWidth : winRow.implicitWidth) + 2 * pad
-                implicitHeight: (root.mode === "apps" ? appRow.implicitHeight : winRow.implicitHeight) + label.implicitHeight + 3 * pad
+                implicitWidth: (Switcher.mode === "apps" ? appRow.implicitWidth : winRow.implicitWidth) + 2 * pad
+                implicitHeight: (Switcher.mode === "apps" ? appRow.implicitHeight : winRow.implicitHeight) + label.implicitHeight + 3 * pad
                 radius: Theme.radiusLarge + 6
                 color: Theme.bg
                 border.width: 1
                 border.color: Theme.border
-                opacity: root.uiShown ? 1 : 0
-                scale: root.uiShown ? 1 : 0.96
+                opacity: Switcher.uiShown ? 1 : 0
+                scale: Switcher.uiShown ? 1 : 0.96
 
                 Behavior on opacity {
                     Anim {
@@ -222,20 +90,20 @@ Scope {
                 Row {
                     id: appRow
 
-                    visible: root.mode === "apps"
+                    visible: Switcher.mode === "apps"
                     x: card.pad
                     y: card.pad
                     spacing: 6
 
                     Repeater {
-                        model: root.mode === "apps" ? root.apps : []
+                        model: Switcher.mode === "apps" ? Switcher.apps : []
 
                         delegate: Item {
                             id: app
 
                             required property var modelData
                             required property int index
-                            readonly property bool chosen: index === root.index
+                            readonly property bool chosen: index === Switcher.index
 
                             width: 92
                             height: 92
@@ -280,8 +148,8 @@ Scope {
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                onEntered: root.index = app.index
-                                onClicked: root.commit()
+                                onEntered: Switcher.index = app.index
+                                onClicked: Switcher.commit()
                             }
                         }
                     }
@@ -293,20 +161,20 @@ Scope {
 
                     readonly property int tileH: 150
 
-                    visible: root.mode === "windows"
+                    visible: Switcher.mode === "windows"
                     x: card.pad
                     y: card.pad
                     spacing: 10
 
                     Repeater {
-                        model: root.mode === "windows" ? root.appWindows : []
+                        model: Switcher.mode === "windows" ? Switcher.appWindows : []
 
                         delegate: Item {
                             id: tile
 
                             required property var modelData
                             required property int index
-                            readonly property bool chosen: index === root.index
+                            readonly property bool chosen: index === Switcher.index
                             readonly property var size: modelData.lastIpcObject?.size ?? [16, 9]
 
                             height: winRow.tileH
@@ -335,8 +203,8 @@ Scope {
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                onEntered: root.index = tile.index
-                                onClicked: root.commit()
+                                onEntered: Switcher.index = tile.index
+                                onClicked: Switcher.commit()
                             }
                         }
                     }
@@ -354,7 +222,7 @@ Scope {
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                     variant: "body"
-                    text: root.mode === "apps" ? (root.apps[root.index]?.name ?? "") : (root.appWindows[root.index]?.title ?? "")
+                    text: Switcher.mode === "apps" ? (Switcher.apps[Switcher.index]?.name ?? "") : (Switcher.appWindows[Switcher.index]?.title ?? "")
                 }
             }
         }
