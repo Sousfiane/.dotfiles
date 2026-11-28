@@ -44,10 +44,29 @@ read_list() {
     sed -e 's/#.*//' -e 's/[[:space:]]*$//' -e '/^$/d' "$PACKAGES_DIR/$1"
 }
 
-# everything the install puts on the machine
+# the GPUs' makers, one per line (nvidia, amd, intel): the display controllers (PCI class 0x03) in /sys, so
+# it needs nothing installed. A laptop with an Intel and an NVIDIA GPU gives both; a VM may give none.
+gpu_vendors() {
+    local dev vendor
+    for dev in /sys/bus/pci/devices/*; do
+        [[ $(<"$dev/class") == 0x03* ]] || continue
+        vendor=$(<"$dev/vendor")
+        case $vendor in
+            0x10de) echo nvidia ;;
+            0x1002) echo amd ;;
+            0x8086) echo intel ;;
+        esac
+    done | sort -u
+}
+
+# everything the install puts on the machine: the GPUs' driver lists (packages/gpu) included
 wanted_packages() {
+    local vendor
     read_list desktop.txt
     read_list apps.txt
+    for vendor in $(gpu_vendors); do
+        read_list "gpu/$vendor.txt"
+    done
 }
 
 is_installed() {

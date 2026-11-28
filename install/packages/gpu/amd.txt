@@ -1,0 +1,7 @@
+# AMD's driver (Mesa: amdgpu is in the kernel), installed when the packages step finds an AMD GPU
+# (install/lib.sh: gpu_vendors). Mesa also does video decoding (VA-API).
+
+mesa
+vulkan-radeon
+lib32-mesa                   # Steam's 32-bit OpenGL and Vulkan (multilib: steps/pacman.sh)
+lib32-vulkan-radeon

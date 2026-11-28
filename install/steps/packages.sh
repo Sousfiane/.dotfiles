@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
-# the packages: everything in desktop.txt and apps.txt, then out with what remove.txt names
+# the packages: everything in desktop.txt and apps.txt, the driver for each GPU found (gpu/), then out with what
+# remove.txt names
 
 source "$(dirname "${BASH_SOURCE[0]}")/../lib.sh"
 
 mapfile -t wanted < <(wanted_packages)
+
+gpus=$(gpu_vendors | paste -sd " ")
+if [[ -n $gpus ]]; then
+    info "GPU: $gpus (its driver from packages/gpu)"
+else
+    warn "No NVIDIA, AMD or Intel GPU found: no graphics driver installed (a VM uses Mesa, which comes as a dependency)"
+fi
 
 info "Installing ${#wanted[@]} packages (already installed ones are skipped)"
 yay -S --needed --noconfirm "${wanted[@]}"

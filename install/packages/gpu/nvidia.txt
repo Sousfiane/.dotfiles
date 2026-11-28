@@ -1,0 +1,8 @@
+# NVIDIA's driver, installed when the packages step finds an NVIDIA GPU (install/lib.sh: gpu_vendors).
+# nvidia-open is for Turing (GTX 16xx, RTX 20xx) and newer; older cards need the legacy driver from the AUR.
+# The session's NVIDIA settings (config/uwsm/env, the Quickshell unit) apply only when this driver is loaded.
+
+nvidia-open
+libva-nvidia-driver          # video decoding
+opencl-nvidia
+lib32-nvidia-utils           # Steam's 32-bit Vulkan driver (multilib: steps/pacman.sh)

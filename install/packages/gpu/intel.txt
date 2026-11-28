@@ -1,0 +1,8 @@
+# Intel's driver (Mesa: i915/xe are in the kernel), installed when the packages step finds an Intel GPU
+# (install/lib.sh: gpu_vendors). On a laptop with an NVIDIA card too, both lists are installed.
+
+mesa
+vulkan-intel
+intel-media-driver           # video decoding (VA-API), Broadwell and newer
+lib32-mesa                   # Steam's 32-bit OpenGL and Vulkan (multilib: steps/pacman.sh)
+lib32-vulkan-intel

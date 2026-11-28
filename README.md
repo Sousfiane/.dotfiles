@@ -6,7 +6,7 @@ Arch Linux with Hyprland and a Quickshell desktop.
 
 On a fresh Arch, set up with **archinstall**:
 
-- **Profile:** "minimal": the install brings the desktop itself, the NVIDIA driver (`nvidia-open`) included
+- **Profile:** "minimal": the install brings the desktop itself, and the graphics driver for the GPU it finds
 - **Audio:** PipeWire • **Bluetooth:** on • **Network:** "Use NetworkManager"
 
 Then, as your user:
@@ -21,7 +21,7 @@ It clones this repo to `~/.dotfiles` and runs `install/install.sh`, which goes t
 |---|---|
 | `pacman` | enables multilib, full system upgrade |
 | `yay` | builds the AUR helper |
-| `packages` | installs `packages/desktop.txt` and `packages/apps.txt`, removes `packages/remove.txt` (what archinstall adds that the desktop replaces) |
+| `packages` | installs `packages/desktop.txt`, `packages/apps.txt` and the driver for each GPU found (`packages/gpu/nvidia.txt`, `amd.txt`, `intel.txt`; both on a laptop with two), removes `packages/remove.txt` (what archinstall adds that the desktop replaces) |
 | `links` | links the files where their folder says (see below) |
 | `services` | enables NetworkManager, Bluetooth and sddm, and the session's user services (Quickshell, hypridle); disables hyprpolkitagent, since Quickshell is the polkit agent |
 | `system` | zsh as the login shell, the GTK theme |

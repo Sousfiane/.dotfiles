@@ -1,6 +1,6 @@
 # The desktop: Hyprland, the Quickshell shell, and everything they run.
-# All of it, the graphics driver included, so archinstall's "minimal" profile is enough (a desktop profile
-# works too: packages already installed are skipped).
+# All of it, so archinstall's "minimal" profile is enough (a desktop profile works too: packages already
+# installed are skipped). The graphics driver is in gpu/, the list for each GPU found.
 
 # ---------- Hyprland ----------
 hyprland
@@ -30,12 +30,6 @@ python                       # scripts/calendar.py
 python-dbus                  # bt-agent (started by autostart.lua)
 python-gobject               # bt-agent
 curl                         # weather
-
-# ---------- graphics: NVIDIA (archinstall only offers a driver with a desktop profile) ----------
-nvidia-open
-libva-nvidia-driver          # video decoding
-opencl-nvidia
-lib32-nvidia-utils           # Steam's 32-bit Vulkan driver (multilib: steps/pacman.sh)
 
 # ---------- audio, network, Bluetooth (services: steps/services.sh) ----------
 pipewire
