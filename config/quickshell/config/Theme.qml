@@ -5,13 +5,10 @@ import QtQuick
 
 // The system theme, from the merged theme ~/.local/state/theme/current.json: theme.json in config/theme
 // (fonts, radii, opacities), the fonts picked in the theme picker over its own, and the current palette's
-// colours on top, put together by config/theme/merge.sh (the one place that works out which palette is
-// current). Hyprland, kitty, Neovim, tmux and zsh read the same file.
-//
-// The shell also keeps the others up to date: it watches what current.json is made from (theme.json, the
-// palette's name and the fonts picked in ~/.local/state/theme, the current palette's file) and runs
-// theme/apply.sh when one changes, which writes current.json first; this file then follows it. This file
-// only says what each colour is used for.
+// colours on top, put together by config/theme/merge.sh. Hyprland, kitty, Neovim, tmux and zsh read the same
+// file. It's kept up to date outside the shell (theme.path watches the theme's files and theme.service
+// runs config/theme/apply.sh, install/units): this file only follows it, and says what each colour is used
+// for.
 Singleton {
     id: root
 
@@ -54,7 +51,16 @@ Singleton {
     readonly property var palette: theme
     // the fonts in use: theme.json's with the picked ones on top { ui, uiPixelSize, mono, monoPointSize, app, appPointSize }
     readonly property var fonts: theme.font
+
     // theme.json as it is, for its own defaults (the theme picker marks the default font)
+    FileView {
+        id: settingsFile
+
+        path: root.themeDir + "/theme.json"
+        blockLoading: true
+        watchChanges: true
+        onFileChanged: reload()
+    }
     readonly property var settings: {
         try {
             return JSON.parse(settingsFile.text());
@@ -65,87 +71,15 @@ Singleton {
         }
     }
 
-    // ---------- what it's made from: a change runs apply.sh ----------
-
-    FileView {
-        id: settingsFile
-
-        path: root.themeDir + "/theme.json"
-        blockLoading: true
-        watchChanges: true
-        onFileChanged: reload()
-        onLoaded: applyTimer.restart()
-    }
-
-    FileView {
-        id: stateFile
-
-        path: root.stateDir + "/palette"
-        blockLoading: true
-        printErrors: false
-        watchChanges: true
-        onFileChanged: reload()
-        onLoaded: applyTimer.restart()
-    }
-
-    FileView {
-        id: fontsFile
-
-        path: root.stateDir + "/fonts.json"
-        blockLoading: true
-        printErrors: false
-        watchChanges: true
-        onFileChanged: reload()
-        onLoaded: applyTimer.restart()
-    }
-
-    FileView {
-        id: paletteFile
-
-        path: root.paletteName ? root.themeDir + "/palettes/" + root.paletteName + ".json" : ""
-        blockLoading: true
-        printErrors: false
-        watchChanges: true
-        onFileChanged: reload()
-        onLoaded: applyTimer.restart()
-    }
-
-    // a file that doesn't exist can't be watched: merge.sh creates the state files and current.json first
-    // (a new machine), then they're read again
+    // a new machine: no current.json yet, merge.sh writes it (and the state files), then it's read
     Process {
         id: merger
 
         command: [root.themeDir + "/merge.sh"]
-        onExited: {
-            currentFile.reload();
-            stateFile.reload();
-            fontsFile.reload();
-        }
+        onExited: currentFile.reload()
     }
-
-    // what the other apps were last brought up to date with
-    property string appliedText: ""
-    Component.onCompleted: {
-        appliedText = settingsFile.text() + stateFile.text() + paletteFile.text() + fontsFile.text();
-        merger.running = true;
-    }
-
-    // switching palettes changes several files in turn: wait for them to settle, then apply once
-    Timer {
-        id: applyTimer
-
-        interval: 300
-        onTriggered: root.applyEverywhere()
-    }
-
-    // after a real change (apply.sh does nothing when a file doesn't parse: a typo mid-edit)
-    function applyEverywhere() {
-        const text = settingsFile.text() + stateFile.text() + paletteFile.text() + fontsFile.text();
-        if (text === appliedText)
-            return;
-        appliedText = text;
-        Quickshell.execDetached([root.themeDir + "/apply.sh"]);
-    }
+    Component.onCompleted: if (!currentFile.text())
+        merger.running = true
 
     // the palette, by name
     readonly property color base: colors.base

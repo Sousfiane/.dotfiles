@@ -1,0 +1,16 @@
+# Brings every app up to date with the theme (config/theme/apply.sh), started by theme.path when one of its
+# files changes. It runs in the session's environment (uwsm puts Hyprland's and Wayland's in it), so it can
+# reload Hyprland and reach the apps. apply.sh does nothing when the merged theme didn't change.
+#
+#   journalctl --user -u theme        what the last runs did
+
+[Unit]
+Description=Bring every app up to date with the theme
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+# a switch writes more than one file: they settle first, then one run takes them all
+ExecStartPre=/usr/bin/sleep 0.3
+ExecStart=%h/.config/theme/apply.sh
+Slice=session-graphical.slice

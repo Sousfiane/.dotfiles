@@ -18,5 +18,5 @@ fi
 
 # the GTK theme (GTK 4 too), light or dark, app font and icons come from theme.json and its palette
 # (config/theme/apply.sh, also run whenever they change)
-"$DOTFILES/config/theme/apply.sh"
+"$DOTFILES/config/theme/apply.sh" --force
 success "GTK theme set"

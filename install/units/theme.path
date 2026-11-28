@@ -1,0 +1,20 @@
+# Watches the theme's files and starts theme.service (apply.sh) when one changes: theme.json, a palette, and
+# the choices in ~/.local/state/theme (the palette, written by `theme` or the theme picker, and the fonts
+# picked). Through the links in ~/.config/theme: an editor's save is seen whether it writes the file in
+# place or renames a new one over it. steps/services.sh enables it from here; uwsm starts it with the
+# session.
+
+[Unit]
+Description=The theme's files, watched (a change brings every app up to date)
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Path]
+PathChanged=%h/.config/theme/theme.json
+PathChanged=%h/.config/theme/palettes
+PathChanged=%h/.local/state/theme/palette
+PathChanged=%h/.local/state/theme/fonts.json
+Unit=theme.service
+
+[Install]
+WantedBy=graphical-session.target

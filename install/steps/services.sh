@@ -40,6 +40,17 @@ else
     success "quickshell.service enabled (restarted if it crashes)"
 fi
 
+# the theme's watcher, from its units in the repo: theme.path sees a theme file change and starts
+# theme.service, which brings every app up to date (config/theme/apply.sh). The service is only linked in:
+# the path starts it
+if systemctl --user is-enabled -q theme.path 2>/dev/null; then
+    success "theme.path already enabled"
+else
+    systemctl --user link "$DOTFILES/install/units/theme.service"
+    systemctl --user enable "$DOTFILES/install/units/theme.path"
+    success "theme.path enabled (a theme change reaches every app)"
+fi
+
 # Quickshell is the polkit agent now, and only one can register: the old one goes
 if systemctl --user is-enabled -q hyprpolkitagent.service 2>/dev/null; then
     systemctl --user disable --now hyprpolkitagent.service

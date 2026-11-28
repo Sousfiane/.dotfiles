@@ -3,14 +3,14 @@
 # its own and the current palette on top (its colors, name, dark, gtk...), "palette" being that palette's
 # file name. The one place that works out which palette is current; the apps only read the result.
 #
-# apply.sh runs this first on every theme change (Quickshell runs apply.sh when a theme file changes, the
-# `theme` command when Quickshell isn't running), and an app that finds no current.json yet runs it itself.
+# apply.sh runs this first on every theme change (theme.service runs apply.sh when theme.path sees a theme
+# file change, install/units), and an app that finds no current.json yet runs it itself.
 # Also creates the state files when missing, so they can be watched: the palette's name (theme.json's
 # default) and the fonts picked (none).
 #
 # The file is written only when it changes, in one step (a new file renamed over the old), so an app
 # watching it never sees half a file or a change that isn't one. When a file doesn't parse (a typo while
-# editing), the last good current.json stays and this fails.
+# editing), the last good current.json stays and this fails (exit 1). Exit 3: nothing changed.
 
 set -euo pipefail
 
@@ -32,6 +32,6 @@ merged=$(jq -s --arg name "$name" '.[0] as $t | .[1] as $f | .[2] as $p
     exit 1
 }
 
-[[ -f $out && $(<"$out") == "$merged" ]] && exit 0
+[[ -f $out && $(<"$out") == "$merged" ]] && exit 3
 printf '%s\n' "$merged" >"$out.tmp"
 mv -f "$out.tmp" "$out"

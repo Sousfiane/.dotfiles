@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 # Brings every app up to date with the theme: theme.json, the fonts picked and the current palette.
-# Quickshell runs this whenever one of them changes, the `theme` command when Quickshell isn't running, and
-# steps/system.sh on install.
+# theme.service runs this whenever one of them changes (theme.path watches them, install/units), the
+# `theme` command when that isn't running, and steps/system.sh on install (--force).
+#
+#   apply.sh            only when the theme changed
+#   apply.sh --force    every app, changed or not
 #
 # First the merged theme every app reads, ~/.local/state/theme/current.json (merge.sh): when it can't be
-# made (a file that doesn't parse), nothing else happens. Then each app's own script in apps/, which does
+# made (a file that doesn't parse), or didn't change (a file saved as it was), nothing else happens. Then
+# each app's own script in apps/, which does
 # all that app needs and nothing else: writes the files it can only read in its own format, then reloads
 # it, or restarts it where it was when it only reads them as it starts (reopen.sh):
 #
@@ -21,7 +25,12 @@
 
 dir="$(dirname "${BASH_SOURCE[0]}")"
 
-"$dir/merge.sh" || exit 1
+"$dir/merge.sh"
+case $? in
+0) ;;
+3) [[ ${1:-} == --force ]] || exit 0 ;;
+*) exit 1 ;;
+esac
 
 status=0
 for app in "$dir"/apps/*.sh; do

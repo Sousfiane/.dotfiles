@@ -11,8 +11,9 @@
 #   theme font <ui|mono|app> size <n|default>   its size: pixels for ui, points for mono and app
 #
 # It writes the palette's name to ~/.local/state/theme/palette, out of the dotfiles so switching never shows up
-# in git (theme.json's "palette" is only the default, for a new machine). Quickshell sees the change and
-# brings every app up to date (config/theme/apply.sh). When Quickshell isn't running, this runs apply.sh.
+# in git (theme.json's "palette" is only the default, for a new machine). theme.path sees the change and
+# theme.service brings every app up to date (config/theme/apply.sh, install/units).
+# When that isn't running (outside the session), this runs apply.sh itself.
 # Fonts work the same way: the ones picked are in ~/.local/state/theme/fonts.json, over theme.json's.
 
 set -euo pipefail
@@ -24,9 +25,9 @@ settings="$dir/theme.json"
 state="$THEME_STATE/palette"
 fonts="$THEME_STATE/fonts.json"
 
-# the other apps follow by themselves when Quickshell is running (it watches the state files)
-apply_if_no_shell() {
-    if ! pgrep -x qs >/dev/null && ! pgrep -x quickshell >/dev/null; then
+# the apps follow by themselves while theme.path watches the state files
+apply_if_not_watched() {
+    if ! systemctl --user is-active -q theme.path 2>/dev/null; then
         "$dir/apply.sh"
     fi
 }
@@ -36,7 +37,7 @@ save_fonts() {
     mkdir -p "$(dirname "$fonts")"
     printf '%s\n' "$1" >"$fonts.tmp"
     mv "$fonts.tmp" "$fonts"
-    apply_if_no_shell
+    apply_if_not_watched
 }
 
 if [[ ${1:-} == font ]]; then
@@ -136,4 +137,4 @@ mkdir -p "$(dirname "$state")"
 printf '%s\n' "$wanted" >"$state.tmp"
 mv "$state.tmp" "$state"
 jq -r '.name' "$dir/palettes/$wanted.json"
-apply_if_no_shell
+apply_if_not_watched
