@@ -42,6 +42,7 @@ encode() {
         -c:a aac \
         -b:a "$AUDIO_BITRATE" \
         -movflags +faststart \
+        -y \
         "$OUTPUT"
 }
 
@@ -50,6 +51,11 @@ DURATION=$(ffprobe -v error \
     -show_entries format=duration \
     -of default=noprint_wrappers=1:nokey=1 \
     "$INPUT")
+
+if ! awk -v d="$DURATION" 'BEGIN { exit !(d + 0 > 0) }'; then
+    echo "Couldn't read the duration of $INPUT (is it a video?)"
+    exit 1
+fi
 
 echo "Video: $INPUT"
 echo "Duration: ${DURATION}s"

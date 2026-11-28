@@ -95,9 +95,10 @@ hl.layer_rule({
 	xray = true,
 })
 
+-- the screenshot panel's region selection (hyprshot runs slurp, whose layer is "selection"): there at once
 hl.layer_rule({
 	name = "noanim-layers",
-	match = { class = "hyprshot" },
+	match = { namespace = "^(selection)$" },
 	no_anim = true,
 })
 

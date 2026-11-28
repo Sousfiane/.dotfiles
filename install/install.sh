@@ -87,7 +87,8 @@ mkdir -p "$(dirname "$LOG")"
 exec > >(tee -a "$LOG") 2>&1
 info "Log: $LOG"
 
-# sudo once, kept alive until the install ends; not asked when only optional steps run (they don't need it)
+# sudo once, kept alive until the install ends; not asked up front when only optional steps run (greeter and
+# plugins ask for it themselves, when they get there)
 needs_sudo=false
 for s in "${selected[@]}"; do
     [[ " ${STEPS[*]} " == *" $s "* ]] && needs_sudo=true

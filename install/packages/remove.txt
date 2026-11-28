@@ -2,7 +2,7 @@
 
 network-manager-applet       # "Use NetworkManager": the network panel replaces it
 dunst                        # Hyprland profile: a second notification daemon, competing with Quickshell's
-polkit-kde-agent             # Hyprland profile: a second password-prompt agent, next to hyprpolkitagent
+polkit-kde-agent             # Hyprland profile: a second password-prompt agent, next to Quickshell's
 polkit-gnome                 # the password-prompt agent before hyprpolkitagent
 hyprpolkitagent              # the password-prompt agent before Quickshell's (only one can run)
 dolphin                      # Hyprland profile: Nautilus is the file manager

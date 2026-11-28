@@ -11,6 +11,7 @@ xdg-desktop-portal-hyprland  # screen sharing, file pickers
 qt5-wayland
 qt6-wayland
 sddm                         # login screen (enabled by steps/services.sh)
+greetd                       # the login screen with the Quickshell greeter, instead (install.sh greeter)
 
 # ---------- Quickshell and what it calls ----------
 quickshell
@@ -56,4 +57,3 @@ libnotify                    # notify-send: theme/apply.sh's "restart Spotify" n
 hyprqt6engine
 darkly                       # Qt apps' widget style: rounded, modern (set by config/theme/files.sh)
 unicode-emoji                # the emoji list the launcher searches (":")
-greetd                       # the login screen, with the Quickshell greeter (install.sh greeter)

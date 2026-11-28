@@ -3,7 +3,8 @@
 # like the rest (config/hypr/greeter.lua, config/quickshell/greeter.qml, linked by the links step); greetd
 # runs them as its `greeter` user, which this lets cross the home with an ACL (`x` only: it can't list the
 # home, only reach paths it knows, and what's under them that others can read). Then it writes
-# /etc/greetd/config.toml and, asking first, switches the login screen from sddm to greetd.
+# /etc/greetd/config.toml and /etc/pam.d/greetd (the login unlocks the keyring) and, asking first, switches the
+# login screen from sddm to greetd.
 #
 # Optional, run by name: `install/install.sh greeter`. Changes to the greeter, the lock screen, the theme,
 # the wallpaper, the monitors or the keyboard reach it by themselves: no need to run this again. To go back
