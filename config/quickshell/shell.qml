@@ -24,6 +24,7 @@ import qs.modules.packages
 import qs.modules.keybinds
 import qs.modules.polkit
 import qs.modules.overview
+import qs.modules.switcher
 import qs.services
 import qs.components.panel
 
@@ -62,6 +63,7 @@ ShellRoot {
     TrayPanel {}
     AppDock {}
     Overview {}
+    Switcher {}
 
     // the window the right edge's dropdowns share: one card, growing or shrinking from one to another
     SharedDropdown {}

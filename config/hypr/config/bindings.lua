@@ -54,6 +54,19 @@ hl.bind(mod .. " + Backspace", hl.dsp.exec_cmd(qs .. "lock lock"), { description
 -- Mission Control: every workspace's strip, live (macOS's Ctrl + Up)
 hl.bind(mod .. " + Up", hl.dsp.exec_cmd(qs .. "overview toggle"), { description = "Overview (Mission Control)" })
 
+-- the app switcher (macOS's Cmd + Tab, with ALT: SUPER + Tab is the workspaces). ALT + ² (the key above Tab,
+-- by keycode) goes through the windows of the app in front, as Cmd + ` does. Letting go of ALT goes to the
+-- chosen one: passed on to the apps too (non_consuming), and a no-op when the switcher isn't open
+hl.bind(alt .. " + Tab", hl.dsp.exec_cmd(qs .. "switcher next apps"), { description = "App switcher: next app" })
+hl.bind(alt .. " + " .. shift .. " + Tab", hl.dsp.exec_cmd(qs .. "switcher prev apps"), { description = "App switcher: previous app" })
+hl.bind(alt .. " + code:49", hl.dsp.exec_cmd(qs .. "switcher next windows"), { description = "App switcher: next window of the app" })
+hl.bind(
+	alt .. " + " .. shift .. " + code:49",
+	hl.dsp.exec_cmd(qs .. "switcher prev windows"),
+	{ description = "App switcher: previous window of the app" }
+)
+hl.bind(alt .. " + Alt_L", hl.dsp.exec_cmd(qs .. "switcher commit"), { release = true, non_consuming = true, description = "App switcher: go (ALT let go)" })
+
 hl.bind(
 	mod .. " + " .. shift .. " + Backspace",
 	hl.dsp.exec_cmd("uwsm stop"),
