@@ -136,11 +136,22 @@ PanelWindow {
         }
 
         WsIcons {
+            id: wsIcons
             screen: win.screen
             edgeGap: 11                   // the cells carry 5 px of padding: the first dot stays 16 px in
             anchors {
                 left: parent.left
                 leftMargin: edgeGap
+                verticalCenter: parent.verticalCenter
+            }
+        }
+
+        // the scrolling layout's columns, right after the dots
+        StripMap {
+            screen: win.screen
+            anchors {
+                left: wsIcons.right
+                leftMargin: 10
                 verticalCenter: parent.verticalCenter
             }
         }
