@@ -116,6 +116,13 @@ ColumnLayout {
             active: Toggles.keepAwake
             onClicked: Toggles.keepAwake = !Toggles.keepAwake
         }
+
+        QuickToggle {
+            icon: Toggles.tv ? Icons.tv : Icons.tvOff
+            label: "TV"
+            active: Toggles.tv
+            onClicked: Toggles.toggleTv()
+        }
     }
 
     Divider {}

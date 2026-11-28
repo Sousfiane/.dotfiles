@@ -19,6 +19,8 @@ hl.bind(mod .. " + " .. shift .. " + F", require("config.floating").toggle, { de
 
 hl.bind(mod .. " + P", require("config.popout").toggle, { description = "Toggle picture-in-picture / popup mode" })
 
+hl.bind(mod .. " + T", require("config.monitors").toggle_tv, { description = "Toggle the TV (left of the main screen)" })
+
 --------------------------------------------------
 -- 🚀 Menus
 --------------------------------------------------

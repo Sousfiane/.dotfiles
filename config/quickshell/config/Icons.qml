@@ -64,6 +64,8 @@ Singleton {
 
     // quick toggles (hub)
     readonly property string keepAwake: glyph(0xF0176)     // md-coffee
+    readonly property string tv: glyph(0xF0502)            // md-television
+    readonly property string tvOff: glyph(0xF083B)         // md-television_off
 
     // launcher modes
     readonly property string calculator: glyph(0xF00EC)    // md-calculator
