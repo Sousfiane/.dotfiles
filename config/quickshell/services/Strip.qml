@@ -52,6 +52,29 @@ Singleton {
         });
     }
 
+    // every window of workspace `ws`, tiled and floating, where Hyprland puts it (a workspace that isn't
+    // shown keeps its strip as it was last seen): { toplevel, address, title, x, y, w, h, floating },
+    // the floating ones last so they're drawn on top
+    function windows(ws) {
+        const out = [];
+        for (const t of Hyprland.toplevels.values) {
+            const o = t.lastIpcObject;
+            if (!o || o.workspace?.id !== ws || o.hidden || !o.mapped || !o.at || !o.size)
+                continue;
+            out.push({
+                toplevel: t,
+                address: "0x" + String(t.address).replace(/^0x/, ""),
+                title: o.title ?? "",
+                x: o.at[0],
+                y: o.at[1],
+                w: o.size[0],
+                h: o.size[1],
+                floating: !!o.floating
+            });
+        }
+        return out.sort((a, b) => (a.floating - b.floating) || (a.x - b.x) || (a.y - b.y));
+    }
+
     // the monitor's own area in the same coordinates (its size divided by its scale)
     function viewport(monitor) {
         const s = monitor?.scale || 1;

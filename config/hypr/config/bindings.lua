@@ -51,6 +51,9 @@ end
 
 hl.bind(mod .. " + Backspace", hl.dsp.exec_cmd(qs .. "lock lock"), { description = "Lock screen" })
 
+-- Mission Control: every workspace's strip, live (macOS's Ctrl + Up)
+hl.bind(mod .. " + Up", hl.dsp.exec_cmd(qs .. "overview toggle"), { description = "Overview (Mission Control)" })
+
 hl.bind(
 	mod .. " + " .. shift .. " + Backspace",
 	hl.dsp.exec_cmd("uwsm stop"),
