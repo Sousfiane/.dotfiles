@@ -63,7 +63,7 @@ For a login screen in the theme (greetd with a Quickshell greeter, instead of sd
 ~/.dotfiles/install/install.sh greeter          # installs it in /etc/greetd, then asks before switching
 ```
 
-It shows the lock screen itself (the same `LockFace.qml`) and logs in to the same uwsm session. Its files are in the home like the rest, `config/hypr/greeter.lua` and `config/quickshell/greeter.qml`: greetd runs them as its `greeter` user, which the step lets cross the home with an ACL (`setfacl -m u:greeter:x ~`: it can't list the home, only reach paths it knows). So it reads the theme, the wallpaper, the monitors and the keyboard as they are, and changes to them need nothing more. If the greeter ever fails to come up (Quickshell broken by an update, say), Ctrl+Alt+F2 gives a text console, where `uwsm start hyprland.desktop` starts the desktop. To go back to sddm: `sudo systemctl disable greetd && sudo systemctl enable sddm`.
+It shows the lock screen itself (the same `LockFace.qml`) and logs in to the same uwsm session. Its files are in the home like the rest, `config/hypr/greeter.lua` and `config/quickshell/greeter.qml` (its parts in `config/quickshell/modules/greeter`: the theme, logging in, the power buttons): greetd runs them as its `greeter` user, which the step lets cross the home with an ACL (`setfacl -m u:greeter:x ~`: it can't list the home, only reach paths it knows). So it reads the theme, the wallpaper, the monitors and the keyboard as they are, and changes to them need nothing more. If the greeter ever fails to come up (Quickshell broken by an update, say), Ctrl+Alt+F2 gives a text console, where `uwsm start hyprland.desktop` starts the desktop. To go back to sddm: `sudo systemctl disable greetd && sudo systemctl enable sddm`.
 
 ## Layout
 
