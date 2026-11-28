@@ -73,16 +73,6 @@ session    [success=1 default=ignore] pam_succeed_if.so user = greeter quiet
 EOF
 success "greetd's PAM stack written (/etc/pam.d/greetd: the login unlocks the keyring)"
 
-# what earlier versions of this step wrote, read by nothing now
-old=(/etc/greetd/hypr /etc/greetd/quickshell /var/lib/qs-greeter /etc/greetd/login-screen /etc/greetd/text-session)
-for f in "${old[@]}"; do
-    if [[ -e $f ]]; then
-        sudo rm -rf "${old[@]}"
-        success "Earlier versions' files removed (${old[*]})"
-        break
-    fi
-done
-
 # ---------- the switch ----------
 
 if systemctl is-enabled -q greetd.service 2>/dev/null; then
