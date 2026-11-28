@@ -7,7 +7,7 @@ import qs.config
 import qs.services
 import qs.components.ui
 
-// Mission Control on one monitor (Overview.qml): its workspaces, each a cell with its number and its strip
+// Mission Control on one monitor (services/Overview.qml): its workspaces, each a cell with its number and its strip
 // as the layout has it, at one scale for every cell so the windows compare. The cells fill a grid of 1, 2 or
 // 3 columns, whichever shows the windows largest (a few short strips side by side, long ones a row each),
 // in reading order. A frame marks the part of each strip the monitor shows; what's scrolled out of view is
@@ -15,18 +15,16 @@ import qs.components.ui
 PanelWindow {
     id: win
 
-    required property var overview
-
     // looked up in the live list, as the bar does (the object monitorFor() hands out can go away)
     readonly property HyprlandMonitor monitor: Hyprland.monitors.values.find(m => m.name === screen?.name) ?? null
-    readonly property bool hasKeys: overview.open && overview.screenName === (screen?.name ?? "")
+    readonly property bool hasKeys: Overview.open && Overview.screenName === (screen?.name ?? "")
 
     // 0 closed .. 1 open: everything fades and settles on it
-    property real shown: overview.open ? 1 : 0
+    property real shown: Overview.open ? 1 : 0
     Behavior on shown {
         Anim {
-            curve: win.overview.open ? Motion.enter : Motion.exit
-            duration: win.overview.open ? Motion.normal : Motion.out
+            curve: Overview.open ? Motion.enter : Motion.exit
+            duration: Overview.open ? Motion.normal : Motion.out
         }
     }
     visible: shown > 0
@@ -115,12 +113,12 @@ PanelWindow {
 
     function goToWindow(address) {
         Hyprland.dispatch(`hl.dsp.focus({ window = "address:${address}" })`);
-        overview.close();
+        Overview.close();
     }
 
     function goToWorkspace(id) {
         Hyprland.dispatch(`hl.dsp.focus({ workspace = ${id} })`);
-        overview.close();
+        Overview.close();
     }
 
     // ---------- the keyboard: a window chosen, row by row ----------
@@ -183,7 +181,7 @@ PanelWindow {
         Keys.onPressed: event => {
             const k = event.key;
             if (k === Qt.Key_Escape)
-                win.overview.close();
+                Overview.close();
             else if (k === Qt.Key_Return || k === Qt.Key_Enter || k === Qt.Key_Space) {
                 if (win.selected)
                     win.goToWindow(win.selected);
@@ -245,7 +243,7 @@ PanelWindow {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: win.overview.close()
+            onClicked: Overview.close()
         }
     }
 
@@ -352,128 +350,9 @@ PanelWindow {
                         objectProp: "address"
                     }
 
-                    delegate: Item {
-                        id: tile
-
-                        required property var modelData
-
-                        readonly property bool onScreen: modelData.x + modelData.w > win.view.x + 1 && modelData.x < win.view.x + win.view.w - 1
-                        readonly property bool lit: mouse.containsMouse || win.selected === modelData.address
-                        readonly property bool lifted: win.dragged?.address === modelData.address
-
-                        x: row.mapX(modelData.x)
-                        y: (modelData.y - win.view.y) * win.scale
-                        width: modelData.w * win.scale
-                        height: modelData.h * win.scale
-                        z: modelData.floating ? 2 : 1
-                        opacity: lifted ? 0.3 : onScreen ? 1 : 0.55
-
-                        Behavior on x {
-                            Anim {}
-                        }
-                        Behavior on opacity {
-                            Anim {
-                                duration: Motion.fast
-                            }
-                        }
-
-                        ClippingRectangle {
-                            anchors.fill: parent
-                            radius: 8
-                            color: Theme.surface
-
-                            ScreencopyView {
-                                anchors.fill: parent
-                                captureSource: win.visible ? (tile.modelData.toplevel?.wayland ?? null) : null
-                                live: win.overview.open
-                            }
-                        }
-
-                        Rectangle {
-                            anchors.fill: parent
-                            radius: 8
-                            color: "transparent"
-                            border.width: tile.lit ? 2 : 1
-                            border.color: tile.lit ? Theme.accent : Theme.withAlpha(Theme.fg, 0.12)
-                        }
-
-                        // the app, at the bottom edge as macOS does
-                        AppIcon {
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                                verticalCenter: parent.bottom
-                            }
-                            implicitSize: 32
-                            source: Icons.source(Apps.entryForWindow(tile.modelData.toplevel)?.icon ?? Windows.appClass(tile.modelData.toplevel).toLowerCase(), "application-x-executable")
-                        }
-
-                        // its title, under the pointer or the keyboard
-                        Rectangle {
-                            visible: tile.lit && tile.modelData.title !== ""
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                                bottom: parent.bottom
-                                bottomMargin: 22
-                            }
-                            width: Math.min(title.implicitWidth + 16, tile.width + 40)
-                            height: title.implicitHeight + 8
-                            radius: height / 2
-                            color: Theme.withAlpha(Theme.base, 0.9)
-
-                            Txt {
-                                id: title
-                                anchors.centerIn: parent
-                                width: parent.width - 16
-                                horizontalAlignment: Text.AlignHCenter
-                                elide: Text.ElideRight
-                                variant: "row"
-                                text: tile.modelData.title
-                            }
-                        }
-
-                        MouseArea {
-                            id: mouse
-
-                            property real pressX: 0
-                            property real pressY: 0
-                            property bool moved: false
-
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-                            cursorShape: win.dragged ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-                            preventStealing: true
-
-                            onPressed: m => {
-                                pressX = m.x;
-                                pressY = m.y;
-                                moved = false;
-                            }
-                            onPositionChanged: m => {
-                                if (!pressed || !(pressedButtons & Qt.LeftButton))
-                                    return;
-                                const p = mapToItem(content, m.x, m.y);
-                                if (!moved && Math.hypot(m.x - pressX, m.y - pressY) > 8) {
-                                    moved = true;
-                                    win.grabX = pressX;
-                                    win.grabY = pressY;
-                                    win.dragged = tile.modelData;
-                                }
-                                if (moved) {
-                                    win.dragX = p.x;
-                                    win.dragY = p.y;
-                                }
-                            }
-                            onReleased: m => {
-                                if (moved)
-                                    win.drop();
-                                else if (m.button === Qt.MiddleButton)
-                                    Windows.close(tile.modelData.toplevel);
-                                else
-                                    win.goToWindow(tile.modelData.address);
-                                moved = false;
-                            }
-                        }
+                    delegate: OverviewTile {
+                        overview: win
+                        strip: row
                     }
                 }
             }

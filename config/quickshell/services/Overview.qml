@@ -1,8 +1,8 @@
+pragma Singleton
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
-import qs.services
 
 // Mission Control for the scrolling layout (SUPER + Up, or `qs ipc call overview toggle`): every monitor
 // shows its workspaces as rows, each row its strip of windows as live previews, laid out as the layout
@@ -13,7 +13,9 @@ import qs.services
 //   middle-click            close it
 //   click a row             go to that workspace
 //   h j k l / arrows        choose a window, Enter goes to it; Esc closes
-Scope {
+//
+// This is its state and its IPC; modules/overview/OverviewPanel.qml puts a window on every monitor.
+Singleton {
     id: root
 
     property bool open: false
@@ -48,16 +50,6 @@ Scope {
         }
         function close(): void {
             root.close();
-        }
-    }
-
-    Variants {
-        model: Quickshell.screens
-
-        delegate: OverviewWindow {
-            required property ShellScreen modelData
-            screen: modelData
-            overview: root
         }
     }
 }

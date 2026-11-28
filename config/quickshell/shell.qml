@@ -62,7 +62,7 @@ ShellRoot {
     LockScreen {}
     TrayPanel {}
     AppDock {}
-    Overview {}
+    OverviewPanel {}
     SwitcherPanel {}
 
     // the window the right edge's dropdowns share: one card, growing or shrinking from one to another
