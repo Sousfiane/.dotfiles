@@ -6,8 +6,8 @@ Arch Linux with Hyprland and a Quickshell desktop.
 
 On a fresh Arch, set up with **archinstall**:
 
-- **Profile:** Desktop → Hyprland, with **sddm** as the greeter (the install also lists them itself, so the "minimal" profile works too)
-- **Audio:** PipeWire • **Bluetooth:** on • **Network:** "Use NetworkManager" • **Graphics:** the proprietary NVIDIA driver (`nvidia-open`)
+- **Profile:** "minimal": the install brings the desktop itself, the NVIDIA driver (`nvidia-open`) included
+- **Audio:** PipeWire • **Bluetooth:** on • **Network:** "Use NetworkManager"
 
 Then, as your user:
 
