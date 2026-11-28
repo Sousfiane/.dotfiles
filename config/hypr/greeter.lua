@@ -31,18 +31,19 @@ end
 
 -- The greeter quits cleanly only once someone has logged in: that's marked for greetd's login-screen script
 -- (/etc/greetd/login-screen, written by install/steps/greeter.sh), which counts anything else as a failure and
--- falls back to a text login after a few in a row.
---
--- After a login, the GPU's device is held open for a few seconds, past this Hyprland's exit, until the
--- session's Hyprland has it. When the last process holding it closes it, the kernel puts the text console
--- back on the screens; the session's Hyprland, starting a moment later, then waits ~3 s on the NVIDIA driver
--- ("Flip event timeout"). sddm never hit that: its X server stays alive on its own VT for the whole session.
-local hold_gpu = [[setsid -f sh -c 'i=3; for c in /dev/dri/card*; do eval "exec $i<$c"; i=$((i+1)); done;]]
-	.. [[ exec sleep 5' 2>/dev/null; ]]
+-- falls back to a text login after a few in a row
 hl.on("hyprland.start", function()
 	hl.exec_cmd(
 		"QS_GREETER_HOME='" .. home .. "' QS_GREETER_USER='" .. user .. "' qs -p '" .. home
-			.. "/.config/quickshell/greeter.qml' && { touch /tmp/qs-greeter-ok; " .. hold_gpu .. "};"
-			.. " hyprctl dispatch 'hl.dsp.exit()'"
+			.. "/.config/quickshell/greeter.qml' && touch /tmp/qs-greeter-ok; hyprctl dispatch 'hl.dsp.exit()'"
 	)
 end)
+
+-- A way out when the greeter won't log in: CTRL + ALT + BackSpace leaves it for a text login (agreety) on this
+-- console, once; the greeter is back after that login's session ends. CTRL + ALT + F2 to F6 give the other
+-- consoles, as anywhere in Hyprland.
+hl.bind(
+	"CTRL + ALT + BackSpace",
+	hl.dsp.exec_cmd("touch /tmp/qs-greeter-text; hyprctl dispatch 'hl.dsp.exit()'"),
+	{ description = "Leave the greeter for a text login" }
+)

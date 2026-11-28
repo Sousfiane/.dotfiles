@@ -11,7 +11,7 @@
 #   sudo systemctl disable greetd && sudo systemctl enable sddm
 #
 # If the login screen ever fails to come up, another console still works (Ctrl+Alt+F2) to log in there and
-# run that.
+# run that. In the greeter, Ctrl+Alt+BackSpace leaves it for a text login on its own console.
 
 source "$(dirname "${BASH_SOURCE[0]}")/../lib.sh"
 
@@ -42,18 +42,27 @@ QS_GREETER_HOME=$HOME Hyprland --verify-config -c "$hypr" 2>/dev/null | grep -q 
 # home: the fallback must work when what's in the home doesn't (Quickshell broken by an update, the home
 # unreadable). The Quickshell greeter in its small Hyprland, with nothing of a desktop session for the
 # greeter user (no systemd session target, no portals); greeter.lua marks a login. After 3 starts in a row
-# without one, a text login (agreety) until the next boot, so a broken greeter never locks you out.
+# without one, a text login (agreety) until the next boot, so a broken greeter never locks you out; and
+# CTRL + ALT + BackSpace in the greeter asks for one text login right away.
 sudo tee /etc/greetd/login-screen >/dev/null <<EOF
 #!/bin/sh
 # Written by ~/.dotfiles/install/steps/greeter.sh: greetd's login screen (/etc/greetd/config.toml).
 
 failures=/tmp/qs-greeter-failures
 ok=/tmp/qs-greeter-ok
+text=/tmp/qs-greeter-text
 n=\$(cat "\$failures" 2>/dev/null || echo 0)
 
 if [ "\$n" -ge 3 ]; then
     printf '\\nThe login screen failed to start %s times in a row: text login until the next boot.\\n' "\$n"
     printf 'Once logged in: uwsm start hyprland.desktop (the desktop), or fix it and reboot.\\n\\n'
+    exec agreety --cmd /etc/greetd/text-session
+fi
+
+# asked for from the greeter (CTRL + ALT + BackSpace, greeter.lua): a text login, once
+if [ -e "\$text" ]; then
+    rm -f "\$text"
+    printf '\\nText login (asked for from the login screen). It comes back once this session ends.\\n\\n'
     exec agreety --cmd /etc/greetd/text-session
 fi
 
@@ -63,7 +72,7 @@ rm -f "\$ok"
 QS_GREETER_HOME=$HOME HYPRLAND_NO_SD_TARGET=1 HYPRLAND_NO_SD_VARS=1 QT_NO_XDG_DESKTOP_PORTAL=1 \\
     start-hyprland -- -c $hypr >/dev/null 2>&1
 
-if [ -e "\$ok" ]; then
+if [ -e "\$ok" ] || [ -e "\$text" ]; then
     rm -f "\$failures" "\$ok"
 else
     echo \$((n + 1)) >"\$failures"

@@ -7,12 +7,12 @@
 #
 # Started through the user's login shell, as a display manager does: its profile (~/.zprofile: ~/.local/bin in
 # PATH, DOTFILES, the theme's colours) runs first, and uwsm hands that environment to the whole session.
-# Output would print on the console while Hyprland comes up (a few seconds): the console is cleared, its
-# cursor hidden, and the output dropped (uwsm and Hyprland log to the journal anyway).
+# Output would print on the console while Hyprland comes up: it's dropped (uwsm and Hyprland log to the journal
+# anyway). Nothing is written to the console either: the GPU is changing hands then, between the greeter's
+# Hyprland and the session's, and the NVIDIA driver is touchy about it (a 3 s "Flip event timeout").
 #
 # -g -1: no check that the system reached graphical.target. When it hasn't (a boot to multi-user.target, greetd
 # started by hand) uwsm waits 5 s for nothing: greetd is what logged us in, so this is the graphical session.
 
-printf '\033[2J\033[3J\033[H\033[?25l'
 login=$(getent passwd "$(id -un)" | cut -d: -f7)
 exec "${login:-/bin/sh}" -l -c 'exec uwsm start -g -1 -e -D Hyprland hyprland.desktop' >/dev/null 2>&1
