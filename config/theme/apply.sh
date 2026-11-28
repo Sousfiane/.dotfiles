@@ -9,12 +9,21 @@
 #   GTK        theme, colour scheme, app font and icon theme (gsettings), and GTK 4's gtk.css link
 #   Spotify    if it's open with another scheme, it restarts with the new one (spotify-themed)
 #   Discord    follows by itself (files.sh writes its palette); this only makes sure the palette is enabled
+#   Zen        files.sh writes its userChrome.css, userContent.css and user.js, which it reads only as it
+#              starts: if it's open and its colours changed, it restarts (its tabs come back). Dark Reader's
+#              colours too (darkreader.py), while it's closed
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 theme="$THEME_DIR/theme.json"
 fonts="$THEME_STATE/fonts.json"    # the fonts picked in the theme picker, over theme.json's
 palette=$(theme_palette_file)      # every part below that reads it checks for jq first
+
+# Zen's colours as they were, to tell after files.sh whether they changed
+zen_colors() {
+    cat "$HOME"/.config/zen/*/chrome/userChrome.css "$HOME"/.zen/*/chrome/userChrome.css 2>/dev/null | md5sum
+}
+zen_before=$(zen_colors)
 
 "$(dirname "${BASH_SOURCE[0]}")/files.sh"
 
@@ -87,4 +96,25 @@ if [[ -f $vesktop ]] && command -v jq >/dev/null && ! pgrep -x vesktop >/dev/nul
         .themeLinks = ((.themeLinks // []) - [$rin] + [$rin])
         | .enabledThemes = ((.enabledThemes // []) - ["palette.theme.css"] + ["palette.theme.css"])' \
         "$vesktop" >"$vesktop.tmp" && mv -f "$vesktop.tmp" "$vesktop" || rm -f "$vesktop.tmp"
+fi
+
+# Zen reads its theme only as it starts: if it's open and its colours changed, it's closed (TERM to its
+# main process: a normal quit, the session saved) and opened again, its tabs restored as on every start.
+# Dark Reader's colours are written in between, as it saves over them while Zen runs; when Zen is closed,
+# at once. In the background; if Zen doesn't close within 15 s (a "close tabs?" prompt), it's left as it is
+darkreader=(python3 -I "$(dirname "${BASH_SOURCE[0]}")/darkreader.py" "$palette")
+if main=$(pgrep -o -x zen-bin); then
+    if [[ $(zen_colors) != "$zen_before" ]]; then
+        setsid -f bash -c '
+            kill -TERM "$1"
+            for _ in $(seq 75); do
+                if ! kill -0 "$1" 2>/dev/null; then
+                    "${@:2}"
+                    exec uwsm-app -- zen.desktop
+                fi
+                sleep 0.2
+            done' _ "$main" "${darkreader[@]}" >/dev/null 2>&1
+    fi
+elif command -v python3 >/dev/null; then
+    "${darkreader[@]}"
 fi
