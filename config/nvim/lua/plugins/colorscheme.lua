@@ -1,21 +1,20 @@
--- The rose-pine plugin with the palette from ~/.config/theme/theme.json and the palette it names
--- (config/theme in the dotfiles), which quickshell, Hyprland, kitty and tmux read too. Without those
--- files, the plugin's own Rosé Pine.
-local function read(path)
-	return vim.json.decode(table.concat(vim.fn.readfile(vim.fn.expand(path)), "\n"))
-end
+-- The rose-pine plugin with the current palette, from the merged theme (~/.local/state/theme/current.json:
+-- theme.json in config/theme, the fonts picked and the palette, put together by merge.sh), which quickshell,
+-- Hyprland, kitty and tmux read too. Without it, the plugin's own Rosé Pine.
+local state = vim.fn.expand("~/.local/state/theme")
+local current = state .. "/current.json"
 
 -- the plugin variant to use and its colours, or nil
 local function theme_palette()
 	local ok, palette = pcall(function()
-		local theme = read("~/.config/theme/theme.json")
-		-- the current palette: the state file (out of the repo, written by `theme`), or the default
-		local state = vim.fn.expand("~/.local/state/theme/palette")
-		local name = vim.fn.filereadable(state) == 1 and vim.trim(vim.fn.readfile(state, "", 1)[1] or "") or ""
-		return read("~/.config/theme/palettes/" .. (name ~= "" and name or theme.palette) .. ".json")
+		-- written first if it isn't there yet (a new machine)
+		if vim.fn.filereadable(current) == 0 then
+			vim.fn.system({ vim.fn.expand("~/.config/theme/merge.sh") })
+		end
+		return vim.json.decode(table.concat(vim.fn.readfile(current), "\n"))
 	end)
 	if not ok then
-		vim.notify("theme.json: " .. tostring(palette), vim.log.levels.WARN)
+		vim.notify("theme: " .. tostring(palette), vim.log.levels.WARN)
 		return nil
 	end
 	local c = palette.colors
@@ -70,13 +69,13 @@ local function apply(opts)
 	vim.cmd("colorscheme rose-pine")
 end
 
--- Follows theme changes live: watches the folders theme.json and the palettes really live in (the repo,
--- since editors write through the links) and the one with the current palette's name (written by
--- `theme`), and applies again shortly after one of them changes.
+-- Follows theme changes live: watches the merged theme's folder (merge.sh writes it whenever theme.json,
+-- a palette, the current palette or the fonts change, as a new file renamed over the old), and applies
+-- again shortly after current.json changes.
 local function follow_theme()
 	local timer = assert(vim.uv.new_timer())
 	local function changed(err, name)
-		if err or not (name and (name:match("%.json$") or name == "palette")) then
+		if err or name ~= "current.json" then
 			return
 		end
 		timer:stop()
@@ -88,16 +87,10 @@ local function follow_theme()
 			end)
 		)
 	end
-	local theme = vim.fn.expand("~/.config/theme")
-	local settings = vim.uv.fs_realpath(theme .. "/theme.json")
-	local palettes = vim.uv.fs_realpath(theme .. "/palettes")
-	local state = vim.fn.expand("~/.local/state/theme")
 	vim.fn.mkdir(state, "p")
-	for _, dir in ipairs({ settings and vim.fs.dirname(settings), palettes, state }) do
-		local watcher = vim.uv.new_fs_event()
-		if dir and watcher then
-			watcher:start(dir, {}, changed)
-		end
+	local watcher = vim.uv.new_fs_event()
+	if watcher then
+		watcher:start(state, {}, changed)
 	end
 end
 

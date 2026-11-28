@@ -14,8 +14,8 @@ if ! command -v jq >/dev/null; then
     exit 0
 fi
 
-# the colours come from the current palette
-file=$(theme_palette_file)
+# the colours come from the merged theme (the current palette's)
+file=$(theme_current)
 
 declare -A c
 while IFS=$'\t' read -r name value; do

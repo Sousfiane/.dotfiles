@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# The theme for the apps that can only read their own format, written from theme.json, the fonts picked
-# (~/.local/state/theme/fonts.json) and the current palette. apply.sh runs this whenever any of them changes.
+# The theme for the apps that can only read their own format, written from the merged theme
+# (~/.local/state/theme/current.json, merge.sh). apply.sh runs this whenever it changes.
 # These files aren't in the dotfiles: edit theme.json, or this file.
 #
 #   ~/.config/hypr/hyprtoolkit.conf     hyprtoolkit apps (hyprland-dialog, the share picker)
@@ -14,11 +14,8 @@ set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-fonts="$THEME_STATE/fonts.json"
-jq -e 'type == "object"' "$fonts" >/dev/null 2>&1 || fonts=<(echo '{}')   # one that doesn't parse is ignored
-
 # theme.json, the fonts picked over its own, then the palette on top (its colors, name, dark, gtk...)
-theme=$(jq -s '.[0] as $t | .[1] as $f | .[2] as $p | ($t | .font += $f) + $p' "$THEME_DIR/theme.json" "$fonts" "$(theme_palette_file)")
+theme=$(<"$(theme_current)")
 
 # writes what `make` prints to `path`, in one step so an app never reads half a file. Only once it's all
 # there: when `make` fails, the old file stays

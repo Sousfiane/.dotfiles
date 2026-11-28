@@ -1,5 +1,6 @@
--- The system theme, read from ~/.config/theme/theme.json and the current palette (config/theme in the
--- dotfiles; the current one is named in ~/.local/state/theme/palette, the fonts picked in fonts.json next to it), which quickshell, kitty, Neovim and tmux read too. Hyprland reads it on start and on `hyprctl reload`.
+-- The system theme, from the merged theme (~/.local/state/theme/current.json: theme.json in config/theme,
+-- the fonts picked and the current palette, put together by merge.sh), which quickshell, kitty, Neovim and
+-- tmux read too. Hyprland reads it on start and on `hyprctl reload`.
 --
 --   local theme = require("config.theme")
 --   theme.colors.muted              "#6e6a86"
@@ -10,6 +11,7 @@
 local json = require("config.json")
 
 local dir = os.getenv("HOME") .. "/.config/theme"
+local current = os.getenv("HOME") .. "/.local/state/theme/current.json"
 
 local function read(path)
 	local file = assert(io.open(path, "r"), "theme: can't open " .. path)
@@ -18,39 +20,16 @@ local function read(path)
 	return value
 end
 
--- the current palette: ~/.local/state/theme/palette (out of the repo, written by `theme`), or the settings'
--- default
-local function current_palette(default)
-	local file = io.open(os.getenv("HOME") .. "/.local/state/theme/palette", "r")
-	if not file then
-		return default
-	end
-	local name = (file:read("*l") or ""):match("^%s*(.-)%s*$")
-	file:close()
-	return name ~= "" and name or default
-end
-
--- the settings, with the current palette on top (its colors, name, dark, gtk...)
-local theme = read(dir .. "/theme.json")
-
--- the fonts picked in the theme picker (~/.local/state/theme/fonts.json, written by `theme font`) over the
--- settings' (one that doesn't parse is ignored)
+-- the merged theme: written first by merge.sh if it isn't there yet (a new machine)
 do
-	local file = io.open(os.getenv("HOME") .. "/.local/state/theme/fonts.json", "r")
+	local file = io.open(current, "r")
 	if file then
-		local ok, fonts = pcall(json.decode, file:read("*a"))
 		file:close()
-		if ok and type(fonts) == "table" then
-			for key, value in pairs(fonts) do
-				theme.font[key] = value
-			end
-		end
+	else
+		os.execute("'" .. dir .. "/merge.sh'")
 	end
 end
-theme.palette = current_palette(theme.palette)
-for key, value in pairs(read(dir .. "/palettes/" .. theme.palette .. ".json")) do
-	theme[key] = value
-end
+local theme = read(current)
 
 -- a palette colour's hex digits, without the "#"
 local function hex(name)

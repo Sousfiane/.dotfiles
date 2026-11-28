@@ -1,5 +1,5 @@
-# The shell's colours, from ~/.config/theme/theme.json and the palette it names (config/theme in the
-# dotfiles):
+# The shell's colours, from the merged theme (~/.local/state/theme/current.json: theme.json in config/theme,
+# the fonts picked and the current palette, put together by merge.sh):
 #
 #   fzf          FZF_DEFAULT_OPTS
 #   ls, eza...   LS_COLORS, from vivid's theme of the same name (the palette's "vivid")
@@ -13,13 +13,9 @@ zmodload -F zsh/stat b:zstat
 
 # sets them from the current palette; leaves each as it was when it can't be worked out
 shell_theme() {
-    local dir=$HOME/.config/theme value name
-    # the current palette: the state file (written by `theme`), or theme.json's default when it names none or
-    # one that's gone (renamed, deleted)
-    [[ -r $HOME/.local/state/theme/palette ]] && name=$(<$HOME/.local/state/theme/palette)
-    name=${${name%%$'\n'*}//[[:space:]]/}
-    [[ -n $name && -r $dir/palettes/$name.json ]] || name=$(jq -r '.palette' "$dir/theme.json" 2>/dev/null)
-    local palette="$dir/palettes/$name.json"
+    local value palette=$HOME/.local/state/theme/current.json
+    # written first if it isn't there yet (a new machine)
+    [[ -f $palette ]] || $HOME/.config/theme/merge.sh 2>/dev/null
 
     value=$(jq -r '.colors | [
         "--color=fg:\(.subtle),bg:\(.base),hl:\(.rose)",
@@ -38,15 +34,16 @@ shell_theme() {
     [[ -o interactive ]] && zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 }
 
-# shell_theme again, but only when a theme file changed since the last time (their modification times: no
-# process started, so it's cheap enough for every command)
+# shell_theme again, but only when the merged theme changed since the last time: merge.sh writes a new file
+# for each change, so its inode tells, even two changes within the same second (no process started, so it's
+# cheap enough for every command)
 typeset -g _shell_theme_stamp=""
 shell_theme_refresh() {
-    local dir=$HOME/.config/theme
-    local -a times
-    zstat -A times +mtime -- "$dir/theme.json" "$dir"/palettes/*.json "$HOME/.local/state/theme/palette" 2>/dev/null
-    [[ ${times[*]} == "$_shell_theme_stamp" ]] && return
-    _shell_theme_stamp=${times[*]}
+    local -A st
+    zstat -H st -- "$HOME/.local/state/theme/current.json" 2>/dev/null
+    local stamp="${st[inode]}:${st[mtime]}"
+    [[ $stamp == "$_shell_theme_stamp" ]] && return
+    _shell_theme_stamp=$stamp
     shell_theme
 }
 

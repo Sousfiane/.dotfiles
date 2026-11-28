@@ -1,14 +1,14 @@
 # shellcheck shell=bash
-# Sourced by the theme's shell scripts (theme, apply.sh, files.sh, tmux's theme.sh, spotify-themed, the
-# spicetify step): where the theme lives and which palette is current. Hyprland, kitty, Quickshell and zsh
-# work it out the same way in their own language.
+# Sourced by the theme's shell scripts (theme, merge.sh, apply.sh, files.sh, tmux's theme.sh,
+# spotify-themed, the spicetify step): where the theme lives and which palette is current.
 #
 #   source "$HOME/.config/theme/lib.sh"
-#   theme_palette_name      "rose-pine-moon"
-#   theme_palette_file      ~/.config/theme/palettes/rose-pine-moon.json
+#   theme_current           ~/.local/state/theme/current.json: the whole theme, what the apps read
+#   theme_palette_name      "rose-pine-moon" (merge.sh, and `theme` to switch)
 
 THEME_DIR="$HOME/.config/theme"            # theme.json and palettes/ (config/theme in the dotfiles)
 THEME_STATE="$HOME/.local/state/theme"     # the choices, out of the repo: palette, fonts.json
+THEME_CURRENT="$THEME_STATE/current.json"  # theme.json + fonts.json + the palette, written by merge.sh
 
 # the current palette: the state file (written by `theme`), or theme.json's default when it names none or
 # one that's gone (renamed, deleted)
@@ -21,6 +21,8 @@ theme_palette_name() {
     printf '%s\n' "$name"
 }
 
-theme_palette_file() {
-    printf '%s/palettes/%s.json\n' "$THEME_DIR" "$(theme_palette_name)"
+# the merged theme's path, written first if it isn't there yet (a new machine)
+theme_current() {
+    [[ -f $THEME_CURRENT ]] || "$THEME_DIR/merge.sh" || true
+    printf '%s\n' "$THEME_CURRENT"
 }

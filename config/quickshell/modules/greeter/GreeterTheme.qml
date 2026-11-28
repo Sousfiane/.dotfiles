@@ -3,8 +3,9 @@ import Quickshell.Io
 import QtQuick
 
 // The greeter's theme, as config/Theme.qml reads it but from `home` (the user's, the greeter runs as another
-// user) and once: nothing is watched, created or applied. theme.json, the current palette, the fonts picked,
-// and the shell's current wallpaper.
+// user) and once: nothing is watched, created or applied. The merged theme (~/.local/state/theme/current.json:
+// theme.json, the fonts picked and the current palette, written by merge.sh), and the shell's current
+// wallpaper.
 Scope {
     id: root
 
@@ -19,33 +20,14 @@ Scope {
     }
 
     FileView {
-        id: settingsFile
-        path: root.home + "/.config/theme/theme.json"
-        blockLoading: true
-        printErrors: false
-    }
-    FileView {
-        id: fontsFile
-        path: root.home + "/.local/state/theme/fonts.json"
-        blockLoading: true
-        printErrors: false
-    }
-    FileView {
-        id: paletteName
-        path: root.home + "/.local/state/theme/palette"
-        blockLoading: true
-        printErrors: false
-    }
-    FileView {
-        id: paletteFile
-        path: root.home + "/.config/theme/palettes/" + (paletteName.text().trim() || root.settings.palette || "rose-pine") + ".json"
+        id: currentFile
+        path: root.home + "/.local/state/theme/current.json"
         blockLoading: true
         printErrors: false
     }
 
-    readonly property var settings: parse(settingsFile)
-    readonly property var fonts: Object.assign({}, settings.font ?? {}, parse(fontsFile))
-    readonly property var palette: parse(paletteFile)
+    readonly property var settings: parse(currentFile)
+    readonly property var fonts: settings.font ?? {}
 
     // Rosé Pine Moon, for a missing or broken palette
     readonly property var colors: Object.assign({
@@ -64,7 +46,7 @@ Scope {
         highlightLow: "#2a283e",
         highlightMed: "#44415a",
         highlightHigh: "#56526e"
-    }, palette.colors ?? {})
+    }, settings.colors ?? {})
     readonly property string font: fonts.ui ?? "JetBrainsMono Nerd Font"
     readonly property int fontSize: fonts.uiPixelSize ?? 13
     readonly property int radius: settings.radius?.large ?? 6

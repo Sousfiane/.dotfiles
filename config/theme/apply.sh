@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Brings everything up to date with theme.json and its palette. Quickshell runs this whenever either changes
-# (it follows them itself), the `theme` command when Quickshell isn't running, and steps/system.sh on install.
+# Brings everything up to date with theme.json, the fonts picked and the current palette. Quickshell runs
+# this whenever one of them changes, the `theme` command when Quickshell isn't running, and steps/system.sh
+# on install.
 #
+#   current    ~/.local/state/theme/current.json, the merged theme every app reads (merge.sh): first, and
+#              nothing else happens when it can't be made (a file that doesn't parse)
 #   files      hyprtoolkit's and hyprqt6engine's own files, written again (files.sh)
 #   Hyprland   reloads its config, for its own colours
 #   kitty      reloads its config (SIGUSR1), in every window
@@ -15,9 +18,8 @@
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-theme="$THEME_DIR/theme.json"
-fonts="$THEME_STATE/fonts.json"    # the fonts picked in the theme picker, over theme.json's
-palette=$(theme_palette_file)      # every part below that reads it checks for jq first
+"$(dirname "${BASH_SOURCE[0]}")/merge.sh" || exit 1
+theme=$THEME_CURRENT               # every part below that reads it checks for jq first
 
 # Zen's colours as they were, to tell after files.sh whether they changed
 zen_colors() {
@@ -39,18 +41,17 @@ fi
 
 if command -v jq >/dev/null && command -v gsettings >/dev/null; then
     GNOME=org.gnome.desktop.interface
-    gsettings set $GNOME gtk-theme "$(jq -r '.gtk' "$palette")"
+    gsettings set $GNOME gtk-theme "$(jq -r '.gtk' "$theme")"
     # each palette says which: the rose-pine GTK themes look wrong with prefer-dark, since libadwaita apps
     # then add their own dark style on top of the theme's colours
-    gsettings set $GNOME color-scheme "$(jq -r '.gtkColorScheme // "default"' "$palette")"
-    [[ -r $fonts ]] || fonts=/dev/null
-    gsettings set $GNOME font-name "$(jq -rs '(.[0].font + (.[1] // {})) | "\(.app // .ui) \(.appPointSize)"' "$theme" "$fonts")"
+    gsettings set $GNOME color-scheme "$(jq -r '.gtkColorScheme // "default"' "$theme")"
+    gsettings set $GNOME font-name "$(jq -r '.font | "\(.app // .ui) \(.appPointSize)"' "$theme")"
     gsettings set $GNOME icon-theme "$(jq -r '.icons' "$theme")"
 fi
 
 # GTK 4 apps (Nautilus) ignore the theme setting: they read gtk-4.0/gtk.css, a link to the theme's own
 if command -v jq >/dev/null; then
-    css="/usr/share/themes/$(jq -r '.gtk' "$palette")/gtk-4.0/gtk.css"
+    css="/usr/share/themes/$(jq -r '.gtk' "$theme")/gtk-4.0/gtk.css"
     link="$HOME/.config/gtk-4.0/gtk.css"
     if [[ -f $css && ( -L $link || ! -e $link ) && $(readlink "$link") != "$css" ]]; then
         mkdir -p "$(dirname "$link")"
@@ -74,7 +75,7 @@ fi
 # Spotify can't change theme while it runs: spotify-themed applies it as it opens. If it's open now with
 # another scheme, it's closed and opened again with the new one. In the background, so nothing here waits
 if pgrep -x spotify >/dev/null && command -v jq >/dev/null; then
-    wanted=$(jq -r '.spicetify // ""' "$palette" 2>/dev/null)
+    wanted=$(jq -r '.spicetify // ""' "$theme" 2>/dev/null)
     scheme=$(awk -F' *= *' '$1=="color_scheme"{print $2; exit}' "$HOME/.config/spicetify/config-xpui.ini" 2>/dev/null)
     if [[ -n $wanted && $scheme != "$wanted" ]]; then
         setsid -f bash -c '
@@ -102,7 +103,7 @@ fi
 # main process: a normal quit, the session saved) and opened again, its tabs restored as on every start.
 # Dark Reader's colours are written in between, as it saves over them while Zen runs; when Zen is closed,
 # at once. In the background; if Zen doesn't close within 15 s (a "close tabs?" prompt), it's left as it is
-darkreader=(python3 -I "$(dirname "${BASH_SOURCE[0]}")/darkreader.py" "$palette")
+darkreader=(python3 -I "$(dirname "${BASH_SOURCE[0]}")/darkreader.py" "$theme")
 if main=$(pgrep -o -x zen-bin); then
     if [[ $(zen_colors) != "$zen_before" ]]; then
         setsid -f bash -c '

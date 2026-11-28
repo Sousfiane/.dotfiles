@@ -1,10 +1,11 @@
-# kitty's colours, font and opacity, from ~/.config/theme/theme.json and the current palette (config/theme
-# in the dotfiles), which quickshell, Hyprland, Neovim and tmux read too. kitty.conf runs this with
-# `geninclude` on every config load (ctrl+shift+f5 reloads) and reads what it prints as config: nothing is
-# written to disk.
+# kitty's colours, font and opacity, from the merged theme (~/.local/state/theme/current.json: theme.json in
+# config/theme, the fonts picked and the current palette), which quickshell, Hyprland, Neovim and tmux read
+# too. kitty.conf runs this with `geninclude` on every config load (ctrl+shift+f5 reloads) and reads what it
+# prints as config: nothing is written to disk.
 
 import json
 import os
+import subprocess
 
 theme_dir = os.path.expanduser("~/.config/theme")
 
@@ -14,25 +15,12 @@ def read(path):
         return json.load(f)
 
 
-# the current palette: ~/.local/state/theme/palette (out of the repo, written by `theme`), or the settings'
-# default when it names none or one that's gone (renamed, deleted)
-def current_palette(default):
-    try:
-        with open(os.path.expanduser("~/.local/state/theme/palette"), encoding="utf-8") as f:
-            name = f.readline().strip()
-    except OSError:
-        return default
-    return name if name and os.path.isfile(f"{theme_dir}/palettes/{name}.json") else default
-
-
-# the settings, with the current palette on top, and the fonts picked in the theme picker over theirs
-# (~/.local/state/theme/fonts.json, written by `theme font`)
-theme = read(f"{theme_dir}/theme.json")
-try:
-    theme["font"].update(read(os.path.expanduser("~/.local/state/theme/fonts.json")))
-except (OSError, ValueError, AttributeError, TypeError):
-    pass
-theme.update(read(f"{theme_dir}/palettes/{current_palette(theme['palette'])}.json"))
+# the merged theme (~/.local/state/theme/current.json, from theme.json, the fonts picked and the current
+# palette): written first by merge.sh if it isn't there yet
+current = os.path.expanduser("~/.local/state/theme/current.json")
+if not os.path.isfile(current):
+    subprocess.run([f"{theme_dir}/merge.sh"], check=False)
+theme = read(current)
 
 c = theme["colors"]
 term = theme["terminal"]

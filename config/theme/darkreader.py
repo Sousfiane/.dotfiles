@@ -9,7 +9,7 @@
 # The colour scheme's name, which its popup shows, is Dark Reader's own when one has these colours (Rosé
 # Pine: dark is Rosé Pine, light is Dawn), the palette's otherwise.
 #
-#   darkreader.py <palette.json>
+#   darkreader.py <theme.json>     the merged theme (~/.local/state/theme/current.json) or a palette
 
 import configparser
 import json
