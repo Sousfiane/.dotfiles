@@ -7,10 +7,11 @@ import qs.config
 import qs.services
 import qs.components.ui
 
-// Mission Control on one monitor (Overview.qml): its workspaces top to bottom, each a row with its number
-// and its strip as the layout has it, at one scale for every row so the windows compare. A frame marks the
-// part of each strip the monitor shows; what's scrolled out of view is fainter. The last row takes a window
-// dropped on it to a new workspace.
+// Mission Control on one monitor (Overview.qml): its workspaces, each a cell with its number and its strip
+// as the layout has it, at one scale for every cell so the windows compare. The cells fill a grid of 1, 2 or
+// 3 columns, whichever shows the windows largest (a few short strips side by side, long ones a row each),
+// in reading order. A frame marks the part of each strip the monitor shows; what's scrolled out of view is
+// fainter. The row under the grid takes a window dropped on it to a new workspace.
 PanelWindow {
     id: win
 
@@ -56,21 +57,59 @@ PanelWindow {
         };
     })
 
-    // ---------- layout: one scale for every row ----------
+    // ---------- layout: a grid of cells, one scale for every cell ----------
 
     readonly property int marginX: 72
     readonly property int marginTop: Theme.barHeight + 36
     readonly property int marginBottom: 96             // clear of the dock
-    readonly property int labelWidth: 64
-    readonly property int rowGap: 24
+    readonly property int labelWidth: 56
+    readonly property int rowGap: 28
+    readonly property int colGap: 40
     readonly property int newRowHeight: 48
-    readonly property real stripWidth: width - 2 * marginX - labelWidth
-    readonly property real rowHeight: rows.length ? Math.min((height - marginTop - marginBottom - newRowHeight) / rows.length - rowGap, view.h * 0.32) : 0
-    readonly property real scale: rows.length && view.h > 0 ? Math.min(rowHeight / view.h, ...rows.map(r => stripWidth / Math.max(1, r.max - r.min))) : 0
+    readonly property real maxScale: 0.42              // a single workspace isn't blown up to the whole screen
 
-    function rowY(i) {
-        return marginTop + i * (rowHeight + rowGap);
+    readonly property real widest: Math.max(1, ...rows.map(r => r.max - r.min))
+    readonly property real gridHeight: height - marginTop - marginBottom - newRowHeight - rowGap
+
+    // the grid for `cols` columns: { cols, perCol (rows of cells), cellW, cellH, scale }
+    function gridFor(cols) {
+        const lines = Math.ceil(rows.length / cols);
+        const cellW = (width - 2 * marginX - (cols - 1) * colGap) / cols;
+        const cellH = gridHeight / lines - rowGap;
+        const scale = Math.min(maxScale, cellH / view.h, (cellW - labelWidth) / widest);
+        return {
+            cols: cols,
+            lines: lines,
+            cellW: cellW,
+            cellH: cellH,
+            scale: scale
+        };
     }
+
+    // the columns that show the windows largest (fewer columns when it's a tie)
+    readonly property var grid: {
+        if (!rows.length || view.h <= 0)
+            return gridFor(1);
+        let best = gridFor(1);
+        for (let c = 2; c <= Math.min(3, rows.length); c++) {
+            const g = gridFor(c);
+            if (g.scale > best.scale * 1.05)
+                best = g;
+        }
+        return best;
+    }
+    readonly property real scale: Math.max(0, grid.scale)
+    // the cells only as tall as the windows need, the grid centred in the room
+    readonly property real cellHeight: view.h * scale
+    readonly property real gridTop: marginTop + Math.max(0, (gridHeight - grid.lines * (cellHeight + rowGap)) / 2)
+
+    function cellX(i) {
+        return marginX + (i % grid.cols) * (grid.cellW + colGap);
+    }
+    function cellY(i) {
+        return gridTop + Math.floor(i / grid.cols) * (cellHeight + rowGap);
+    }
+    readonly property real newRowY: gridTop + grid.lines * (cellHeight + rowGap)
 
     // ---------- going somewhere ----------
 
@@ -111,13 +150,24 @@ PanelWindow {
         let [r, i] = at;
         if (dx !== 0) {
             const wins = rows[r].windows;
-            selected = wins[Math.max(0, Math.min(wins.length - 1, i + dx))].address;
+            if (i + dx >= 0 && i + dx < wins.length) {
+                selected = wins[i + dx].address;
+                return;
+            }
+            // past the strip's end: the next workspace with windows that way, from its near end
+            for (let n = r + dx; n >= 0 && n < rows.length; n += dx) {
+                const next = rows[n].windows;
+                if (next.length) {
+                    selected = (dx > 0 ? next[0] : next[next.length - 1]).address;
+                    return;
+                }
+            }
             return;
         }
-        // the next row with windows, and in it the window nearest across
+        // the cell above or below (a grid line away) with windows, and in it the window nearest across
         const from = rows[r].windows[i];
         const mid = from.x + from.w / 2 - rows[r].min;
-        for (let n = r + dy; n >= 0 && n < rows.length; n += dy) {
+        for (let n = r + dy * grid.cols; n >= 0 && n < rows.length; n += dy * grid.cols) {
             const wins = rows[n].windows;
             if (!wins.length)
                 continue;
@@ -160,15 +210,17 @@ PanelWindow {
     property real grabY: 0
     property real dragScale: 1
 
-    // the row under the pointer: an index into rows, rows.length for the new-workspace row, -1 for none
+    // the cell under the pointer: an index into rows, rows.length for the new-workspace row, -1 for none
     readonly property int dropRow: {
         if (!dragged)
             return -1;
-        for (let i = 0; i <= rows.length; i++) {
-            const top = rowY(i), h = i < rows.length ? rowHeight : newRowHeight;
-            if (dragY >= top - rowGap / 2 && dragY < top + h + rowGap / 2)
+        for (let i = 0; i < rows.length; i++) {
+            const x = cellX(i), y = cellY(i);
+            if (dragX >= x - colGap / 2 && dragX < x + grid.cellW + colGap / 2 && dragY >= y - rowGap / 2 && dragY < y + cellHeight + rowGap / 2)
                 return i;
         }
+        if (dragY >= newRowY - rowGap / 2 && dragY < newRowY + newRowHeight + rowGap)
+            return rows.length;
         return -1;
     }
 
@@ -217,24 +269,31 @@ PanelWindow {
 
                 readonly property bool active: modelData.id === win.activeId
                 readonly property real stripW: (modelData.max - modelData.min) * win.scale
-                // the strip centred in the room for it
-                readonly property real stripX: win.marginX + win.labelWidth + (win.stripWidth - stripW) / 2
+                // the strip centred in the room for it, right of the number
+                readonly property real stripX: win.labelWidth + (win.grid.cellW - win.labelWidth - stripW) / 2
 
                 function mapX(x) {
                     return stripX + (x - modelData.min) * win.scale;
                 }
 
-                x: 0
-                y: win.rowY(index)
-                width: win.width
-                height: win.rowHeight
+                x: win.cellX(index)
+                y: win.cellY(index)
+                width: win.grid.cellW
+                height: win.cellHeight
 
-                // the row lights up under a dragged window
+                Behavior on x {
+                    Anim {}
+                }
+                Behavior on y {
+                    Anim {}
+                }
+
+                // the cell lights up under a dragged window
                 Rectangle {
-                    x: win.marginX - 16
-                    width: win.width - 2 * win.marginX + 32
-                    height: parent.height + 12
-                    y: -6
+                    x: -14
+                    width: parent.width + 28
+                    height: parent.height + 16
+                    y: -8
                     radius: Theme.radiusLarge
                     color: Theme.withAlpha(Theme.accent, 0.08)
                     border.width: 1
@@ -247,9 +306,9 @@ PanelWindow {
                     }
                 }
 
-                // the workspace's number; a click there or on the row's empty space goes to it
+                // the workspace's number; a click there or on the cell's empty space goes to it
                 Txt {
-                    x: win.marginX
+                    x: 0
                     width: win.labelWidth - 16
                     anchors.verticalCenter: parent.verticalCenter
                     horizontalAlignment: Text.AlignRight
@@ -260,9 +319,7 @@ PanelWindow {
                 }
 
                 MouseArea {
-                    x: win.marginX
-                    width: win.width - 2 * win.marginX
-                    height: parent.height
+                    anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: win.goToWorkspace(row.modelData.id)
                 }
@@ -426,9 +483,9 @@ PanelWindow {
         Rectangle {
             readonly property bool target: win.dropRow === win.rows.length
 
-            x: win.marginX + win.labelWidth
-            y: win.rowY(win.rows.length)
-            width: win.stripWidth
+            x: win.marginX
+            y: win.newRowY
+            width: win.width - 2 * win.marginX
             height: win.newRowHeight
             radius: Theme.radiusLarge
             color: target ? Theme.withAlpha(Theme.accent, 0.1) : Theme.withAlpha(Theme.fg, 0.03)
